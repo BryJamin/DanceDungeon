@@ -3,7 +3,7 @@ package com.bryjamin.dancedungeon.assets;
 /**
  * Created by BB on 09/10/2017.
  *
- * Used for file names and location strings. 
+ * Used for file names and location strings.
  *
  */
 
