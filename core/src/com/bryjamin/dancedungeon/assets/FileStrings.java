@@ -10,6 +10,6 @@ package com.bryjamin.dancedungeon.assets;
 public class FileStrings {
 
     public static final String SPRITE_ATLAS_FILE = "sprite.atlas";
-    public static final String SPRITE_ATLAS_NAME = "sprite";
+    public static final String ATLAS_NAME = "sprite";
 
 }

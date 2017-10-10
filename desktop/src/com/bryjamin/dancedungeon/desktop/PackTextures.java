@@ -20,7 +20,7 @@ public class PackTextures {
         String projectPath = System.getProperty("user.dir");
         String inputDir = projectPath + "/images/tobepacked";
         String outputDir = projectPath;
-        String packFileName = FileStrings.SPRITE_ATLAS_NAME;
+        String packFileName = FileStrings.ATLAS_NAME;
 
         TexturePacker.Settings settings = new TexturePacker.Settings();
         settings.maxWidth = 2048;
