@@ -3,6 +3,8 @@ package com.bryjamin.dancedungeon;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.bryjamin.dancedungeon.assets.FileStrings;
 import com.bryjamin.dancedungeon.screens.LoadingScreen;
 
 /**
@@ -32,11 +34,11 @@ public class MainGame extends Game {
         batch = new SpriteBatch(700);
         //Gdx.input.setCursorCatched(true);
         //Gdx.input.setCursorPosition(0, 0);
-/*
-        assetManager.load(FileLocationStrings.spriteAtlas, TextureAtlas.class);
 
-        SoundFileStrings.loadSoundsToManager(assetManager);
-*/
+        assetManager.load(FileStrings.SPRITE_ATLAS_FILE, TextureAtlas.class);
+
+       // SoundFileStrings.loadSoundsToManager(assetManager);
+
 
 /*
         FileHandleResolver resolver = new InternalFileHandleResolver();

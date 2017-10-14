@@ -58,6 +58,19 @@ public class RenderingSystem extends EntitySystem {
         }
     }
 
+    @Override
+    protected void begin() {
+        if(!batch.isDrawing()) {
+            batch.begin();
+        }
+    }
+
+    @Override
+    protected void end() {
+        batch.end();
+    }
+
+
     protected boolean process(Entity e) {
 
         DrawableComponent drawableComponent = drawablem.get(e);
@@ -67,6 +80,10 @@ public class RenderingSystem extends EntitySystem {
 
             float originX = drawableDescription.getWidth() * 0.5f;
             float originY = drawableDescription.getHeight() * 0.5f;
+
+            System.out.println(gameport.getCamera().position);
+            System.out.println(gameport.getCamera().viewportWidth);
+
 
             TextureRegion tr = atlas.findRegion(drawableDescription.getRegion(), drawableDescription.getIndex());
             if(tr == null) tr =  atlas.findRegion(TextureStrings.BLOCK);

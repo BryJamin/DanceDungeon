@@ -1,6 +1,8 @@
 package com.bryjamin.dancedungeon.screens;
 
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bryjamin.dancedungeon.MainGame;
 
 /**
@@ -10,9 +12,13 @@ import com.bryjamin.dancedungeon.MainGame;
 public class AbstractScreen implements Screen {
 
     protected MainGame game;
+    protected SpriteBatch batch;
+    protected AssetManager assetManager;
 
     public AbstractScreen(MainGame game) {
         this.game = game;
+        this.batch = game.batch;
+        this.assetManager = game.assetManager;
     }
 
     @Override

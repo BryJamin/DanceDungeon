@@ -22,7 +22,7 @@ public class LoadingScreen extends AbstractScreen {
 
         if(game.assetManager.update())
         {
-            game.setScreen(new MenuScreen(game));
+            game.setScreen(new PlayScreen(game));
         }
 
     }

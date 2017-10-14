@@ -2,6 +2,7 @@ package com.bryjamin.dancedungeon.ecs.components.graphics;
 
 import com.artemis.Component;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.OrderedMap;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.utils.texture.DrawableDescription;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
@@ -19,6 +20,8 @@ public class DrawableComponent extends Component {
 
     public int layer = Layer.ENEMY_LAYER_MIDDLE;
     public Array<DrawableDescription> drawables = new Array<DrawableDescription>();
+    public OrderedMap<String, DrawableDescription> trackedDrawables = new OrderedMap<String, DrawableDescription>();
+
 
     public DrawableComponent(){
 
