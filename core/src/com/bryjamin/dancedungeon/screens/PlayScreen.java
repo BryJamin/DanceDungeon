@@ -14,11 +14,14 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
+import com.bryjamin.dancedungeon.ecs.components.ExpireComponent;
 import com.bryjamin.dancedungeon.ecs.components.ExplosionComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
+import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.RenderingSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.DeathSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ExplosionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.HealthSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.BoundsDrawingSystem;
@@ -65,10 +68,12 @@ public class PlayScreen extends AbstractScreen {
                     new MovementSystem(),
                     new UpdatePositionSystem())
                 .with(WorldConfigurationBuilder.Priority.HIGH,
-                    new ExplosionSystem(),
-                    new HealthSystem(),
-                    new RenderingSystem(game, gameport),
-                    new BoundsDrawingSystem(batch)
+                        new ExplosionSystem(),
+                        new HealthSystem(),
+                        new DeathSystem(),
+                        new ExpireSystem(),
+                        new RenderingSystem(game, gameport),
+                        new BoundsDrawingSystem(batch)
             ).build();
 
         world = new World(config);
@@ -123,6 +128,7 @@ public class PlayScreen extends AbstractScreen {
                 explosion.edit().add(new PositionComponent(input));
                 explosion.edit().add(new ExplosionComponent(5));
                 explosion.edit().add(new HitBoxComponent(new HitBox(new Rectangle(input.x,input.y, size, size), -size / 2, -size / 2)));
+                explosion.edit().add(new ExpireComponent(1f));
 
                 return false;
             }

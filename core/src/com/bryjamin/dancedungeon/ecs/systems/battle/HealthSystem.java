@@ -6,6 +6,7 @@ import com.artemis.Entity;
 import com.artemis.systems.EntityProcessingSystem;
 import com.bryjamin.dancedungeon.ecs.components.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerComponent;
 
 /**
@@ -30,7 +31,7 @@ public class HealthSystem extends EntityProcessingSystem {
         HealthComponent hc = healthm.get(e);
         hc.health = hc.health - hc.getAccumulatedDamage();
         hc.clearDamage();
-        if(hc.health <= 0) e.deleteFromWorld();
+        if(hc.health <= 0) e.edit().add(new DeadComponent());
 
 
     }
