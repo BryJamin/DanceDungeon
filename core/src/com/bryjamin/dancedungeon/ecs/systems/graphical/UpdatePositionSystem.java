@@ -1,4 +1,4 @@
-package com.bryjamin.dancedungeon.ecs.systems;
+package com.bryjamin.dancedungeon.ecs.systems.graphical;
 
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
@@ -6,30 +6,29 @@ import com.artemis.Entity;
 import com.artemis.systems.EntityProcessingSystem;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
-import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
 
 /**
- * Created by BB on 11/10/2017.
+ * Created by BB on 15/10/2017.
  */
 
-public class MovementSystem extends EntityProcessingSystem {
+public class UpdatePositionSystem extends EntityProcessingSystem {
 
     ComponentMapper<PositionComponent> pm;
-    ComponentMapper<VelocityComponent> vm;
     ComponentMapper<HitBoxComponent> hitboxComponentM;
 
     @SuppressWarnings("unchecked")
-    public MovementSystem() {
-        super(Aspect.all(PositionComponent.class, VelocityComponent.class));
+    public UpdatePositionSystem() {
+        super(Aspect.all(PositionComponent.class));
     }
 
     @Override
     protected void process(Entity e) {
 
         PositionComponent pc = pm.get(e);
-        VelocityComponent vc = vm.get(e);
-        pc.position.add(vc.velocity.x * world.delta, vc.velocity.y * world.delta, 0);
+        if(hitboxComponentM.has(e)) hitboxComponentM.get(e).update(pc);
 
     }
 
 }
+
+

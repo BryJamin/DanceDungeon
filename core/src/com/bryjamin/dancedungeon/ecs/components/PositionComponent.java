@@ -1,6 +1,7 @@
 package com.bryjamin.dancedungeon.ecs.components;
 
 import com.artemis.Component;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 /**
@@ -15,6 +16,11 @@ public class PositionComponent extends Component {
 
     public PositionComponent(float x, float y){
         position = new Vector3(x,y,0);
+    }
+
+
+    public PositionComponent(Vector2 v){
+        position = new Vector3(v.x,v.y,0);
     }
 
     public PositionComponent(){

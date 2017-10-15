@@ -8,4 +8,11 @@ public class TextureStrings {
 
     public static final String BLOCK = "block";
 
+
+
+    public static final String PLAYER = "player/block_walk";
+
+
+    public static final String BLOB = "enemy/blob";
+
 }
