@@ -2,7 +2,7 @@ package com.bryjamin.dancedungeon.factories.player;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
-import com.bryjamin.dancedungeon.ecs.components.HealthComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerComponent;

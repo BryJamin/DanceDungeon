@@ -1,4 +1,4 @@
-package com.bryjamin.dancedungeon.ecs.components;
+package com.bryjamin.dancedungeon.ecs.components.battle;
 
 import com.artemis.Component;
 

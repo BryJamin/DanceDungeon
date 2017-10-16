@@ -3,7 +3,8 @@ package com.bryjamin.dancedungeon.factories.enemy;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Rectangle;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
-import com.bryjamin.dancedungeon.ecs.components.HealthComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.DispellableComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
@@ -41,6 +42,7 @@ public class DummyFactory extends AbstractFactory {
         ComponentBag bag = new ComponentBag();
         bag.add(new PositionComponent(x,y));
         bag.add(new HealthComponent(10));
+        bag.add(new DispellableComponent());
         bag.add(new EnemyComponent());
         bag.add(new HitBoxComponent(new HitBox(new Rectangle(x,y, width, height))));
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, player));

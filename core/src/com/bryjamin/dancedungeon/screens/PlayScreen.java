@@ -1,27 +1,22 @@
 package com.bryjamin.dancedungeon.screens;
 
-import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.WorldConfiguration;
 import com.artemis.WorldConfigurationBuilder;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
-import com.bryjamin.dancedungeon.ecs.components.ExpireComponent;
-import com.bryjamin.dancedungeon.ecs.components.ExplosionComponent;
-import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
-import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
+import com.bryjamin.dancedungeon.ecs.DirectionalInputAdapter;
+import com.bryjamin.dancedungeon.ecs.components.battle.DispellableComponent;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.DeathSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.DispelSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ExplosionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.HealthSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.BoundsDrawingSystem;
@@ -29,7 +24,6 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
 import com.bryjamin.dancedungeon.factories.enemy.DummyFactory;
 import com.bryjamin.dancedungeon.factories.player.PlayerFactory;
 import com.bryjamin.dancedungeon.utils.GameDelta;
-import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
 
@@ -69,6 +63,7 @@ public class PlayScreen extends AbstractScreen {
                     new UpdatePositionSystem())
                 .with(WorldConfigurationBuilder.Priority.HIGH,
                         new ExplosionSystem(),
+                        new DispelSystem(),
                         new HealthSystem(),
                         new DeathSystem(),
                         new ExpireSystem(),
@@ -113,6 +108,22 @@ public class PlayScreen extends AbstractScreen {
         InputMultiplexer multiplexer = new InputMultiplexer();
 
 
+        multiplexer.addProcessor(new DirectionalInputAdapter(new DirectionalInputAdapter.DirectionalGestureListener() {
+            @Override
+            public boolean tap(float x, float y, int count, int button) {
+                return true;
+            }
+
+            @Override
+            public boolean swipe(float startX, float startY, float endX, float endY) {
+
+                world.getSystem(DispelSystem.class).dispel(DispellableComponent.Type.HORIZONTAL);
+
+                return true;
+            }
+        }));
+
+/*
         multiplexer.addProcessor(new InputAdapter() {
 
             @Override
@@ -134,6 +145,7 @@ public class PlayScreen extends AbstractScreen {
             }
 
         });
+*/
 
 
         Gdx.input.setInputProcessor(multiplexer);
