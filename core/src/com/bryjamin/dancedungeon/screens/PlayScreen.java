@@ -15,6 +15,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.DispellableComponent;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.RenderingSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.BlinkOnHitSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.DeathSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.DispelSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ExplosionSystem;
@@ -105,6 +106,7 @@ public class PlayScreen extends AbstractScreen {
                         new ExplosionSystem(),
                         new DispelSystem(),
                         new HealthSystem(),
+                        new BlinkOnHitSystem(),
                         new DeathSystem(),
                         new ExpireSystem(),
                         new RenderingSystem(game, gameport),
@@ -120,7 +122,18 @@ public class PlayScreen extends AbstractScreen {
         ComponentBag bag = new DummyFactory(assetManager).targetDummy(Measure.units(10f), Measure.units(50f));
         bag.getComponent(DispellableComponent.class).dispelArray.clear();
         bag.getComponent(DispellableComponent.class).dispelArray.add(DispellableComponent.Type.VERTICAL);
+        BagToEntity.bagToEntity(world.createEntity(), bag);
 
+
+        bag = new DummyFactory(assetManager).targetDummy(Measure.units(40f), Measure.units(50f));
+        bag.getComponent(DispellableComponent.class).dispelArray.clear();
+        bag.getComponent(DispellableComponent.class).dispelArray.add(DispellableComponent.Type.BACK_SLASH);
+        BagToEntity.bagToEntity(world.createEntity(), bag);
+
+
+        bag = new DummyFactory(assetManager).targetDummy(Measure.units(55f), Measure.units(50f));
+        bag.getComponent(DispellableComponent.class).dispelArray.clear();
+        bag.getComponent(DispellableComponent.class).dispelArray.add(DispellableComponent.Type.FRONT_SLASH);
         BagToEntity.bagToEntity(world.createEntity(), bag);
 
         BagToEntity.bagToEntity(world.createEntity(), new DummyFactory(assetManager).targetDummy(Measure.units(25f), Measure.units(50f)));

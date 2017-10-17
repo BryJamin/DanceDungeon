@@ -1,5 +1,7 @@
 package com.bryjamin.dancedungeon.utils.texture;
 
+import com.badlogic.gdx.graphics.Color;
+
 /**
  * Created by BB on 10/10/2017.
  */
@@ -14,9 +16,11 @@ public class DrawableDescription {
     private float height;
     private float offsetX;
     private float offsetY;
-    private float scaleX = 1;
-    private float scaleY = 1;
-    private float rotation = 0;
+    private float scaleX;
+    private float scaleY;
+    private float rotation;
+    private Color color;
+    private Color resetColor;
 
 
     public DrawableDescription(DrawableDescriptionBuilder ddb){
@@ -27,6 +31,10 @@ public class DrawableDescription {
         this.height = ddb.height;
         this.offsetX = ddb.offsetX;
         this.offsetY = ddb.offsetY;
+        this.scaleX = ddb.scaleX;
+        this.scaleY = ddb.scaleY;
+        this.color = ddb.color;
+        this.resetColor = ddb.resetColor;
     }
 
 
@@ -45,6 +53,9 @@ public class DrawableDescription {
         private float scaleX = 1;
         private float scaleY = 1;
         private float rotation = 0;
+
+        private Color color = new Color(Color.WHITE);
+        private Color resetColor = new Color(Color.WHITE);
 
 
         public DrawableDescriptionBuilder(String region){
@@ -83,6 +94,12 @@ public class DrawableDescription {
 
         public DrawableDescriptionBuilder rotation(float val)
         { rotation = val; return this; }
+
+        public DrawableDescriptionBuilder color(Color val) {
+            color = val;
+            resetColor = val;
+            return this;
+        }
 
         public DrawableDescription build()
         { return new DrawableDescription(this); }
@@ -129,5 +146,13 @@ public class DrawableDescription {
 
     public float getRotation() {
         return rotation;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public Color getResetColor() {
+        return resetColor;
     }
 }

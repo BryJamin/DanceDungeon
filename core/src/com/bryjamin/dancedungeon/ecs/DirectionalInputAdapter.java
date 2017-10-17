@@ -46,7 +46,6 @@ public class DirectionalInputAdapter extends InputAdapter {
         tapSquareCenterY = screenY;
         inTapSquare = true;
         test= true;
-        System.out.println(inTapSquare);
 
 
         return false;

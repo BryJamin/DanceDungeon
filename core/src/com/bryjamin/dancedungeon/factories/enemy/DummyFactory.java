@@ -2,11 +2,13 @@ package com.bryjamin.dancedungeon.factories.enemy;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Rectangle;
+import com.bryjamin.dancedungeon.assets.Colors;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.battle.DispellableComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.factories.AbstractFactory;
@@ -29,6 +31,7 @@ public class DummyFactory extends AbstractFactory {
     public static final DrawableDescription player = new DrawableDescription.DrawableDescriptionBuilder(TextureStrings.BLOB)
             .index(2)
             .size(height)
+            .color(Colors.BLOB_RED)
             .build();
 
     public DummyFactory(AssetManager assetManager) {
@@ -44,6 +47,7 @@ public class DummyFactory extends AbstractFactory {
         bag.add(new HealthComponent(10));
         bag.add(new DispellableComponent());
         bag.add(new EnemyComponent());
+        bag.add(new BlinkOnHitComponent());
         bag.add(new HitBoxComponent(new HitBox(new Rectangle(x,y, width, height))));
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, player));
 

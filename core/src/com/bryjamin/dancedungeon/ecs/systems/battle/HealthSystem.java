@@ -6,6 +6,7 @@ import com.artemis.Entity;
 import com.artemis.systems.EntityProcessingSystem;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerComponent;
 
@@ -18,6 +19,7 @@ public class HealthSystem extends EntityProcessingSystem {
     ComponentMapper<HealthComponent> healthm;
     ComponentMapper<VelocityComponent> vm;
     ComponentMapper<PlayerComponent> pm;
+    ComponentMapper<BlinkOnHitComponent> blinkOnHitMapper;
 
     @SuppressWarnings("unchecked")
     public HealthSystem() {
@@ -29,6 +31,11 @@ public class HealthSystem extends EntityProcessingSystem {
     protected void process(Entity e) {
 
         HealthComponent hc = healthm.get(e);
+
+
+        if(hc.getAccumulatedDamage() > 0 && blinkOnHitMapper.has(e))
+            blinkOnHitMapper.get(e).isHit = true;
+
         hc.health = hc.health - hc.getAccumulatedDamage();
         hc.clearDamage();
         if(hc.health <= 0) e.edit().add(new DeadComponent());

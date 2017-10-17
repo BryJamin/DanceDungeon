@@ -21,12 +21,8 @@ public class HitBoxComponent extends Component {
 
     public boolean overlaps(Rectangle r){
 
-        System.out.println("Rect x: " + r.x);
-
 
         for(HitBox hitBox : hitBoxes){
-            System.out.println("Hitbox x: " + hitBox.hitbox.x);
-            System.out.println(r.overlaps(hitBox.hitbox));
             if(r.overlaps(hitBox.hitbox)){
                 return true;
             }
