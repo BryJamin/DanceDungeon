@@ -23,9 +23,11 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.BoundsDrawingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
 import com.bryjamin.dancedungeon.factories.enemy.DummyFactory;
 import com.bryjamin.dancedungeon.factories.player.PlayerFactory;
+import com.bryjamin.dancedungeon.utils.AngleMath;
 import com.bryjamin.dancedungeon.utils.GameDelta;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
+import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
 
 /**
  * Created by BB on 11/10/2017.
@@ -37,6 +39,8 @@ public class PlayScreen extends AbstractScreen {
     private Viewport gameport;
     private World world;
 
+    private DirectionalInputAdapter directionalInputAdapter;
+
     public PlayScreen(MainGame game) {
         super(game);
 
@@ -47,6 +51,42 @@ public class PlayScreen extends AbstractScreen {
         //gamecam.position.set(gameport.getWorldWidth() / 2, gameport.getWorldHeight() / 2, 0);
         gamecam.update();
         gameport.apply();
+
+        directionalInputAdapter = new DirectionalInputAdapter(new DirectionalInputAdapter.DirectionalGestureListener() {
+            @Override
+            public boolean tap(float x, float y, int count, int button) {
+                return true;
+            }
+
+            @Override
+            public boolean swipe(float startX, float startY, float endX, float endY) {
+
+
+                double angle = AngleMath.angleOfTravelInDegrees(startX, startY, endX, endY);
+
+
+                System.out.println(angle);
+
+                float wiggleRoom = 22.5f;
+
+                if(angle < wiggleRoom && angle > -wiggleRoom || angle > 180 - wiggleRoom && angle < -180 + wiggleRoom)  {
+                    System.out.println("HORI");
+                    world.getSystem(DispelSystem.class).dispel(DispellableComponent.Type.HORIZONTAL);
+                } else if(angle < 90 + wiggleRoom && angle > 90 - wiggleRoom || angle > -90 - wiggleRoom && angle < -90 + wiggleRoom) {
+                    System.out.println("vert");
+                    world.getSystem(DispelSystem.class).dispel(DispellableComponent.Type.VERTICAL);
+                } else if(angle < 135 + wiggleRoom && angle > 135 - wiggleRoom || angle > -45 - wiggleRoom && angle < -45 + wiggleRoom){
+                    System.out.println("Front Slash");
+                    world.getSystem(DispelSystem.class).dispel(DispellableComponent.Type.FRONT_SLASH);
+                } else if(angle < 45 + wiggleRoom && angle > 45 - wiggleRoom || angle > -135 - wiggleRoom && angle < -135 + wiggleRoom){
+                    System.out.println("Back Slash");
+                    world.getSystem(DispelSystem.class).dispel(DispellableComponent.Type.BACK_SLASH);
+                }
+
+
+                return true;
+            }
+        });
 
 
         createWorld();
@@ -75,7 +115,14 @@ public class PlayScreen extends AbstractScreen {
 
 
         BagToEntity.bagToEntity(world.createEntity(), new PlayerFactory(assetManager).player(Measure.units(10f), Measure.units(10f)));
-        BagToEntity.bagToEntity(world.createEntity(), new DummyFactory(assetManager).targetDummy(Measure.units(10f), Measure.units(50f)));
+
+
+        ComponentBag bag = new DummyFactory(assetManager).targetDummy(Measure.units(10f), Measure.units(50f));
+        bag.getComponent(DispellableComponent.class).dispelArray.clear();
+        bag.getComponent(DispellableComponent.class).dispelArray.add(DispellableComponent.Type.VERTICAL);
+
+        BagToEntity.bagToEntity(world.createEntity(), bag);
+
         BagToEntity.bagToEntity(world.createEntity(), new DummyFactory(assetManager).targetDummy(Measure.units(25f), Measure.units(50f)));
 
 
@@ -108,20 +155,7 @@ public class PlayScreen extends AbstractScreen {
         InputMultiplexer multiplexer = new InputMultiplexer();
 
 
-        multiplexer.addProcessor(new DirectionalInputAdapter(new DirectionalInputAdapter.DirectionalGestureListener() {
-            @Override
-            public boolean tap(float x, float y, int count, int button) {
-                return true;
-            }
-
-            @Override
-            public boolean swipe(float startX, float startY, float endX, float endY) {
-
-                world.getSystem(DispelSystem.class).dispel(DispellableComponent.Type.HORIZONTAL);
-
-                return true;
-            }
-        }));
+        multiplexer.addProcessor(directionalInputAdapter);
 
 /*
         multiplexer.addProcessor(new InputAdapter() {

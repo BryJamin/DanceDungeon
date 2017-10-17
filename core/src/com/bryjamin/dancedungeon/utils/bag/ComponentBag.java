@@ -31,4 +31,18 @@ public class ComponentBag extends Bag<Component> {
 
         super.add(component);
     }
+
+
+    public <T extends Component> T getComponent(Class<T> cls){
+
+        try {
+            T t = BagSearch.getObjectOfTypeClass(cls, this);
+            if (t == null) throw new Exception("Error: " + cls.getName() + " not contained in Bag");
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return BagSearch.getObjectOfTypeClass(cls, this);
+    }
+
 }

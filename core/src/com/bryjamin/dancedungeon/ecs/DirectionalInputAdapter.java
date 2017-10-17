@@ -56,13 +56,10 @@ public class DirectionalInputAdapter extends InputAdapter {
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 
         if(pointer > 0) return false;
-        System.out.println("Test is : " + test);
 
-        System.out.println(inTapSquare);
 
         if (inTapSquare && !isWithinTapSquare(screenX, screenY, tapSquareCenterX, tapSquareCenterY)) inTapSquare = false;
 
-        System.out.println(inTapSquare);
 
         if(inTapSquare && isWithinTapInterval()) {
 
@@ -82,16 +79,12 @@ public class DirectionalInputAdapter extends InputAdapter {
             lastTapY = screenY;
             lastTapPointer = pointer;
 
-            System.out.println("??");
-
             return listener.tap(screenX, screenY, tapCount, button);
 
         } else {
-            if(TimeUtils.nanoTime() - lastTapTime > tapInterval * 2){
+            if(Gdx.input.getCurrentEventTime() - tapStartTime < tapInterval * 2){
 
-                System.out.println("?dawdawdw?");
-
-
+                //TODO distance should also be a factor
                 return listener.swipe(tapSquareCenterX, tapSquareCenterY, screenX, screenY);
             }
         }
@@ -103,8 +96,6 @@ public class DirectionalInputAdapter extends InputAdapter {
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
-        System.out.println("drag");
-        System.out.println(pointer);
         return false;
     }
 
