@@ -28,6 +28,11 @@ public class DispellableComponent extends Component {
         dispelArray.add(Type.HORIZONTAL);
     }
 
+    public DispellableComponent(Type... type){
+        this.maxSize = maxSize;
+        dispelArray.addAll(type);
+    }
+
 
 
 }

@@ -119,24 +119,18 @@ public class PlayScreen extends AbstractScreen {
         BagToEntity.bagToEntity(world.createEntity(), new PlayerFactory(assetManager).player(Measure.units(10f), Measure.units(10f)));
 
 
-        ComponentBag bag = new DummyFactory(assetManager).targetDummy(Measure.units(10f), Measure.units(50f));
-        bag.getComponent(DispellableComponent.class).dispelArray.clear();
-        bag.getComponent(DispellableComponent.class).dispelArray.add(DispellableComponent.Type.VERTICAL);
+        ComponentBag bag = new DummyFactory(assetManager).targetDummyLeft(Measure.units(10f), Measure.units(50f));
         BagToEntity.bagToEntity(world.createEntity(), bag);
 
 
-        bag = new DummyFactory(assetManager).targetDummy(Measure.units(40f), Measure.units(50f));
-        bag.getComponent(DispellableComponent.class).dispelArray.clear();
-        bag.getComponent(DispellableComponent.class).dispelArray.add(DispellableComponent.Type.BACK_SLASH);
+        bag = new DummyFactory(assetManager).targetDummyVert(Measure.units(40f), Measure.units(50f));
         BagToEntity.bagToEntity(world.createEntity(), bag);
 
 
-        bag = new DummyFactory(assetManager).targetDummy(Measure.units(55f), Measure.units(50f));
-        bag.getComponent(DispellableComponent.class).dispelArray.clear();
-        bag.getComponent(DispellableComponent.class).dispelArray.add(DispellableComponent.Type.FRONT_SLASH);
+        bag = new DummyFactory(assetManager).targetDummyBackSlash(Measure.units(55f), Measure.units(50f));
         BagToEntity.bagToEntity(world.createEntity(), bag);
 
-        BagToEntity.bagToEntity(world.createEntity(), new DummyFactory(assetManager).targetDummy(Measure.units(25f), Measure.units(50f)));
+        BagToEntity.bagToEntity(world.createEntity(), new DummyFactory(assetManager).targetDummyFrontSlash(Measure.units(25f), Measure.units(50f)));
 
 
     }

@@ -4,10 +4,10 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Rectangle;
 import com.bryjamin.dancedungeon.assets.Colors;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
-import com.bryjamin.dancedungeon.ecs.components.battle.DispellableComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.DispellableComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
@@ -28,11 +28,10 @@ public class DummyFactory extends AbstractFactory {
     public static final float height = Measure.units(5f);
 
 
-    public static final DrawableDescription player = new DrawableDescription.DrawableDescriptionBuilder(TextureStrings.BLOB)
+    public static final DrawableDescription.DrawableDescriptionBuilder player = new DrawableDescription.DrawableDescriptionBuilder(TextureStrings.BLOB)
             .index(2)
             .size(height)
-            .color(Colors.BLOB_RED)
-            .build();
+            .color(Colors.BLOB_RED);
 
     public DummyFactory(AssetManager assetManager) {
         super(assetManager);
@@ -45,14 +44,53 @@ public class DummyFactory extends AbstractFactory {
         ComponentBag bag = new ComponentBag();
         bag.add(new PositionComponent(x,y));
         bag.add(new HealthComponent(10));
-        bag.add(new DispellableComponent());
         bag.add(new EnemyComponent());
+       // bag.add(new VelocityComponent(Measure.units(15f), 0));
         bag.add(new BlinkOnHitComponent());
         bag.add(new HitBoxComponent(new HitBox(new Rectangle(x,y, width, height))));
-        bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, player));
+        bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, player.build()));
 
         return bag;
 
+
+    }
+
+    public ComponentBag targetDummyLeft(float x, float y) {
+
+        ComponentBag bag = targetDummy(x, y);
+        bag.add(new DispellableComponent(DispellableComponent.Type.HORIZONTAL));
+        bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, player.build()));
+        return bag;
+
+    }
+
+
+    public ComponentBag targetDummyVert(float x, float y) {
+
+        ComponentBag bag = targetDummy(x, y);
+        bag.add(new DispellableComponent(DispellableComponent.Type.VERTICAL));
+        bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, player.color(Colors.BOMB_ORANGE).build()));
+        return bag;
+
+    }
+
+
+    public ComponentBag targetDummyFrontSlash(float x, float y) {
+
+        ComponentBag bag = targetDummy(x, y);
+        bag.add(new DispellableComponent(DispellableComponent.Type.FRONT_SLASH));
+        bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, player.color(Colors.AMOEBA_BLUE).build()));
+        return bag;
+
+    }
+
+
+    public ComponentBag targetDummyBackSlash(float x, float y) {
+
+        ComponentBag bag = targetDummy(x, y);
+        bag.add(new DispellableComponent(DispellableComponent.Type.BACK_SLASH));
+        bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, player.color(Colors.AMOEBA_FAST_PURPLE).build()));
+        return bag;
 
     }
 
