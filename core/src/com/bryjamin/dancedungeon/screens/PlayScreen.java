@@ -7,12 +7,15 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.ecs.DirectionalInputAdapter;
+import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.DispellableComponent;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
+import com.bryjamin.dancedungeon.ecs.systems.FindPlayerSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BlinkOnHitSystem;
@@ -20,8 +23,10 @@ import com.bryjamin.dancedungeon.ecs.systems.battle.DeathSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.DispelSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ExplosionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.HealthSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.BoundsDrawingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
+import com.bryjamin.dancedungeon.factories.decor.FloorFactory;
 import com.bryjamin.dancedungeon.factories.enemy.DummyFactory;
 import com.bryjamin.dancedungeon.factories.player.PlayerFactory;
 import com.bryjamin.dancedungeon.utils.AngleMath;
@@ -56,6 +61,15 @@ public class PlayScreen extends AbstractScreen {
         directionalInputAdapter = new DirectionalInputAdapter(new DirectionalInputAdapter.DirectionalGestureListener() {
             @Override
             public boolean tap(float x, float y, int count, int button) {
+
+                Vector3 input = gameport.unproject(new Vector3(x, y, 0));
+
+
+                if(world.getSystem(TileSystem.class).isMovementSquare(input.x, input.y)){
+                    world.getSystem(FindPlayerSystem.class).getPlayerComponent(PositionComponent.class).position.set(input.x, input.y, 0);
+                }
+                System.out.println("Is movement square " + world.getSystem(TileSystem.class).isMovementSquare(input.x, input.y));
+
                 return true;
             }
 
@@ -101,11 +115,14 @@ public class PlayScreen extends AbstractScreen {
         WorldConfiguration config = new WorldConfigurationBuilder()
                 .with(WorldConfigurationBuilder.Priority.HIGHEST,
                     new MovementSystem(),
-                    new UpdatePositionSystem())
+                    new UpdatePositionSystem(),
+                    new TileSystem(Measure.units(10f), Measure.units(5f), Measure.units(80f), Measure.units(50f), 5, 10)
+                )
                 .with(WorldConfigurationBuilder.Priority.HIGH,
                         new ExplosionSystem(),
                         new DispelSystem(),
                         new HealthSystem(),
+                        new FindPlayerSystem(),
                         new BlinkOnHitSystem(),
                         new DeathSystem(),
                         new ExpireSystem(),
@@ -116,8 +133,10 @@ public class PlayScreen extends AbstractScreen {
         world = new World(config);
 
 
-        BagToEntity.bagToEntity(world.createEntity(), new PlayerFactory(assetManager).player(Measure.units(10f), Measure.units(10f)));
+        ComponentBag player = new PlayerFactory(assetManager).player(Measure.units(10f), Measure.units(10f));
+        BagToEntity.bagToEntity(world.createEntity(), player);
 
+        world.getSystem(FindPlayerSystem.class).setPlayerBag(player);
 
         ComponentBag bag = new DummyFactory(assetManager).targetDummyLeft(Measure.units(10f), Measure.units(50f));
         BagToEntity.bagToEntity(world.createEntity(), bag);
@@ -131,6 +150,9 @@ public class PlayScreen extends AbstractScreen {
         BagToEntity.bagToEntity(world.createEntity(), bag);
 
         BagToEntity.bagToEntity(world.createEntity(), new DummyFactory(assetManager).targetDummyFrontSlash(Measure.units(25f), Measure.units(50f)));
+
+        BagToEntity.bagToEntity(world.createEntity(), new FloorFactory(assetManager).createFloor(Measure.units(10f), Measure.units(5f), Measure.units(80f), Measure.units(50f),
+                5, 10));
 
 
     }
