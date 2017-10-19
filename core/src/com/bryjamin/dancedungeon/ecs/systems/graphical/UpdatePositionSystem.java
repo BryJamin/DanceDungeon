@@ -30,7 +30,7 @@ public class UpdatePositionSystem extends EntityProcessingSystem {
         if(hitboxComponentM.has(e)) hitboxComponentM.get(e).update(pc);
         if(boundComponentM.has(e)) {
             boundComponentM.get(e).bound.x = pc.getX();
-            boundComponentM.get(e).bound.x = pc.getY();
+            boundComponentM.get(e).bound.y = pc.getY();
         }
 
     }

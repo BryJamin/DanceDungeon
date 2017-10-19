@@ -100,8 +100,6 @@ public class RenderingSystem extends EntitySystem {
 
 
         if(blinkOnHitm.has(e)){
-
-            if(blinkOnHitm.get(e).isHit) System.out.println("Blink is : " + blinkOnHitm.get(e).isHit);
             shaderOn = blinkOnHitm.get(e).isHit;
         }
 

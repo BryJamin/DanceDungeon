@@ -13,6 +13,8 @@ public class HitBoxComponent extends Component {
 
     public Array<HitBox> hitBoxes = new Array<HitBox>();
 
+    public boolean enabled = true;
+
     public HitBoxComponent(){}
 
     public HitBoxComponent(HitBox... hitBoxes){

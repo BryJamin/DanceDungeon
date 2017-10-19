@@ -11,6 +11,7 @@ public class BoundComponent extends Component {
 
     public Rectangle bound = new Rectangle();
 
+
     public BoundComponent(){}
 
     public BoundComponent(Rectangle bound){
