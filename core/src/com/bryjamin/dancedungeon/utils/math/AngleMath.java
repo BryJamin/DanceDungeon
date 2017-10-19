@@ -1,4 +1,4 @@
-package com.bryjamin.dancedungeon.utils;
+package com.bryjamin.dancedungeon.utils.math;
 
 /**
  * Created by BB on 17/10/2017.

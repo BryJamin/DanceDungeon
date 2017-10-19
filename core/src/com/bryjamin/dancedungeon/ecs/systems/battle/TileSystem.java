@@ -5,7 +5,10 @@ import com.artemis.Entity;
 import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
+import com.bryjamin.dancedungeon.ecs.components.BoundComponent;
+import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
+import com.bryjamin.dancedungeon.utils.math.CenterMath;
 
 /**
  * Created by BB on 18/10/2017.
@@ -58,10 +61,16 @@ public class TileSystem extends EntityProcessingSystem {
     }
 
 
-    public boolean isMovementSquare(float x, float y){
+    public boolean isMovementSquare(float x, float y, PositionComponent pc, BoundComponent bc){
 
         for(Rectangle r : movementRectangles){
             if(r.contains(x, y)){
+
+                bc.bound.x = r.x + CenterMath.offsetX(r.getWidth(), bc.bound.getWidth());
+                bc.bound.y = r.y + CenterMath.offsetY(r.getHeight(), bc.bound.getHeight());
+
+                pc.position.set(bc.bound.x, bc.bound.y, pc.position.z);
+
                 return true;
             }
         }

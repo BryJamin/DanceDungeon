@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.ecs.DirectionalInputAdapter;
+import com.bryjamin.dancedungeon.ecs.components.BoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.DispellableComponent;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
@@ -29,7 +30,7 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
 import com.bryjamin.dancedungeon.factories.decor.FloorFactory;
 import com.bryjamin.dancedungeon.factories.enemy.DummyFactory;
 import com.bryjamin.dancedungeon.factories.player.PlayerFactory;
-import com.bryjamin.dancedungeon.utils.AngleMath;
+import com.bryjamin.dancedungeon.utils.math.AngleMath;
 import com.bryjamin.dancedungeon.utils.GameDelta;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
@@ -65,10 +66,9 @@ public class PlayScreen extends AbstractScreen {
                 Vector3 input = gameport.unproject(new Vector3(x, y, 0));
 
 
-                if(world.getSystem(TileSystem.class).isMovementSquare(input.x, input.y)){
-                    world.getSystem(FindPlayerSystem.class).getPlayerComponent(PositionComponent.class).position.set(input.x, input.y, 0);
-                }
-                System.out.println("Is movement square " + world.getSystem(TileSystem.class).isMovementSquare(input.x, input.y));
+                world.getSystem(TileSystem.class).isMovementSquare(input.x, input.y,
+                        world.getSystem(FindPlayerSystem.class).getPlayerComponent(PositionComponent.class),
+                        world.getSystem(FindPlayerSystem.class).getPlayerComponent(BoundComponent.class));
 
                 return true;
             }
