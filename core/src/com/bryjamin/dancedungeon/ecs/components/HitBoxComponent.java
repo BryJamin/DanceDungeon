@@ -22,16 +22,23 @@ public class HitBoxComponent extends Component {
     }
 
     public boolean overlaps(Rectangle r){
-
-
         for(HitBox hitBox : hitBoxes){
             if(r.overlaps(hitBox.hitbox)){
                 return true;
             }
         }
-
         return false;
     }
+
+    public boolean contains(float x, float y){
+        for(HitBox hitBox : hitBoxes){
+            if(hitBox.hitbox.contains(x, y)){
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     public void update(PositionComponent pc){
         for(HitBox hb : hitBoxes){

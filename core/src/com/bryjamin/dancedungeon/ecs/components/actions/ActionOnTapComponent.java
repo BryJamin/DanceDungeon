@@ -12,6 +12,8 @@ public class ActionOnTapComponent extends Component {
 
     public Array<WorldAction> actions = new Array<WorldAction>();
 
+    public boolean enabled = true;
+
     public ActionOnTapComponent(){};
 
     public ActionOnTapComponent(WorldAction... actions){
