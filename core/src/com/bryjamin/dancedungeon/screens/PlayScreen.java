@@ -34,6 +34,7 @@ import com.bryjamin.dancedungeon.ecs.systems.battle.DispelSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ExplosionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.HealthSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.BoundsDrawingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
 import com.bryjamin.dancedungeon.factories.decor.FloorFactory;
@@ -78,27 +79,33 @@ public class PlayScreen extends AbstractScreen {
                 Vector3 input = gameport.unproject(new Vector3(x, y, 0));
 
 
-                world.getSystem(TileSystem.class).isMovementSquare(input.x, input.y,
-                        world.getSystem(FindPlayerSystem.class).getPlayerComponent(PositionComponent.class),
-                        world.getSystem(FindPlayerSystem.class).getPlayerComponent(BoundComponent.class));
+                if(world.getSystem(TurnSystem.class).turn == TurnSystem.TURN.ALLY) {
 
-                PositionComponent pc = world.getSystem(FindPlayerSystem.class).getPlayerComponent(PositionComponent.class);
+                    world.getSystem(TileSystem.class).isMovementSquare(input.x, input.y,
+                            world.getSystem(FindPlayerSystem.class).getPlayerComponent(PositionComponent.class),
+                            world.getSystem(FindPlayerSystem.class).getPlayerComponent(BoundComponent.class));
+
+                    PositionComponent pc = world.getSystem(FindPlayerSystem.class).getPlayerComponent(PositionComponent.class);
 
 
-                Entity bullet = world.createEntity();
+                    Entity bullet = world.createEntity();
 
 
-                double angle = AngleMath.angleOfTravel(pc.getX(), pc.getY(), input.x, input.y);
+                    double angle = AngleMath.angleOfTravel(pc.getX(), pc.getY(), input.x, input.y);
 
-                bullet.edit().add(new PositionComponent(pc.getX(), pc.getY()));
-                bullet.edit().add(new BulletComponent(2));
-                bullet.edit().add(new BoundComponent(new Rectangle(pc.getX(), pc.getY(), Measure.units(5f), Measure.units(5f))));
-                bullet.edit().add(new VelocityComponent(AngleMath.velocityX(Measure.units(50f), angle), AngleMath.velocityY(Measure.units(50f), angle)));
-                bullet.edit().add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, new DrawableDescription.DrawableDescriptionBuilder(TextureStrings.BLOCK)
-                        .size(Measure.units(5))
-                        .color(new Color(Color.YELLOW))
-                        .build()));
-                bullet.edit().add(new FriendlyComponent());
+                    bullet.edit().add(new PositionComponent(pc.getX(), pc.getY()));
+                    bullet.edit().add(new BulletComponent(2));
+                    bullet.edit().add(new BoundComponent(new Rectangle(pc.getX(), pc.getY(), Measure.units(5f), Measure.units(5f))));
+                    bullet.edit().add(new VelocityComponent(AngleMath.velocityX(Measure.units(50f), angle), AngleMath.velocityY(Measure.units(50f), angle)));
+                    bullet.edit().add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, new DrawableDescription.DrawableDescriptionBuilder(TextureStrings.BLOCK)
+                            .size(Measure.units(5))
+                            .color(new Color(Color.YELLOW))
+                            .build()));
+                    bullet.edit().add(new FriendlyComponent());
+
+                    world.getSystem(TurnSystem.class).turn = TurnSystem.TURN.ENEMY;
+
+                }
 
 
                 return true;
@@ -146,6 +153,7 @@ public class PlayScreen extends AbstractScreen {
                         new ExplosionSystem(),
                         new BulletSystem(),
                         new DispelSystem(),
+                        new TurnSystem(),
                         new HealthSystem(),
                         new FindPlayerSystem(),
                         new BlinkOnHitSystem(),
@@ -168,16 +176,20 @@ public class PlayScreen extends AbstractScreen {
         world.getSystem(FindPlayerSystem.class).setPlayerBag(player);
 
         ComponentBag bag = new DummyFactory(assetManager).targetDummyLeft(Measure.units(10f), Measure.units(50f));
-        BagToEntity.bagToEntity(world.createEntity(), bag);
+        Entity e = BagToEntity.bagToEntity(world.createEntity(), bag);
+       // world.getSystem(TileSystem.class).placeUsingCoordinates(new Coordinates(-2, 1), e.getComponent(PositionComponent.class), e.getComponent(BoundComponent.class));
 
 
         bag = new DummyFactory(assetManager).targetDummyVert(Measure.units(40f), Measure.units(50f));
-        BagToEntity.bagToEntity(world.createEntity(), bag);
+        e = BagToEntity.bagToEntity(world.createEntity(), bag);
+       // world.getSystem(TileSystem.class).placeUsingCoordinates(new Coordinates(-2, 2), e.getComponent(PositionComponent.class), e.getComponent(BoundComponent.class));
 
 
         bag = new DummyFactory(assetManager).targetDummyBackSlash(Measure.units(55f), Measure.units(50f));
         BagToEntity.bagToEntity(world.createEntity(), bag);
 
+        BagToEntity.bagToEntity(world.createEntity(), new DummyFactory(assetManager).targetDummyFrontSlash(Measure.units(25f), Measure.units(50f)));
+        BagToEntity.bagToEntity(world.createEntity(), new DummyFactory(assetManager).targetDummyFrontSlash(Measure.units(25f), Measure.units(50f)));
         BagToEntity.bagToEntity(world.createEntity(), new DummyFactory(assetManager).targetDummyFrontSlash(Measure.units(25f), Measure.units(50f)));
 
         BagToEntity.bagToEntity(world.createEntity(), new FloorFactory(assetManager).createFloor(Measure.units(10f), Measure.units(5f), Measure.units(80f), Measure.units(50f),

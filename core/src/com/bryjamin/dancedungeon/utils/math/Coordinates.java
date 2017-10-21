@@ -1,4 +1,4 @@
-package com.bryjamin.dancedungeon.utils;
+package com.bryjamin.dancedungeon.utils.math;
 
 /**
  * Created by BB on 18/10/2017.
@@ -49,6 +49,11 @@ public class Coordinates {
 
     public void addY(int y){
         this.y += y;
+    }
+
+    public void set(Coordinates coordinates){
+        this.x = coordinates.getX();
+        this.y = coordinates.getY();
     }
 
     public void add(int x, int y){

@@ -4,14 +4,18 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Rectangle;
 import com.bryjamin.dancedungeon.assets.Colors;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
+import com.bryjamin.dancedungeon.ecs.components.BoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.DispellableComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.factories.AbstractFactory;
+import com.bryjamin.dancedungeon.utils.math.Coordinates;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
@@ -45,10 +49,13 @@ public class DummyFactory extends AbstractFactory {
         bag.add(new PositionComponent(x,y));
         bag.add(new HealthComponent(10));
         bag.add(new EnemyComponent());
-       // bag.add(new VelocityComponent(Measure.units(15f), 0));
+        bag.add(new TurnComponent());
+        bag.add(new CoordinateComponent(new Coordinates(4, 2)));
+        //bag.add(new VelocityComponent(Measure.units(5f), 0));
         bag.add(new BlinkOnHitComponent());
+        bag.add(new BoundComponent(new Rectangle(x,y, width, height)));
         bag.add(new HitBoxComponent(new HitBox(new Rectangle(x,y, width, height))));
-        bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, player.build()));
+        //bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, player.build()));
 
         return bag;
 
