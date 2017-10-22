@@ -4,8 +4,8 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Rectangle;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.BoundComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerComponent;
 import com.bryjamin.dancedungeon.factories.AbstractFactory;
@@ -40,6 +40,7 @@ public class PlayerFactory extends AbstractFactory {
         bag.add(new PositionComponent(x,y));
         bag.add(new HealthComponent(10));
         bag.add(new PlayerComponent());
+      //  bag.add(new TurnComponent());
         bag.add(new BoundComponent(new Rectangle(x, y, width, height)));
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, player));
 

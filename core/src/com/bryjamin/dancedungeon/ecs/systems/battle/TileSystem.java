@@ -102,8 +102,6 @@ public class TileSystem extends EntityProcessingSystem {
                 }
             }
 
-          //  for(Entity e : )
-
         } else {
 
             occupiedMap.put(coordinateComponent.coordinates, e);

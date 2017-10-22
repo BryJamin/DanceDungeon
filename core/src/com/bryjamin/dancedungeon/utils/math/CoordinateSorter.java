@@ -29,7 +29,7 @@ public class CoordinateSorter {
     private static int getNearestDistance(Coordinates coordinates, Coordinates origin){
         int x = Math.abs(coordinates.getX() - origin.getX());
         int y = Math.abs(coordinates.getY() - origin.getY());
-        
+
         return x <= y  ? x : y;
 
     }

@@ -45,8 +45,8 @@ public class FloorFactory extends AbstractFactory {
 
             for(int j = 0; j < rows; j++){
 
-                Color color1 = j % 2 != 0 ? new Color(Color.WHITE) : new Color(Color.RED);
-                Color color2 = j % 2 != 0 ? new Color(Color.RED) : new Color(Color.BLUE);
+                Color color1 = j % 2 != 0 ? new Color(Color.LIGHT_GRAY) : new Color(Color.FIREBRICK);
+                Color color2 = j % 2 != 0 ? new Color(Color.FIREBRICK) : new Color(Color.LIGHT_GRAY);
 
 
                 drawableComponent.drawables.add(descriptionBuilder

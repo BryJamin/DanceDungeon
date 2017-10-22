@@ -25,6 +25,7 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.FriendlyComponent;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
 import com.bryjamin.dancedungeon.ecs.systems.FindPlayerSystem;
+import com.bryjamin.dancedungeon.ecs.systems.MoveToTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BlinkOnHitSystem;
@@ -103,7 +104,7 @@ public class PlayScreen extends AbstractScreen {
                             .build()));
                     bullet.edit().add(new FriendlyComponent());
 
-                    world.getSystem(TurnSystem.class).turn = TurnSystem.TURN.ENEMY;
+                    world.getSystem(TurnSystem.class).setUp(TurnSystem.TURN.ENEMY);
 
                 }
 
@@ -145,9 +146,10 @@ public class PlayScreen extends AbstractScreen {
 
         WorldConfiguration config = new WorldConfigurationBuilder()
                 .with(WorldConfigurationBuilder.Priority.HIGHEST,
-                    new MovementSystem(),
-                    new UpdatePositionSystem(),
-                    new TileSystem(Measure.units(10f), Measure.units(5f), Measure.units(80f), Measure.units(50f), 5, 10)
+                        new MovementSystem(),
+                        new UpdatePositionSystem(),
+                        new TileSystem(Measure.units(10f), Measure.units(5f), Measure.units(80f), Measure.units(50f), 5, 10),
+                        new MoveToTargetSystem()
                 )
                 .with(WorldConfigurationBuilder.Priority.HIGH,
                         new ExplosionSystem(),
@@ -187,14 +189,15 @@ public class PlayScreen extends AbstractScreen {
 
         bag = new DummyFactory(assetManager).targetDummyBackSlash(Measure.units(55f), Measure.units(50f));
         BagToEntity.bagToEntity(world.createEntity(), bag);
+/*
 
         BagToEntity.bagToEntity(world.createEntity(), new DummyFactory(assetManager).targetDummyFrontSlash(Measure.units(25f), Measure.units(50f)));
         BagToEntity.bagToEntity(world.createEntity(), new DummyFactory(assetManager).targetDummyFrontSlash(Measure.units(25f), Measure.units(50f)));
         BagToEntity.bagToEntity(world.createEntity(), new DummyFactory(assetManager).targetDummyFrontSlash(Measure.units(25f), Measure.units(50f)));
+*/
 
         BagToEntity.bagToEntity(world.createEntity(), new FloorFactory(assetManager).createFloor(Measure.units(10f), Measure.units(5f), Measure.units(80f), Measure.units(50f),
                 5, 10));
-
 
     }
 
