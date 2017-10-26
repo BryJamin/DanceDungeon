@@ -15,6 +15,8 @@ import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.math.CoordinateSorter;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
+import java.util.Comparator;
+
 /**
  * Created by BB on 18/10/2017.
  */
@@ -268,6 +270,8 @@ public class TileSystem extends EntityProcessingSystem {
 
         Array<Node> closedList = new Array<Node>();
 
+        int horiCostOfMovement = 10;
+
         OrderedMap<Coordinates, Node> allNodeMap = new OrderedMap<Coordinates, Node>();
 
         for(Coordinates coordinates : coordinateMap.keys().toArray()) {
@@ -285,17 +289,19 @@ public class TileSystem extends EntityProcessingSystem {
         for(Node n : closedList){
             for(Coordinates c : returnSurroundingCoordinates(n.coordinates)){
                 //TODO test what happens if null
-                Node node = allNodeMap.get(c);
-                if(!closedList.contains(node, false) && node != null) {
-                    node.parent = n;
-                    node.gValue = 10;
-                    openList.add(node);
+                Node potentialOpenListNode = allNodeMap.get(c);
+                if(!closedList.contains(potentialOpenListNode, false) && potentialOpenListNode != null) {
+                    potentialOpenListNode.parent = n;
+                    potentialOpenListNode.gValue = horiCostOfMovement;
 
-                    if(node.parent == null){
-                        node.parent = n;
+
+                    openList.add(potentialOpenListNode);
+
+                    if(potentialOpenListNode.parent == null){
+                        potentialOpenListNode.parent = n;
                     }
 
-                    node.calcF();
+                    potentialOpenListNode.calcF();
 
                 }
             }
@@ -305,15 +311,85 @@ public class TileSystem extends EntityProcessingSystem {
         for(Node n : closedList){
         }
 
-        System.out.println(openList.size);
+        boolean test = false;
 
-        //TODO if diagonals the gvalue should chan
-        for(Node n : openList){
-            System.out.println(n.fValue);
-            //n.gValue = 10;
+        for(int i = 0; i < 100; i++) {
+
+            //System.out.println(openList.size);
+
+            //Find lowers f value
+            openList.sort(new Comparator<Node>() {
+                @Override
+                public int compare(Node node, Node t1) {
+
+                    Integer n = node.fValue;
+                    Integer n2 = t1.fValue;
+
+                    return n.compareTo(n2);
+                }
+            });
+
+/*            for (Node n : openList) {
+                System.out.println(n.coordinates);
+                System.out.println(n.gValue);
+                System.out.println("f value" + n.fValue);
+            }*/
+            System.out.println("i is + " + i);
+
+            Node nextNode = openList.first();
+/*            System.out.println(nextNode.coordinates);
+            System.out.println(nextNode.gValue);
+            System.out.println("f value" + nextNode.fValue);*/
+
+            closedList.add(nextNode);
+            openList.removeValue(nextNode, false);
+
+            for (Coordinates c : returnSurroundingCoordinates(nextNode.coordinates)) {
+
+                if(c.equals(start)){
+                    continue;
+                }
+
+                if(c.equals(end)) {
+                    test = true;
+
+
+                    Node potentialOpenListNode = allNodeMap.get(c);
+                    potentialOpenListNode.parent = nextNode;
+                    System.out.println(printNodeSequence(potentialOpenListNode));
+
+
+
+                    break;
+                }
+
+                Node potentialOpenListNode = allNodeMap.get(c);
+
+
+                if (potentialOpenListNode != null) {
+                    if (potentialOpenListNode.gValue == 0) {
+                        potentialOpenListNode.gValue = nextNode.gValue + horiCostOfMovement;
+                        potentialOpenListNode.parent = nextNode;
+                        openList.add(potentialOpenListNode);
+                    } else if(openList.contains(potentialOpenListNode, false)){
+                        System.out.println(potentialOpenListNode.gValue);
+
+                        if (potentialOpenListNode.gValue > nextNode.gValue + horiCostOfMovement) {
+                            potentialOpenListNode.gValue = nextNode.gValue + horiCostOfMovement;
+
+                         //   potentialOpenListNode.parent = nextNode;
+                        }
+                    }
+                    potentialOpenListNode.calcF();
+
+                }
+
+            }
+
+            if(test) break;
+
         }
 
-        
 
 /*
         allNodeMap.sort(new Comparator<Node>() {
@@ -343,6 +419,18 @@ public class TileSystem extends EntityProcessingSystem {
 
 
 
+    public String printNodeSequence(Node node){
 
+ /*       if(node.parent == node){
+            return "";
+        }*/
+
+        if(node.parent != null){
+            return node.coordinates.toString() + "\n" + printNodeSequence(node.parent);
+        }
+
+        return node.coordinates.toString();
+
+    }
 
 }

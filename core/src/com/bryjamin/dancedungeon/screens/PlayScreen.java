@@ -200,7 +200,7 @@ public class PlayScreen extends AbstractScreen {
         BagToEntity.bagToEntity(world.createEntity(), new FloorFactory(assetManager).createFloor(Measure.units(10f), Measure.units(5f), Measure.units(80f), Measure.units(50f),
                 5, 10));
 
-        world.getSystem(TileSystem.class).findShortestPath(new Coordinates(1,3), new Coordinates(6,3));
+        world.getSystem(TileSystem.class).findShortestPath(new Coordinates(1,1), new Coordinates(7,4));
 
     }
 
