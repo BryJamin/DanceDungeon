@@ -4,6 +4,7 @@ import com.artemis.Aspect;
 import com.artemis.Entity;
 import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.bryjamin.dancedungeon.ecs.components.BoundComponent;
@@ -13,6 +14,8 @@ import com.bryjamin.dancedungeon.ecs.components.identifiers.OverlappableComponen
 import com.bryjamin.dancedungeon.utils.math.CoordinateSorter;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
+
+import java.util.Comparator;
 
 /**
  * Created by BB on 18/10/2017.
@@ -162,6 +165,16 @@ public class TileSystem extends EntityProcessingSystem {
 
     }
 
+    public Vector3 getPositionUsingCoordinates(Coordinates coordinates, Rectangle rectangle){
+
+        float x = originX + ((coordinates.getX()) * tileWidthSize);
+        float y = originY + ((coordinates.getY()) * tileHeightSize);
+
+        return new Vector3(x + CenterMath.offsetX(tileWidthSize, rectangle.getWidth()),
+        y + CenterMath.offsetY(tileHeightSize, rectangle.getHeight()), 0);
+
+    }
+
 
 
 
@@ -182,6 +195,95 @@ public class TileSystem extends EntityProcessingSystem {
 
         return false;
     }
+
+
+
+    private class Node {
+
+
+        public Node(Coordinates coordinates){
+            this.coordinates = coordinates;
+        }
+
+        public Node parent;
+
+        public Coordinates coordinates;
+
+        public int hValue;
+        public int gValue;
+        public int fValue;
+
+        public void calcF(){
+            fValue = gValue + hValue;
+        }
+
+        private void setHeuristic(Coordinates start, Coordinates goal) {
+
+            int dx = Math.abs(start.getX() - goal.getY());
+            int dy = Math.abs(start.getY() - goal.getY());
+
+            int D = 1;
+
+            hValue = D * (dx + dy);
+
+        }
+       // public int
+
+
+    }
+
+
+
+
+
+    public Array<Coordinates> findShortestPath(Coordinates start, Coordinates end){
+
+        Array<Node> openList = new Array<Node>();
+
+        Array<Node> closedList = new Array<Node>();
+
+        Array<Node> allNodes = new Array<Node>();
+
+        for(Coordinates coordinates : coordinateMap.keys().toArray()) {
+            allNodes.add(new Node(coordinates));
+        }
+
+        for(Node n: allNodes){
+            n.setHeuristic(start, end);
+            if(n.coordinates.equals(start)){
+                closedList.add(n);
+            }
+        }
+
+
+        
+
+        allNodes.sort(new Comparator<Node>() {
+            @Override
+            public int compare(Node node, Node t1) {
+                return CoordinateSorter.SORT_BY_NEAREST(new Coordinates(0,0)).compare(node.coordinates, t1.coordinates);
+            }
+        });
+
+
+
+
+
+        return null;
+
+
+
+
+
+
+
+
+
+
+    }
+
+
+
 
 
 }

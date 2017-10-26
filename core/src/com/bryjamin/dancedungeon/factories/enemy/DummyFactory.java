@@ -5,7 +5,6 @@ import com.artemis.World;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector3;
 import com.bryjamin.dancedungeon.assets.Colors;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.BoundComponent;
@@ -22,6 +21,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
+import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.factories.AbstractFactory;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
@@ -64,9 +64,19 @@ public class DummyFactory extends AbstractFactory {
             @Override
             public void performAction(World world, Entity entity) {
 
+                TileSystem tileSystem = world.getSystem(TileSystem.class);
+
+                CoordinateComponent coordinateComponent = entity.getComponent(CoordinateComponent.class);
+
+                int x = MathUtils.random.nextInt(10);
+                int y = MathUtils.random.nextInt(5);
+
+
                 System.out.println("perform action");
-                entity.getComponent(MoveToComponent.class).movementPositions.addAll(new Vector3(MathUtils.random.nextFloat() * 1000, MathUtils.random.nextFloat() * 1000, 0),
-                        new Vector3(MathUtils.random.nextFloat() * 1000, MathUtils.random.nextFloat() * 1000, 0)
+                entity.getComponent(MoveToComponent.class).movementPositions.addAll(
+                        tileSystem.getPositionUsingCoordinates(new Coordinates(x, y), entity.getComponent(BoundComponent.class).bound),
+                        tileSystem.getPositionUsingCoordinates(new Coordinates(x, y + 1), entity.getComponent(BoundComponent.class).bound)
+
                         );
             }
 
