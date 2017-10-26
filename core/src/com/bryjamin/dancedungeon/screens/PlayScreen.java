@@ -46,6 +46,7 @@ import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
 import com.bryjamin.dancedungeon.utils.math.AngleMath;
+import com.bryjamin.dancedungeon.utils.math.Coordinates;
 import com.bryjamin.dancedungeon.utils.texture.DrawableDescription;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
 
@@ -198,6 +199,8 @@ public class PlayScreen extends AbstractScreen {
 
         BagToEntity.bagToEntity(world.createEntity(), new FloorFactory(assetManager).createFloor(Measure.units(10f), Measure.units(5f), Measure.units(80f), Measure.units(50f),
                 5, 10));
+
+        world.getSystem(TileSystem.class).findShortestPath(new Coordinates(1,3), new Coordinates(6,3));
 
     }
 
