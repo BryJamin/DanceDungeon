@@ -11,11 +11,9 @@ import com.bryjamin.dancedungeon.ecs.components.BoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.OverlappableComponent;
+import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.math.CoordinateSorter;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
-import com.bryjamin.dancedungeon.utils.math.CenterMath;
-
-import java.util.Comparator;
 
 /**
  * Created by BB on 18/10/2017.
@@ -155,9 +153,6 @@ public class TileSystem extends EntityProcessingSystem {
         float x = originX + ((coordinates.getX()) * tileWidthSize);
         float y = originY + ((coordinates.getY()) * tileHeightSize);
 
-        System.out.println(x);
-        System.out.println(y);
-
         bc.bound.x = x + CenterMath.offsetX(tileWidthSize, bc.bound.getWidth());
         bc.bound.y = y + CenterMath.offsetY(tileHeightSize, bc.bound.getHeight());
 
@@ -219,16 +214,47 @@ public class TileSystem extends EntityProcessingSystem {
 
         private void setHeuristic(Coordinates start, Coordinates goal) {
 
-            int dx = Math.abs(start.getX() - goal.getY());
+            int dx = Math.abs(start.getX() - goal.getX());
             int dy = Math.abs(start.getY() - goal.getY());
 
             int D = 1;
 
-            hValue = D * (dx + dy);
+            this.hValue = D * (dx + dy);
 
         }
-       // public int
 
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Node node = (Node) o;
+
+            return coordinates.equals(node.coordinates);
+
+        }
+
+        @Override
+        public int hashCode() {
+            return coordinates.hashCode();
+        }
+
+        // public int
+
+
+    }
+
+
+    public Array<Coordinates> returnSurroundingCoordinates(Coordinates coordinates){
+
+        Array<Coordinates> array = new Array<Coordinates>();
+
+        array.add(new Coordinates(coordinates.getX(), coordinates.getY() + 1));
+        array.add(new Coordinates(coordinates.getX(), coordinates.getY() - 1));
+        array.add(new Coordinates(coordinates.getX() + 1, coordinates.getY()));
+        array.add(new Coordinates(coordinates.getX() - 1, coordinates.getY()));
+
+        return array;
 
     }
 
@@ -242,29 +268,62 @@ public class TileSystem extends EntityProcessingSystem {
 
         Array<Node> closedList = new Array<Node>();
 
-        Array<Node> allNodes = new Array<Node>();
+        OrderedMap<Coordinates, Node> allNodeMap = new OrderedMap<Coordinates, Node>();
 
         for(Coordinates coordinates : coordinateMap.keys().toArray()) {
-            allNodes.add(new Node(coordinates));
+            allNodeMap.put(coordinates, new Node(coordinates));
         }
 
-        for(Node n: allNodes){
-            n.setHeuristic(start, end);
+        for(Node n: allNodeMap.values().toArray()){
+            n.setHeuristic(n.coordinates, end);
             if(n.coordinates.equals(start)){
                 closedList.add(n);
             }
         }
 
 
+        for(Node n : closedList){
+            for(Coordinates c : returnSurroundingCoordinates(n.coordinates)){
+                //TODO test what happens if null
+                Node node = allNodeMap.get(c);
+                if(!closedList.contains(node, false) && node != null) {
+                    node.parent = n;
+                    node.gValue = 10;
+                    openList.add(node);
+
+                    if(node.parent == null){
+                        node.parent = n;
+                    }
+
+                    node.calcF();
+
+                }
+            }
+
+        }
+
+        for(Node n : closedList){
+        }
+
+        System.out.println(openList.size);
+
+        //TODO if diagonals the gvalue should chan
+        for(Node n : openList){
+            System.out.println(n.fValue);
+            //n.gValue = 10;
+        }
+
         
 
-        allNodes.sort(new Comparator<Node>() {
+/*
+        allNodeMap.sort(new Comparator<Node>() {
             @Override
             public int compare(Node node, Node t1) {
                 return CoordinateSorter.SORT_BY_NEAREST(new Coordinates(0,0)).compare(node.coordinates, t1.coordinates);
             }
         });
 
+*/
 
 
 
