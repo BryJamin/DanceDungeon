@@ -274,9 +274,30 @@ public class TileSystem extends EntityProcessingSystem {
 
         OrderedMap<Coordinates, Node> allNodeMap = new OrderedMap<Coordinates, Node>();
 
-        for(Coordinates coordinates : coordinateMap.keys().toArray()) {
-            allNodeMap.put(coordinates, new Node(coordinates));
+
+
+        Array<Coordinates> availableCoordinates = new Array<Coordinates>();
+
+
+        System.out.println("Occupied");
+
+        for(Coordinates coordinates : occupiedMap.keys().toArray()){
+            System.out.println(coordinates);
         }
+
+        System.out.println("End");
+
+        for(Coordinates coordinates : coordinateMap.keys().toArray()) {
+            if(!occupiedMap.keys().toArray().contains(coordinates, false)) {
+                availableCoordinates.add(coordinates);
+                allNodeMap.put(coordinates, new Node(coordinates));
+            }
+        }
+
+        for(Coordinates coordinates : availableCoordinates){
+            System.out.println(coordinates);
+        }
+
 
         for(Node n: allNodeMap.values().toArray()){
             n.setHeuristic(n.coordinates, end);
@@ -336,6 +357,8 @@ public class TileSystem extends EntityProcessingSystem {
             }*/
             System.out.println("i is + " + i);
 
+            if(openList.size == 0) return new Array<Coordinates>();
+
             Node nextNode = openList.first();
 /*            System.out.println(nextNode.coordinates);
             System.out.println(nextNode.gValue);
@@ -346,6 +369,10 @@ public class TileSystem extends EntityProcessingSystem {
 
             for (Coordinates c : returnSurroundingCoordinates(nextNode.coordinates)) {
 
+
+                //This is to prevent a stack over flow error (Most likely due to the way return surrounding coordinates
+                //Does not account for nodes of the closed list. A way to prevent this would be to
+                //check if the coordinate selected belongs to any node on the closed list possibly?
                 if(c.equals(start)){
                     continue;
                 }
@@ -356,11 +383,16 @@ public class TileSystem extends EntityProcessingSystem {
 
                     Node potentialOpenListNode = allNodeMap.get(c);
                     potentialOpenListNode.parent = nextNode;
-                    System.out.println(printNodeSequence(potentialOpenListNode));
 
 
+                    Array<Coordinates> coordinatesArray = createCoordinateSequence(potentialOpenListNode, new Array<Coordinates>());
 
-                    break;
+                    for(Coordinates coordinates : coordinatesArray){
+                        System.out.println(coordinates);
+                    }
+
+                    return coordinatesArray;
+
                 }
 
                 Node potentialOpenListNode = allNodeMap.get(c);
@@ -401,14 +433,7 @@ public class TileSystem extends EntityProcessingSystem {
 
 */
 
-
-
-
-        return null;
-
-
-
-
+        return new Array<Coordinates>();
 
 
 
@@ -419,17 +444,18 @@ public class TileSystem extends EntityProcessingSystem {
 
 
 
-    public String printNodeSequence(Node node){
+    public Array<Coordinates> createCoordinateSequence(Node node, Array<Coordinates> coordinatesArray){
 
  /*       if(node.parent == node){
             return "";
         }*/
 
         if(node.parent != null){
-            return node.coordinates.toString() + "\n" + printNodeSequence(node.parent);
+            coordinatesArray.add(node.coordinates);
+            return createCoordinateSequence(node.parent, coordinatesArray);
         }
 
-        return node.coordinates.toString();
+        return coordinatesArray;
 
     }
 

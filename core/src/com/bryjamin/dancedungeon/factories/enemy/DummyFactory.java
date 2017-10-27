@@ -71,13 +71,17 @@ public class DummyFactory extends AbstractFactory {
                 int x = MathUtils.random.nextInt(10);
                 int y = MathUtils.random.nextInt(5);
 
+                System.out.println("Start Coords is " + coordinateComponent.coordinates);
 
-                System.out.println("perform action");
-                entity.getComponent(MoveToComponent.class).movementPositions.addAll(
-                        tileSystem.getPositionUsingCoordinates(new Coordinates(x, y), entity.getComponent(BoundComponent.class).bound),
-                        tileSystem.getPositionUsingCoordinates(new Coordinates(x, y + 1), entity.getComponent(BoundComponent.class).bound)
+                coordinateComponent.coordinates = new Coordinates(4,1);
 
-                        );
+                for(Coordinates coordinates : tileSystem.findShortestPath(new Coordinates(0,0), new Coordinates(5,1))){
+
+                    entity.getComponent(MoveToComponent.class).movementPositions.add(
+                            tileSystem.getPositionUsingCoordinates(coordinates, entity.getComponent(BoundComponent.class).bound));
+
+                };
+
             }
 
             @Override
@@ -94,7 +98,7 @@ public class DummyFactory extends AbstractFactory {
         };
 
         bag.add(turnComponent);
-        bag.add(new CoordinateComponent(new Coordinates(4, 2)));
+        bag.add(new CoordinateComponent(new Coordinates(1, 0)));
         bag.add(new MoveToComponent());
         bag.add(new VelocityComponent(0, 0));
         bag.add(new BlinkOnHitComponent());

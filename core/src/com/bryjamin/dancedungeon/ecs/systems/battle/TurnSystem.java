@@ -119,8 +119,6 @@ public class TurnSystem extends EntitySystem {
 
                     case ENEMY:
 
-                        System.out.println("hmm");
-                        System.out.println(currentTurnEntities.size);
 
                         if (currentTurnEntities.size <= 0) {
                             setUp(ALLY);
@@ -132,8 +130,6 @@ public class TurnSystem extends EntitySystem {
 
                     case ALLY:
 
-                        System.out.println("Inside ally");
-
                         return;
 
                        // break;
@@ -141,7 +137,6 @@ public class TurnSystem extends EntitySystem {
                 }
 
                 currentEntity = currentTurnEntities.pop();
-                System.out.println("pop");
                 currentEntity.getComponent(TurnComponent.class).turnAction.performAction(world, currentEntity);
 
                 state = STATE.WAITING;

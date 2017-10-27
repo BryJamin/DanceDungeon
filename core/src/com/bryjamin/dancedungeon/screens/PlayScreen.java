@@ -78,6 +78,10 @@ public class PlayScreen extends AbstractScreen {
             @Override
             public boolean tap(float x, float y, int count, int button) {
 
+
+                world.getSystem(TileSystem.class).findShortestPath(new Coordinates(1,1), new Coordinates(7,4));
+
+
                 Vector3 input = gameport.unproject(new Vector3(x, y, 0));
 
 
@@ -183,12 +187,12 @@ public class PlayScreen extends AbstractScreen {
        // world.getSystem(TileSystem.class).placeUsingCoordinates(new Coordinates(-2, 1), e.getComponent(PositionComponent.class), e.getComponent(BoundComponent.class));
 
 
-        bag = new DummyFactory(assetManager).targetDummyVert(Measure.units(40f), Measure.units(50f));
+        //bag = new DummyFactory(assetManager).targetDummyVert(Measure.units(40f), Measure.units(50f));
         e = BagToEntity.bagToEntity(world.createEntity(), bag);
        // world.getSystem(TileSystem.class).placeUsingCoordinates(new Coordinates(-2, 2), e.getComponent(PositionComponent.class), e.getComponent(BoundComponent.class));
 
 
-        bag = new DummyFactory(assetManager).targetDummyBackSlash(Measure.units(55f), Measure.units(50f));
+       // bag = new DummyFactory(assetManager).targetDummyBackSlash(Measure.units(55f), Measure.units(50f));
         BagToEntity.bagToEntity(world.createEntity(), bag);
 /*
 
@@ -199,8 +203,6 @@ public class PlayScreen extends AbstractScreen {
 
         BagToEntity.bagToEntity(world.createEntity(), new FloorFactory(assetManager).createFloor(Measure.units(10f), Measure.units(5f), Measure.units(80f), Measure.units(50f),
                 5, 10));
-
-        world.getSystem(TileSystem.class).findShortestPath(new Coordinates(1,1), new Coordinates(7,4));
 
     }
 
