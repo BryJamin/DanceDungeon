@@ -136,6 +136,9 @@ public class TurnSystem extends EntitySystem {
 
                 }
 
+
+                System.out.println("Entity size is" + currentTurnEntities.size);
+
                 currentEntity = currentTurnEntities.pop();
                 currentEntity.getComponent(TurnComponent.class).turnAction.performAction(world, currentEntity);
 

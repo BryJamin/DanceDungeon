@@ -20,6 +20,7 @@ import com.bryjamin.dancedungeon.ecs.components.BoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.BulletComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.DispellableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.FriendlyComponent;
@@ -90,6 +91,13 @@ public class PlayScreen extends AbstractScreen {
                     world.getSystem(TileSystem.class).isMovementSquare(input.x, input.y,
                             world.getSystem(FindPlayerSystem.class).getPlayerComponent(PositionComponent.class),
                             world.getSystem(FindPlayerSystem.class).getPlayerComponent(BoundComponent.class));
+
+                    world.getSystem(TileSystem.class).updateCoordinates(
+                            world.getSystem(TileSystem.class).getCoordinatesUsingPosition(world.getSystem(FindPlayerSystem.class).getPlayerComponent(BoundComponent.class).bound),
+                            world.getSystem(FindPlayerSystem.class).getPlayerEntity()
+                    );
+
+                    world.getSystem(TileSystem.class).setPlayerCoordinates(world.getSystem(FindPlayerSystem.class).getPlayerComponent(CoordinateComponent.class).coordinates);
 
                     PositionComponent pc = world.getSystem(FindPlayerSystem.class).getPlayerComponent(PositionComponent.class);
 
@@ -177,29 +185,21 @@ public class PlayScreen extends AbstractScreen {
         world = new World(config);
 
 
-        ComponentBag player = new PlayerFactory(assetManager).player(Measure.units(10f), Measure.units(10f));
+        ComponentBag player = new PlayerFactory(assetManager).player(Measure.units(10f), Measure.units(10f), new Coordinates(0,0));
         BagToEntity.bagToEntity(world.createEntity(), player);
 
         world.getSystem(FindPlayerSystem.class).setPlayerBag(player);
 
         ComponentBag bag = new DummyFactory(assetManager).targetDummyLeft(Measure.units(10f), Measure.units(50f));
         Entity e = BagToEntity.bagToEntity(world.createEntity(), bag);
+
+
+        ComponentBag bag2 = new DummyFactory(assetManager).targetDummyLeft(Measure.units(10f), Measure.units(50f));
+        Entity e2 = BagToEntity.bagToEntity(world.createEntity(), bag2);
+
+        ComponentBag bag3 = new DummyFactory(assetManager).targetDummyLeft(Measure.units(10f), Measure.units(50f));
+        Entity e3 = BagToEntity.bagToEntity(world.createEntity(), bag3);
        // world.getSystem(TileSystem.class).placeUsingCoordinates(new Coordinates(-2, 1), e.getComponent(PositionComponent.class), e.getComponent(BoundComponent.class));
-
-
-        //bag = new DummyFactory(assetManager).targetDummyVert(Measure.units(40f), Measure.units(50f));
-        e = BagToEntity.bagToEntity(world.createEntity(), bag);
-       // world.getSystem(TileSystem.class).placeUsingCoordinates(new Coordinates(-2, 2), e.getComponent(PositionComponent.class), e.getComponent(BoundComponent.class));
-
-
-       // bag = new DummyFactory(assetManager).targetDummyBackSlash(Measure.units(55f), Measure.units(50f));
-        BagToEntity.bagToEntity(world.createEntity(), bag);
-/*
-
-        BagToEntity.bagToEntity(world.createEntity(), new DummyFactory(assetManager).targetDummyFrontSlash(Measure.units(25f), Measure.units(50f)));
-        BagToEntity.bagToEntity(world.createEntity(), new DummyFactory(assetManager).targetDummyFrontSlash(Measure.units(25f), Measure.units(50f)));
-        BagToEntity.bagToEntity(world.createEntity(), new DummyFactory(assetManager).targetDummyFrontSlash(Measure.units(25f), Measure.units(50f)));
-*/
 
         BagToEntity.bagToEntity(world.createEntity(), new FloorFactory(assetManager).createFloor(Measure.units(10f), Measure.units(5f), Measure.units(80f), Measure.units(50f),
                 5, 10));

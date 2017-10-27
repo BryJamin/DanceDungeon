@@ -5,6 +5,7 @@ import com.artemis.World;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.assets.Colors;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.BoundComponent;
@@ -73,19 +74,29 @@ public class DummyFactory extends AbstractFactory {
 
                 System.out.println("Start Coords is " + coordinateComponent.coordinates);
 
-                coordinateComponent.coordinates = new Coordinates(4,1);
+                Array<Coordinates> coordinatesArray = tileSystem.findShortestPath(coordinateComponent.coordinates, tileSystem.playerCoordinates);
+                
 
-                for(Coordinates coordinates : tileSystem.findShortestPath(new Coordinates(0,0), new Coordinates(5,1))){
+
+                System.out.println("HERE WE GO AGAIN");
+
+                for(Coordinates coordinates : coordinatesArray){
 
                     entity.getComponent(MoveToComponent.class).movementPositions.add(
                             tileSystem.getPositionUsingCoordinates(coordinates, entity.getComponent(BoundComponent.class).bound));
 
                 };
 
+
+                System.out.println("PEED IS " + coordinatesArray.first());
+
+                world.getSystem(TileSystem.class).updateCoordinates(coordinatesArray.first(), entity);
+
             }
 
             @Override
             public void cleanUpAction(World world, Entity e) {
+
 
             }
         };

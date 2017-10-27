@@ -42,9 +42,23 @@ public class TileSystem extends EntityProcessingSystem {
     //Map for all spaces
     private OrderedMap<Coordinates, Array<Entity>> coordinateMap = new OrderedMap<Coordinates,  Array<Entity>>();
 
+
+    private OrderedMap<Coordinates, Rectangle> rectangleMap = new OrderedMap<Coordinates,  Rectangle>();
+
     //Mpa used to show if a space is occupied
     private OrderedMap<Coordinates, Entity> occupiedMap = new OrderedMap<Coordinates,  Entity>();
 
+
+    //TODO this is jsut for testing and isn't going to be used.
+    public Coordinates playerCoordinates = new Coordinates();
+
+    public Coordinates getPlayerCoordinates() {
+        return playerCoordinates;
+    }
+
+    public void setPlayerCoordinates(Coordinates playerCoordinates) {
+        this.playerCoordinates = playerCoordinates;
+    }
 
     @SuppressWarnings("unchecked")
     public TileSystem(float originX, float originY, float width, float height, int rows, int columns) {
@@ -64,14 +78,23 @@ public class TileSystem extends EntityProcessingSystem {
 
                 coordinateMap.put(new Coordinates(i, j), new Array<Entity>());
 
+                Rectangle r = new Rectangle(originX + i * tileWidthSize,
+                        originY + j * tileHeightSize,
+                        tileWidthSize,
+                        tileHeightSize);
+
+                movementRectangles.add(r);
+
+                rectangleMap.put(new Coordinates(i, j), r);
+
                 System.out.println();
 
-                if(i == columns - 1){
+              //  if(i == columns - 1){
                     movementRectangles.add(new Rectangle(originX + i * tileWidthSize,
                             originY + j * tileHeightSize,
                             tileWidthSize,
                             tileHeightSize));
-                }
+               // }
             }
         }
 
@@ -113,6 +136,27 @@ public class TileSystem extends EntityProcessingSystem {
         }
 
         placeUsingCoordinates(e.getComponent(CoordinateComponent.class).coordinates, e.getComponent(PositionComponent.class), e.getComponent(BoundComponent.class));
+    }
+
+
+    public void updateCoordinates(Coordinates newCoordinates, Entity e){
+
+
+        CoordinateComponent coordinateComponent = e.getComponent(CoordinateComponent.class);
+
+        occupiedMap.remove(e.getComponent(CoordinateComponent.class).coordinates);
+        coordinateMap.get(e.getComponent(CoordinateComponent.class).coordinates).removeValue(e, true);
+
+
+        coordinateComponent.coordinates = newCoordinates;
+
+
+        occupiedMap.put(coordinateComponent.coordinates, e);
+        coordinateMap.get(coordinateComponent.coordinates).add(e);
+
+
+
+
     }
 
 
@@ -169,6 +213,24 @@ public class TileSystem extends EntityProcessingSystem {
 
         return new Vector3(x + CenterMath.offsetX(tileWidthSize, rectangle.getWidth()),
         y + CenterMath.offsetY(tileHeightSize, rectangle.getHeight()), 0);
+
+    }
+
+    public Coordinates getCoordinatesUsingPosition(Rectangle rectangle){
+
+
+        System.out.println("GET COO USE POS");
+
+        for(Rectangle r : rectangleMap.values().toArray()){
+            if(r.contains(rectangle)){
+
+                System.out.println("CONTAINS BRUH");
+
+                return rectangleMap.findKey(r, false);
+            }
+        }
+
+        return new Coordinates();
 
     }
 
@@ -262,75 +324,49 @@ public class TileSystem extends EntityProcessingSystem {
 
 
 
+    private OrderedMap<Coordinates, Node> setUpNodes(OrderedMap<Coordinates, Node> fillNodeMap, Coordinates start){
+
+        for(Coordinates coordinates : coordinateMap.keys().toArray()) {
+            if(!occupiedMap.keys().toArray().contains(coordinates, false) || coordinates.equals(start)) {
+                fillNodeMap.put(coordinates, new Node(coordinates));
+            }
+        }
+
+        return fillNodeMap;
+
+    }
 
 
     public Array<Coordinates> findShortestPath(Coordinates start, Coordinates end){
 
         Array<Node> openList = new Array<Node>();
-
         Array<Node> closedList = new Array<Node>();
 
         int horiCostOfMovement = 10;
 
-        OrderedMap<Coordinates, Node> allNodeMap = new OrderedMap<Coordinates, Node>();
+        OrderedMap<Coordinates, Node> allNodeMap = setUpNodes(new OrderedMap<Coordinates, Node>(), start);
 
+        Node firstNode = allNodeMap.get(start);
 
+        System.out.println(firstNode.coordinates);
 
-        Array<Coordinates> availableCoordinates = new Array<Coordinates>();
+        closedList.add(allNodeMap.get(start));
 
+        //Could place this inside the Node set up.
+        for(Node n: allNodeMap.values().toArray()) n.setHeuristic(n.coordinates, end);
 
-        System.out.println("Occupied");
-
-        for(Coordinates coordinates : occupiedMap.keys().toArray()){
-            System.out.println(coordinates);
-        }
-
-        System.out.println("End");
-
-        for(Coordinates coordinates : coordinateMap.keys().toArray()) {
-            if(!occupiedMap.keys().toArray().contains(coordinates, false)) {
-                availableCoordinates.add(coordinates);
-                allNodeMap.put(coordinates, new Node(coordinates));
-            }
-        }
-
-        for(Coordinates coordinates : availableCoordinates){
-            System.out.println(coordinates);
-        }
-
-
-        for(Node n: allNodeMap.values().toArray()){
-            n.setHeuristic(n.coordinates, end);
-            if(n.coordinates.equals(start)){
-                closedList.add(n);
+        for(Coordinates c : returnSurroundingCoordinates(firstNode.coordinates)){
+            //TODO test what happens if null
+            Node potentialOpenListNode = allNodeMap.get(c);
+            if(!closedList.contains(potentialOpenListNode, false) && potentialOpenListNode != null) {
+                potentialOpenListNode.parent = firstNode;
+                potentialOpenListNode.gValue = horiCostOfMovement;
+                openList.add(potentialOpenListNode);
+                potentialOpenListNode.calcF();
             }
         }
 
 
-        for(Node n : closedList){
-            for(Coordinates c : returnSurroundingCoordinates(n.coordinates)){
-                //TODO test what happens if null
-                Node potentialOpenListNode = allNodeMap.get(c);
-                if(!closedList.contains(potentialOpenListNode, false) && potentialOpenListNode != null) {
-                    potentialOpenListNode.parent = n;
-                    potentialOpenListNode.gValue = horiCostOfMovement;
-
-
-                    openList.add(potentialOpenListNode);
-
-                    if(potentialOpenListNode.parent == null){
-                        potentialOpenListNode.parent = n;
-                    }
-
-                    potentialOpenListNode.calcF();
-
-                }
-            }
-
-        }
-
-        for(Node n : closedList){
-        }
 
         boolean test = false;
 
@@ -350,19 +386,10 @@ public class TileSystem extends EntityProcessingSystem {
                 }
             });
 
-/*            for (Node n : openList) {
-                System.out.println(n.coordinates);
-                System.out.println(n.gValue);
-                System.out.println("f value" + n.fValue);
-            }*/
-            System.out.println("i is + " + i);
 
             if(openList.size == 0) return new Array<Coordinates>();
 
             Node nextNode = openList.first();
-/*            System.out.println(nextNode.coordinates);
-            System.out.println(nextNode.gValue);
-            System.out.println("f value" + nextNode.fValue);*/
 
             closedList.add(nextNode);
             openList.removeValue(nextNode, false);
@@ -380,12 +407,14 @@ public class TileSystem extends EntityProcessingSystem {
                 if(c.equals(end)) {
                     test = true;
 
+                    System.out.println("C is " + c);
+                    System.out.println("End is "+ end);
 
-                    Node potentialOpenListNode = allNodeMap.get(c);
-                    potentialOpenListNode.parent = nextNode;
+                  //  Node potentialOpenListNode = allNodeMap.get(c);
+                  //  potentialOpenListNode.parent = nextNode;
 
 
-                    Array<Coordinates> coordinatesArray = createCoordinateSequence(potentialOpenListNode, new Array<Coordinates>());
+                    Array<Coordinates> coordinatesArray = createCoordinateSequence(nextNode, new Array<Coordinates>());
 
                     for(Coordinates coordinates : coordinatesArray){
                         System.out.println(coordinates);
@@ -404,7 +433,7 @@ public class TileSystem extends EntityProcessingSystem {
                         potentialOpenListNode.parent = nextNode;
                         openList.add(potentialOpenListNode);
                     } else if(openList.contains(potentialOpenListNode, false)){
-                        System.out.println(potentialOpenListNode.gValue);
+                      //  System.out.println(potentialOpenListNode.gValue);
 
                         if (potentialOpenListNode.gValue > nextNode.gValue + horiCostOfMovement) {
                             potentialOpenListNode.gValue = nextNode.gValue + horiCostOfMovement;
