@@ -38,6 +38,7 @@ import com.bryjamin.dancedungeon.ecs.systems.battle.HealthSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.BoundsDrawingSystem;
+import com.bryjamin.dancedungeon.ecs.systems.graphical.FadeSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
 import com.bryjamin.dancedungeon.factories.decor.FloorFactory;
 import com.bryjamin.dancedungeon.factories.enemy.DummyFactory;
@@ -91,6 +92,9 @@ public class PlayScreen extends AbstractScreen {
                     world.getSystem(TileSystem.class).isMovementSquare(input.x, input.y,
                             world.getSystem(FindPlayerSystem.class).getPlayerComponent(PositionComponent.class),
                             world.getSystem(FindPlayerSystem.class).getPlayerComponent(BoundComponent.class));
+
+
+
 
                     world.getSystem(TileSystem.class).updateCoordinates(
                             world.getSystem(FindPlayerSystem.class).getPlayerEntity()
@@ -175,6 +179,7 @@ public class PlayScreen extends AbstractScreen {
                         new ExpireSystem()
                 )
                 .with(WorldConfigurationBuilder.Priority.LOWEST,
+                        new FadeSystem(),
                         new RenderingSystem(game, gameport),
                         new BoundsDrawingSystem(batch)
                 )
