@@ -86,8 +86,6 @@ public class TurnSystem extends EntitySystem {
 
         this.turn = turn;
 
-        System.out.println("Set up called turn is" + turn);
-
         if(turn == ENEMY) {
             currentTurnEntities.addAll(enemyTurnEntities);
         } else if(turn == ALLY){
@@ -137,8 +135,6 @@ public class TurnSystem extends EntitySystem {
                 }
 
 
-                System.out.println("Entity size is" + currentTurnEntities.size);
-
                 currentEntity = currentTurnEntities.pop();
                 currentEntity.getComponent(TurnComponent.class).turnAction.performAction(world, currentEntity);
 
@@ -149,14 +145,10 @@ public class TurnSystem extends EntitySystem {
 
             case WAITING:
 
-
-               // System.out.println("waiting");
-
                 if(currentEntity.getComponent(TurnComponent.class).turnOverCondition.condition(world, currentEntity)){
                     currentEntity.getComponent(TurnComponent.class).turnAction.cleanUpAction(world, currentEntity);
                     state = STATE.NEXT;
                 }
-
 
                 break;
 

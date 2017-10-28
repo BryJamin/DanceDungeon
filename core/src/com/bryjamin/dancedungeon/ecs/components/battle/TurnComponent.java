@@ -17,7 +17,6 @@ public class TurnComponent extends Component {
     public boolean isTurnOver = false;
 
     public WorldCondition turnOverCondition;
-
     public WorldTask turnAction;
 
     public TurnComponent(){

@@ -93,7 +93,6 @@ public class PlayScreen extends AbstractScreen {
                             world.getSystem(FindPlayerSystem.class).getPlayerComponent(BoundComponent.class));
 
                     world.getSystem(TileSystem.class).updateCoordinates(
-                            world.getSystem(TileSystem.class).getCoordinatesUsingPosition(world.getSystem(FindPlayerSystem.class).getPlayerComponent(BoundComponent.class).bound),
                             world.getSystem(FindPlayerSystem.class).getPlayerEntity()
                     );
 
@@ -190,14 +189,14 @@ public class PlayScreen extends AbstractScreen {
 
         world.getSystem(FindPlayerSystem.class).setPlayerBag(player);
 
-        ComponentBag bag = new DummyFactory(assetManager).targetDummyLeft(Measure.units(10f), Measure.units(50f));
+        ComponentBag bag = new DummyFactory(assetManager).targetDummySprinter(Measure.units(10f), Measure.units(50f));
         Entity e = BagToEntity.bagToEntity(world.createEntity(), bag);
 
 
-        ComponentBag bag2 = new DummyFactory(assetManager).targetDummyLeft(Measure.units(10f), Measure.units(50f));
+        ComponentBag bag2 = new DummyFactory(assetManager).targetDummyWalker(Measure.units(10f), Measure.units(50f));
         Entity e2 = BagToEntity.bagToEntity(world.createEntity(), bag2);
 
-        ComponentBag bag3 = new DummyFactory(assetManager).targetDummyLeft(Measure.units(10f), Measure.units(50f));
+        ComponentBag bag3 = new DummyFactory(assetManager).targetDummyWalker(Measure.units(10f), Measure.units(50f));
         Entity e3 = BagToEntity.bagToEntity(world.createEntity(), bag3);
        // world.getSystem(TileSystem.class).placeUsingCoordinates(new Coordinates(-2, 1), e.getComponent(PositionComponent.class), e.getComponent(BoundComponent.class));
 

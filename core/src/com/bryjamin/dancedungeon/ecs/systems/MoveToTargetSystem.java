@@ -20,7 +20,7 @@ public class MoveToTargetSystem extends EntityProcessingSystem {
 
     ComponentMapper<MoveToComponent> moveToMapper;
 
-    private final static float speed = Measure.units(10f);
+    private final static float speed = Measure.units(30f);
 
     @SuppressWarnings("unchecked")
     public MoveToTargetSystem() {
@@ -37,7 +37,7 @@ public class MoveToTargetSystem extends EntityProcessingSystem {
         if(moveToComponent.movementPositions.size == 0) return;
 
 
-        Vector3 targetPosition = moveToComponent.movementPositions.peek();
+        Vector3 targetPosition = moveToComponent.movementPositions.first();
 
         double angle = AngleMath.angleOfTravel(positionComponent.getX(), positionComponent.getY(),
                 targetPosition.x, targetPosition.y);
@@ -93,7 +93,7 @@ public class MoveToTargetSystem extends EntityProcessingSystem {
 
 
 
-        if(isPositionX && isPositionY) moveToComponent.movementPositions.pop();
+        if(isPositionX && isPositionY) moveToComponent.movementPositions.removeIndex(0);
 
         if(moveToComponent.movementPositions.size <= 0){
             velocityComponent.velocity.x = 0;

@@ -3,9 +3,9 @@ package com.bryjamin.dancedungeon.factories.enemy;
 import com.artemis.Entity;
 import com.artemis.World;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Queue;
 import com.bryjamin.dancedungeon.assets.Colors;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.BoundComponent;
@@ -18,15 +18,18 @@ import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.DispellableComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.MovementRangeComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.factories.AbstractFactory;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
+import com.bryjamin.dancedungeon.utils.math.CoordinateMath;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 import com.bryjamin.dancedungeon.utils.texture.DrawableDescription;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
@@ -69,33 +72,47 @@ public class DummyFactory extends AbstractFactory {
 
                 CoordinateComponent coordinateComponent = entity.getComponent(CoordinateComponent.class);
 
-                int x = MathUtils.random.nextInt(10);
-                int y = MathUtils.random.nextInt(5);
+                Queue<Coordinates> coordinatesQueue = tileSystem.findShortestPath(coordinateComponent.coordinates, tileSystem.playerCoordinates);
 
-                System.out.println("Start Coords is " + coordinateComponent.coordinates);
+                int count = 0;
 
-                Array<Coordinates> coordinatesArray = tileSystem.findShortestPath(coordinateComponent.coordinates, tileSystem.playerCoordinates);
-                
+                for(Coordinates c : coordinatesQueue){
 
-
-                System.out.println("HERE WE GO AGAIN");
-
-                for(Coordinates coordinates : coordinatesArray){
+                    count++;
+                    if(count > entity.getComponent(MovementRangeComponent.class).range) {
+                        break;
+                    }
 
                     entity.getComponent(MoveToComponent.class).movementPositions.add(
-                            tileSystem.getPositionUsingCoordinates(coordinates, entity.getComponent(BoundComponent.class).bound));
+                            tileSystem.getPositionUsingCoordinates(c, entity.getComponent(BoundComponent.class).bound));
 
-                };
-
-
-                System.out.println("PEED IS " + coordinatesArray.first());
-
-                world.getSystem(TileSystem.class).updateCoordinates(coordinatesArray.first(), entity);
+                }
 
             }
 
             @Override
             public void cleanUpAction(World world, Entity e) {
+
+                world.getSystem(TileSystem.class).updateCoordinates(e);
+
+
+                System.out.println(world.getSystem(TileSystem.class).getPlayerCoordinates());
+
+                System.out.println(CoordinateMath.isNextTo(e.getComponent(CoordinateComponent.class).coordinates, world.getSystem(TileSystem.class).getPlayerCoordinates()));
+
+                if(CoordinateMath.isNextTo(e.getComponent(CoordinateComponent.class).coordinates, world.getSystem(TileSystem.class).getPlayerCoordinates())){
+
+
+                    System.out.println("inside?");
+
+                    for(Entity meleeRangeEntity : world.getSystem(TileSystem.class).getCoordinateMap().get(world.getSystem(TileSystem.class).playerCoordinates)){
+                        if( world.getMapper(PlayerComponent.class).has(meleeRangeEntity)){
+                            meleeRangeEntity.getComponent(HealthComponent.class).applyDamage(2.0f);
+                            System.out.println(meleeRangeEntity.getComponent(HealthComponent.class).health);
+                        }
+                    }
+                }
+
 
 
             }
@@ -130,6 +147,29 @@ public class DummyFactory extends AbstractFactory {
         ComponentBag bag = targetDummy(x, y);
         bag.add(new DispellableComponent(DispellableComponent.Type.HORIZONTAL));
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, player.build()));
+        bag.add(new MovementRangeComponent(2));
+        return bag;
+
+    }
+
+
+    public ComponentBag targetDummyWalker(float x, float y) {
+
+        ComponentBag bag = targetDummy(x, y);
+        bag.add(new DispellableComponent(DispellableComponent.Type.HORIZONTAL));
+        bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, player.color(Color.BLACK).build()));
+        bag.add(new MovementRangeComponent(2));
+        return bag;
+
+    }
+
+
+    public ComponentBag targetDummySprinter(float x, float y) {
+
+        ComponentBag bag = targetDummy(x, y);
+        bag.add(new DispellableComponent(DispellableComponent.Type.HORIZONTAL));
+        bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE,player.color(Color.WHITE).build()));
+        bag.add(new MovementRangeComponent(4));
         return bag;
 
     }
@@ -140,6 +180,7 @@ public class DummyFactory extends AbstractFactory {
         ComponentBag bag = targetDummy(x, y);
         bag.add(new DispellableComponent(DispellableComponent.Type.VERTICAL));
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, player.color(Colors.BOMB_ORANGE).build()));
+        bag.add(new MovementRangeComponent(4));
         return bag;
 
     }
