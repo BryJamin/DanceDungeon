@@ -31,7 +31,14 @@ public class ParentChildSystem extends EntitySystem {
 
     @Override
     public void removed(Entity e) {
-        if(childMapper.has(e)) childMap.remove(e.getComponent(ChildComponent.class));
+        if(childMapper.has(e)) {
+
+            ChildComponent c = e.getComponent(ChildComponent.class);
+            childMap.remove(c);
+            if(parentMap.containsKey(c.parent)){
+                parentMap.get(c.parent).getComponent(ParentComponent.class).children.removeValue(c, true);
+            }
+        }
         if(parentMapper.has(e)) parentMap.remove(e.getComponent(ParentComponent.class));
     }
 

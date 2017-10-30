@@ -247,28 +247,6 @@ public class TileSystem extends EntityProcessingSystem {
 
     }
 
-
-
-
-
-    public boolean isMovementSquare(float x, float y, PositionComponent pc, BoundComponent bc){
-
-        for(Rectangle r : movementRectangles){
-            if(r.contains(x, y)){
-
-                bc.bound.x = r.x + CenterMath.offsetX(r.getWidth(), bc.bound.getWidth());
-                bc.bound.y = r.y + CenterMath.offsetY(r.getHeight(), bc.bound.getHeight());
-
-                pc.position.set(bc.bound.x, bc.bound.y, pc.position.z);
-
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-
     public boolean findShortestPath(Coordinates start, Coordinates end, Queue<Coordinates> fillQueue, boolean nextTo){
         AStarPathCalculator aStarPathCalculator = new AStarPathCalculator(coordinateMap.keys().toArray(), occupiedMap.keys().toArray());
         return aStarPathCalculator.findShortestPath(start, end, fillQueue, nextTo);

@@ -62,10 +62,6 @@ public class AStarPathCalculator {
         }
 */
         if(!isDestinationNextTo && unavailableCoordinates.contains(end, false)) {
-
-
-            System.out.println("Inside for " + end);
-
             return false;
         }
 
@@ -104,8 +100,6 @@ public class AStarPathCalculator {
 
             if(surroundingCoordinates.contains(end, false)) {
                 createCoordinateSequence(nextNode, fillQueue);
-
-                System.out.println("Inside?");
 
                 //If the goal is to reach the end point you need to check if the end point is filled
                 if(!isDestinationNextTo) {

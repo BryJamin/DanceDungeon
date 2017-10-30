@@ -56,15 +56,6 @@ public class PlayerGraphicalTargetingSystem extends BaseSystem {
             final Queue<Coordinates> coordinatesQueue = new Queue<Coordinates>();
 
             boolean bool = tileSystem.findShortestPath(coordinateComponent.coordinates, c, coordinatesQueue, false);
-            System.out.println("Path to " + c + " is " + bool);
-            System.out.println("Size is " + coordinatesQueue.size);
-            System.out.println(coordinatesQueue.size <= movementRange && bool);
-
-            if(coordinatesQueue.size > movementRange){
-                for(Coordinates c2 : coordinatesQueue){
-                    System.out.println(c2);
-                }
-            }
 
             if(coordinatesQueue.size <= movementRange && bool) {
 
@@ -89,8 +80,6 @@ public class PlayerGraphicalTargetingSystem extends BaseSystem {
                         public void performAction(World world, Entity entity) {
 
                             Entity player = world.getSystem(FindPlayerSystem.class).getPlayerEntity();
-
-                            System.out.println("Size of queue is " + coordinatesQueue.size);
 
                             for(Coordinates c : coordinatesQueue){
                                 player.getComponent(MoveToComponent.class).movementPositions.add(

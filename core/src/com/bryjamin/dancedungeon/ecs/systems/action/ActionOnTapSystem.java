@@ -42,9 +42,6 @@ public class ActionOnTapSystem extends EntitySystem {
      */
     public boolean touch(float x, float y){
 
-        System.out.println(this.getEntities().size());
-
-
         for(Entity e : this.getEntities()) {
 
             ActionOnTapComponent actionOnTapComponent = e.getComponent(ActionOnTapComponent.class);

@@ -82,7 +82,6 @@ public class DummyFactory extends AbstractFactory {
                 Queue<Coordinates> coordinatesQueue = new Queue<Coordinates>();
                 tileSystem.findShortestPath(coordinateComponent.coordinates, playerCoordinates, coordinatesQueue, true);
 
-
                 int count = 0;
 
                 for(Coordinates c : coordinatesQueue){
