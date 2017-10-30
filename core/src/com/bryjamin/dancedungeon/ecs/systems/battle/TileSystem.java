@@ -47,18 +47,6 @@ public class TileSystem extends EntityProcessingSystem {
     //Mpa used to show if a space is occupied
     private OrderedMap<Coordinates, Entity> occupiedMap = new OrderedMap<Coordinates,  Entity>();
 
-
-    //TODO this is jsut for testing and isn't going to be used.
-    public Coordinates playerCoordinates = new Coordinates();
-
-    public Coordinates getPlayerCoordinates() {
-        return playerCoordinates;
-    }
-
-    public void setPlayerCoordinates(Coordinates playerCoordinates) {
-        this.playerCoordinates = playerCoordinates;
-    }
-
     public OrderedMap<Coordinates, Array<Entity>> getCoordinateMap() {
         return coordinateMap;
     }
@@ -143,16 +131,16 @@ public class TileSystem extends EntityProcessingSystem {
 
     public void updateCoordinates(Entity e){
 
-        CoordinateComponent coordinateComponent = e.getComponent(CoordinateComponent.class);
-        Coordinates coordinates = getCoordinatesUsingPosition(e.getComponent(BoundComponent.class).bound);
-
         occupiedMap.remove(e.getComponent(CoordinateComponent.class).coordinates);
         coordinateMap.get(e.getComponent(CoordinateComponent.class).coordinates).removeValue(e, true);
 
-        coordinateComponent.coordinates = coordinates;
+        CoordinateComponent coordinateComponent = e.getComponent(CoordinateComponent.class);
+        BoundComponent boundComponent = e.getComponent(BoundComponent.class);
 
-        occupiedMap.put(coordinates, e);
-        coordinateMap.get(coordinates).add(e);
+        coordinateComponent.coordinates = getCoordinatesUsingPosition(boundComponent.bound);
+
+        occupiedMap.put(coordinateComponent.coordinates, e);
+        coordinateMap.get(coordinateComponent.coordinates).add(e);
 
 
 
@@ -165,18 +153,25 @@ public class TileSystem extends EntityProcessingSystem {
         coordinateMap.get(e.getComponent(CoordinateComponent.class).coordinates).removeValue(e, true);
     }
 
+
+
     @Override
     protected void process(Entity e) {
 
-       // if(coordinateMap.containsKey(e.getComponent(CoordinateComponent.class).coordinates));
-
-     //   placeUsingCoordinates(e.getComponent(CoordinateComponent.class).coordinates, e.getComponent(PositionComponent.class), e.getComponent(BoundComponent.class));
+        //TODO might be better to do this after a turn instead of all the time
+        updateCoordinates(e);
 
 
     }
 
 
-
+    /**
+     * Uses the given coordinates to place an entity centered within the bounds
+     *
+     * @param coordinates - Coordinates to where the entity will be placed
+     * @param pc - Position Component of Entity
+     * @param bc - Bound Component
+     */
     public void placeUsingCoordinates(Coordinates coordinates, PositionComponent pc, BoundComponent bc){
 
         float x = originX + ((coordinates.getX()) * tileWidthSize);
@@ -189,6 +184,12 @@ public class TileSystem extends EntityProcessingSystem {
 
     }
 
+    /**
+     * Gets the position an entity would be at if moved to the given coordinates
+     * @param coordinates - The coordinates used to generate a position
+     * @param rectangle - The rectangle of the entity that will be used to determine position
+     * @return - Returns the x and y position.
+     */
     public Vector3 getPositionUsingCoordinates(Coordinates coordinates, Rectangle rectangle){
 
         float x = originX + ((coordinates.getX()) * tileWidthSize);
@@ -199,6 +200,12 @@ public class TileSystem extends EntityProcessingSystem {
 
     }
 
+    /**
+     * Returns the rectangle located at the given coordinates
+     * @param coordinates - The coordinates used to check if the rectangle exists
+     * @param fill - The rectangle that will be used to store the map rectangle's information
+     * @return - True, if a rectangle can be found, false if otherwise
+     */
     public boolean getRectangleUsingCoordinates(Coordinates coordinates, Rectangle fill){
 
         if(rectangleMap.containsKey(coordinates)){
@@ -210,6 +217,11 @@ public class TileSystem extends EntityProcessingSystem {
 
     }
 
+    /**
+     * Given a rectangle returns the co-ordinate position of it.
+     * @param rectangle - The rectangle
+     * @return - The Coordinate position of the rectangle provided
+     */
     public Coordinates getCoordinatesUsingPosition(Rectangle rectangle){
 
         for(Rectangle r : rectangleMap.values().toArray()){
@@ -217,7 +229,20 @@ public class TileSystem extends EntityProcessingSystem {
                 return rectangleMap.findKey(r, false);
             }
         }
+        return new Coordinates();
 
+    }
+
+    /**
+     * Given an x and y value returns the coordinates
+     */
+    public Coordinates getCoordinatesUsingPosition(float x, float y){
+
+        for(Rectangle r : rectangleMap.values().toArray()){
+            if(r.contains(x, y)){
+                return rectangleMap.findKey(r, false);
+            }
+        }
         return new Coordinates();
 
     }
@@ -244,16 +269,9 @@ public class TileSystem extends EntityProcessingSystem {
     }
 
 
-    public Queue<Coordinates> findShortestPath(Coordinates start, Coordinates end){
-
+    public boolean findShortestPath(Coordinates start, Coordinates end, Queue<Coordinates> fillQueue, boolean nextTo){
         AStarPathCalculator aStarPathCalculator = new AStarPathCalculator(coordinateMap.keys().toArray(), occupiedMap.keys().toArray());
-
-        Queue<Coordinates> coordinatesQueue = new Queue<Coordinates>();
-
-        boolean bool = aStarPathCalculator.findShortestPath(start, end, coordinatesQueue);
-
-        return coordinatesQueue;
-
+        return aStarPathCalculator.findShortestPath(start, end, fillQueue, nextTo);
     }
 
 

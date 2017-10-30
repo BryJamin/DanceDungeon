@@ -6,29 +6,21 @@ import com.artemis.WorldConfiguration;
 import com.artemis.WorldConfigurationBuilder;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
-import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.DirectionalInputAdapter;
-import com.bryjamin.dancedungeon.ecs.components.BoundComponent;
-import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
-import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.BulletComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.DispellableComponent;
-import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.FriendlyComponent;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
 import com.bryjamin.dancedungeon.ecs.systems.FindPlayerSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MoveToTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
+import com.bryjamin.dancedungeon.ecs.systems.ParentChildSystem;
 import com.bryjamin.dancedungeon.ecs.systems.RenderingSystem;
+import com.bryjamin.dancedungeon.ecs.systems.action.ActionOnTapSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BlinkOnHitSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BulletSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.DeathSystem;
@@ -39,18 +31,18 @@ import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.BoundsDrawingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.FadeSystem;
+import com.bryjamin.dancedungeon.ecs.systems.graphical.PlayerGraphicalTargetingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
 import com.bryjamin.dancedungeon.factories.decor.FloorFactory;
 import com.bryjamin.dancedungeon.factories.enemy.DummyFactory;
 import com.bryjamin.dancedungeon.factories.player.PlayerFactory;
+import com.bryjamin.dancedungeon.factories.player.spells.SpellFactory;
 import com.bryjamin.dancedungeon.utils.GameDelta;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
 import com.bryjamin.dancedungeon.utils.math.AngleMath;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
-import com.bryjamin.dancedungeon.utils.texture.DrawableDescription;
-import com.bryjamin.dancedungeon.utils.texture.Layer;
 
 
 /**
@@ -80,47 +72,18 @@ public class PlayScreen extends AbstractScreen {
             @Override
             public boolean tap(float x, float y, int count, int button) {
 
-
-                world.getSystem(TileSystem.class).findShortestPath(new Coordinates(1,1), new Coordinates(7,4));
-
-
                 Vector3 input = gameport.unproject(new Vector3(x, y, 0));
+
 
 
                 if(world.getSystem(TurnSystem.class).turn == TurnSystem.TURN.ALLY) {
 
-                    world.getSystem(TileSystem.class).isMovementSquare(input.x, input.y,
-                            world.getSystem(FindPlayerSystem.class).getPlayerComponent(PositionComponent.class),
-                            world.getSystem(FindPlayerSystem.class).getPlayerComponent(BoundComponent.class));
+                    if(world.getSystem(ActionOnTapSystem.class).touch(input.x, input.y)){
+                        return  true;
+                    };
 
 
-
-
-                    world.getSystem(TileSystem.class).updateCoordinates(
-                            world.getSystem(FindPlayerSystem.class).getPlayerEntity()
-                    );
-
-                    world.getSystem(TileSystem.class).setPlayerCoordinates(world.getSystem(FindPlayerSystem.class).getPlayerComponent(CoordinateComponent.class).coordinates);
-
-                    PositionComponent pc = world.getSystem(FindPlayerSystem.class).getPlayerComponent(PositionComponent.class);
-
-
-                    Entity bullet = world.createEntity();
-
-
-                    double angle = AngleMath.angleOfTravel(pc.getX(), pc.getY(), input.x, input.y);
-
-                    bullet.edit().add(new PositionComponent(pc.getX(), pc.getY()));
-                    bullet.edit().add(new BulletComponent(2));
-                    bullet.edit().add(new BoundComponent(new Rectangle(pc.getX(), pc.getY(), Measure.units(5f), Measure.units(5f))));
-                    bullet.edit().add(new VelocityComponent(AngleMath.velocityX(Measure.units(50f), angle), AngleMath.velocityY(Measure.units(50f), angle)));
-                    bullet.edit().add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, new DrawableDescription.DrawableDescriptionBuilder(TextureStrings.BLOCK)
-                            .size(Measure.units(5))
-                            .color(new Color(Color.YELLOW))
-                            .build()));
-                    bullet.edit().add(new FriendlyComponent());
-
-                    world.getSystem(TurnSystem.class).setUp(TurnSystem.TURN.ENEMY);
+                    //PositionComponent pc = world.getSystem(FindPlayerSystem.class).getPlayerComponent(PositionComponent.class);
 
                 }
 
@@ -174,12 +137,15 @@ public class PlayScreen extends AbstractScreen {
                         new TurnSystem(),
                         new HealthSystem(),
                         new FindPlayerSystem(),
+                        new ParentChildSystem(),
                         new BlinkOnHitSystem(),
                         new DeathSystem(),
                         new ExpireSystem()
                 )
                 .with(WorldConfigurationBuilder.Priority.LOWEST,
+                        new ActionOnTapSystem(gameport),
                         new FadeSystem(),
+                        new PlayerGraphicalTargetingSystem(),
                         new RenderingSystem(game, gameport),
                         new BoundsDrawingSystem(batch)
                 )
@@ -189,7 +155,7 @@ public class PlayScreen extends AbstractScreen {
         world = new World(config);
 
 
-        ComponentBag player = new PlayerFactory(assetManager).player(Measure.units(10f), Measure.units(10f), new Coordinates(0,0));
+        ComponentBag player = new PlayerFactory(assetManager).player(Measure.units(10f), Measure.units(10f), new Coordinates(5,3));
         BagToEntity.bagToEntity(world.createEntity(), player);
 
         world.getSystem(FindPlayerSystem.class).setPlayerBag(player);
@@ -207,6 +173,12 @@ public class PlayScreen extends AbstractScreen {
 
         BagToEntity.bagToEntity(world.createEntity(), new FloorFactory(assetManager).createFloor(Measure.units(10f), Measure.units(5f), Measure.units(80f), Measure.units(50f),
                 5, 10));
+
+
+        BagToEntity.bagToEntity(world.createEntity(), new SpellFactory(assetManager).endTurnButton(0, 0));
+        BagToEntity.bagToEntity(world.createEntity(), new SpellFactory(assetManager).moveToButton(0, Measure.units(20f)));
+
+
 
     }
 

@@ -32,7 +32,7 @@ public class TurnSystem extends EntitySystem {
 
     private TurnComponent currentTurnComponent;
 
-    private boolean processingFlag = false;
+    private boolean processingFlag = true;
 
 
     private enum STATE {
@@ -76,8 +76,12 @@ public class TurnSystem extends EntitySystem {
         allyTurnEntities.removeValue(e, true);
         currentTurnEntities.removeValue(e, true);
 
-        if(currentEntity.equals(e)){
-            state = STATE.NEXT;
+        try {
+            if (currentEntity.equals(e)) {
+                state = STATE.NEXT;
+            }
+        } catch (Exception exception){
+            exception.printStackTrace();
         }
 
     }
@@ -85,6 +89,7 @@ public class TurnSystem extends EntitySystem {
     public void setUp(TURN turn){
 
         this.turn = turn;
+        currentTurnEntities.clear();
 
         if(turn == ENEMY) {
             currentTurnEntities.addAll(enemyTurnEntities);
@@ -128,7 +133,11 @@ public class TurnSystem extends EntitySystem {
 
                     case ALLY:
 
-                        return;
+                        if (currentTurnEntities.size <= 0) {
+                            setUp(ENEMY);
+                            return;
+                        }
+
 
                        // break;
 
@@ -136,18 +145,23 @@ public class TurnSystem extends EntitySystem {
 
 
                 currentEntity = currentTurnEntities.pop();
-                currentEntity.getComponent(TurnComponent.class).turnAction.performAction(world, currentEntity);
+                if(!playerMapper.has(currentEntity)) {
+                    currentEntity.getComponent(TurnComponent.class).turnAction.performAction(world, currentEntity);
+                }
 
                 state = STATE.WAITING;
+
 
                 break;
 
 
             case WAITING:
 
-                if(currentEntity.getComponent(TurnComponent.class).turnOverCondition.condition(world, currentEntity)){
-                    currentEntity.getComponent(TurnComponent.class).turnAction.cleanUpAction(world, currentEntity);
-                    state = STATE.NEXT;
+                if(!playerMapper.has(currentEntity)) {
+                    if (currentEntity.getComponent(TurnComponent.class).turnOverCondition.condition(world, currentEntity)) {
+                        currentEntity.getComponent(TurnComponent.class).turnAction.cleanUpAction(world, currentEntity);
+                        state = STATE.NEXT;
+                    }
                 }
 
                 break;

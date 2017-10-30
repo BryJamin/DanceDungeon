@@ -24,6 +24,7 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerComponent;
+import com.bryjamin.dancedungeon.ecs.systems.FindPlayerSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.factories.AbstractFactory;
 import com.bryjamin.dancedungeon.utils.HitBox;
@@ -65,6 +66,9 @@ public class DummyFactory extends AbstractFactory {
         TurnComponent turnComponent = new TurnComponent();
 
         turnComponent.turnAction = new WorldTask() {
+
+            private Coordinates playerCoordinates = new Coordinates();
+
             @Override
             public void performAction(World world, Entity entity) {
 
@@ -72,7 +76,12 @@ public class DummyFactory extends AbstractFactory {
 
                 CoordinateComponent coordinateComponent = entity.getComponent(CoordinateComponent.class);
 
-                Queue<Coordinates> coordinatesQueue = tileSystem.findShortestPath(coordinateComponent.coordinates, tileSystem.playerCoordinates);
+
+                playerCoordinates = world.getSystem(FindPlayerSystem.class).getPlayerComponent(CoordinateComponent.class).coordinates;
+
+                Queue<Coordinates> coordinatesQueue = new Queue<Coordinates>();
+                tileSystem.findShortestPath(coordinateComponent.coordinates, playerCoordinates, coordinatesQueue, true);
+
 
                 int count = 0;
 
@@ -95,17 +104,8 @@ public class DummyFactory extends AbstractFactory {
 
                 world.getSystem(TileSystem.class).updateCoordinates(e);
 
-
-                System.out.println(world.getSystem(TileSystem.class).getPlayerCoordinates());
-
-                System.out.println(CoordinateMath.isNextTo(e.getComponent(CoordinateComponent.class).coordinates, world.getSystem(TileSystem.class).getPlayerCoordinates()));
-
-                if(CoordinateMath.isNextTo(e.getComponent(CoordinateComponent.class).coordinates, world.getSystem(TileSystem.class).getPlayerCoordinates())){
-
-
-                    System.out.println("inside?");
-
-                    for(Entity meleeRangeEntity : world.getSystem(TileSystem.class).getCoordinateMap().get(world.getSystem(TileSystem.class).playerCoordinates)){
+                if(CoordinateMath.isNextTo(e.getComponent(CoordinateComponent.class).coordinates, playerCoordinates)){
+                    for(Entity meleeRangeEntity : world.getSystem(TileSystem.class).getCoordinateMap().get(playerCoordinates)){
                         if( world.getMapper(PlayerComponent.class).has(meleeRangeEntity)){
                             meleeRangeEntity.getComponent(HealthComponent.class).applyDamage(2.0f);
                             System.out.println(meleeRangeEntity.getComponent(HealthComponent.class).health);
