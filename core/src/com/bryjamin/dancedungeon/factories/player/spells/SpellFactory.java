@@ -46,7 +46,7 @@ public class SpellFactory extends AbstractFactory {
         ComponentBag bag = defaultButton(x, y, new WorldAction() {
             @Override
             public void performAction(World world, Entity entity) {
-                world.getSystem(PlayerGraphicalTargetingSystem.class).createMovementTiles(entity, 2);
+                world.getSystem(PlayerGraphicalTargetingSystem.class).createMovementTiles(entity, 3);
 
 
 

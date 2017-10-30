@@ -57,23 +57,28 @@ public class AStarPathCalculator {
         //Could place this inside the Node set up.
         for(Node n: allNodeMap.values().toArray()) n.setHeuristic(n.coordinates, end);
 
-        for(Coordinates coordinates : unavailableCoordinates){
+   /*     for(Coordinates coordinates : unavailableCoordinates){
             System.out.println(coordinates);
         }
+*/
+        if(!isDestinationNextTo && unavailableCoordinates.contains(end, false)) {
+
+
+            System.out.println("Inside for " + end);
+
+            return false;
+        }
+
 
         for(Coordinates c : returnSurroundingCoordinates(firstNode.coordinates)){
 
-            if(c.equals(end)){
-                if(isDestinationNextTo){
-                    return true;
-                } else {
-                    if(!unavailableCoordinates.contains(c, false)){
-                        fillQueue.addLast(end);
-                        return true;
-                    }else {
-                        return false;
-                    }
-                }
+            if(c.equals(end) && isDestinationNextTo){
+                return true;
+            }
+
+            if(c.equals(end) && !isDestinationNextTo){
+                fillQueue.addLast(end);
+                return  true;
             }
 
             //TODO test what happens if null
@@ -99,6 +104,8 @@ public class AStarPathCalculator {
 
             if(surroundingCoordinates.contains(end, false)) {
                 createCoordinateSequence(nextNode, fillQueue);
+
+                System.out.println("Inside?");
 
                 //If the goal is to reach the end point you need to check if the end point is filled
                 if(!isDestinationNextTo) {
@@ -140,7 +147,6 @@ public class AStarPathCalculator {
 
             }
         }
-
 
         return false;
     }
