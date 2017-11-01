@@ -91,6 +91,11 @@ public class TileSystem extends EntityProcessingSystem {
 
     }
 
+    public OrderedMap<Coordinates, Entity> getOccupiedMap() {
+        return occupiedMap;
+    }
+
+
 
     @Override
     protected void begin() {
@@ -125,7 +130,9 @@ public class TileSystem extends EntityProcessingSystem {
 
         }
 
-        placeUsingCoordinates(e.getComponent(CoordinateComponent.class).coordinates, e.getComponent(PositionComponent.class), e.getComponent(BoundComponent.class));
+        if(!coordinateComponent.freePlacement) {
+            placeUsingCoordinates(e.getComponent(CoordinateComponent.class).coordinates, e.getComponent(PositionComponent.class), e.getComponent(BoundComponent.class));
+        }
     }
 
 

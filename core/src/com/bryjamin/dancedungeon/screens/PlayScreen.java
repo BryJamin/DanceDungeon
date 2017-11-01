@@ -21,6 +21,7 @@ import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ParentChildSystem;
 import com.bryjamin.dancedungeon.ecs.systems.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.ActionOnTapSystem;
+import com.bryjamin.dancedungeon.ecs.systems.action.ConditionalActionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BlinkOnHitSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BulletSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.DeathSystem;
@@ -131,6 +132,7 @@ public class PlayScreen extends AbstractScreen {
                         new MoveToTargetSystem()
                 )
                 .with(WorldConfigurationBuilder.Priority.HIGH,
+                        new ConditionalActionSystem(),
                         new ExplosionSystem(),
                         new BulletSystem(),
                         new DispelSystem(),
@@ -177,6 +179,7 @@ public class PlayScreen extends AbstractScreen {
 
         BagToEntity.bagToEntity(world.createEntity(), new SpellFactory(assetManager).endTurnButton(0, 0));
         BagToEntity.bagToEntity(world.createEntity(), new SpellFactory(assetManager).moveToButton(0, Measure.units(20f)));
+        BagToEntity.bagToEntity(world.createEntity(), new SpellFactory(assetManager).fireBallButton(0, Measure.units(40f)));
 
 
 

@@ -14,11 +14,19 @@ public class CoordinateComponent extends Component {
 
     public Coordinates coordinates = new Coordinates();
 
+    public boolean freePlacement = false;
+
 
     public CoordinateComponent(){}
 
     public CoordinateComponent(Coordinates coordinates){
         this.coordinates = coordinates;
+    }
+
+
+    public CoordinateComponent(Coordinates coordinates, boolean freePlacement){
+        this.coordinates = coordinates;
+        this.freePlacement = freePlacement;
     }
 
 }

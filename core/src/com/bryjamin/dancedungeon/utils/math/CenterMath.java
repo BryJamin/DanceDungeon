@@ -16,4 +16,14 @@ public class CenterMath {
         return (height / 2) - (heightToCenter / 2);
     }
 
+
+    public static float centerPositionX(float width, float posX){
+        return posX - width / 2;
+    }
+
+    public static float centerPositionY(float height, float posY){
+        return posY - height / 2;
+    }
+
+
 }

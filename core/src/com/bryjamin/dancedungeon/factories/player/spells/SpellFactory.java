@@ -9,6 +9,7 @@ import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.ParentComponent;
+import com.bryjamin.dancedungeon.ecs.systems.FindPlayerSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.DeathSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.PlayerGraphicalTargetingSystem;
@@ -63,6 +64,32 @@ public class SpellFactory extends AbstractFactory {
         return bag;
 
     }
+
+
+    public ComponentBag fireBallButton(float x, float y){
+
+        ComponentBag bag = defaultButton(x, y, new WorldAction() {
+
+            @Override
+            public void performAction(World world, Entity entity) {
+
+                System.out.println(entity.getComponent(ParentComponent.class).children.size);
+
+                if(entity.getComponent(ParentComponent.class).children.size > 0){
+                    world.getSystem(DeathSystem.class).killChildComponents(entity.getComponent(ParentComponent.class));
+                } else {
+                    world.getSystem(PlayerGraphicalTargetingSystem.class).createTargetTile(world.getSystem(FindPlayerSystem.class).getPlayerEntity(), 3);
+                }
+            }
+        });
+        bag.add(new ParentComponent());
+
+        return bag;
+
+    }
+
+
+
 
 
     public ComponentBag defaultButton(float x, float y, WorldAction action){

@@ -22,5 +22,9 @@ public class MoveToComponent extends Component {
         this.movementPositions.addAll(movementPositions);
     }
 
+    public boolean isEmpty(){
+        return movementPositions.size == 0;
+    }
+
 
 }
