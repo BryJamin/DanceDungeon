@@ -12,6 +12,7 @@ public class MoveToComponent extends Component {
 
     public Array<Vector3> movementPositions = new Array<Vector3>();
 
+
     public boolean isInPosition;
 
     public boolean isComplete;

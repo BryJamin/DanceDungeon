@@ -42,8 +42,41 @@ public class AStarPathCalculator {
 
 
 
+    public boolean findShortestPathMultiple(Queue<Coordinates> fillQueue, Coordinates start, Array<Coordinates> targets){
 
-    public boolean findShortestPath(Coordinates start, Coordinates end, Queue<Coordinates> fillQueue, boolean isDestinationNextTo){
+
+        Array<Queue<Coordinates>> queueArray = new Array<Queue<Coordinates>>();
+
+
+        for(Coordinates c : targets){
+            Queue<Coordinates> coordinatesQueue = new Queue<Coordinates>();
+            if(findShortestPath(coordinatesQueue, start, c)) queueArray.add(coordinatesQueue);
+        }
+
+
+        System.out.println("Help");
+
+        if(queueArray.size == 0) return false;
+
+
+        queueArray.sort(new Comparator<Queue<Coordinates>>() {
+            @Override
+            public int compare(Queue<Coordinates> q1, Queue<Coordinates> q2) {
+                return q1.size < q2.size ? -1 : q1.size == q2.size ? 0 : -1;
+            }
+        });
+
+        for(Coordinates c : queueArray.first()){
+            fillQueue.addLast(c);
+        }
+
+
+        return true;
+
+    }
+
+
+    public boolean findShortestPath(Queue<Coordinates> fillQueue, Coordinates start, Coordinates end){
 
         Array<Node> openList = new Array<Node>();
         Array<Node> closedList = new Array<Node>();
@@ -57,24 +90,15 @@ public class AStarPathCalculator {
         //Could place this inside the Node set up.
         for(Node n: allNodeMap.values().toArray()) n.setHeuristic(n.coordinates, end);
 
-   /*     for(Coordinates coordinates : unavailableCoordinates){
-            System.out.println(coordinates);
-        }
-*/
-        if(!isDestinationNextTo && unavailableCoordinates.contains(end, false)) {
+        if(unavailableCoordinates.contains(end, false)) {
             return false;
         }
 
-
         for(Coordinates c : returnSurroundingCoordinates(firstNode.coordinates)){
 
-            if(c.equals(end) && isDestinationNextTo){
-                return true;
-            }
-
-            if(c.equals(end) && !isDestinationNextTo){
+            if(c.equals(end)){
                 fillQueue.addLast(end);
-                return  true;
+                return true;
             }
 
             //TODO test what happens if null
@@ -97,11 +121,7 @@ public class AStarPathCalculator {
             //TODO this would mean you wouldn't need this 'isDestinationNextTo' boolean
             if(surroundingCoordinates.contains(end, false)) {
                 createCoordinateSequence(nextNode, fillQueue);
-
-                //If the goal is to reach the end point you need to check if the end point is filled
-                if(!isDestinationNextTo) {
-                    fillQueue.addLast(end);
-                }
+                fillQueue.addLast(end);
                 return true;
             }
 

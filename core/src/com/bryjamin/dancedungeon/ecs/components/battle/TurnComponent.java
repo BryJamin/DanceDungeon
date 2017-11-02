@@ -14,6 +14,14 @@ import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldTask;
 
 public class TurnComponent extends Component {
 
+
+    public enum State {
+        DECIDING, WAITING, END
+    }
+
+    public State state = State.DECIDING;
+
+
     public boolean isTurnOver = false;
 
     public WorldCondition turnOverCondition;

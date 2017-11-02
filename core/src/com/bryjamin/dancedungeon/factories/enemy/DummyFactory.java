@@ -1,36 +1,29 @@
 package com.bryjamin.dancedungeon.factories.enemy;
 
-import com.artemis.Entity;
-import com.artemis.World;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.utils.Queue;
 import com.bryjamin.dancedungeon.assets.Colors;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.BoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
-import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldCondition;
-import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldTask;
+import com.bryjamin.dancedungeon.ecs.components.battle.AbilityPointComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.DispellableComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MovementRangeComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.ai.AttackAiComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerComponent;
-import com.bryjamin.dancedungeon.ecs.systems.FindPlayerSystem;
-import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.factories.AbstractFactory;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
-import com.bryjamin.dancedungeon.utils.math.CoordinateMath;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 import com.bryjamin.dancedungeon.utils.texture.DrawableDescription;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
@@ -62,69 +55,9 @@ public class DummyFactory extends AbstractFactory {
         bag.add(new PositionComponent(x,y));
         bag.add(new HealthComponent(10));
         bag.add(new EnemyComponent());
-
-        TurnComponent turnComponent = new TurnComponent();
-
-        turnComponent.turnAction = new WorldTask() {
-
-            private Coordinates playerCoordinates = new Coordinates();
-
-            @Override
-            public void performAction(World world, Entity entity) {
-
-                TileSystem tileSystem = world.getSystem(TileSystem.class);
-
-                CoordinateComponent coordinateComponent = entity.getComponent(CoordinateComponent.class);
-
-
-                playerCoordinates = world.getSystem(FindPlayerSystem.class).getPlayerComponent(CoordinateComponent.class).coordinates;
-
-                Queue<Coordinates> coordinatesQueue = new Queue<Coordinates>();
-                tileSystem.findShortestPath(coordinateComponent.coordinates, playerCoordinates, coordinatesQueue, true);
-
-                int count = 0;
-
-                for(Coordinates c : coordinatesQueue){
-
-                    count++;
-                    if(count > entity.getComponent(MovementRangeComponent.class).range) {
-                        break;
-                    }
-
-                    entity.getComponent(MoveToComponent.class).movementPositions.add(
-                            tileSystem.getPositionUsingCoordinates(c, entity.getComponent(BoundComponent.class).bound));
-
-                }
-
-            }
-
-            @Override
-            public void cleanUpAction(World world, Entity e) {
-
-                world.getSystem(TileSystem.class).updateCoordinates(e);
-
-                if(CoordinateMath.isNextTo(e.getComponent(CoordinateComponent.class).coordinates, playerCoordinates)){
-                    for(Entity meleeRangeEntity : world.getSystem(TileSystem.class).getCoordinateMap().get(playerCoordinates)){
-                        if( world.getMapper(PlayerComponent.class).has(meleeRangeEntity)){
-                            meleeRangeEntity.getComponent(HealthComponent.class).applyDamage(2.0f);
-                            System.out.println(meleeRangeEntity.getComponent(HealthComponent.class).health);
-                        }
-                    }
-                }
-
-
-
-            }
-        };
-
-        turnComponent.turnOverCondition = new WorldCondition() {
-            @Override
-            public boolean condition(World world, Entity entity) {
-                return entity.getComponent(MoveToComponent.class).movementPositions.size <= 0;
-            }
-        };
-
-        bag.add(turnComponent);
+        bag.add(new AbilityPointComponent());
+        bag.add(new AttackAiComponent());
+        bag.add(new TurnComponent());
         bag.add(new CoordinateComponent(new Coordinates(1, 0)));
         bag.add(new MoveToComponent());
         bag.add(new VelocityComponent(0, 0));

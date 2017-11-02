@@ -210,8 +210,13 @@ public class PlayerGraphicalTargetingSystem extends BaseSystem {
 
             final Queue<Coordinates> coordinatesQueue = new Queue<Coordinates>();
 
-            boolean bool = tileSystem.findShortestPath(coordinateComponent.coordinates, c, coordinatesQueue, false);
+            Array<Coordinates> coordinatesArray1 = new Array<Coordinates>();
+            coordinatesArray1.add(c);
 
+            boolean bool = tileSystem.findShortestPath(coordinatesQueue, coordinateComponent.coordinates, coordinatesArray1);
+
+
+            System.out.println(coordinatesQueue.size);
             if(coordinatesQueue.size <= movementRange && bool) {
 
                 Rectangle r = new Rectangle();
