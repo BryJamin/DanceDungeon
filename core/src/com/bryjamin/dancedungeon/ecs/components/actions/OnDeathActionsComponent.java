@@ -18,6 +18,4 @@ public class OnDeathActionsComponent extends Component {
         this.actions.addAll(worldActions);
     }
 
-
-
 }
