@@ -4,21 +4,15 @@ import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
-import com.artemis.World;
 import com.badlogic.gdx.utils.Array;
-import com.bryjamin.dancedungeon.ecs.components.BoundComponent;
-import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldCondition;
+import com.bryjamin.dancedungeon.ecs.components.actions.UtilityAiComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.AbilityPointComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MovementRangeComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.AttackAiComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerComponent;
-import com.bryjamin.dancedungeon.ecs.systems.FindPlayerSystem;
-import com.bryjamin.dancedungeon.utils.math.CoordinateMath;
 
 import static com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem.TURN.ALLY;
 import static com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem.TURN.ENEMY;
@@ -39,6 +33,9 @@ public class TurnSystem extends EntitySystem {
 
 
     private ComponentMapper<AbilityPointComponent> abilityPointMapper;
+
+
+    private ComponentMapper<UtilityAiComponent> utilityAiMapper;
 
     private ComponentMapper<CoordinateComponent> coordinateMapper;
 
@@ -71,7 +68,7 @@ public class TurnSystem extends EntitySystem {
 
     @SuppressWarnings("unchecked")
     public TurnSystem() {
-        super(Aspect.all(TurnComponent.class));
+        super(Aspect.all(TurnComponent.class).one(UtilityAiComponent.class, PlayerComponent.class));
     }
 
 
@@ -185,54 +182,20 @@ public class TurnSystem extends EntitySystem {
 
                 if(!playerMapper.has(currentEntity)) {
 
-
                     switch (turnComponent.state) {
 
                         case DECIDING:
 
-                            AttackAiComponent attackAiComponent = attackAiComponentMapper.get(currentEntity);
-
                             AbilityPointComponent abilityPointComponent = abilityPointMapper.get(currentEntity);
-
-                            CoordinateComponent playerCoordinateComponent = world.getSystem(FindPlayerSystem.class).getPlayerComponent(CoordinateComponent.class);
-
-                            MovementRangeComponent movementRangeComponent = movementRangeMapper.get(currentEntity);
-                            CoordinateComponent coordinateComponent = coordinateMapper.get(currentEntity);
-                            MoveToComponent moveToComponent = currentEntity.getComponent(MoveToComponent.class);
-
-
-
-                            if(!CoordinateMath.isWithinRange(coordinateComponent.coordinates, playerCoordinateComponent.coordinates, attackAiComponent.range)
-                                    && abilityPointComponent.abilityPoints > 0
-                                    ) {
-
-
-                                world.getSystem(MovementAiSystem.class).calculatePath(coordinateComponent, movementRangeComponent, moveToComponent, currentEntity.getComponent(BoundComponent.class));
-
-                                turnComponent.turnOverCondition = new WorldCondition() {
-                                    @Override
-                                    public boolean condition(World world, Entity entity) {
-                                        return entity.getComponent(MoveToComponent.class).isEmpty();
-                                    }
-                                };
-
-                                abilityPointComponent.abilityPoints -= 1;
-
-                                turnComponent.state = TurnComponent.State.WAITING;
-                            } else if(abilityPointComponent.abilityPoints > 0){
-
-                                for(Entity meleeRangeEntity : world.getSystem(TileSystem.class).getCoordinateMap().get(playerCoordinateComponent.coordinates)){
-                                    if( world.getMapper(PlayerComponent.class).has(meleeRangeEntity)){
-                                        meleeRangeEntity.getComponent(HealthComponent.class).applyDamage(2.0f);
-                                        System.out.println(meleeRangeEntity.getComponent(HealthComponent.class).health);
-                                    }
-                                }
-
-                                abilityPointComponent.abilityPoints = 0;
-
-
-                            } else {
+                            if(abilityPointComponent.abilityPoints <= 0) {
                                 turnComponent.state = TurnComponent.State.END;
+                                break;
+                            }
+
+                            turnComponent.state = TurnComponent.State.WAITING;
+
+                            if(utilityAiMapper.has(currentEntity)){
+                                utilityAiMapper.get(currentEntity).utilityAiCalculator.performAction(world, currentEntity);
                             }
 
                             break;
@@ -241,12 +204,11 @@ public class TurnSystem extends EntitySystem {
 
                             if (turnComponent.turnOverCondition.condition(world, currentEntity)) turnComponent.state = TurnComponent.State.DECIDING;
 
-                                break;
+                            break;
 
                         case END:
 
-                            //System.out.println("End?");
-
+                            System.out.println("End?");
                             state = STATE.NEXT;
                             break;
                     }
