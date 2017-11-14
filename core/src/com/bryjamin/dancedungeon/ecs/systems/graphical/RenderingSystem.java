@@ -1,4 +1,4 @@
-package com.bryjamin.dancedungeon.ecs.systems;
+package com.bryjamin.dancedungeon.ecs.systems.graphical;
 
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;

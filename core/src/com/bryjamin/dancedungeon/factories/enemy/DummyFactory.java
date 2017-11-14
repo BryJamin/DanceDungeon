@@ -91,7 +91,6 @@ public class DummyFactory extends AbstractFactory {
                                 if (CoordinateMath.isWithinRange(coordinateComponent.coordinates, playerCoordinateComponent.coordinates, 1)) {
                                     return 0;
                                 } else {
-                                    System.out.println("Inside Above");
                                     return 100;
                                 }
                             }
@@ -106,7 +105,6 @@ public class DummyFactory extends AbstractFactory {
                                                     world.getSystem(FindPlayerSystem.class).getPlayerComponent(CoordinateComponent.class).coordinates)) {
                                                 if (world.getMapper(PlayerComponent.class).has(meleeRangeEntity)) {
                                                     meleeRangeEntity.getComponent(HealthComponent.class).applyDamage(2.0f);
-                                                   // System.out.println(meleeRangeEntity.getComponent(HealthComponent.class).health);
                                                 }
                                             }
 
@@ -129,7 +127,7 @@ public class DummyFactory extends AbstractFactory {
                                             CoordinateComponent coordinateComponent = entity.getComponent(CoordinateComponent.class);
                                             CoordinateComponent playerCoordinateComponent = world.getSystem(FindPlayerSystem.class).getPlayerComponent(CoordinateComponent.class);
 
-                                            if (CoordinateMath.isWithinRange(coordinateComponent.coordinates, playerCoordinateComponent.coordinates, 1)) {
+                                            if (CoordinateMath.isNextTo(coordinateComponent.coordinates, playerCoordinateComponent.coordinates)) {
                                                 return 150;
                                             } else {
                                                 return -10;

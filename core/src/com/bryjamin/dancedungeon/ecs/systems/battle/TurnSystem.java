@@ -163,11 +163,10 @@ public class TurnSystem extends EntitySystem {
                 currentEntity = currentTurnEntities.pop();
                 if(!playerMapper.has(currentEntity)) {
                     currentEntity.getComponent(TurnComponent.class).state = TurnComponent.State.DECIDING;
-
-                    AbilityPointComponent abilityPointComponent = abilityPointMapper.get(currentEntity);
-
-                    abilityPointComponent.abilityPoints = abilityPointComponent.abilityPointsPerTurn;
                 }
+
+                AbilityPointComponent apc = abilityPointMapper.get(currentEntity);
+                apc.abilityPoints = apc.abilityPointsPerTurn;
 
                 state = STATE.WAITING;
 

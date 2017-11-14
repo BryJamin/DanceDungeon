@@ -13,5 +13,10 @@ public class AbilityPointComponent extends Component {
 
     public AbilityPointComponent(){}
 
+    public AbilityPointComponent(int abilityPoints){
+        this.abilityPoints = abilityPoints;
+        this.abilityPointsPerTurn = abilityPoints;
+    }
+
 
 }

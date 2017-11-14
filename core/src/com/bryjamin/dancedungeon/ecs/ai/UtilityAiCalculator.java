@@ -35,7 +35,6 @@ public class UtilityAiCalculator {
                 return ac1.getScore() > ac2.getScore() ? -1 : ac1.getScore() == ac2.getScore() ? 0 : 1;
             }
         });
-
         for(ActionCalculator actionCalculator : actionCalculators){
             System.out.println(actionCalculator.getScore());
         }

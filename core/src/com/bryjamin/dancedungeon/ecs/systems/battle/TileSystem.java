@@ -210,18 +210,13 @@ public class TileSystem extends EntityProcessingSystem {
     /**
      * Returns the rectangle located at the given coordinates
      * @param coordinates - The coordinates used to check if the rectangle exists
-     * @param fill - The rectangle that will be used to store the map rectangle's information
      * @return - True, if a rectangle can be found, false if otherwise
      */
-    public boolean getRectangleUsingCoordinates(Coordinates coordinates, Rectangle fill){
-
+    public Rectangle getRectangleUsingCoordinates(Coordinates coordinates) {
         if(rectangleMap.containsKey(coordinates)){
-            fill.set(rectangleMap.get(coordinates));
-            return true;
+            return new Rectangle(rectangleMap.get(coordinates));
         }
-
-        return false;
-
+        return null;
     }
 
     /**

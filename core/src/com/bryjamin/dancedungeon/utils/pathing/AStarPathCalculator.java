@@ -48,13 +48,11 @@ public class AStarPathCalculator {
         Array<Queue<Coordinates>> queueArray = new Array<Queue<Coordinates>>();
 
 
+
         for(Coordinates c : targets){
             Queue<Coordinates> coordinatesQueue = new Queue<Coordinates>();
             if(findShortestPath(coordinatesQueue, start, c)) queueArray.add(coordinatesQueue);
         }
-
-
-        System.out.println("Help");
 
         if(queueArray.size == 0) return false;
 
@@ -62,7 +60,7 @@ public class AStarPathCalculator {
         queueArray.sort(new Comparator<Queue<Coordinates>>() {
             @Override
             public int compare(Queue<Coordinates> q1, Queue<Coordinates> q2) {
-                return q1.size < q2.size ? -1 : q1.size == q2.size ? 0 : -1;
+                return q1.size < q2.size ? -1 : q1.size == q2.size ? 0 : 1;
             }
         });
 
@@ -70,6 +68,7 @@ public class AStarPathCalculator {
             fillQueue.addLast(c);
         }
 
+        queueArray.first();
 
         return true;
 

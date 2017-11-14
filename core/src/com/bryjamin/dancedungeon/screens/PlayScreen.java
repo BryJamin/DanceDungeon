@@ -19,7 +19,7 @@ import com.bryjamin.dancedungeon.ecs.systems.FindPlayerSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MoveToTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ParentChildSystem;
-import com.bryjamin.dancedungeon.ecs.systems.RenderingSystem;
+import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.ActionOnTapSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.ConditionalActionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BlinkOnHitSystem;
@@ -34,6 +34,7 @@ import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.BoundsDrawingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.FadeSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.PlayerGraphicalTargetingSystem;
+import com.bryjamin.dancedungeon.ecs.systems.graphical.UIRenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
 import com.bryjamin.dancedungeon.factories.decor.FloorFactory;
 import com.bryjamin.dancedungeon.factories.enemy.DummyFactory;
@@ -125,11 +126,21 @@ public class PlayScreen extends AbstractScreen {
 
     public void createWorld(){
 
+
+        float originX = Measure.units(10f);
+        float originY = Measure.units(10f);
+        float width = Measure.units(80f);
+        float height = Measure.units(45f);
+
+        int rows = 5;
+        int columns = 10;
+
+
         WorldConfiguration config = new WorldConfigurationBuilder()
                 .with(WorldConfigurationBuilder.Priority.HIGHEST,
                         new MovementSystem(),
                         new UpdatePositionSystem(),
-                        new TileSystem(Measure.units(10f), Measure.units(5f), Measure.units(80f), Measure.units(50f), 5, 10),
+                        new TileSystem(originX, originY, width, height, rows, columns),
                         new MoveToTargetSystem()
                 )
                 .with(WorldConfigurationBuilder.Priority.HIGH,
@@ -150,6 +161,7 @@ public class PlayScreen extends AbstractScreen {
                         new FadeSystem(),
                         new PlayerGraphicalTargetingSystem(),
                         new RenderingSystem(game, gameport),
+                        new UIRenderingSystem(game, gameport),
                         new BoundsDrawingSystem(batch),
 
 
@@ -177,8 +189,8 @@ public class PlayScreen extends AbstractScreen {
         Entity e3 = BagToEntity.bagToEntity(world.createEntity(), bag3);
        // world.getSystem(TileSystem.class).placeUsingCoordinates(new Coordinates(-2, 1), e.getComponent(PositionComponent.class), e.getComponent(BoundComponent.class));
 
-        BagToEntity.bagToEntity(world.createEntity(), new FloorFactory(assetManager).createFloor(Measure.units(10f), Measure.units(5f), Measure.units(80f), Measure.units(50f),
-                5, 10));
+        BagToEntity.bagToEntity(world.createEntity(), new FloorFactory(assetManager).createFloor(originX, originY, width, height,
+                rows, columns));
 
 
         BagToEntity.bagToEntity(world.createEntity(), new SpellFactory(assetManager).endTurnButton(0, 0));

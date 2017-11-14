@@ -2,10 +2,20 @@ package com.bryjamin.dancedungeon;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.FileHandleResolver;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
+import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.bryjamin.dancedungeon.assets.FileStrings;
 import com.bryjamin.dancedungeon.screens.LoadingScreen;
+import com.bryjamin.dancedungeon.utils.Measure;
+
 
 /**
  * Created by BB on 08/10/2017.
@@ -40,7 +50,7 @@ public class MainGame extends Game {
        // SoundFileStrings.loadSoundsToManager(assetManager);
 
 
-/*
+
         FileHandleResolver resolver = new InternalFileHandleResolver();
         assetManager.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
         assetManager.setLoader(BitmapFont.class, ".ttf", new FreetypeFontLoader(resolver));
@@ -56,8 +66,9 @@ public class MainGame extends Game {
 
         //size1Params.fontParameters.genMipMaps = true;
         //size1Params.fontParameters.minFilter = Texture.TextureFilter.MipMapNearestNearest;
-        assetManager.load(com.bryjamin.wickedwizard.assets.FontAssets.small, BitmapFont.class, size1Params);
+        assetManager.load(FileStrings.DEFAULT_FONT_NAME, BitmapFont.class, size1Params);
 
+        /*
         FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
         size2Params.fontFileName = "fonts/Roboto-Black.ttf";
         size2Params.fontParameters.size = (int) Measure.units(4f);

@@ -2,6 +2,7 @@ package com.bryjamin.dancedungeon.ecs.ai.actions;
 
 import com.artemis.Entity;
 import com.artemis.World;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Queue;
 import com.bryjamin.dancedungeon.ecs.components.BoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
@@ -32,11 +33,24 @@ public class MeleeMoveToAction implements WorldAction {
 
         Queue<Coordinates> coordinatesQueue = new Queue<Coordinates>();
 
-        tileSystem.findShortestPath(coordinatesQueue, entity.getComponent(CoordinateComponent.class).coordinates, CoordinateMath.getCoordinatesInRange(playerCoordinates, 1));
+
+        System.out.println("Move Action ");
+
+
+        Array<Coordinates> test = CoordinateMath.getCoordinatesInLine(playerCoordinates, 1);
+        test.first();
+
+        tileSystem.findShortestPath(coordinatesQueue, entity.getComponent(CoordinateComponent.class).coordinates, CoordinateMath.getCoordinatesInLine(playerCoordinates, 1));
+
+
+        System.out.println("Queue size is " + coordinatesQueue.size);
+
 
         while (coordinatesQueue.size > entity.getComponent(MovementRangeComponent.class).range) {
             coordinatesQueue.removeLast();
         }
+
+        System.out.println("Queue size is " + coordinatesQueue.size);
 
         for(Coordinates c : coordinatesQueue){
             entity.getComponent(MoveToComponent.class).movementPositions.add(

@@ -6,6 +6,7 @@ import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.BoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.AbilityPointComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
@@ -48,6 +49,7 @@ public class PlayerFactory extends AbstractFactory {
         bag.add(new PlayerComponent());
         bag.add(new CoordinateComponent(coordinates));
         bag.add(new BlinkOnHitComponent());
+        bag.add(new AbilityPointComponent(4));
         //bag.add(new FadeComponent(true, 1.0f, true));
         bag.add(new MoveToComponent());
         bag.add(new VelocityComponent());

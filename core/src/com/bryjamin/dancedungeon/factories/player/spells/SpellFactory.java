@@ -7,7 +7,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
+import com.bryjamin.dancedungeon.ecs.components.actions.ConditionalActionsComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
+import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
+import com.bryjamin.dancedungeon.ecs.components.battle.AbilityPointComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.ParentComponent;
 import com.bryjamin.dancedungeon.ecs.systems.FindPlayerSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.DeathSystem;
@@ -35,7 +38,6 @@ public class SpellFactory extends AbstractFactory {
         return defaultButton(x, y, new WorldAction() {
             @Override
             public void performAction(World world, Entity entity) {
-
                 world.getSystem(TurnSystem.class).setUp(TurnSystem.TURN.ENEMY);
             }
         });
@@ -61,6 +63,8 @@ public class SpellFactory extends AbstractFactory {
         });
         bag.add(new ParentComponent());
 
+        bag.add(new ConditionalActionsComponent(new CastSpellConditionalAction(2)));
+
         return bag;
 
     }
@@ -78,10 +82,16 @@ public class SpellFactory extends AbstractFactory {
                 if(entity.getComponent(ParentComponent.class).children.size > 0){
                     world.getSystem(DeathSystem.class).killChildComponents(entity.getComponent(ParentComponent.class));
                 } else {
-                    world.getSystem(PlayerGraphicalTargetingSystem.class).createTargetTile(world.getSystem(FindPlayerSystem.class).getPlayerEntity(), 3);
+                    world.getSystem(PlayerGraphicalTargetingSystem.class).createTargetTile(world.getSystem(FindPlayerSystem.class).getPlayerEntity(),new Fireball(), 3);
                 }
             }
         });
+
+
+        bag.add(new ConditionalActionsComponent(new CastSpellConditionalAction(1)));
+
+
+
         bag.add(new ParentComponent());
 
         return bag;
@@ -103,8 +113,28 @@ public class SpellFactory extends AbstractFactory {
 
     }
 
+    public class CastSpellConditionalAction implements WorldConditionalAction {
+
+        private int cost = 0;
+
+        boolean enabled;
+
+        public CastSpellConditionalAction(int cost){
+            this.cost = cost;
+        }
 
 
+        @Override
+        public boolean condition(World world, Entity entity) {
+            enabled = world.getSystem(FindPlayerSystem.class).getPlayerComponent(AbilityPointComponent.class).abilityPoints >= cost;
+            return true;
+        }
+
+        @Override
+        public void performAction(World world, Entity entity) {
+            entity.getComponent(ActionOnTapComponent.class).enabled = enabled;
+        }
+    }
 
 
 

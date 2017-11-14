@@ -52,7 +52,23 @@ public class CoordinateMath {
 
         return coordinatesArray.orderedItems();
 
+    }
 
+    public static Array<Coordinates> getCoordinatesInLine(Coordinates coordinates, int range){
+
+        OrderedSet<Coordinates> coordinatesArray = new OrderedSet<Coordinates>();
+        if(range <= 0) return coordinatesArray.orderedItems();
+
+        for(int i = 1; i <= range; i++){
+
+            coordinatesArray.add(new Coordinates(coordinates.getX() + i, coordinates.getY()));
+            coordinatesArray.add(new Coordinates(coordinates.getX() - i, coordinates.getY()));
+            coordinatesArray.add(new Coordinates(coordinates.getX(), coordinates.getY() + i));
+            coordinatesArray.add(new Coordinates(coordinates.getX(), coordinates.getY() - i));
+
+        }
+
+        return coordinatesArray.orderedItems();
 
     }
 

@@ -12,4 +12,11 @@ public class FileStrings {
     public static final String SPRITE_ATLAS_FILE = "sprite.atlas";
     public static final String ATLAS_NAME = "sprite";
 
+
+
+    public static final String DEFAULT_FONT_FILE = "fonts/Roboto-Black.ttf";
+
+
+    public static final String DEFAULT_FONT_NAME = "font.ttf";
+
 }
