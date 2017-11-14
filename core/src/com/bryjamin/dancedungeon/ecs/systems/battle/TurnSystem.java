@@ -58,8 +58,6 @@ public class TurnSystem extends EntitySystem {
     private STATE state = STATE.NEXT;
 
 
-
-
     public enum TURN {
         ENEMY, ALLY
     }
@@ -75,13 +73,13 @@ public class TurnSystem extends EntitySystem {
     @Override
     public void inserted(Entity e) {
 
-        if(enemyMapper.has(e)){
+        if (enemyMapper.has(e)) {
             enemyTurnEntities.add(e);
-           // if(turn == ENEMY) currentTurnEntities.add(e);
+            // if(turn == ENEMY) currentTurnEntities.add(e);
 
-        } else if(playerMapper.has(e)){
+        } else if (playerMapper.has(e)) {
             allyTurnEntities.add(e);
-           // if(turn == ALLY) currentTurnEntities.add(e);
+            // if(turn == ALLY) currentTurnEntities.add(e);
         }
 
     }
@@ -96,27 +94,26 @@ public class TurnSystem extends EntitySystem {
             if (currentEntity.equals(e)) {
                 state = STATE.NEXT;
             }
-        } catch (Exception exception){
+        } catch (Exception exception) {
             exception.printStackTrace();
         }
 
     }
 
-    public void setUp(TURN turn){
+    public void setUp(TURN turn) {
 
         this.turn = turn;
         currentTurnEntities.clear();
 
-        if(turn == ENEMY) {
+        if (turn == ENEMY) {
             currentTurnEntities.addAll(enemyTurnEntities);
-        } else if(turn == ALLY){
+        } else if (turn == ALLY) {
             currentTurnEntities.addAll(allyTurnEntities);
         }
 
         state = STATE.NEXT;
 
         processingFlag = true;
-
 
 
     }
@@ -155,13 +152,13 @@ public class TurnSystem extends EntitySystem {
                         }
 
 
-                       // break;
+                        // break;
 
                 }
 
 
                 currentEntity = currentTurnEntities.pop();
-                if(!playerMapper.has(currentEntity)) {
+                if (!playerMapper.has(currentEntity)) {
                     currentEntity.getComponent(TurnComponent.class).state = TurnComponent.State.DECIDING;
                 }
 
@@ -179,21 +176,21 @@ public class TurnSystem extends EntitySystem {
                 TurnComponent turnComponent = currentEntity.getComponent(TurnComponent.class);
 
 
-                if(!playerMapper.has(currentEntity)) {
+                if (!playerMapper.has(currentEntity)) {
 
                     switch (turnComponent.state) {
 
                         case DECIDING:
 
                             AbilityPointComponent abilityPointComponent = abilityPointMapper.get(currentEntity);
-                            if(abilityPointComponent.abilityPoints <= 0) {
+                            if (abilityPointComponent.abilityPoints <= 0) {
                                 turnComponent.state = TurnComponent.State.END;
                                 break;
                             }
 
                             turnComponent.state = TurnComponent.State.WAITING;
 
-                            if(utilityAiMapper.has(currentEntity)){
+                            if (utilityAiMapper.has(currentEntity)) {
                                 utilityAiMapper.get(currentEntity).utilityAiCalculator.performAction(world, currentEntity);
                             }
 
@@ -201,13 +198,13 @@ public class TurnSystem extends EntitySystem {
 
                         case WAITING:
 
-                            if (turnComponent.turnOverCondition.condition(world, currentEntity)) turnComponent.state = TurnComponent.State.DECIDING;
+                            if (turnComponent.turnOverCondition.condition(world, currentEntity))
+                                turnComponent.state = TurnComponent.State.DECIDING;
 
                             break;
 
                         case END:
 
-                            System.out.println("End?");
                             state = STATE.NEXT;
                             break;
                     }
@@ -220,11 +217,6 @@ public class TurnSystem extends EntitySystem {
         }
 
     }
-
-
-
-
-
 
 
 }

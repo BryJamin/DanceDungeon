@@ -1,7 +1,9 @@
 package com.bryjamin.dancedungeon.factories.player.spells;
 
+import com.artemis.Aspect;
 import com.artemis.Entity;
 import com.artemis.World;
+import com.artemis.utils.IntBag;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Rectangle;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
@@ -11,9 +13,13 @@ import com.bryjamin.dancedungeon.ecs.components.actions.ConditionalActionsCompon
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.AbilityPointComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.ParentComponent;
 import com.bryjamin.dancedungeon.ecs.systems.FindPlayerSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.DeathSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.PlayerGraphicalTargetingSystem;
 import com.bryjamin.dancedungeon.factories.AbstractFactory;
@@ -51,9 +57,6 @@ public class SpellFactory extends AbstractFactory {
 
             @Override
             public void performAction(World world, Entity entity) {
-
-                System.out.println(entity.getComponent(ParentComponent.class).children.size);
-
                 if(entity.getComponent(ParentComponent.class).children.size > 0){
                     world.getSystem(DeathSystem.class).killChildComponents(entity.getComponent(ParentComponent.class));
                 } else {
@@ -77,13 +80,46 @@ public class SpellFactory extends AbstractFactory {
             @Override
             public void performAction(World world, Entity entity) {
 
-                System.out.println(entity.getComponent(ParentComponent.class).children.size);
+
+                TileSystem tileSystem = world.getSystem(TileSystem.class);
+
+
+                IntBag intBag = world.getAspectSubscriptionManager().get(Aspect.all(EnemyComponent.class, CoordinateComponent.class, HealthComponent.class)).getEntities();
+
+                for(int i = 0; i < intBag.size(); i++){
+                    Entity e = world.getEntity(intBag.get(i));
+                    new Fireball().cast(world.getSystem(FindPlayerSystem.class).getPlayerEntity(), world, e.getComponent(CoordinateComponent.class).coordinates);
+                }
+
+                world.getSystem(FindPlayerSystem.class).getPlayerEntity().getComponent(AbilityPointComponent.class).abilityPoints -= 1;
+
+
+/*
+
+
+
+                for(Coordinates c : tileSystem.getCoordinateMap().keys().toArray()){
+
+                    for()
+
+
+
+                }
+*/
+
+              //  new Fireball().cast(entity, world, c);
+                //clearTrackedEntites();
+
+/*
 
                 if(entity.getComponent(ParentComponent.class).children.size > 0){
                     world.getSystem(DeathSystem.class).killChildComponents(entity.getComponent(ParentComponent.class));
                 } else {
+
+
+
                     world.getSystem(PlayerGraphicalTargetingSystem.class).createTargetTile(world.getSystem(FindPlayerSystem.class).getPlayerEntity(),new Fireball(), 3);
-                }
+                }*/
             }
         });
 

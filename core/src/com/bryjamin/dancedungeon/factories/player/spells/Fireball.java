@@ -14,7 +14,6 @@ import com.bryjamin.dancedungeon.ecs.components.actions.ConditionalActionsCompon
 import com.bryjamin.dancedungeon.ecs.components.actions.OnDeathActionsComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
-import com.bryjamin.dancedungeon.ecs.components.battle.AbilityPointComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
@@ -40,8 +39,6 @@ public class Fireball implements Spell{
 
     @Override
     public void cast(Entity entity, World world, Coordinates target) {
-
-        entity.getComponent(AbilityPointComponent.class).abilityPoints -= getApCost();
 
         final TileSystem tileSystem = world.getSystem(TileSystem.class);
         PositionComponent positionComponent = entity.getComponent(PositionComponent.class);
