@@ -17,10 +17,16 @@ import com.bryjamin.dancedungeon.utils.math.CoordinateMath;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
 /**
- * Created by BB on 04/11/2017.
+ * Created by BB on 15/11/2017.
  */
 
-public class MeleeMoveToAction implements WorldAction {
+public class RangedMoveToAction implements WorldAction {
+
+    private int range;
+
+    public RangedMoveToAction(int range){
+        this.range = range;
+    }
 
 
     @Override
@@ -32,14 +38,14 @@ public class MeleeMoveToAction implements WorldAction {
 
         Queue<Coordinates> coordinatesQueue = new Queue<Coordinates>();
 
-        tileSystem.findShortestPath(coordinatesQueue, entity.getComponent(CoordinateComponent.class).coordinates, CoordinateMath.getCoordinatesInLine(playerCoordinates, 1));
+        tileSystem.findShortestPath(coordinatesQueue, entity.getComponent(CoordinateComponent.class).coordinates, CoordinateMath.getCoordinatesInRange(playerCoordinates, range));
 
 
         while (coordinatesQueue.size > entity.getComponent(MovementRangeComponent.class).range) {
             coordinatesQueue.removeLast();
         }
 
-        for(Coordinates c : coordinatesQueue){
+        for (Coordinates c : coordinatesQueue) {
             entity.getComponent(MoveToComponent.class).movementPositions.add(
                     tileSystem.getPositionUsingCoordinates(c, entity.getComponent(BoundComponent.class).bound));
         }
@@ -55,4 +61,5 @@ public class MeleeMoveToAction implements WorldAction {
         entity.getComponent(AbilityPointComponent.class).abilityPoints -= 1;
 
     }
+
 }

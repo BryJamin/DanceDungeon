@@ -11,8 +11,6 @@ import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 
 public class ActionCalculator {
 
-    //TODO a lot
-
     public ActionCalculator(WorldAction action, ActionScoreCalculation... actionScoreCalculations){
         this.worldAction = action;
         this.actionScoreCalculations.addAll(actionScoreCalculations);

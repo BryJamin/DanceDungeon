@@ -19,7 +19,6 @@ import com.bryjamin.dancedungeon.ecs.systems.FindPlayerSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MoveToTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ParentChildSystem;
-import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.ActionOnTapSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.ConditionalActionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BlinkOnHitSystem;
@@ -34,10 +33,12 @@ import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.BoundsDrawingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.FadeSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.PlayerGraphicalTargetingSystem;
+import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UIRenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
 import com.bryjamin.dancedungeon.factories.decor.FloorFactory;
 import com.bryjamin.dancedungeon.factories.enemy.DummyFactory;
+import com.bryjamin.dancedungeon.factories.enemy.RangedDummyFactory;
 import com.bryjamin.dancedungeon.factories.player.PlayerFactory;
 import com.bryjamin.dancedungeon.factories.player.spells.SpellFactory;
 import com.bryjamin.dancedungeon.utils.GameDelta;
@@ -187,6 +188,11 @@ public class PlayScreen extends AbstractScreen {
 
         ComponentBag bag3 = new DummyFactory(assetManager).targetDummyWalker(Measure.units(10f), Measure.units(50f));
         Entity e3 = BagToEntity.bagToEntity(world.createEntity(), bag3);
+
+
+        ComponentBag bag4 = new RangedDummyFactory(assetManager).rangedDummy(Measure.units(10f), Measure.units(50f));
+        Entity e4 = BagToEntity.bagToEntity(world.createEntity(), bag4);
+
        // world.getSystem(TileSystem.class).placeUsingCoordinates(new Coordinates(-2, 1), e.getComponent(PositionComponent.class), e.getComponent(BoundComponent.class));
 
         BagToEntity.bagToEntity(world.createEntity(), new FloorFactory(assetManager).createFloor(originX, originY, width, height,
@@ -196,6 +202,7 @@ public class PlayScreen extends AbstractScreen {
         BagToEntity.bagToEntity(world.createEntity(), new SpellFactory(assetManager).endTurnButton(0, 0));
         BagToEntity.bagToEntity(world.createEntity(), new SpellFactory(assetManager).moveToButton(0, Measure.units(20f)));
         BagToEntity.bagToEntity(world.createEntity(), new SpellFactory(assetManager).fireBallButton(0, Measure.units(40f)));
+
 
 
 
