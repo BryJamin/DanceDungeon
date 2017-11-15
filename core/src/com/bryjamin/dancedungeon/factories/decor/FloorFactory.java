@@ -18,6 +18,8 @@ import com.bryjamin.dancedungeon.utils.texture.Layer;
 public class FloorFactory extends AbstractFactory {
 
 
+
+
     public FloorFactory(AssetManager assetManager) {
         super(assetManager);
     }
@@ -45,8 +47,8 @@ public class FloorFactory extends AbstractFactory {
 
             for(int j = 0; j < rows; j++){
 
-                Color color1 = j % 2 != 0 ? new Color(Color.LIGHT_GRAY) : new Color(Color.FIREBRICK);
-                Color color2 = j % 2 != 0 ? new Color(Color.FIREBRICK) : new Color(Color.LIGHT_GRAY);
+                Color color1 = j % 2 != 0 ? new Color(Color.LIGHT_GRAY) : new Color(Color.SKY);
+                Color color2 = j % 2 != 0 ? new Color(Color.SKY) : new Color(Color.LIGHT_GRAY);
 
 
                 drawableComponent.drawables.add(descriptionBuilder

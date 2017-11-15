@@ -19,7 +19,6 @@ import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
@@ -54,7 +53,7 @@ public class Fireball implements Spell{
         Entity fireBall = world.createEntity();
         fireBall.edit().add(new PositionComponent(x, y));
         fireBall.edit().add(new CoordinateComponent(new Coordinates(), true));
-        fireBall.edit().add(new MoveToComponent(new Vector3(
+        fireBall.edit().add(new MoveToComponent(Measure.units(60f), new Vector3(
                 CenterMath.centerPositionX(size, r.getCenter(new Vector2()).x),
                 CenterMath.centerPositionY(size, r.getCenter(new Vector2()).y),
                 0)));
@@ -92,7 +91,7 @@ public class Fireball implements Spell{
                 CoordinateComponent coordinateComponent = entity.getComponent(CoordinateComponent.class);
 
                 for(Entity e : tileSystem.getCoordinateMap().get(coordinateComponent.coordinates)){
-                    if(world.getMapper(EnemyComponent.class).has(e)){
+                    if(world.getMapper(HealthComponent.class).has(e)){
                         e.getComponent(HealthComponent.class).applyDamage(3);
                     }
                 };

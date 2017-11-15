@@ -92,34 +92,6 @@ public class SpellFactory extends AbstractFactory {
                 }
 
                 world.getSystem(FindPlayerSystem.class).getPlayerEntity().getComponent(AbilityPointComponent.class).abilityPoints -= 1;
-
-
-/*
-
-
-
-                for(Coordinates c : tileSystem.getCoordinateMap().keys().toArray()){
-
-                    for()
-
-
-
-                }
-*/
-
-              //  new Fireball().cast(entity, world, c);
-                //clearTrackedEntites();
-
-/*
-
-                if(entity.getComponent(ParentComponent.class).children.size > 0){
-                    world.getSystem(DeathSystem.class).killChildComponents(entity.getComponent(ParentComponent.class));
-                } else {
-
-
-
-                    world.getSystem(PlayerGraphicalTargetingSystem.class).createTargetTile(world.getSystem(FindPlayerSystem.class).getPlayerEntity(),new Fireball(), 3);
-                }*/
             }
         });
 
@@ -148,6 +120,11 @@ public class SpellFactory extends AbstractFactory {
         return bag;
 
     }
+
+
+
+
+
 
     public class CastSpellConditionalAction implements WorldConditionalAction {
 

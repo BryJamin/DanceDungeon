@@ -8,7 +8,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
-import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.AngleMath;
 
 /**
@@ -19,8 +18,6 @@ public class MoveToTargetSystem extends EntityProcessingSystem {
 
 
     ComponentMapper<MoveToComponent> moveToMapper;
-
-    private final static float speed = Measure.units(30f);
 
     @SuppressWarnings("unchecked")
     public MoveToTargetSystem() {
@@ -34,7 +31,7 @@ public class MoveToTargetSystem extends EntityProcessingSystem {
         VelocityComponent velocityComponent = e.getComponent(VelocityComponent.class);
         MoveToComponent moveToComponent = e.getComponent(MoveToComponent.class);
 
-        if(moveToComponent.movementPositions.size == 0) return;
+        if (moveToComponent.movementPositions.size == 0) return;
 
 
         Vector3 targetPosition = moveToComponent.movementPositions.first();
@@ -42,16 +39,16 @@ public class MoveToTargetSystem extends EntityProcessingSystem {
         double angle = AngleMath.angleOfTravel(positionComponent.getX(), positionComponent.getY(),
                 targetPosition.x, targetPosition.y);
 
-        float vx = AngleMath.velocityX(speed, angle);
-        float vy = AngleMath.velocityY(speed, angle);
+        float vx = AngleMath.velocityX(moveToComponent.speed, angle);
+        float vy = AngleMath.velocityY(moveToComponent.speed, angle);
 
 
         boolean isPositionX = positionComponent.position.x == targetPosition.x;
         boolean isPositionY = positionComponent.position.y == targetPosition.y;
 
-        if(positionComponent.getX() < targetPosition.x){
+        if (positionComponent.getX() < targetPosition.x) {
 
-            if(positionComponent.getX() + vx * world.delta > targetPosition.x){
+            if (positionComponent.getX() + vx * world.delta > targetPosition.x) {
                 positionComponent.position.x = targetPosition.x;
                 isPositionX = true;
             } else {
@@ -60,7 +57,7 @@ public class MoveToTargetSystem extends EntityProcessingSystem {
 
         } else {
 
-            if(positionComponent.getX() + vx * world.delta < targetPosition.x){
+            if (positionComponent.getX() + vx * world.delta < targetPosition.x) {
                 positionComponent.position.x = targetPosition.x;
                 isPositionX = true;
             } else {
@@ -70,10 +67,9 @@ public class MoveToTargetSystem extends EntityProcessingSystem {
         }
 
 
+        if (positionComponent.getY() < targetPosition.y) {
 
-        if(positionComponent.getY() < targetPosition.y){
-
-            if(positionComponent.getY() + vy * world.delta > targetPosition.y){
+            if (positionComponent.getY() + vy * world.delta > targetPosition.y) {
                 positionComponent.position.y = targetPosition.y;
                 isPositionY = true;
             } else {
@@ -82,7 +78,7 @@ public class MoveToTargetSystem extends EntityProcessingSystem {
 
         } else {
 
-            if(positionComponent.getY() + vy * world.delta < targetPosition.y){
+            if (positionComponent.getY() + vy * world.delta < targetPosition.y) {
                 positionComponent.position.y = targetPosition.y;
                 isPositionY = true;
             } else {
@@ -92,14 +88,12 @@ public class MoveToTargetSystem extends EntityProcessingSystem {
         }
 
 
+        if (isPositionX && isPositionY) moveToComponent.movementPositions.removeIndex(0);
 
-        if(isPositionX && isPositionY) moveToComponent.movementPositions.removeIndex(0);
-
-        if(moveToComponent.movementPositions.size <= 0){
+        if (moveToComponent.movementPositions.size <= 0) {
             velocityComponent.velocity.x = 0;
             velocityComponent.velocity.y = 0;
         }
-
 
 
     }

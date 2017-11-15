@@ -64,7 +64,7 @@ public class DummyFactory extends AbstractFactory {
         bag.add(new AttackAiComponent());
         bag.add(new TurnComponent());
         bag.add(new CoordinateComponent(new Coordinates(1, 0)));
-        bag.add(new MoveToComponent());
+        bag.add(new MoveToComponent(Measure.units(40f)));
         bag.add(new VelocityComponent(0, 0));
         bag.add(new BlinkOnHitComponent());
         bag.add(new BoundComponent(new Rectangle(x, y, width, height)));

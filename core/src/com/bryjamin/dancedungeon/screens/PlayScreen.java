@@ -8,11 +8,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.ecs.DirectionalInputAdapter;
+import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
+import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.DispellableComponent;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
 import com.bryjamin.dancedungeon.ecs.systems.FindPlayerSystem;
@@ -32,6 +35,7 @@ import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.BoundsDrawingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.FadeSystem;
+import com.bryjamin.dancedungeon.ecs.systems.graphical.HealthBarSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.PlayerGraphicalTargetingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UIRenderingSystem;
@@ -85,10 +89,6 @@ public class PlayScreen extends AbstractScreen {
                     if(world.getSystem(ActionOnTapSystem.class).touch(input.x, input.y)){
                         return  true;
                     };
-
-
-                    //PositionComponent pc = world.getSystem(FindPlayerSystem.class).getPlayerComponent(PositionComponent.class);
-
                 }
 
 
@@ -162,6 +162,7 @@ public class PlayScreen extends AbstractScreen {
                         new FadeSystem(),
                         new PlayerGraphicalTargetingSystem(),
                         new RenderingSystem(game, gameport),
+                        new HealthBarSystem(game, gameport),
                         new UIRenderingSystem(game, gameport),
                         new BoundsDrawingSystem(batch),
 
@@ -181,19 +182,25 @@ public class PlayScreen extends AbstractScreen {
 
         ComponentBag bag = new DummyFactory(assetManager).targetDummySprinter(Measure.units(10f), Measure.units(50f));
         Entity e = BagToEntity.bagToEntity(world.createEntity(), bag);
+        e.getComponent(CoordinateComponent.class).coordinates.setX(MathUtils.random(0, 7));
+        e.getComponent(CoordinateComponent.class).coordinates.setY(MathUtils.random(0, 5));
 
 
         ComponentBag bag2 = new DummyFactory(assetManager).targetDummyWalker(Measure.units(10f), Measure.units(50f));
         Entity e2 = BagToEntity.bagToEntity(world.createEntity(), bag2);
+        e2.getComponent(CoordinateComponent.class).coordinates.setX(MathUtils.random(0, 7));
+        e2.getComponent(CoordinateComponent.class).coordinates.setY(MathUtils.random(0, 5));
 
         ComponentBag bag3 = new DummyFactory(assetManager).targetDummyWalker(Measure.units(10f), Measure.units(50f));
         Entity e3 = BagToEntity.bagToEntity(world.createEntity(), bag3);
+        e3.getComponent(CoordinateComponent.class).coordinates.setX(MathUtils.random(0, 7));
+        e3.getComponent(CoordinateComponent.class).coordinates.setY(MathUtils.random(0, 5));
 
 
         ComponentBag bag4 = new RangedDummyFactory(assetManager).rangedDummy(Measure.units(10f), Measure.units(50f));
         Entity e4 = BagToEntity.bagToEntity(world.createEntity(), bag4);
-
-       // world.getSystem(TileSystem.class).placeUsingCoordinates(new Coordinates(-2, 1), e.getComponent(PositionComponent.class), e.getComponent(BoundComponent.class));
+        e4.getComponent(CoordinateComponent.class).coordinates.setX(MathUtils.random(0, 7));
+        e4.getComponent(CoordinateComponent.class).coordinates.setY(MathUtils.random(0, 5));
 
         BagToEntity.bagToEntity(world.createEntity(), new FloorFactory(assetManager).createFloor(originX, originY, width, height,
                 rows, columns));
@@ -203,6 +210,12 @@ public class PlayScreen extends AbstractScreen {
         BagToEntity.bagToEntity(world.createEntity(), new SpellFactory(assetManager).moveToButton(0, Measure.units(20f)));
         BagToEntity.bagToEntity(world.createEntity(), new SpellFactory(assetManager).fireBallButton(0, Measure.units(40f)));
 
+        BagToEntity.bagToEntity(world.createEntity(), new SpellFactory(assetManager).defaultButton(Measure.units(70f), 0, new WorldAction() {
+            @Override
+            public void performAction(World world, Entity entity) {
+                game.setScreen(new PlayScreen(game));
+            }
+        }));
 
 
 

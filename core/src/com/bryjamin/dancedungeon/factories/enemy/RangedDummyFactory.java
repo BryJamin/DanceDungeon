@@ -2,7 +2,6 @@ package com.bryjamin.dancedungeon.factories.enemy;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Rectangle;
-import com.bryjamin.dancedungeon.assets.Colors;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.ai.ActionCalculator;
 import com.bryjamin.dancedungeon.ecs.ai.UtilityAiCalculator;
@@ -45,8 +44,7 @@ public class RangedDummyFactory extends AbstractFactory {
 
     public static final DrawableDescription.DrawableDescriptionBuilder player = new DrawableDescription.DrawableDescriptionBuilder(TextureStrings.BIGGABLOBBA)
             .index(2)
-            .size(height)
-            .color(Colors.BLOB_RED);
+            .size(height);
 
     public RangedDummyFactory(AssetManager assetManager) {
         super(assetManager);
@@ -63,7 +61,7 @@ public class RangedDummyFactory extends AbstractFactory {
         bag.add(new AttackAiComponent());
         bag.add(new TurnComponent());
         bag.add(new CoordinateComponent(new Coordinates(1, 0)));
-        bag.add(new MoveToComponent());
+        bag.add(new MoveToComponent(Measure.units(30f)));
         bag.add(new VelocityComponent(0, 0));
         bag.add(new BlinkOnHitComponent());
         bag.add(new BoundComponent(new Rectangle(x, y, width, height)));
