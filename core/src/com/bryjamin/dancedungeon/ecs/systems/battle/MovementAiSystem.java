@@ -24,7 +24,7 @@ public class MovementAiSystem extends BaseSystem {
 
         Queue<Coordinates> coordinatesQueue = new Queue<Coordinates>();
 
-        tileSystem.findShortestPath(coordinatesQueue, coordinateComponent.coordinates, CoordinateMath.getCoordinatesInRange(playerCoordinates, 1));
+        tileSystem.findShortestPath(coordinatesQueue, coordinateComponent.coordinates, CoordinateMath.getCoordinatesInMovementRange(playerCoordinates, 1));
 
         while (coordinatesQueue.size > movementRangeComponent.range) {
             coordinatesQueue.removeLast();

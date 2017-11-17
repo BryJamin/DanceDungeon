@@ -245,7 +245,7 @@ public class TileSystem extends EntityProcessingSystem {
                 return rectangleMap.findKey(r, false);
             }
         }
-        return new Coordinates();
+        return null;
 
     }
 

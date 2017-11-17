@@ -2,13 +2,15 @@ package com.bryjamin.dancedungeon.ecs.ai.actions;
 
 import com.artemis.Entity;
 import com.artemis.World;
+import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldCondition;
 import com.bryjamin.dancedungeon.ecs.components.battle.AbilityPointComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
-import com.bryjamin.dancedungeon.ecs.systems.FindPlayerSystem;
+import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.factories.player.spells.Spell;
+import com.bryjamin.dancedungeon.utils.math.CoordinateSorter;
 
 /**
  * Created by BB on 15/11/2017.
@@ -25,7 +27,13 @@ public class RangedAttackAction implements WorldAction {
 
     @Override
     public void performAction(World world, Entity entity) {
-        spell.cast(entity, world, world.getSystem(FindPlayerSystem.class).getPlayerComponent(CoordinateComponent.class).coordinates);
+
+        Array<Entity> entityArray = entity.getComponent(TargetComponent.class).getTargets(world);
+        if(entityArray.size <= 0) return;
+        entityArray.sort(CoordinateSorter.SORT_BY_NEAREST(entity));
+
+
+        spell.cast(entity, world, entityArray.first().getComponent(CoordinateComponent.class).coordinates);
         entity.getComponent(AbilityPointComponent.class).abilityPoints = 0;
 
         entity.getComponent(TurnComponent.class).turnOverCondition = new WorldCondition() {

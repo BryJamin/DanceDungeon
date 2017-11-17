@@ -44,9 +44,38 @@ public class PlayerGraphicalTargetingSystem extends BaseSystem {
 
     private Bag<Entity> trackedEntities = new Bag<Entity>();
 
+    private Coordinates targetCoordinates = null;
+
 
     @Override
     protected void processSystem() {
+
+    }
+
+    public Coordinates getTargetCoordinates() {
+        return targetCoordinates;
+    }
+
+    public boolean createTarget(float x, float y){
+
+        TileSystem tileSystem = world.getSystem(TileSystem.class);
+
+
+        Coordinates c = tileSystem.getCoordinatesUsingPosition(x, y);
+
+        if(c == null) return false;
+
+        if(c == targetCoordinates) {
+            clearTrackedEntites(); return false;
+        }
+
+        clearTrackedEntites();
+        targetCoordinates = c;
+        Entity box = BagToEntity.bagToEntity(world.createEntity(), highlightBox(tileSystem.getRectangleUsingCoordinates(c)));
+        trackedEntities.add(box);
+
+
+        return true;
 
     }
 
@@ -100,6 +129,7 @@ public class PlayerGraphicalTargetingSystem extends BaseSystem {
             }
         }
         trackedEntities.clear();
+        targetCoordinates = null;
     }
 
 
@@ -129,7 +159,7 @@ public class PlayerGraphicalTargetingSystem extends BaseSystem {
 
         TileSystem tileSystem = world.getSystem(TileSystem.class);
 
-        for (Coordinates c : CoordinateMath.getCoordinatesInRange(coordinateComponent.coordinates, movementRange)) {
+        for (Coordinates c : CoordinateMath.getCoordinatesInMovementRange(coordinateComponent.coordinates, movementRange)) {
 
             if(!tileSystem.getCoordinateMap().containsKey(c)) continue;
 

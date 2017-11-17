@@ -1,5 +1,6 @@
 package com.bryjamin.dancedungeon.factories.enemy;
 
+import com.artemis.Aspect;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
@@ -23,9 +24,11 @@ import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MovementRangeComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.AttackAiComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerComponent;
 import com.bryjamin.dancedungeon.factories.AbstractFactory;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
@@ -69,6 +72,8 @@ public class DummyFactory extends AbstractFactory {
         bag.add(new BlinkOnHitComponent());
         bag.add(new BoundComponent(new Rectangle(x, y, width, height)));
         bag.add(new HitBoxComponent(new HitBox(new Rectangle(x, y, width, height))));
+
+        bag.add(new TargetComponent(Aspect.all(PlayerComponent.class, CoordinateComponent.class)));
 
         bag.add(new UtilityAiComponent(
                 new UtilityAiCalculator(

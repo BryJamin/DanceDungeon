@@ -86,6 +86,8 @@ public class PlayScreen extends AbstractScreen {
 
                 if(world.getSystem(TurnSystem.class).turn == TurnSystem.TURN.ALLY) {
 
+                //    if(world.getSystem(PlayerGraphicalTargetingSystem.class).createTarget(input.x, input.y)) return true;
+
                     if(world.getSystem(ActionOnTapSystem.class).touch(input.x, input.y)){
                         return  true;
                     };
@@ -179,6 +181,11 @@ public class PlayScreen extends AbstractScreen {
         BagToEntity.bagToEntity(world.createEntity(), player);
 
         world.getSystem(FindPlayerSystem.class).setPlayerBag(player);
+
+
+        ComponentBag playerzzzzzz = new PlayerFactory(assetManager).player(Measure.units(10f), Measure.units(10f), new Coordinates(1,3));
+        BagToEntity.bagToEntity(world.createEntity(), playerzzzzzz);
+
 
         ComponentBag bag = new DummyFactory(assetManager).targetDummySprinter(Measure.units(10f), Measure.units(50f));
         Entity e = BagToEntity.bagToEntity(world.createEntity(), bag);

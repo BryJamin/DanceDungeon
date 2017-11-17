@@ -1,6 +1,9 @@
 package com.bryjamin.dancedungeon.utils.math;
 
 
+import com.artemis.Entity;
+import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
+
 import java.util.Comparator;
 
 /**
@@ -22,6 +25,19 @@ public class CoordinateSorter {
                 Double i2 = Math.sqrt(Math.pow(coords2.getX() - origin.getX(), 2) + Math.pow(coords2.getY() - origin.getY(), 2));
 
                 return i1 < i2 ? -1 : (i1.equals(i2) ? 0 : 1);
+            }
+        };
+    }
+
+
+    public static Comparator<Entity> SORT_BY_NEAREST(final Entity origin){
+
+        final Comparator<Coordinates> coordSorter = SORT_BY_NEAREST(origin.getComponent(CoordinateComponent.class).coordinates);
+
+        return new Comparator<Entity>() {
+            @Override
+            public int compare(Entity coords, Entity coords2) {
+                return  coordSorter.compare(coords.getComponent(CoordinateComponent.class).coordinates, coords2.getComponent(CoordinateComponent.class).coordinates);
             }
         };
     }

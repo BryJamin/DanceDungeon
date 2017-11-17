@@ -30,7 +30,7 @@ public class CoordinateMath {
     }
 
 
-    public static Array<Coordinates> getCoordinatesInRange(Coordinates coordinates, int range){
+    public static Array<Coordinates> getCoordinatesInMovementRange(Coordinates coordinates, int range){
 
         OrderedSet<Coordinates> coordinatesArray = new OrderedSet<Coordinates>();
 
@@ -47,6 +47,30 @@ public class CoordinateMath {
                 coordinatesArray.add(new Coordinates(coordinates.getX() - x, coordinates.getY() + y));
                 coordinatesArray.add(new Coordinates(coordinates.getX() - x, coordinates.getY() - y));
 
+            }
+        }
+
+        return coordinatesArray.orderedItems();
+
+    }
+
+
+    public static Array<Coordinates> getCoordinatesInSquareRange(Coordinates coordinates, int range){
+
+        OrderedSet<Coordinates> coordinatesArray = new OrderedSet<Coordinates>();
+
+        if(range <= 0) return coordinatesArray.orderedItems();
+
+        for(int x = 0; x <= range; x++){
+            for(int y = 0; y <= range; y++){
+
+                if(x == 0 && y == 0) continue;
+                if(x > range || y > range) continue;
+
+                coordinatesArray.add(new Coordinates(coordinates.getX() + x, coordinates.getY() + y));
+                coordinatesArray.add(new Coordinates(coordinates.getX() + x, coordinates.getY() - y));
+                coordinatesArray.add(new Coordinates(coordinates.getX() - x, coordinates.getY() + y));
+                coordinatesArray.add(new Coordinates(coordinates.getX() - x, coordinates.getY() - y));
             }
         }
 
