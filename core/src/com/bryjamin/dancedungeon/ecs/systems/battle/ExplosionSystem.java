@@ -11,7 +11,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.utils.HitBox;
 
 /**
@@ -27,7 +27,7 @@ public class ExplosionSystem extends EntityProcessingSystem {
 
     //ComponentMapper<FriendlyComponent> fm;
 
-    ComponentMapper<PlayerComponent> playerm;
+    ComponentMapper<PlayerControlledComponent> playerm;
 
     ComponentMapper<EnemyComponent> enemym;
 
@@ -44,7 +44,7 @@ public class ExplosionSystem extends EntityProcessingSystem {
     protected void begin() {
 
         EntitySubscription subscription = world.getAspectSubscriptionManager().
-                get(Aspect.all(HealthComponent.class, HitBoxComponent.class).one(PlayerComponent.class, EnemyComponent.class));
+                get(Aspect.all(HealthComponent.class, HitBoxComponent.class).one(PlayerControlledComponent.class, EnemyComponent.class));
 
         entities = subscription.getEntities();
 

@@ -28,7 +28,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.factories.AbstractFactory;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
@@ -73,7 +73,7 @@ public class DummyFactory extends AbstractFactory {
         bag.add(new BoundComponent(new Rectangle(x, y, width, height)));
         bag.add(new HitBoxComponent(new HitBox(new Rectangle(x, y, width, height))));
 
-        bag.add(new TargetComponent(Aspect.all(PlayerComponent.class, CoordinateComponent.class)));
+        bag.add(new TargetComponent(Aspect.all(PlayerControlledComponent.class, CoordinateComponent.class)));
 
         bag.add(new UtilityAiComponent(
                 new UtilityAiCalculator(

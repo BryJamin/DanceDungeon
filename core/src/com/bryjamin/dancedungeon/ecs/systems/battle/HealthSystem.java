@@ -8,7 +8,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 
 /**
  * Created by BB on 15/10/2017.
@@ -18,7 +18,7 @@ public class HealthSystem extends EntityProcessingSystem {
 
     ComponentMapper<HealthComponent> healthm;
     ComponentMapper<VelocityComponent> vm;
-    ComponentMapper<PlayerComponent> pm;
+    ComponentMapper<PlayerControlledComponent> pm;
     ComponentMapper<BlinkOnHitComponent> blinkOnHitMapper;
 
     @SuppressWarnings("unchecked")

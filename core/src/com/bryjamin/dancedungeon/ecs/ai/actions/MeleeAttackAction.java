@@ -10,7 +10,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.utils.math.CoordinateSorter;
 
@@ -30,7 +30,7 @@ public class MeleeAttackAction implements WorldAction {
 
         for (Entity meleeRangeEntity : world.getSystem(TileSystem.class).getCoordinateMap().get(
                 entityArray.first().getComponent(CoordinateComponent.class).coordinates)) {
-            if (world.getMapper(PlayerComponent.class).has(meleeRangeEntity)) {
+            if (world.getMapper(PlayerControlledComponent.class).has(meleeRangeEntity)) {
                 meleeRangeEntity.getComponent(HealthComponent.class).applyDamage(2.0f);
             }
         }

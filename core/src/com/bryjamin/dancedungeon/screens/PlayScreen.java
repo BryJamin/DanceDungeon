@@ -31,6 +31,7 @@ import com.bryjamin.dancedungeon.ecs.systems.battle.DispelSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ExplosionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.HealthSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.MovementAiSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.SelectedTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.BoundsDrawingSystem;
@@ -88,6 +89,8 @@ public class PlayScreen extends AbstractScreen {
 
                 //    if(world.getSystem(PlayerGraphicalTargetingSystem.class).createTarget(input.x, input.y)) return true;
 
+                    System.out.println(world.getSystem(SelectedTargetSystem.class).selectCharacter(input.x, input.y));
+
                     if(world.getSystem(ActionOnTapSystem.class).touch(input.x, input.y)){
                         return  true;
                     };
@@ -99,7 +102,6 @@ public class PlayScreen extends AbstractScreen {
 
             @Override
             public boolean swipe(float startX, float startY, float endX, float endY) {
-
 
                 double angle = AngleMath.angleOfTravelInDegrees(startX, startY, endX, endY);
 
@@ -169,6 +171,8 @@ public class PlayScreen extends AbstractScreen {
                         new BoundsDrawingSystem(batch),
 
 
+                        new SelectedTargetSystem(),
+
                         new MovementAiSystem()
                 )
 
@@ -213,17 +217,14 @@ public class PlayScreen extends AbstractScreen {
                 rows, columns));
 
 
-        BagToEntity.bagToEntity(world.createEntity(), new SpellFactory(assetManager).endTurnButton(0, 0));
-        BagToEntity.bagToEntity(world.createEntity(), new SpellFactory(assetManager).moveToButton(0, Measure.units(20f)));
-        BagToEntity.bagToEntity(world.createEntity(), new SpellFactory(assetManager).fireBallButton(0, Measure.units(40f)));
+        BagToEntity.bagToEntity(world.createEntity(), new SpellFactory().endTurnButton(0, 0));
 
-        BagToEntity.bagToEntity(world.createEntity(), new SpellFactory(assetManager).defaultButton(Measure.units(70f), 0, new WorldAction() {
+        BagToEntity.bagToEntity(world.createEntity(), new SpellFactory().defaultButton(Measure.units(0), Measure.units(50f), new WorldAction() {
             @Override
             public void performAction(World world, Entity entity) {
                 game.setScreen(new PlayScreen(game));
             }
         }));
-
 
 
     }

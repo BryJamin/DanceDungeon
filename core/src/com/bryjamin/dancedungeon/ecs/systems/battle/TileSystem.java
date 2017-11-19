@@ -1,6 +1,7 @@
 package com.bryjamin.dancedungeon.ecs.systems.battle;
 
 import com.artemis.Aspect;
+import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.math.Rectangle;
@@ -11,6 +12,7 @@ import com.badlogic.gdx.utils.Queue;
 import com.bryjamin.dancedungeon.ecs.components.BoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.math.CoordinateSorter;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
@@ -22,6 +24,8 @@ import com.bryjamin.dancedungeon.utils.pathing.AStarPathCalculator;
 
 public class TileSystem extends EntityProcessingSystem {
 
+
+    private ComponentMapper<PlayerControlledComponent> pcm;
 
     private float originX;
     private float originY;
@@ -41,6 +45,7 @@ public class TileSystem extends EntityProcessingSystem {
     //Map for all spaces
     private OrderedMap<Coordinates, Array<Entity>> coordinateMap = new OrderedMap<Coordinates,  Array<Entity>>();
 
+    private OrderedMap<Coordinates, Entity> playerControlledMap = new OrderedMap<Coordinates,  Entity>();
 
     private OrderedMap<Coordinates, Rectangle> rectangleMap = new OrderedMap<Coordinates,  Rectangle>();
 
@@ -125,6 +130,7 @@ public class TileSystem extends EntityProcessingSystem {
 
         } else {
 
+            if(pcm.has(e)) playerControlledMap.put(coordinateComponent.coordinates, e);
             occupiedMap.put(coordinateComponent.coordinates, e);
             coordinateMap.get(coordinateComponent.coordinates).add(e);
 
@@ -138,24 +144,27 @@ public class TileSystem extends EntityProcessingSystem {
 
     public void updateCoordinates(Entity e){
 
-        occupiedMap.remove(e.getComponent(CoordinateComponent.class).coordinates);
-        coordinateMap.get(e.getComponent(CoordinateComponent.class).coordinates).removeValue(e, true);
-
         CoordinateComponent coordinateComponent = e.getComponent(CoordinateComponent.class);
-        BoundComponent boundComponent = e.getComponent(BoundComponent.class);
 
+        occupiedMap.remove(coordinateComponent.coordinates);
+        coordinateMap.get(coordinateComponent.coordinates).removeValue(e, true);
+
+        if(pcm.has(e)) playerControlledMap.remove(coordinateComponent.coordinates);
+
+
+        BoundComponent boundComponent = e.getComponent(BoundComponent.class);
         coordinateComponent.coordinates = getCoordinatesUsingPosition(boundComponent.bound);
 
         occupiedMap.put(coordinateComponent.coordinates, e);
         coordinateMap.get(coordinateComponent.coordinates).add(e);
-
-
+        if(pcm.has(e)) playerControlledMap.put(coordinateComponent.coordinates, e);
 
 
     }
 
     @Override
     public void removed(Entity e) {
+        playerControlledMap.remove(e.getComponent(CoordinateComponent.class).coordinates);
         occupiedMap.remove(e.getComponent(CoordinateComponent.class).coordinates);
         coordinateMap.get(e.getComponent(CoordinateComponent.class).coordinates).removeValue(e, true);
     }
@@ -240,12 +249,11 @@ public class TileSystem extends EntityProcessingSystem {
      */
     public Coordinates getCoordinatesUsingPosition(float x, float y){
 
-        for(Rectangle r : rectangleMap.values().toArray()){
-            if(r.contains(x, y)){
-                return rectangleMap.findKey(r, false);
-            }
-        }
-        return null;
+        Coordinates coordinates = new Coordinates();
+        coordinates.setX((int)((x - originX) / tileWidthSize));
+        coordinates.setY((int)((y - originY) / tileHeightSize));
+
+        return coordinates;
 
     }
 
@@ -254,6 +262,7 @@ public class TileSystem extends EntityProcessingSystem {
         return aStarPathCalculator.findShortestPathMultiple(fillQueue,start, targets);
     }
 
-
-
+    public OrderedMap<Coordinates, Entity> getPlayerControlledMap() {
+        return playerControlledMap;
+    }
 }

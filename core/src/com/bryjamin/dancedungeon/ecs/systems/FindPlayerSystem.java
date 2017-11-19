@@ -6,7 +6,7 @@ import com.artemis.Component;
 import com.artemis.Entity;
 import com.artemis.utils.Bag;
 import com.artemis.utils.IntBag;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.utils.bag.BagSearch;
 
 /**
@@ -55,10 +55,10 @@ public class FindPlayerSystem extends BaseSystem {
 
     public Entity getPlayerEntity(){
 
-        IntBag bag = world.getAspectSubscriptionManager().get(Aspect.all(PlayerComponent.class)).getEntities();
+        IntBag bag = world.getAspectSubscriptionManager().get(Aspect.all(PlayerControlledComponent.class)).getEntities();
 
         for(int i = 0; i < bag.size(); i++){
-            if(world.getEntity(bag.get(i)).getComponent(PlayerComponent.class) == BagSearch.getObjectOfTypeClass(PlayerComponent.class, playerBag)){
+            if(world.getEntity(bag.get(i)).getComponent(PlayerControlledComponent.class) == BagSearch.getObjectOfTypeClass(PlayerControlledComponent.class, playerBag)){
                 return world.getEntity(bag.get(i));
             };
         };

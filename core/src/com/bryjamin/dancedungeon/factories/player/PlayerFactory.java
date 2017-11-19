@@ -1,5 +1,6 @@
 package com.bryjamin.dancedungeon.factories.player;
 
+import com.artemis.Aspect;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Rectangle;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
@@ -11,10 +12,15 @@ import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.factories.AbstractFactory;
+import com.bryjamin.dancedungeon.factories.player.spells.FireballDescription;
+import com.bryjamin.dancedungeon.factories.player.spells.FrostBallDescription;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
@@ -46,7 +52,7 @@ public class PlayerFactory extends AbstractFactory {
         ComponentBag bag = new ComponentBag();
         bag.add(new PositionComponent(x,y));
         bag.add(new HealthComponent(10));
-        bag.add(new PlayerComponent());
+        bag.add(new PlayerControlledComponent());
         bag.add(new CoordinateComponent(coordinates));
         bag.add(new BlinkOnHitComponent());
         bag.add(new AbilityPointComponent(4));
@@ -54,6 +60,10 @@ public class PlayerFactory extends AbstractFactory {
         bag.add(new MoveToComponent());
         bag.add(new VelocityComponent());
         bag.add(new TurnComponent());
+
+
+        bag.add(new SkillsComponent(new FireballDescription(), new FrostBallDescription()));
+        bag.add(new TargetComponent(Aspect.all(EnemyComponent.class, CoordinateComponent.class)));
 
       //  bag.add(new TurnComponent());
         bag.add(new BoundComponent(new Rectangle(x, y, width, height)));

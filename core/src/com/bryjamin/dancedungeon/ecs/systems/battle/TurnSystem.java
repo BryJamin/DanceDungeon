@@ -12,7 +12,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.MovementRangeComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.AttackAiComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 
 import static com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem.TURN.ALLY;
 import static com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem.TURN.ENEMY;
@@ -26,7 +26,7 @@ public class TurnSystem extends EntitySystem {
     private ComponentMapper<TurnComponent> turnMapper;
 
     private ComponentMapper<EnemyComponent> enemyMapper;
-    private ComponentMapper<PlayerComponent> playerMapper;
+    private ComponentMapper<PlayerControlledComponent> playerMapper;
 
     private ComponentMapper<AttackAiComponent> attackAiComponentMapper;
     private ComponentMapper<MovementRangeComponent> movementRangeMapper;
@@ -66,7 +66,7 @@ public class TurnSystem extends EntitySystem {
 
     @SuppressWarnings("unchecked")
     public TurnSystem() {
-        super(Aspect.all(TurnComponent.class).one(UtilityAiComponent.class, PlayerComponent.class));
+        super(Aspect.all(TurnComponent.class).one(UtilityAiComponent.class, PlayerControlledComponent.class));
     }
 
 
@@ -160,10 +160,17 @@ public class TurnSystem extends EntitySystem {
                 currentEntity = currentTurnEntities.pop();
                 if (!playerMapper.has(currentEntity)) {
                     currentEntity.getComponent(TurnComponent.class).state = TurnComponent.State.DECIDING;
+                    AbilityPointComponent apc = abilityPointMapper.get(currentEntity);
+                    apc.abilityPoints = apc.abilityPointsPerTurn;
+                } else {
+
+                    for(Entity e : currentTurnEntities){
+                        AbilityPointComponent apc = abilityPointMapper.get(e);
+                        apc.abilityPoints = apc.abilityPointsPerTurn;
+                    }
+
                 }
 
-                AbilityPointComponent apc = abilityPointMapper.get(currentEntity);
-                apc.abilityPoints = apc.abilityPointsPerTurn;
 
                 state = STATE.WAITING;
 

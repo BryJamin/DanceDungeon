@@ -60,7 +60,6 @@ public class PlayerGraphicalTargetingSystem extends BaseSystem {
 
         TileSystem tileSystem = world.getSystem(TileSystem.class);
 
-
         Coordinates c = tileSystem.getCoordinatesUsingPosition(x, y);
 
         if(c == null) return false;
@@ -73,7 +72,6 @@ public class PlayerGraphicalTargetingSystem extends BaseSystem {
         targetCoordinates = c;
         Entity box = BagToEntity.bagToEntity(world.createEntity(), highlightBox(tileSystem.getRectangleUsingCoordinates(c)));
         trackedEntities.add(box);
-
 
         return true;
 
@@ -113,8 +111,6 @@ public class PlayerGraphicalTargetingSystem extends BaseSystem {
                 }));
 
                 trackedEntities.add(box);
-
-
             }
 
         }
