@@ -1,6 +1,7 @@
 package com.bryjamin.dancedungeon.ecs.systems.graphical;
 
 import com.artemis.BaseSystem;
+import com.artemis.Entity;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -12,7 +13,7 @@ import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.assets.FileStrings;
 import com.bryjamin.dancedungeon.ecs.components.battle.AbilityPointComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
-import com.bryjamin.dancedungeon.ecs.systems.FindPlayerSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.SelectedTargetSystem;
 import com.bryjamin.dancedungeon.utils.Measure;
 
 /**
@@ -51,9 +52,11 @@ public class UIRenderingSystem extends BaseSystem{
         float camX = gamecam.position.x - gamecam.viewportWidth / 2;
         float camY = gamecam.position.y - gamecam.viewportHeight / 2;
 
-        float health = world.getSystem(FindPlayerSystem.class).getPlayerComponent(HealthComponent.class).health;
+        Entity select = world.getSystem(SelectedTargetSystem.class).getSelectedEntity();
+        if(select == null) return;
 
-        float ap = world.getSystem(FindPlayerSystem.class).getPlayerComponent(AbilityPointComponent.class).abilityPoints;
+        float health = select.getComponent(HealthComponent.class).health;
+        float ap = select.getComponent(AbilityPointComponent.class).abilityPoints;
 
         currencyFont.draw(batch, "health: " + health,
                 camX + Measure.units(3f),
@@ -65,8 +68,6 @@ public class UIRenderingSystem extends BaseSystem{
                 camX + Measure.units(40f),
                 gamecam.position.y + (gamecam.viewportHeight / 2) - Measure.units(1.25f),
                 0, Align.left, true);
-
-
 
 
     }

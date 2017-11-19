@@ -35,6 +35,14 @@ public class Fireball implements Spell{
 
     private static final int AP = 1;
 
+    private float damage = 3;
+
+    public Fireball(){};
+
+    public Fireball(float damage){
+        this.damage = damage;
+    }
+
 
     @Override
     public void cast(Entity entity, World world, Coordinates target) {
@@ -92,7 +100,7 @@ public class Fireball implements Spell{
 
                 for(Entity e : tileSystem.getCoordinateMap().get(coordinateComponent.coordinates)){
                     if(world.getMapper(HealthComponent.class).has(e)){
-                        e.getComponent(HealthComponent.class).applyDamage(3);
+                        e.getComponent(HealthComponent.class).applyDamage(damage);
                     }
                 };
 
@@ -102,6 +110,8 @@ public class Fireball implements Spell{
 
 
     }
+
+
 
     @Override
     public int getApCost() {

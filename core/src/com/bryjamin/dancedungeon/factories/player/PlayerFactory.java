@@ -2,6 +2,7 @@ package com.bryjamin.dancedungeon.factories.player;
 
 import com.artemis.Aspect;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.BoundComponent;
@@ -21,6 +22,7 @@ import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComp
 import com.bryjamin.dancedungeon.factories.AbstractFactory;
 import com.bryjamin.dancedungeon.factories.player.spells.FireballDescription;
 import com.bryjamin.dancedungeon.factories.player.spells.FrostBallDescription;
+import com.bryjamin.dancedungeon.factories.player.spells.MovementDescription;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
@@ -37,10 +39,8 @@ public class PlayerFactory extends AbstractFactory {
     public static final float height = Measure.units(5f);
 
 
-    public static final DrawableDescription player = new DrawableDescription.DrawableDescriptionBuilder(TextureStrings.PLAYER)
-            .size(height)
-            .build();
-
+    public static final DrawableDescription.DrawableDescriptionBuilder player = new DrawableDescription.DrawableDescriptionBuilder(TextureStrings.PLAYER)
+            .size(height);
     public PlayerFactory(AssetManager assetManager) {
         super(assetManager);
     }
@@ -62,17 +62,45 @@ public class PlayerFactory extends AbstractFactory {
         bag.add(new TurnComponent());
 
 
-        bag.add(new SkillsComponent(new FireballDescription(), new FrostBallDescription()));
+        bag.add(new SkillsComponent(new MovementDescription(), new FireballDescription(), new FrostBallDescription()));
         bag.add(new TargetComponent(Aspect.all(EnemyComponent.class, CoordinateComponent.class)));
 
       //  bag.add(new TurnComponent());
         bag.add(new BoundComponent(new Rectangle(x, y, width, height)));
-        bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, player));
+        bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, player.build()));
 
         return bag;
 
 
     }
+
+    public ComponentBag player2(float x, float y, Coordinates coordinates){
+
+        ComponentBag bag = new ComponentBag();
+        bag.add(new PositionComponent(x,y));
+        bag.add(new HealthComponent(10));
+        bag.add(new PlayerControlledComponent());
+        bag.add(new CoordinateComponent(coordinates));
+        bag.add(new BlinkOnHitComponent());
+        bag.add(new AbilityPointComponent(4));
+        //bag.add(new FadeComponent(true, 1.0f, true));
+        bag.add(new MoveToComponent());
+        bag.add(new VelocityComponent());
+        bag.add(new TurnComponent());
+
+
+        bag.add(new SkillsComponent(new MovementDescription(), new FrostBallDescription(), new FireballDescription()));
+        bag.add(new TargetComponent(Aspect.all(EnemyComponent.class, CoordinateComponent.class)));
+
+        //  bag.add(new TurnComponent());
+        bag.add(new BoundComponent(new Rectangle(x, y, width, height)));
+        bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, player.color(new Color(Color.WHITE)).build()));
+
+        return bag;
+
+
+    }
+
 
 
 }

@@ -164,7 +164,7 @@ public class TurnSystem extends EntitySystem {
                     apc.abilityPoints = apc.abilityPointsPerTurn;
                 } else {
 
-                    for(Entity e : currentTurnEntities){
+                    for(Entity e : allyTurnEntities){
                         AbilityPointComponent apc = abilityPointMapper.get(e);
                         apc.abilityPoints = apc.abilityPointsPerTurn;
                     }
