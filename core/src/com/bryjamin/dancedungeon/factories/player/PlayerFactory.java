@@ -23,6 +23,7 @@ import com.bryjamin.dancedungeon.factories.AbstractFactory;
 import com.bryjamin.dancedungeon.factories.player.spells.FireballDescription;
 import com.bryjamin.dancedungeon.factories.player.spells.FrostBallDescription;
 import com.bryjamin.dancedungeon.factories.player.spells.MovementDescription;
+import com.bryjamin.dancedungeon.factories.player.spells.SlashDescription;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
@@ -89,7 +90,7 @@ public class PlayerFactory extends AbstractFactory {
         bag.add(new TurnComponent());
 
 
-        bag.add(new SkillsComponent(new MovementDescription(), new FrostBallDescription(), new FireballDescription()));
+        bag.add(new SkillsComponent(new MovementDescription(), new SlashDescription(), new FireballDescription()));
         bag.add(new TargetComponent(Aspect.all(EnemyComponent.class, CoordinateComponent.class)));
 
         //  bag.add(new TurnComponent());

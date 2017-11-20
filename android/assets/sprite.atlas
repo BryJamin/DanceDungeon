@@ -1,369 +1,376 @@
 
 sprite.png
-size: 512,512
+size: 2048,256
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
 block
   rotate: false
-  xy: 265, 397
+  xy: 265, 1
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
 decor/turret
   rotate: false
-  xy: 331, 265
+  xy: 661, 1
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
 decor/turret
   rotate: false
-  xy: 397, 331
+  xy: 727, 67
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 1
 decor/turret
   rotate: false
-  xy: 133, 1
+  xy: 793, 133
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 2
 decor/turret
   rotate: false
-  xy: 199, 67
+  xy: 727, 1
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 3
 decor/turret
   rotate: false
-  xy: 265, 133
+  xy: 793, 67
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 4
 decor/turret
   rotate: false
-  xy: 331, 199
+  xy: 859, 133
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 5
 decor/turret
   rotate: false
-  xy: 397, 265
+  xy: 793, 1
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 6
 decor/turret
   rotate: false
-  xy: 199, 1
+  xy: 859, 67
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 7
 decor/turret
   rotate: false
-  xy: 265, 67
+  xy: 925, 133
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 8
 decor/turret
   rotate: false
-  xy: 331, 133
+  xy: 859, 1
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 9
 decor/turret
   rotate: false
-  xy: 397, 199
+  xy: 925, 67
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 10
 decor/turret
   rotate: false
-  xy: 265, 1
+  xy: 991, 133
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 11
 decor/turret
   rotate: false
-  xy: 331, 67
+  xy: 925, 1
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 12
 decor/turret
   rotate: false
-  xy: 397, 133
+  xy: 991, 67
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 13
 decor/turret
   rotate: false
-  xy: 331, 1
+  xy: 1057, 133
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 14
 decor/turret
   rotate: false
-  xy: 397, 67
+  xy: 991, 1
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 15
 enemy/blob
   rotate: false
-  xy: 67, 199
+  xy: 199, 1
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 1
 enemy/blob
   rotate: false
-  xy: 67, 199
+  xy: 199, 1
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 3
 enemy/blob
   rotate: false
-  xy: 133, 265
+  xy: 265, 67
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 2
 enemy/blob
   rotate: false
-  xy: 199, 331
+  xy: 331, 133
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 4
 enemy/boss/biggablobba
-  rotate: false
-  xy: 67, 331
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 0
-enemy/boss/biggablobba
-  rotate: false
-  xy: 133, 397
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 1
-enemy/boss/biggablobba
-  rotate: false
-  xy: 1, 199
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 2
-enemy/boss/biggablobba
-  rotate: false
-  xy: 67, 265
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 3
-enemy/boss/biggablobba
-  rotate: false
-  xy: 133, 331
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 4
-enemy/boss/biggablobba
-  rotate: false
-  xy: 199, 397
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 5
-enemy/boss/biggablobba
-  rotate: false
-  xy: 1, 133
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 6
-enemy/xi_portrait
-  rotate: false
-  xy: 397, 1
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 0
-icons/arrow
-  rotate: false
-  xy: 1, 265
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 0
-icons/item
-  rotate: false
-  xy: 1, 1
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 0
-icons/lock
   rotate: false
   xy: 133, 133
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
-icons/music
-  rotate: false
-  xy: 199, 199
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 0
-icons/music
-  rotate: false
-  xy: 265, 265
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 1
-icons/music
-  rotate: false
-  xy: 331, 331
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 2
-icons/music_off
-  rotate: false
-  xy: 397, 397
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 0
-icons/question_mark
+enemy/boss/biggablobba
   rotate: false
   xy: 67, 1
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
-  index: 0
-icons/settings_goto
+  index: 1
+enemy/boss/biggablobba
   rotate: false
   xy: 133, 67
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
-  index: 0
-icons/sound
+  index: 2
+enemy/boss/biggablobba
   rotate: false
   xy: 199, 133
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
-  index: 0
-icons/sound_off
+  index: 3
+enemy/boss/biggablobba
   rotate: false
-  xy: 265, 199
+  xy: 133, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 4
+enemy/boss/biggablobba
+  rotate: false
+  xy: 199, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 5
+enemy/boss/biggablobba
+  rotate: false
+  xy: 265, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 6
+enemy/xi_portrait
+  rotate: false
+  xy: 1057, 67
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
-line_vertical
+icons/arrow
   rotate: false
   xy: 67, 67
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
-player/block_firing
+icons/item
   rotate: false
-  xy: 1, 67
+  xy: 463, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 0
+icons/lock
+  rotate: false
+  xy: 463, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 0
+icons/music
+  rotate: false
+  xy: 529, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 0
+icons/music
+  rotate: false
+  xy: 595, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 1
+icons/music
+  rotate: false
+  xy: 529, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 2
+icons/music_off
+  rotate: false
+  xy: 595, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 0
+icons/question_mark
+  rotate: false
+  xy: 661, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 0
+icons/settings_goto
+  rotate: false
+  xy: 595, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 0
+icons/sound
+  rotate: false
+  xy: 661, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 0
+icons/sound_off
+  rotate: false
+  xy: 727, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 0
+line_vertical
+  rotate: false
+  xy: 529, 133
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
 player/block_firing
   rotate: false
-  xy: 67, 133
+  xy: 331, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 0
+player/block_firing
+  rotate: false
+  xy: 397, 133
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 1
 player/block_firing
   rotate: false
-  xy: 133, 199
+  xy: 331, 1
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 2
 player/block_walk
   rotate: false
-  xy: 133, 199
+  xy: 331, 1
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
 player/block_firing
   rotate: false
-  xy: 199, 265
+  xy: 397, 67
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 3
 player/block_walk
   rotate: false
-  xy: 199, 265
+  xy: 397, 67
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 1
 player/block_portrait
   rotate: false
-  xy: 265, 331
+  xy: 463, 133
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
 player/block_walk
   rotate: false
-  xy: 331, 397
+  xy: 397, 1
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 2
 skills/Fire
   rotate: false
-  xy: 1, 397
+  xy: 1, 133
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
 skills/Frost
   rotate: false
-  xy: 1, 331
+  xy: 1, 67
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
 skills/QuickStep
   rotate: false
-  xy: 67, 397
+  xy: 67, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 0
+skills/Slash
+  rotate: false
+  xy: 1, 1
   size: 64, 64
   orig: 64, 64
   offset: 0, 0

@@ -33,15 +33,17 @@ public class DeathSystem extends EntityProcessingSystem {
         kill(e);
     }
 
+    /**
+     * When called cleanly removes an entity from the world, while also performing theur on deah action
+     * @param e
+     */
     public void kill(Entity e){
-
 
         if(onDeathActionsMapper.has(e)){
             for(WorldAction worldAction : onDeathActionsMapper.get(e).actions){
                 worldAction.performAction(world, e);
             }
         }
-
 
         if(parentMapper.has(e)){
             killChildComponents(e.getComponent(ParentComponent.class));

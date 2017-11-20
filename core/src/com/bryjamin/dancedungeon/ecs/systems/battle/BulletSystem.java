@@ -37,22 +37,12 @@ public class BulletSystem extends EntityProcessingSystem {
     @Override
     protected void process(Entity e) {
 
-
-
         if(friendlyMapper.has(e)){
-
             EntitySubscription subscription = world.getAspectSubscriptionManager()
                     .get(Aspect.all(HitBoxComponent.class, HealthComponent.class, EnemyComponent.class));
             IntBag entityIds = subscription.getEntities();
             bulletScan(e, entityIds);
-
         }
-
-
-
-
-
-
 
     }
 

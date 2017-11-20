@@ -249,15 +249,12 @@ public class TileSystem extends EntityProcessingSystem {
      */
     public Coordinates getCoordinatesUsingPosition(float x, float y){
 
-        System.out.println("y is : " + y);
-
-        System.out.println("origin y is : " + originY);
-
         Coordinates coordinates = new Coordinates();
 
         coordinates.setX((int)((x - originX) / tileWidthSize));
         coordinates.setY((int)((y - originY) / tileHeightSize));
 
+        //when negative
         if(x - originX < 0) coordinates.addX(-1);
         if(y - originY < 0) coordinates.addY(-1);
 

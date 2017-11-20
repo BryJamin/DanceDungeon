@@ -35,6 +35,7 @@ public class Colors {
     public static final Color BLOB_GREEN = RGBtoColor(75f, 232f, 14f, 1);
     public static final Color BLOB_RED = RGBtoColor(241f, 53f, 53f, 1);
 
+
     public static Color RGBtoColor(float r, float g, float b, float a){
         return new Color(r / 255f, g / 255f, b / 255f, a);
     }

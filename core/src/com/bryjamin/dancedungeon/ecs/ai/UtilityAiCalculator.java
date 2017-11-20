@@ -21,8 +21,9 @@ public class UtilityAiCalculator {
     }
 
 
-
-
+    /**
+     * Returns the action with the highest calculated score
+     */
     public WorldAction getAction(World world, Entity entity){
 
         for(ActionCalculator actionCalculator : actionCalculators){

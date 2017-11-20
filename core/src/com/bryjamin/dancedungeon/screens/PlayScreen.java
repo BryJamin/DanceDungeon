@@ -30,7 +30,6 @@ import com.bryjamin.dancedungeon.ecs.systems.battle.DeathSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.DispelSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ExplosionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.HealthSystem;
-import com.bryjamin.dancedungeon.ecs.systems.battle.MovementAiSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.SelectedTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
@@ -169,11 +168,8 @@ public class PlayScreen extends AbstractScreen {
                         new HealthBarSystem(game, gameport),
                         new UIRenderingSystem(game, gameport),
                         new BoundsDrawingSystem(batch),
-
-
-                        new SelectedTargetSystem(),
-
-                        new MovementAiSystem()
+                        
+                        new SelectedTargetSystem()
                 )
 
                 .build();
