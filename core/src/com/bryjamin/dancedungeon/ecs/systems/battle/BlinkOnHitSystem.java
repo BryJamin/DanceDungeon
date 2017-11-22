@@ -9,7 +9,11 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 /**
  * Created by BB on 17/10/2017.
  *
- * System used to track how long an appears to be 'flashing' when hit.
+ * This system checks if an entity has just been hit.
+ *
+ * If it has changes a value within the BlinkOnHitComponent, which is used by the Rendering System
+ * to see if the entity appears as if it is flashing white, to signify to the player that it has been
+ * hit
  *
  */
 

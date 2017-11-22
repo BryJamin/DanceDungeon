@@ -25,7 +25,7 @@ public abstract class CooldownSpellDescription extends SkillDescription {
     @Override
     public void cast(World world, Entity entity, Coordinates target) {
         ready = false;
-        spell.cast(world, entity, target);
+        skill.cast(world, entity, target);
     }
 
     @Override

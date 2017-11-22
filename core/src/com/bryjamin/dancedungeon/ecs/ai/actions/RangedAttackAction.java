@@ -9,7 +9,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.AbilityPointComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
-import com.bryjamin.dancedungeon.factories.player.spells.Spell;
+import com.bryjamin.dancedungeon.factories.player.spells.animations.Skill;
 import com.bryjamin.dancedungeon.utils.math.CoordinateSorter;
 
 /**
@@ -18,10 +18,10 @@ import com.bryjamin.dancedungeon.utils.math.CoordinateSorter;
 
 public class RangedAttackAction implements WorldAction {
 
-    private Spell spell;
+    private Skill skill;
 
-    public RangedAttackAction(Spell spell){
-        this.spell = spell;
+    public RangedAttackAction(Skill skill){
+        this.skill = skill;
     }
 
 
@@ -33,7 +33,7 @@ public class RangedAttackAction implements WorldAction {
         entityArray.sort(CoordinateSorter.SORT_BY_NEAREST(entity));
 
 
-        spell.cast(world, entity, entityArray.first().getComponent(CoordinateComponent.class).coordinates);
+        skill.cast(world, entity, entityArray.first().getComponent(CoordinateComponent.class).coordinates);
         entity.getComponent(AbilityPointComponent.class).abilityPoints = 0;
 
         entity.getComponent(TurnComponent.class).turnOverCondition = new WorldCondition() {

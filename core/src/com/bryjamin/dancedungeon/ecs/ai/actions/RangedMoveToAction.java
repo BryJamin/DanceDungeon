@@ -22,6 +22,8 @@ import com.bryjamin.dancedungeon.utils.math.Coordinates;
  * Created by BB on 15/11/2017.
  */
 
+//TODO create a generic moveto action that is given a set of coordinates that are avaliable for movmement and then it moves there
+
 public class RangedMoveToAction implements WorldAction {
 
     private int range;

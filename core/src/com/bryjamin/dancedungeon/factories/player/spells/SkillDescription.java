@@ -2,6 +2,7 @@ package com.bryjamin.dancedungeon.factories.player.spells;
 
 import com.artemis.Entity;
 import com.artemis.World;
+import com.bryjamin.dancedungeon.factories.player.spells.animations.Skill;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
 /**
@@ -10,7 +11,7 @@ import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
 public abstract class SkillDescription {
 
-    protected Spell spell;
+    protected Skill skill;
 
     public abstract void createTargeting(World world, Entity player);
 
@@ -18,8 +19,8 @@ public abstract class SkillDescription {
 
     public abstract void cast(World world, Entity entity, Coordinates target);
 
-    public Spell getSpell(){
-        return spell;
+    public Skill getSkill(){
+        return skill;
     }
 
     public abstract void endTurnUpdate();

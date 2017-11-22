@@ -21,6 +21,8 @@ import static com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem.TURN.ENEMY
 
 /**
  * Created by BB on 21/10/2017.
+ *
+ * System used to keep track of player and enemy turns
  */
 
 public class TurnSystem extends EntitySystem {
@@ -80,11 +82,8 @@ public class TurnSystem extends EntitySystem {
 
         if (enemyMapper.has(e)) {
             enemyTurnEntities.add(e);
-            // if(turn == ENEMY) currentTurnEntities.add(e);
-
         } else if (playerMapper.has(e)) {
             allyTurnEntities.add(e);
-            // if(turn == ALLY) currentTurnEntities.add(e);
         }
 
     }
@@ -129,6 +128,7 @@ public class TurnSystem extends EntitySystem {
         return processingFlag;
     }
 
+    //TODO organise, as it is quite messy
     @Override
     protected void processSystem() {
 
@@ -196,6 +196,7 @@ public class TurnSystem extends EntitySystem {
 
                         case DECIDING:
 
+                            //TODO change to just be a varaible that states the turn is over?
                             AbilityPointComponent abilityPointComponent = abilityPointMapper.get(currentEntity);
                             if (abilityPointComponent.abilityPoints <= 0) {
                                 turnComponent.state = TurnComponent.State.END;

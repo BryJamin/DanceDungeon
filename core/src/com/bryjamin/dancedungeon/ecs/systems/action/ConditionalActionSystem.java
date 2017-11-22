@@ -9,6 +9,10 @@ import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditio
 
 /**
  * Created by BB on 01/11/2017.
+ *
+ * Checks the conditions of a given conditional action.
+ * If the condition returns true it performs the corresponding Action
+ *
  */
 
 public class ConditionalActionSystem extends EntityProcessingSystem {

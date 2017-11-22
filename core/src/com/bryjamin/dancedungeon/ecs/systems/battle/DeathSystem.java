@@ -12,8 +12,12 @@ import com.bryjamin.dancedungeon.ecs.systems.ParentChildSystem;
 
 /**
  * Created by BB on 15/10/2017.
+ *
+ * When an entity is given a 'DeadComponent' it is first ran through this system
+ * to run any 'OnDeathActions' the entity may have.
+ *
+ * The entity is this deleted from the world.
  */
-
 public class DeathSystem extends EntityProcessingSystem {
 
 

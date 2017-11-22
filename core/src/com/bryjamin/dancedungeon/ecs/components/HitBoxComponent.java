@@ -7,6 +7,8 @@ import com.bryjamin.dancedungeon.utils.HitBox;
 
 /**
  * Created by BB on 15/10/2017.
+ *
+ * Describes the areas of an entity where it can be interacted with.
  */
 
 public class HitBoxComponent extends Component {

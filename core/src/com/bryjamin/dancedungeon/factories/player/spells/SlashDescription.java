@@ -11,7 +11,7 @@ import com.badlogic.gdx.utils.Array;
     public class SlashDescription extends CooldownSpellDescription {
 
     public SlashDescription(){
-        spell = new Slash();
+        skill = new com.bryjamin.dancedungeon.factories.player.spells.animations.Slash();
     }
 
     @Override

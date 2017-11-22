@@ -16,6 +16,11 @@ import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
 /**
  * Created by BB on 18/11/2017.
+ *
+ * System that tracks which entity is currently selected by the player.
+ *
+ * It changes the buttons and text displayed on the screen based on the entity selected
+ *
  */
 
 public class SelectedTargetSystem extends BaseSystem {
@@ -35,6 +40,9 @@ public class SelectedTargetSystem extends BaseSystem {
     }
 
 
+    /**
+     * Clears the button entities and selected entity from the system
+     */
     public void clear(){
         for(Entity e : buttons){
             e.deleteFromWorld();
@@ -50,6 +58,9 @@ public class SelectedTargetSystem extends BaseSystem {
     }
 
 
+    /**
+     * Removes the current targeting from being displayed
+     */
     public void clearTargeting(){
 
         IntBag bag = world.getAspectSubscriptionManager().get(Aspect.all(UITargetingComponent.class)).getEntities();
@@ -61,38 +72,19 @@ public class SelectedTargetSystem extends BaseSystem {
     }
 
 
-
+    /**
+     * Checks the given x and y input to see if a playerable character has been selected.
+     * If this is the case the system sets up the character's spells
+     * @param x - x input
+     * @param y - y input
+     * @return - True if a playerable character has been selected
+     */
     public boolean selectCharacter(float x, float y){
 
         Coordinates c = world.getSystem(TileSystem.class).getCoordinatesUsingPosition(x, y);
 
-
-        System.out.println(c);
-
         if(world.getSystem(TileSystem.class).getPlayerControlledMap().containsKey(c)){
-
-            if(selectedEntity != null){
-                selectedEntity.edit().remove(FadeComponent.class);
-                selectedEntity.getComponent(DrawableComponent.class).drawables.first().getColor().a = 1;
-            }
-
-            final Entity e = world.getSystem(TileSystem.class).getPlayerControlledMap().get(c);
-            this.selectedEntity = e;
-
-            //TODO just for now
-            e.edit().add(new FadeComponent(true, 2.5f, true));
-
-
-            this.clear();
-
-            final SkillsComponent skillsComponent = e.getComponent(SkillsComponent.class);
-
-            for(int i = 0; i < skillsComponent.skillDescriptions.size; i++){
-
-                buttons.add(BagToEntity.bagToEntity(world.createEntity(), new SpellFactory().skillButton(Measure.units(25f) * (i + 1), 0,
-                        skillsComponent.skillDescriptions.get(i), e)));
-            }
-
+            setUpCharacter(world.getSystem(TileSystem.class).getPlayerControlledMap().get(c));
             return true;
         };
 
@@ -100,7 +92,32 @@ public class SelectedTargetSystem extends BaseSystem {
     }
 
 
+    /**
+     *  Uses the given entity and sets up it's skills
+     *
+     * @param playableCharacter - Selected playable character
+     */
+    private void setUpCharacter(final Entity playableCharacter){
 
+        if(selectedEntity != null){
+            selectedEntity.edit().remove(FadeComponent.class);
+            selectedEntity.getComponent(DrawableComponent.class).drawables.first().getColor().a = 1;
+        }
+
+        this.selectedEntity = playableCharacter;
+
+        //TODO just for now
+        playableCharacter.edit().add(new FadeComponent(true, 2.5f, true));
+        this.clear();
+
+        final SkillsComponent skillsComponent = playableCharacter.getComponent(SkillsComponent.class);
+
+        for(int i = 0; i < skillsComponent.skillDescriptions.size; i++){
+            buttons.add(BagToEntity.bagToEntity(world.createEntity(), new SpellFactory().skillButton(Measure.units(25f) * (i + 1), 0,
+                    skillsComponent.skillDescriptions.get(i), playableCharacter)));
+        }
+
+    }
 
 
 
@@ -108,10 +125,6 @@ public class SelectedTargetSystem extends BaseSystem {
         return selectedEntity != null;
     }
 
-
-    public void createHighlight(){
-
-    }
 
 
 

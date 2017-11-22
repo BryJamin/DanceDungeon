@@ -1,4 +1,4 @@
-package com.bryjamin.dancedungeon.factories.player.spells;
+package com.bryjamin.dancedungeon.factories.player.spells.animations;
 
 import com.artemis.Entity;
 import com.artemis.World;
@@ -27,21 +27,13 @@ import com.bryjamin.dancedungeon.utils.texture.DrawableDescription;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
 
 /**
- * Created by BB on 13/11/2017.
+ * Created by BB on 19/11/2017.
  */
 
-public class Fireball implements Spell{
+public class FrostBall implements Skill {
 
 
     private static final int AP = 1;
-
-    private float damage = 3;
-
-    public Fireball(){};
-
-    public Fireball(float damage){
-        this.damage = damage;
-    }
 
 
     @Override
@@ -68,7 +60,7 @@ public class Fireball implements Spell{
 
         fireBall.edit().add((new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE,
                 new DrawableDescription.DrawableDescriptionBuilder(TextureStrings.BLOCK)
-                        .color(new Color(Color.ORANGE))
+                        .color(new Color(Color.SKY))
                         .width(size)
                         .height(size)
                         .build())));
@@ -98,23 +90,18 @@ public class Fireball implements Spell{
 
                 CoordinateComponent coordinateComponent = entity.getComponent(CoordinateComponent.class);
 
-                for(Entity e : tileSystem.getCoordinateMap().get(coordinateComponent.coordinates)){
-                    if(world.getMapper(HealthComponent.class).has(e)){
-                        e.getComponent(HealthComponent.class).applyDamage(damage);
+                for (Entity e : tileSystem.getCoordinateMap().get(coordinateComponent.coordinates)) {
+                    if (world.getMapper(HealthComponent.class).has(e)) {
+                        e.getComponent(HealthComponent.class).applyDamage(3);
                     }
-                };
+                }
+                ;
 
             }
         }));
 
 
-
     }
 
 
-
-    @Override
-    public int getApCost() {
-        return AP;
-    }
 }

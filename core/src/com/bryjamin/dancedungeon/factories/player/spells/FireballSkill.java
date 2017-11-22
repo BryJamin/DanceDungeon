@@ -7,11 +7,11 @@ import com.artemis.World;
  * Created by BB on 18/11/2017.
  */
 
-public class FireballDescription extends CooldownSpellDescription {
+public class FireballSkill extends CooldownSpellDescription {
 
 
-    public FireballDescription(){
-        spell = new Fireball(6);
+    public FireballSkill(){
+        skill = new com.bryjamin.dancedungeon.factories.player.spells.animations.Fireball(6);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.bryjamin.dancedungeon.factories.player.spells;
+package com.bryjamin.dancedungeon.factories.player.spells.animations;
 
 import com.artemis.Entity;
 import com.artemis.World;
@@ -10,7 +10,7 @@ import com.bryjamin.dancedungeon.utils.math.Coordinates;
  * Created by BB on 20/11/2017.
  */
 
-public class Slash implements Spell{
+public class Slash implements Skill {
 
 
     @Override
@@ -24,8 +24,4 @@ public class Slash implements Spell{
 
     }
 
-    @Override
-    public int getApCost() {
-        return 1;
-    }
 }

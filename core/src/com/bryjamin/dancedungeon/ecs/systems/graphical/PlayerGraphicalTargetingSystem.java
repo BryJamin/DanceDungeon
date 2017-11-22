@@ -26,7 +26,7 @@ import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.systems.FindPlayerSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
-import com.bryjamin.dancedungeon.factories.player.spells.Spell;
+import com.bryjamin.dancedungeon.factories.player.spells.animations.Skill;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
@@ -78,7 +78,7 @@ public class PlayerGraphicalTargetingSystem extends BaseSystem {
     }
 
 
-    public void createTargetTile(final Entity entity, final Spell spell, int range) {
+    public void createTargetTile(final Entity entity, final Skill skill, int range) {
 
         clearTrackedEntites();
 
@@ -104,7 +104,7 @@ public class PlayerGraphicalTargetingSystem extends BaseSystem {
                     @Override
                     public void performAction(World world, final Entity e) {
 
-                        spell.cast(world, entity, c);
+                        skill.cast(world, entity, c);
                         clearTrackedEntites();
 
                     }

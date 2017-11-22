@@ -20,6 +20,11 @@ import com.bryjamin.dancedungeon.utils.pathing.AStarPathCalculator;
 
 /**
  * Created by BB on 18/10/2017.
+ *
+ * System that keeps track of the co-ordinates all entities occupy.
+ *
+ * Is also used to place and locate entities using their co-ordinates
+ *
  */
 
 public class TileSystem extends EntityProcessingSystem {

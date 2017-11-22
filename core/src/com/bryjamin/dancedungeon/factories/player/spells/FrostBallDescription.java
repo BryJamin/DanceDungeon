@@ -10,7 +10,7 @@ import com.artemis.World;
 public class FrostBallDescription extends CooldownSpellDescription {
 
     public FrostBallDescription(){
-        spell = new FrostBall();
+        skill = new com.bryjamin.dancedungeon.factories.player.spells.animations.FrostBall();
     }
 
     @Override
