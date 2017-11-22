@@ -10,7 +10,7 @@ import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
 public interface Spell {
 
-    void cast(Entity entity, World world, Coordinates target);
+    void cast(World world, Entity entity, Coordinates target);
     int getApCost();
 
 

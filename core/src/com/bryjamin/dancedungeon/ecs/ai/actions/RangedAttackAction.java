@@ -33,7 +33,7 @@ public class RangedAttackAction implements WorldAction {
         entityArray.sort(CoordinateSorter.SORT_BY_NEAREST(entity));
 
 
-        spell.cast(entity, world, entityArray.first().getComponent(CoordinateComponent.class).coordinates);
+        spell.cast(world, entity, entityArray.first().getComponent(CoordinateComponent.class).coordinates);
         entity.getComponent(AbilityPointComponent.class).abilityPoints = 0;
 
         entity.getComponent(TurnComponent.class).turnOverCondition = new WorldCondition() {

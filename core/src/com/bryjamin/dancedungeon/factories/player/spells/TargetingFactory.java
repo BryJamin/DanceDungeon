@@ -35,7 +35,7 @@ import com.bryjamin.dancedungeon.utils.texture.Layer;
 public class TargetingFactory {
 
 
-    public Array<Entity> createTargetTiles(World world, final Entity player, final Spell spell, int range) {
+    public Array<Entity> createTargetTiles(World world, final Entity player, final SkillDescription spell, int range) {
 
         Array<Entity> entityArray = new Array<Entity>();
 
@@ -59,7 +59,7 @@ public class TargetingFactory {
                 box.edit().add(new ActionOnTapComponent(new WorldAction() {
                     @Override
                     public void performAction(World world, final Entity e) {
-                        spell.cast(player, world, c);
+                        spell.cast(world, player, c);
                         world.getSystem(SelectedTargetSystem.class).clearTargeting();
                     }
                 }));

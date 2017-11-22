@@ -104,7 +104,7 @@ public class PlayerGraphicalTargetingSystem extends BaseSystem {
                     @Override
                     public void performAction(World world, final Entity e) {
 
-                        spell.cast(entity, world, c);
+                        spell.cast(world, entity, c);
                         clearTrackedEntites();
 
                     }

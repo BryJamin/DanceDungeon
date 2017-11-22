@@ -5,13 +5,13 @@ import com.artemis.World;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
-import com.bryjamin.dancedungeon.ecs.components.battle.AbilityPointComponent;
+import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
 /**
  * Created by BB on 19/11/2017.
  */
 
-public class MovementDescription extends SkillDescription {
+public class MovementDescription extends CooldownSpellDescription {
 
     public MovementDescription(){
     }
@@ -21,11 +21,13 @@ public class MovementDescription extends SkillDescription {
 
         Array<Entity> entityArray = new TargetingFactory().createMovementTiles(world, player, 3);
 
+        final CooldownSpellDescription csd = this;
+
         for(Entity e : entityArray){
             e.getComponent(ActionOnTapComponent.class).actions.add(new WorldAction() {
                 @Override
                 public void performAction(World world, Entity entity) {
-                    player.getComponent(AbilityPointComponent.class).abilityPoints -= 2;
+                    csd.cast(world, entity, new Coordinates());
                 }
             });
         }
@@ -33,8 +35,8 @@ public class MovementDescription extends SkillDescription {
     }
 
     @Override
-    public boolean canCast(World world, Entity entity) {
-        return entity.getComponent(AbilityPointComponent.class).abilityPoints >= 2;
+    public void cast(World world, Entity entity, Coordinates target) {
+        ready = false;
     }
 
 

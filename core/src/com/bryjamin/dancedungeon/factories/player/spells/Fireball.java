@@ -45,7 +45,7 @@ public class Fireball implements Spell{
 
 
     @Override
-    public void cast(Entity entity, World world, Coordinates target) {
+    public void cast(World world, Entity entity, Coordinates target) {
 
         final TileSystem tileSystem = world.getSystem(TileSystem.class);
         PositionComponent positionComponent = entity.getComponent(PositionComponent.class);

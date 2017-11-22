@@ -11,8 +11,10 @@ import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MovementRangeComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.AttackAiComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
+import com.bryjamin.dancedungeon.factories.player.spells.SkillDescription;
 
 import static com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem.TURN.ALLY;
 import static com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem.TURN.ENEMY;
@@ -33,6 +35,9 @@ public class TurnSystem extends EntitySystem {
 
 
     private ComponentMapper<AbilityPointComponent> abilityPointMapper;
+
+
+    private ComponentMapper<SkillsComponent> skillMapper;
 
 
     private ComponentMapper<UtilityAiComponent> utilityAiMapper;
@@ -165,8 +170,10 @@ public class TurnSystem extends EntitySystem {
                 } else {
 
                     for(Entity e : allyTurnEntities){
-                        AbilityPointComponent apc = abilityPointMapper.get(e);
-                        apc.abilityPoints = apc.abilityPointsPerTurn;
+                        SkillsComponent sc = skillMapper.get(e);
+                        for(SkillDescription sd : sc.skillDescriptions){
+                            sd.endTurnUpdate();
+                        }
                     }
 
                 }

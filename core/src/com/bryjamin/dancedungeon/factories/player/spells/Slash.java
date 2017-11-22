@@ -14,7 +14,7 @@ public class Slash implements Spell{
 
 
     @Override
-    public void cast(Entity entity, World world, Coordinates target) {
+    public void cast(World world, Entity entity, Coordinates target) {
 
         for (Entity meleeRangeEntity : world.getSystem(TileSystem.class).getCoordinateMap().get(target)) {
             if (world.getMapper(HealthComponent.class).has(meleeRangeEntity)) {
