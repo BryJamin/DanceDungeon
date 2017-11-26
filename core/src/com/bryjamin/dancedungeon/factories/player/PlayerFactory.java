@@ -29,6 +29,7 @@ import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 import com.bryjamin.dancedungeon.utils.texture.DrawableDescription;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
+import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 /**
  * Created by BB on 14/10/2017.
@@ -40,7 +41,7 @@ public class PlayerFactory extends AbstractFactory {
     public static final float height = Measure.units(5f);
 
 
-    public static final DrawableDescription.DrawableDescriptionBuilder player = new DrawableDescription.DrawableDescriptionBuilder(TextureStrings.PLAYER)
+    public static final DrawableDescription.DrawableDescriptionBuilder player = new TextureDescription.Builder(TextureStrings.PLAYER)
             .size(height);
     public PlayerFactory(AssetManager assetManager) {
         super(assetManager);

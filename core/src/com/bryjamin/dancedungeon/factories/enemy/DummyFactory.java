@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.bryjamin.dancedungeon.assets.Colors;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
-import com.bryjamin.dancedungeon.ecs.ai.ActionCalculator;
+import com.bryjamin.dancedungeon.ecs.ai.ActionScoreCalculator;
 import com.bryjamin.dancedungeon.ecs.ai.UtilityAiCalculator;
 import com.bryjamin.dancedungeon.ecs.ai.actions.MeleeAttackAction;
 import com.bryjamin.dancedungeon.ecs.ai.actions.MeleeMoveToAction;
@@ -36,6 +36,7 @@ import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 import com.bryjamin.dancedungeon.utils.texture.DrawableDescription;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
+import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 /**
  * Created by BB on 15/10/2017.
@@ -47,7 +48,7 @@ public class DummyFactory extends AbstractFactory {
     public static final float height = Measure.units(5f);
 
 
-    public static final DrawableDescription.DrawableDescriptionBuilder player = new DrawableDescription.DrawableDescriptionBuilder(TextureStrings.BLOB)
+    public static final DrawableDescription.DrawableDescriptionBuilder player = new TextureDescription.Builder(TextureStrings.BLOB)
             .index(2)
             .size(height)
             .color(Colors.BLOB_RED);
@@ -57,7 +58,7 @@ public class DummyFactory extends AbstractFactory {
     }
 
 
-    public ComponentBag targetDummy(float x, float y) {
+    private ComponentBag targetDummy(float x, float y) {
 
         ComponentBag bag = new ComponentBag();
         bag.add(new PositionComponent(x, y));
@@ -77,22 +78,11 @@ public class DummyFactory extends AbstractFactory {
 
         bag.add(new UtilityAiComponent(
                 new UtilityAiCalculator(
-                        new ActionCalculator(new MeleeMoveToAction(), new IsNextToCalculator(0, 100)),
-                        new ActionCalculator(new MeleeAttackAction(), new IsNextToCalculator(150, -10)
+                        new ActionScoreCalculator(new MeleeMoveToAction(), new IsNextToCalculator(0, 100)),
+                        new ActionScoreCalculator(new MeleeAttackAction(), new IsNextToCalculator(150, -10)
                         )
                 )));
 
-        return bag;
-
-
-    }
-
-    public ComponentBag targetDummyLeft(float x, float y) {
-
-        ComponentBag bag = targetDummy(x, y);
-        bag.add(new DispellableComponent(DispellableComponent.Type.HORIZONTAL));
-        bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, player.build()));
-        bag.add(new MovementRangeComponent(2));
         return bag;
 
     }
@@ -118,38 +108,6 @@ public class DummyFactory extends AbstractFactory {
         return bag;
 
     }
-
-
-    public ComponentBag targetDummyVert(float x, float y) {
-
-        ComponentBag bag = targetDummy(x, y);
-        bag.add(new DispellableComponent(DispellableComponent.Type.VERTICAL));
-        bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, player.color(Colors.BOMB_ORANGE).build()));
-        bag.add(new MovementRangeComponent(4));
-        return bag;
-
-    }
-
-
-    public ComponentBag targetDummyFrontSlash(float x, float y) {
-
-        ComponentBag bag = targetDummy(x, y);
-        bag.add(new DispellableComponent(DispellableComponent.Type.FRONT_SLASH));
-        bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, player.color(Colors.AMOEBA_BLUE).build()));
-        return bag;
-
-    }
-
-
-    public ComponentBag targetDummyBackSlash(float x, float y) {
-
-        ComponentBag bag = targetDummy(x, y);
-        bag.add(new DispellableComponent(DispellableComponent.Type.BACK_SLASH));
-        bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, player.color(Colors.AMOEBA_FAST_PURPLE).build()));
-        return bag;
-
-    }
-
 
 }
 

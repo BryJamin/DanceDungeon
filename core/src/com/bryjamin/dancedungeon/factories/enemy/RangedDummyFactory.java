@@ -4,7 +4,7 @@ import com.artemis.Aspect;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Rectangle;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
-import com.bryjamin.dancedungeon.ecs.ai.ActionCalculator;
+import com.bryjamin.dancedungeon.ecs.ai.ActionScoreCalculator;
 import com.bryjamin.dancedungeon.ecs.ai.UtilityAiCalculator;
 import com.bryjamin.dancedungeon.ecs.ai.actions.RangedAttackAction;
 import com.bryjamin.dancedungeon.ecs.ai.actions.RangedMoveToAction;
@@ -34,6 +34,7 @@ import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 import com.bryjamin.dancedungeon.utils.texture.DrawableDescription;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
+import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 /**
  * Created by BB on 14/11/2017.
@@ -45,7 +46,7 @@ public class RangedDummyFactory extends AbstractFactory {
     public static final float height = Measure.units(5f);
 
 
-    public static final DrawableDescription.DrawableDescriptionBuilder player = new DrawableDescription.DrawableDescriptionBuilder(TextureStrings.BIGGABLOBBA)
+    public static final DrawableDescription.DrawableDescriptionBuilder player = new TextureDescription.Builder(TextureStrings.BIGGABLOBBA)
             .index(2)
             .size(height);
 
@@ -76,8 +77,8 @@ public class RangedDummyFactory extends AbstractFactory {
 
         bag.add(new UtilityAiComponent(
                 new UtilityAiCalculator(
-                        new ActionCalculator(new RangedMoveToAction(range), new IsInRangeCalculator(0, 100, range)),
-                        new ActionCalculator(new RangedAttackAction(new Fireball()), new IsInRangeCalculator(150, -10, range)
+                        new ActionScoreCalculator(new RangedMoveToAction(range), new IsInRangeCalculator(0, 100, range)),
+                        new ActionScoreCalculator(new RangedAttackAction(new Fireball()), new IsInRangeCalculator(150, -10, range)
                         )
                 )));
 

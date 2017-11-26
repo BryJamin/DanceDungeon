@@ -15,8 +15,8 @@ import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
-import com.bryjamin.dancedungeon.utils.texture.DrawableDescription;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
+import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 /**
  * Created by BB on 28/10/2017.
@@ -40,12 +40,10 @@ public class SpellFactory {
 
     public ComponentBag skillButton(float x, float y, final SkillDescription skillDescription, final Entity player) {
 
-        System.out.println("x: " + x + " y: " + y);
-
         ComponentBag bag = new ComponentBag();
         bag.add(new PositionComponent(x, y));
         bag.add(new HitBoxComponent(new HitBox(new Rectangle(x, y, SIZE, SIZE))));
-        bag.add(new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE, new DrawableDescription.DrawableDescriptionBuilder(skillDescription.getIcon())
+        bag.add(new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE, new TextureDescription.Builder(skillDescription.getIcon())
                 .size(SIZE)
                 .build()));
 
@@ -93,9 +91,6 @@ public class SpellFactory {
 
 
     public ComponentBag defaultButton(float x, float y, WorldAction action) {
-
-        System.out.println("x: " + x + " y: " + y);
-
         ComponentBag bag = new ComponentBag();
         bag.add(new PositionComponent(x, y));
         bag.add(new HitBoxComponent(new HitBox(new Rectangle(x, y, SIZE, SIZE))));

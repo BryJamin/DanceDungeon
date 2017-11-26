@@ -13,7 +13,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
-import com.bryjamin.dancedungeon.ecs.DirectionalInputAdapter;
+import com.bryjamin.dancedungeon.utils.DirectionalInputAdapter;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.DispellableComponent;
@@ -171,7 +171,6 @@ public class PlayScreen extends AbstractScreen {
                         
                         new SelectedTargetSystem()
                 )
-
                 .build();
 
         world = new World(config);

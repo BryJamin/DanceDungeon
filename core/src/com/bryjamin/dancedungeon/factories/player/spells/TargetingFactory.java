@@ -25,8 +25,8 @@ import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
 import com.bryjamin.dancedungeon.utils.math.CoordinateMath;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
-import com.bryjamin.dancedungeon.utils.texture.DrawableDescription;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
+import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 /**
  * Created by BB on 18/11/2017.
@@ -149,7 +149,7 @@ public class TargetingFactory {
 
         bag.add(new PositionComponent(r.x, r.y));
         bag.add(new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE,
-                new DrawableDescription.DrawableDescriptionBuilder(TextureStrings.BLOCK)
+                new TextureDescription.Builder(TextureStrings.BLOCK)
                         .color(new Color(Color.WHITE))
                         .width(r.getWidth())
                         .height(r.getHeight())

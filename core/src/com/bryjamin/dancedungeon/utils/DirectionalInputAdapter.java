@@ -1,4 +1,4 @@
-package com.bryjamin.dancedungeon.ecs;
+package com.bryjamin.dancedungeon.utils;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;

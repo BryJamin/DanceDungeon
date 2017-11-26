@@ -3,7 +3,6 @@ package com.bryjamin.dancedungeon.ecs.ai.calculations;
 import com.artemis.Entity;
 import com.artemis.World;
 import com.badlogic.gdx.utils.Array;
-import com.bryjamin.dancedungeon.ecs.ai.ActionScoreCalculation;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.utils.math.CoordinateMath;

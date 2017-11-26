@@ -32,8 +32,8 @@ import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
 import com.bryjamin.dancedungeon.utils.math.CoordinateMath;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
-import com.bryjamin.dancedungeon.utils.texture.DrawableDescription;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
+import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 /**
  * Created by BB on 29/10/2017.
@@ -134,7 +134,7 @@ public class PlayerGraphicalTargetingSystem extends BaseSystem {
 
         bag.add(new PositionComponent(r.x, r.y));
         bag.add(new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE,
-                new DrawableDescription.DrawableDescriptionBuilder(TextureStrings.BLOCK)
+                new TextureDescription.Builder(TextureStrings.BLOCK)
                         .color(new Color(Color.WHITE))
                         .width(r.getWidth())
                         .height(r.getHeight())
@@ -167,7 +167,7 @@ public class PlayerGraphicalTargetingSystem extends BaseSystem {
             boolean bool = tileSystem.findShortestPath(coordinatesQueue, coordinateComponent.coordinates, coordinatesArray);
 
 
-            System.out.println(coordinatesQueue.size);
+            //System.out.println(coordinatesQueue.size);
             if (coordinatesQueue.size <= movementRange && bool) {
 
 

@@ -6,11 +6,9 @@ import com.badlogic.gdx.graphics.Color;
  * Created by BB on 10/10/2017.
  */
 
-public class DrawableDescription {
+public abstract class DrawableDescription {
 
     //Required
-    private String region;
-    private int index;
     private int identifier;
     private float width;
     private float height;
@@ -23,9 +21,8 @@ public class DrawableDescription {
     private Color resetColor;
 
 
-    public DrawableDescription(DrawableDescriptionBuilder ddb){
-        this.region = ddb.region;
-        this.index = ddb.index;
+
+    public DrawableDescription(DrawableDescriptionBuilder<?> ddb){
         this.identifier = ddb.identifier;
         this.width = ddb.width;
         this.height = ddb.height;
@@ -38,7 +35,7 @@ public class DrawableDescription {
     }
 
 
-    public static class DrawableDescriptionBuilder {
+    public abstract static class DrawableDescriptionBuilder<T extends DrawableDescriptionBuilder<T>> {
 
         //Required
         private String region;
@@ -57,63 +54,50 @@ public class DrawableDescription {
         private Color color = new Color(Color.WHITE);
         private Color resetColor = new Color(Color.WHITE);
 
+        public T index(int val)
+        { index = val; return getThis(); }
 
-        public DrawableDescriptionBuilder(String region){
-            this.region = region;
-        }
+        public T identifier(int val)
+        { identifier = val; return getThis(); }
 
-        public DrawableDescriptionBuilder index(int val)
-        { index = val; return this; }
+        public T width(float val)
+        { width = val; return getThis(); }
 
-        public DrawableDescriptionBuilder identifier(int val)
-        { identifier = val; return this; }
+        public T height(float val)
+        { height = val; return getThis(); }
 
-        public DrawableDescriptionBuilder width(float val)
-        { width = val; return this; }
-
-        public DrawableDescriptionBuilder height(float val)
-        { height = val; return this; }
-
-        public DrawableDescriptionBuilder size(float val) {
+        public T size(float val) {
             width = val;
             height = val;
-            return this;
+            return getThis();
         }
 
-        public DrawableDescriptionBuilder offsetX(float val)
-        { offsetX = val; return this; }
+        public T offsetX(float val)
+        { offsetX = val; return getThis(); }
 
-        public DrawableDescriptionBuilder offsetY(float val)
-        { offsetY = val; return this; }
+        public T offsetY(float val)
+        { offsetY = val; return getThis(); }
 
-        public DrawableDescriptionBuilder scaleX(float val)
-        { scaleX = val; return this; }
+        public T scaleX(float val)
+        { scaleX = val; return getThis(); }
 
-        public DrawableDescriptionBuilder scaleY(float val)
-        { scaleY = val; return this; }
+        public T scaleY(float val)
+        { scaleY = val; return getThis(); }
 
-        public DrawableDescriptionBuilder rotation(float val)
-        { rotation = val; return this; }
+        public T rotation(float val)
+        { rotation = val; return getThis(); }
 
-        public DrawableDescriptionBuilder color(Color val) {
+        public T color(Color val) {
             color = val;
             resetColor = val;
-            return this;
+            return getThis();
         }
 
-        public DrawableDescription build()
-        { return new DrawableDescription(this); }
+        /** Solution for the unchecked cast warning. */
+        public abstract T getThis();
 
+        public abstract DrawableDescription build();
 
-    }
-
-
-    public String getRegion() {
-        return region;
-    }
-
-    public int getIndex() {
-        return index;
     }
 
     public int getIdentifier() {

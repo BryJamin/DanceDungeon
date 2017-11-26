@@ -23,8 +23,8 @@ import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
-import com.bryjamin.dancedungeon.utils.texture.DrawableDescription;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
+import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 /**
  * Created by BB on 19/11/2017.
@@ -59,7 +59,7 @@ public class FrostBall implements Skill {
                 0)));
 
         fireBall.edit().add((new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE,
-                new DrawableDescription.DrawableDescriptionBuilder(TextureStrings.BLOCK)
+                new TextureDescription.Builder(TextureStrings.BLOCK)
                         .color(new Color(Color.SKY))
                         .width(size)
                         .height(size)

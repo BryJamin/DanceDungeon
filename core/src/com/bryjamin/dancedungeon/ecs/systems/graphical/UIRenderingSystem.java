@@ -62,12 +62,12 @@ public class UIRenderingSystem extends BaseSystem{
                 camX + Measure.units(3f),
                 gamecam.position.y + (gamecam.viewportHeight / 2) - Measure.units(1.25f),
                 0, Align.left, true);
-
+/*
 
         currencyFont.draw(batch, "ap: " + ap,
                 camX + Measure.units(40f),
                 gamecam.position.y + (gamecam.viewportHeight / 2) - Measure.units(1.25f),
-                0, Align.left, true);
+                0, Align.left, true);*/
 
 
     }

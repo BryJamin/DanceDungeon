@@ -1,4 +1,4 @@
-package com.bryjamin.dancedungeon.ecs.ai;
+package com.bryjamin.dancedungeon.ecs.ai.calculations;
 
 import com.artemis.Entity;
 import com.artemis.World;

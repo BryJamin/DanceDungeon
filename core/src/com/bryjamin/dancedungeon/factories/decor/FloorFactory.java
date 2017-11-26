@@ -9,6 +9,7 @@ import com.bryjamin.dancedungeon.factories.AbstractFactory;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
 import com.bryjamin.dancedungeon.utils.texture.DrawableDescription;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
+import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 
 /**
@@ -36,7 +37,7 @@ public class FloorFactory extends AbstractFactory {
         float tileHeightSize = height / rows;
 
 
-        DrawableDescription.DrawableDescriptionBuilder descriptionBuilder = new DrawableDescription.DrawableDescriptionBuilder(TextureStrings.BLOCK)
+        DrawableDescription.DrawableDescriptionBuilder descriptionBuilder = new TextureDescription.Builder(TextureStrings.BLOCK)
                 .height(tileHeightSize)
                 .width(tileWidthSize);
 

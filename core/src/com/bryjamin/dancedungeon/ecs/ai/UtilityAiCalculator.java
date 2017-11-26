@@ -14,10 +14,10 @@ import java.util.Comparator;
 public class UtilityAiCalculator {
 
 
-    private Array<ActionCalculator> actionCalculators = new Array<ActionCalculator>();
+    private Array<ActionScoreCalculator> actionCalculators = new Array<ActionScoreCalculator>();
 
-    public UtilityAiCalculator(ActionCalculator... actionCalculators){
-        this.actionCalculators.addAll(actionCalculators);
+    public UtilityAiCalculator(ActionScoreCalculator... actionScoreCalculators){
+        this.actionCalculators.addAll(actionScoreCalculators);
     }
 
 
@@ -26,13 +26,13 @@ public class UtilityAiCalculator {
      */
     public WorldAction getAction(World world, Entity entity){
 
-        for(ActionCalculator actionCalculator : actionCalculators){
-            actionCalculator.calculateScore(world, entity);
+        for(ActionScoreCalculator actionScoreCalculator : actionCalculators){
+            actionScoreCalculator.calculateScore(world, entity);
         }
 
-        actionCalculators.sort(new Comparator<ActionCalculator>() {
+        actionCalculators.sort(new Comparator<ActionScoreCalculator>() {
             @Override
-            public int compare(ActionCalculator ac1, ActionCalculator ac2) {
+            public int compare(ActionScoreCalculator ac1, ActionScoreCalculator ac2) {
                 return ac1.getScore() > ac2.getScore() ? -1 : ac1.getScore() == ac2.getScore() ? 0 : 1;
             }
         });

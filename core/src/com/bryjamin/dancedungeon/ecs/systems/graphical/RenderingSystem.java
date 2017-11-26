@@ -20,6 +20,7 @@ import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.utils.texture.DrawableDescription;
+import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -114,23 +115,26 @@ public class RenderingSystem extends EntitySystem {
             float originX = drawableDescription.getWidth() * 0.5f;
             float originY = drawableDescription.getHeight() * 0.5f;
 
+            if(drawableDescription instanceof TextureDescription) {
 
-            TextureRegion tr = atlas.findRegion(drawableDescription.getRegion(), drawableDescription.getIndex());
-            if(tr == null) tr =  atlas.findRegion(TextureStrings.BLOCK);
+                TextureDescription textureDescription = (TextureDescription) drawableDescription;
 
-            batch.setColor(drawableDescription.getColor());
+                TextureRegion tr = atlas.findRegion(textureDescription.getRegion(), textureDescription.getIndex());
+                if (tr == null) tr = atlas.findRegion(TextureStrings.BLOCK);
 
-         //   System.out.println(drawableDescription.getColor());
+                batch.setColor(drawableDescription.getColor());
 
-            batch.draw(tr,
-                    positionComponent.getX() + drawableDescription.getOffsetX(),
-                    positionComponent.getY() + drawableDescription.getOffsetY(),
-                    originX, originY,
-                    drawableDescription.getWidth(), drawableDescription.getHeight(),
-                    drawableDescription.getScaleX(), drawableDescription.getScaleY(),
-                    drawableDescription.getRotation());
+                batch.draw(tr,
+                        positionComponent.getX() + drawableDescription.getOffsetX(),
+                        positionComponent.getY() + drawableDescription.getOffsetY(),
+                        originX, originY,
+                        drawableDescription.getWidth(), drawableDescription.getHeight(),
+                        drawableDescription.getScaleX(), drawableDescription.getScaleY(),
+                        drawableDescription.getRotation());
 
-            batch.setColor(white);
+                batch.setColor(white);
+
+            }
 
         }
 

@@ -3,7 +3,6 @@ package com.bryjamin.dancedungeon.ecs.components.graphics;
 import com.artemis.Component;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.OrderedMap;
-import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.utils.texture.DrawableDescription;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
 
@@ -39,7 +38,7 @@ public class DrawableComponent extends Component {
                 return drawableDescription;
             }
         }
-        return new DrawableDescription.DrawableDescriptionBuilder(TextureStrings.BLOCK).build();
+        return null;
     }
 
 }
