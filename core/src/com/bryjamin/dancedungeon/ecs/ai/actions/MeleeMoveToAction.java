@@ -4,7 +4,7 @@ import com.artemis.Entity;
 import com.artemis.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Queue;
-import com.bryjamin.dancedungeon.ecs.components.BoundComponent;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldCondition;
 import com.bryjamin.dancedungeon.ecs.components.battle.AbilityPointComponent;
@@ -46,7 +46,7 @@ public class MeleeMoveToAction implements WorldAction {
 
         for(Coordinates c : coordinatesQueue){
             entity.getComponent(MoveToComponent.class).movementPositions.add(
-                    tileSystem.getPositionUsingCoordinates(c, entity.getComponent(BoundComponent.class).bound));
+                    tileSystem.getPositionUsingCoordinates(c, entity.getComponent(CenteringBoundaryComponent.class).bound));
         }
 
 

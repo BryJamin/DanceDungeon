@@ -37,11 +37,7 @@ public abstract class DrawableDescription {
 
     public abstract static class DrawableDescriptionBuilder<T extends DrawableDescriptionBuilder<T>> {
 
-        //Required
-        private String region;
-
         //Optional
-        private int index = 0;
         private int identifier;
         private float width = 0;
         private float height = 0;
@@ -53,9 +49,6 @@ public abstract class DrawableDescription {
 
         private Color color = new Color(Color.WHITE);
         private Color resetColor = new Color(Color.WHITE);
-
-        public T index(int val)
-        { index = val; return getThis(); }
 
         public T identifier(int val)
         { identifier = val; return getThis(); }

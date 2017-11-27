@@ -19,7 +19,7 @@ public class TextDescription extends DrawableDescription {
         this.align = tdb.align;
     }
 
-    public static class TextDescriptionBuilder extends DrawableDescriptionBuilder {
+    public static final class TextDescriptionBuilder extends DrawableDescriptionBuilder {
 
         //Required
         private String font;

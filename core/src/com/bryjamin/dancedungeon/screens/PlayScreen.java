@@ -13,7 +13,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
-import com.bryjamin.dancedungeon.utils.DirectionalInputAdapter;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.DispellableComponent;
@@ -24,6 +23,7 @@ import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ParentChildSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.ActionOnTapSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.ConditionalActionSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.BattleMessageSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BlinkOnHitSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BulletSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.DeathSystem;
@@ -42,9 +42,9 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.UIRenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
 import com.bryjamin.dancedungeon.factories.decor.FloorFactory;
 import com.bryjamin.dancedungeon.factories.enemy.DummyFactory;
-import com.bryjamin.dancedungeon.factories.enemy.RangedDummyFactory;
 import com.bryjamin.dancedungeon.factories.player.PlayerFactory;
 import com.bryjamin.dancedungeon.factories.player.spells.SpellFactory;
+import com.bryjamin.dancedungeon.utils.DirectionalInputAdapter;
 import com.bryjamin.dancedungeon.utils.GameDelta;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
@@ -70,9 +70,7 @@ public class PlayScreen extends AbstractScreen {
 
         gamecam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         gameport = new FitViewport(MainGame.GAME_WIDTH, MainGame.GAME_HEIGHT, gamecam);
-
         gamecam.setToOrtho(false, MainGame.GAME_WIDTH, MainGame.GAME_HEIGHT);
-        //gamecam.position.set(gameport.getWorldWidth() / 2, gameport.getWorldHeight() / 2, 0);
         gamecam.update();
         gameport.apply();
 
@@ -164,6 +162,7 @@ public class PlayScreen extends AbstractScreen {
                         new ActionOnTapSystem(gameport),
                         new FadeSystem(),
                         new PlayerGraphicalTargetingSystem(),
+                        new BattleMessageSystem(gameport),
                         new RenderingSystem(game, gameport),
                         new HealthBarSystem(game, gameport),
                         new UIRenderingSystem(game, gameport),
@@ -192,7 +191,7 @@ public class PlayScreen extends AbstractScreen {
         e.getComponent(CoordinateComponent.class).coordinates.setY(MathUtils.random(0, 5));
 
 
-        ComponentBag bag2 = new DummyFactory(assetManager).targetDummyWalker(Measure.units(10f), Measure.units(50f));
+/*        ComponentBag bag2 = new DummyFactory(assetManager).targetDummyWalker(Measure.units(10f), Measure.units(50f));
         Entity e2 = BagToEntity.bagToEntity(world.createEntity(), bag2);
         e2.getComponent(CoordinateComponent.class).coordinates.setX(MathUtils.random(0, 7));
         e2.getComponent(CoordinateComponent.class).coordinates.setY(MathUtils.random(0, 5));
@@ -206,7 +205,7 @@ public class PlayScreen extends AbstractScreen {
         ComponentBag bag4 = new RangedDummyFactory(assetManager).rangedDummy(Measure.units(10f), Measure.units(50f));
         Entity e4 = BagToEntity.bagToEntity(world.createEntity(), bag4);
         e4.getComponent(CoordinateComponent.class).coordinates.setX(MathUtils.random(0, 7));
-        e4.getComponent(CoordinateComponent.class).coordinates.setY(MathUtils.random(0, 5));
+        e4.getComponent(CoordinateComponent.class).coordinates.setY(MathUtils.random(0, 5));*/
 
         BagToEntity.bagToEntity(world.createEntity(), new FloorFactory(assetManager).createFloor(originX, originY, width, height,
                 rows, columns));
@@ -240,7 +239,7 @@ public class PlayScreen extends AbstractScreen {
 
         handleInput(delta);
         GameDelta.delta(world, delta);
-        world.process();
+        //world.process();
 
 
     }
@@ -249,35 +248,7 @@ public class PlayScreen extends AbstractScreen {
 
 
         InputMultiplexer multiplexer = new InputMultiplexer();
-
-
         multiplexer.addProcessor(directionalInputAdapter);
-
-/*
-        multiplexer.addProcessor(new InputAdapter() {
-
-            @Override
-            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-
-                Vector2 input = gameport.unproject(new Vector2(screenX, screenY));
-
-
-                float size = Measure.units(20f);
-                //float height;
-
-                Entity explosion = world.createEntity();
-                explosion.edit().add(new PositionComponent(input));
-                explosion.edit().add(new ExplosionComponent(5));
-                explosion.edit().add(new HitBoxComponent(new HitBox(new Rectangle(input.x,input.y, size, size), -size / 2, -size / 2)));
-                explosion.edit().add(new ExpireComponent(1f));
-
-                return false;
-            }
-
-        });
-*/
-
-
         Gdx.input.setInputProcessor(multiplexer);
 
 

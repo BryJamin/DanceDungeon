@@ -6,7 +6,7 @@ import com.artemis.Entity;
 import com.artemis.EntitySubscription;
 import com.artemis.systems.EntityProcessingSystem;
 import com.artemis.utils.IntBag;
-import com.bryjamin.dancedungeon.ecs.components.BoundComponent;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.BulletComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
@@ -22,7 +22,7 @@ public class BulletSystem extends EntityProcessingSystem {
 
     private ComponentMapper<BulletComponent> bulletMapper;
     private ComponentMapper<HitBoxComponent> hitBoxMapper;
-    private ComponentMapper<BoundComponent> boundMapper;
+    private ComponentMapper<CenteringBoundaryComponent> boundMapper;
     private ComponentMapper<HealthComponent> healthMapper;
 
     private ComponentMapper<EnemyComponent> enemyMapper;
@@ -30,7 +30,7 @@ public class BulletSystem extends EntityProcessingSystem {
 
     @SuppressWarnings("unchecked")
     public BulletSystem() {
-        super(Aspect.all(BulletComponent.class, BoundComponent.class));
+        super(Aspect.all(BulletComponent.class, CenteringBoundaryComponent.class));
     }
 
 

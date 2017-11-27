@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
-import com.bryjamin.dancedungeon.ecs.components.BoundComponent;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.ConditionalActionsComponent;
@@ -74,7 +74,7 @@ public class Fireball implements Skill {
                         .build())));
 
         fireBall.edit().add(new VelocityComponent());
-        fireBall.edit().add(new BoundComponent(new Rectangle(x, y, size, size)));
+        fireBall.edit().add(new CenteringBoundaryComponent(new Rectangle(x, y, size, size)));
 
         fireBall.edit().add(new ConditionalActionsComponent(new WorldConditionalAction() {
             @Override

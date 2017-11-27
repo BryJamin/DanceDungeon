@@ -11,7 +11,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.assets.FileStrings;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
-import com.bryjamin.dancedungeon.ecs.components.BoundComponent;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.utils.Measure;
@@ -42,7 +42,7 @@ public class HealthBarSystem extends EntityProcessingSystem {
     private ObjectMap<Entity, HealthBar> entityHealthBarObjectMap = new ObjectMap<Entity, HealthBar>();
 
     public HealthBarSystem(MainGame game, Viewport gameport) {
-        super(Aspect.all(HealthComponent.class, PositionComponent.class, BoundComponent.class));
+        super(Aspect.all(HealthComponent.class, PositionComponent.class, CenteringBoundaryComponent.class));
         this.batch = game.batch;
         this.atlas = game.assetManager.get(FileStrings.SPRITE_ATLAS_FILE, TextureAtlas.class);
     }
@@ -87,9 +87,9 @@ public class HealthBarSystem extends EntityProcessingSystem {
 
         }
 
-        BoundComponent boundComponent = e.getComponent(BoundComponent.class);
+        CenteringBoundaryComponent centeringBoundaryComponent = e.getComponent(CenteringBoundaryComponent.class);
 
-        float x = positionComponent.getX() + CenterMath.offsetX(boundComponent.bound.getWidth(), initialHealthBarWidth);
+        float x = positionComponent.getX() + CenterMath.offsetX(centeringBoundaryComponent.bound.getWidth(), initialHealthBarWidth);
         float y = positionComponent.getY() + initialHealthBarOffsetY;
 
         batch.setColor(bottomBarColor);

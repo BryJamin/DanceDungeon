@@ -14,7 +14,7 @@ public class FadeComponent extends Component {
     public float alphaTimer = 0;
     public float alphaTimeLimit;
 
-    public float alpha;
+    public float alpha = 1;
 
     public boolean fadeIn;
     public boolean flicker;
@@ -33,6 +33,14 @@ public class FadeComponent extends Component {
         this.fadeIn = fadeIn;
         this.alphaTimeLimit = alphaTimeLimit;
         this.isEndless = isEndless;
+
+        this.alpha = fadeIn ? 0 : 1;
+        this.alphaTimer = fadeIn ? 0 : alphaTimeLimit;
+
+
+
+        System.out.println("Alpha is " + alpha);
+
     }
 
 

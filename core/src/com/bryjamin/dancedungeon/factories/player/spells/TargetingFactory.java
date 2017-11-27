@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Queue;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
-import com.bryjamin.dancedungeon.ecs.components.BoundComponent;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
@@ -105,7 +105,7 @@ public class TargetingFactory {
                         for (Coordinates c : coordinatesQueue) {
                             player.getComponent(MoveToComponent.class).movementPositions.add(
                                     world.getSystem(TileSystem.class).getPositionUsingCoordinates(
-                                            c, player.getComponent(BoundComponent.class).bound));
+                                            c, player.getComponent(CenteringBoundaryComponent.class).bound));
                         }
                         world.getSystem(SelectedTargetSystem.class).clearTargeting();
 
@@ -156,7 +156,7 @@ public class TargetingFactory {
                         .build()));
         bag.add(new FadeComponent(true, 1.0f, true));
         bag.add(new HitBoxComponent(new HitBox(r)));
-        bag.add(new BoundComponent());
+        bag.add(new CenteringBoundaryComponent());
         bag.add(new UITargetingComponent());
 
         return bag;

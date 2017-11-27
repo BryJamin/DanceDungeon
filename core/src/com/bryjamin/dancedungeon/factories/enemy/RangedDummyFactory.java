@@ -9,7 +9,7 @@ import com.bryjamin.dancedungeon.ecs.ai.UtilityAiCalculator;
 import com.bryjamin.dancedungeon.ecs.ai.actions.RangedAttackAction;
 import com.bryjamin.dancedungeon.ecs.ai.actions.RangedMoveToAction;
 import com.bryjamin.dancedungeon.ecs.ai.calculations.IsInRangeCalculator;
-import com.bryjamin.dancedungeon.ecs.components.BoundComponent;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
@@ -65,10 +65,10 @@ public class RangedDummyFactory extends AbstractFactory {
         bag.add(new AttackAiComponent());
         bag.add(new TurnComponent());
         bag.add(new CoordinateComponent(new Coordinates(1, 0)));
-        bag.add(new MoveToComponent(Measure.units(30f)));
+        bag.add(new MoveToComponent(Measure.units(60f)));
         bag.add(new VelocityComponent(0, 0));
         bag.add(new BlinkOnHitComponent());
-        bag.add(new BoundComponent(new Rectangle(x, y, width, height)));
+        bag.add(new CenteringBoundaryComponent(new Rectangle(x, y, width, height)));
         bag.add(new HitBoxComponent(new HitBox(new Rectangle(x, y, width, height))));
 
         bag.add(new TargetComponent(Aspect.all(PlayerControlledComponent.class, CoordinateComponent.class)));

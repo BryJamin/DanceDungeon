@@ -4,7 +4,7 @@ import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.systems.EntityProcessingSystem;
-import com.bryjamin.dancedungeon.ecs.components.BoundComponent;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 
@@ -16,11 +16,16 @@ public class UpdatePositionSystem extends EntityProcessingSystem {
 
     ComponentMapper<PositionComponent> pm;
     ComponentMapper<HitBoxComponent> hitboxComponentM;
-    ComponentMapper<BoundComponent> boundComponentM;
+    ComponentMapper<CenteringBoundaryComponent> boundComponentM;
 
     @SuppressWarnings("unchecked")
     public UpdatePositionSystem() {
         super(Aspect.all(PositionComponent.class));
+    }
+
+    @Override
+    public void inserted(Entity e) {
+        process(e);
     }
 
     @Override

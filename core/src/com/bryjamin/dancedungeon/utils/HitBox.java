@@ -18,6 +18,12 @@ public class HitBox {
         this.offsetY = 0;
     }
 
+    public HitBox(float width, float height){
+        this.hitbox = new Rectangle(0, 0, width, height);
+        this.offsetX = 0;
+        this.offsetY = 0;
+    }
+
     public HitBox(Rectangle hitbox, float offsetX, float offsetY){
         this.hitbox = hitbox;
         this.offsetX = offsetX;

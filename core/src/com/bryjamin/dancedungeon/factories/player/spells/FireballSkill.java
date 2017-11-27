@@ -2,6 +2,8 @@ package com.bryjamin.dancedungeon.factories.player.spells;
 
 import com.artemis.Entity;
 import com.artemis.World;
+import com.badlogic.gdx.utils.Array;
+import com.bryjamin.dancedungeon.ecs.systems.battle.BattleMessageSystem;
 
 /**
  * Created by BB on 18/11/2017.
@@ -16,7 +18,13 @@ public class FireballSkill extends CooldownSpellDescription {
 
     @Override
     public void createTargeting(World world, final Entity player) {
-        new TargetingFactory().createTargetTiles(world, player, this, 3);
+        Array<Entity> entityArray = new TargetingFactory().createTargetTiles(world, player, this, 3);
+
+        if(entityArray.size <= 0){
+            world.getSystem(BattleMessageSystem.class).createWarningMessage();
+        }
+
+
     }
 
     @Override

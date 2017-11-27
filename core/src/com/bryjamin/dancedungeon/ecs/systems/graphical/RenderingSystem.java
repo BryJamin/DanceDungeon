@@ -7,6 +7,8 @@ import com.artemis.EntitySystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -16,10 +18,13 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.assets.FileStrings;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
+import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.texture.DrawableDescription;
+import com.bryjamin.dancedungeon.utils.texture.TextDescription;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 import java.util.ArrayList;
@@ -33,6 +38,7 @@ import java.util.Comparator;
 public class RenderingSystem extends EntitySystem {
 
     private ComponentMapper<PositionComponent> positionm;
+    private ComponentMapper<CenteringBoundaryComponent> boundm;
     private ComponentMapper<DrawableComponent> drawablem;
     private ComponentMapper<BlinkOnHitComponent> blinkOnHitm;
 
@@ -47,6 +53,8 @@ public class RenderingSystem extends EntitySystem {
     private Color white = new Color(Color.WHITE);
 
     public ShaderProgram whiteShaderProgram;
+
+    private GlyphLayout glyphLayout = new GlyphLayout();
 
 
     /**
@@ -115,14 +123,14 @@ public class RenderingSystem extends EntitySystem {
             float originX = drawableDescription.getWidth() * 0.5f;
             float originY = drawableDescription.getHeight() * 0.5f;
 
+            batch.setColor(drawableDescription.getColor());
+
             if(drawableDescription instanceof TextureDescription) {
 
                 TextureDescription textureDescription = (TextureDescription) drawableDescription;
 
                 TextureRegion tr = atlas.findRegion(textureDescription.getRegion(), textureDescription.getIndex());
                 if (tr == null) tr = atlas.findRegion(TextureStrings.BLOCK);
-
-                batch.setColor(drawableDescription.getColor());
 
                 batch.draw(tr,
                         positionComponent.getX() + drawableDescription.getOffsetX(),
@@ -132,9 +140,31 @@ public class RenderingSystem extends EntitySystem {
                         drawableDescription.getScaleX(), drawableDescription.getScaleY(),
                         drawableDescription.getRotation());
 
-                batch.setColor(white);
+            } else if(drawableDescription instanceof TextDescription){
+
+
+                TextDescription textDescription = (TextDescription) drawableDescription;
+
+                BitmapFont bmf = assetManager.get(textDescription.getFont(), BitmapFont.class);
+
+                if(boundm.has(e)){
+                    CenteringBoundaryComponent bc = boundm.get(e);
+                    glyphLayout.setText(bmf, textDescription.getText(), drawableDescription.getColor(), bc.bound.width, textDescription.getAlign(), false);
+
+                    bmf.draw(batch, glyphLayout,
+                            positionComponent.getX(),
+                            positionComponent.getY() + glyphLayout.height + CenterMath.offsetY(bc.bound.height, glyphLayout.height) + textDescription.getOffsetY());
+                } else {
+                    bmf.draw(batch, textDescription.getText(),
+                            positionComponent.getX() + textDescription.getOffsetX(),
+                            positionComponent.getY() + textDescription.getOffsetY(),
+                            textDescription.getWidth(), textDescription.getAlign(), true);
+                }
+
 
             }
+
+            batch.setColor(white);
 
         }
 

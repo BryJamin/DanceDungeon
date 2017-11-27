@@ -20,7 +20,7 @@ public class FadeSystem extends EntityProcessingSystem {
 
     @SuppressWarnings("unchecked")
     public FadeSystem() {
-        super(Aspect.all(FadeComponent.class));
+        super(Aspect.all(FadeComponent.class, DrawableComponent.class));
     }
 
     @Override
@@ -36,15 +36,6 @@ public class FadeSystem extends EntityProcessingSystem {
 
         fc.alphaTimer = fc.fadeIn ? fc.alphaTimer + world.delta : fc.alphaTimer - world.delta;
 
-        //TODO Currently converted this to use the maxAlpha and spawnTime so this may have affected a bunch
-        //TODO of fades in the game. Need to review them.
-        //TODO note: code previously was: fc.alpha = (fc.alphaTimer / fc.alphaTimeLimit)
-        //TODO note: if it was also using the min value it'd be (fc.maxAlpha - fc.minAlpha) + fc.minAlpha
-
-        //Interpolation.fade.apply((fadeElapsed-SUBTITLE_FADE_DELAY) / FADE_IN_TIME);
-
-        // fc.alpha = ((fc.alphaTimer / fc.alphaTimeLimit) * (fc.maxAlpha - fc.minAlpha)) + fc.minAlpha;
-        //Can't really tell the difference but apparently interpolation is better?
         fc.alpha = Interpolation.fade.apply(((fc.alphaTimer / fc.alphaTimeLimit) * (fc.maxAlpha - fc.minAlpha)) + fc.minAlpha);
         if (fc.alpha <= fc.minAlpha) {
             if (fc.isEndless || fc.count > 0) {
@@ -73,6 +64,7 @@ public class FadeSystem extends EntityProcessingSystem {
     }
 
     private void applyFade(Entity e, float alpha) {
+
         if (drawableMapper.has(e)) {
             DrawableComponent dc = drawableMapper.get(e);
             for (DrawableDescription drawableDescription : dc.drawables) {

@@ -5,7 +5,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
-import com.bryjamin.dancedungeon.ecs.components.BoundComponent;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.AbilityPointComponent;
@@ -59,7 +59,7 @@ public class PlayerFactory extends AbstractFactory {
         bag.add(new BlinkOnHitComponent());
         bag.add(new AbilityPointComponent(4));
         //bag.add(new FadeComponent(true, 1.0f, true));
-        bag.add(new MoveToComponent());
+        bag.add(new MoveToComponent(Measure.units(60f)));
         bag.add(new VelocityComponent());
         bag.add(new TurnComponent());
 
@@ -68,7 +68,7 @@ public class PlayerFactory extends AbstractFactory {
         bag.add(new TargetComponent(Aspect.all(EnemyComponent.class, CoordinateComponent.class)));
 
       //  bag.add(new TurnComponent());
-        bag.add(new BoundComponent(new Rectangle(x, y, width, height)));
+        bag.add(new CenteringBoundaryComponent(new Rectangle(x, y, width, height)));
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, player.build()));
 
         return bag;
@@ -86,7 +86,7 @@ public class PlayerFactory extends AbstractFactory {
         bag.add(new BlinkOnHitComponent());
         bag.add(new AbilityPointComponent(4));
         //bag.add(new FadeComponent(true, 1.0f, true));
-        bag.add(new MoveToComponent());
+        bag.add(new MoveToComponent(Measure.units(60f)));
         bag.add(new VelocityComponent());
         bag.add(new TurnComponent());
 
@@ -95,7 +95,7 @@ public class PlayerFactory extends AbstractFactory {
         bag.add(new TargetComponent(Aspect.all(EnemyComponent.class, CoordinateComponent.class)));
 
         //  bag.add(new TurnComponent());
-        bag.add(new BoundComponent(new Rectangle(x, y, width, height)));
+        bag.add(new CenteringBoundaryComponent(new Rectangle(x, y, width, height)));
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, player.color(new Color(Color.WHITE)).build()));
 
         return bag;

@@ -107,7 +107,7 @@ public class SelectedTargetSystem extends BaseSystem {
         this.selectedEntity = playableCharacter;
 
         //TODO just for now
-        playableCharacter.edit().add(new FadeComponent(true, 2.5f, true));
+        playableCharacter.edit().add(new FadeComponent(true, 1.25f, true));
         this.clear();
 
         final SkillsComponent skillsComponent = playableCharacter.getComponent(SkillsComponent.class);
