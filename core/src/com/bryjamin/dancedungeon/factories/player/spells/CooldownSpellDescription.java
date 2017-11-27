@@ -2,6 +2,7 @@ package com.bryjamin.dancedungeon.factories.player.spells;
 
 import com.artemis.Entity;
 import com.artemis.World;
+import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
@@ -15,7 +16,7 @@ public abstract class CooldownSpellDescription extends SkillDescription {
 
 
     @Override
-    public abstract void createTargeting(World world, Entity player);
+    public abstract Array<Entity> createTargeting(World world, Entity player);
 
     @Override
     public boolean canCast(World world, Entity entity) {

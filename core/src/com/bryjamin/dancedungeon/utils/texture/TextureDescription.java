@@ -16,7 +16,7 @@ public class TextureDescription extends DrawableDescription {
         this.index = tdb.index;
     }
 
-    public static class Builder extends DrawableDescriptionBuilder {
+    public static class Builder extends DrawableDescriptionBuilder<Builder> {
 
         //Required
         private String region;

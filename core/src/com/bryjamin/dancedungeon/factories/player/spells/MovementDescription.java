@@ -17,7 +17,7 @@ public class MovementDescription extends CooldownSpellDescription {
     }
 
     @Override
-    public void createTargeting(World world, final Entity player) {
+    public Array<Entity> createTargeting(World world, final Entity player) {
 
         Array<Entity> entityArray = new TargetingFactory().createMovementTiles(world, player, 3);
 
@@ -32,6 +32,7 @@ public class MovementDescription extends CooldownSpellDescription {
             });
         }
 
+        return entityArray;
     }
 
     @Override

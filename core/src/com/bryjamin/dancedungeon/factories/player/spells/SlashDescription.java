@@ -15,8 +15,9 @@ import com.badlogic.gdx.utils.Array;
     }
 
     @Override
-    public void createTargeting(World world, final Entity player) {
+    public Array<Entity> createTargeting(World world, final Entity player) {
         Array<Entity> entityArray = new TargetingFactory().createTargetTiles(world, player, this, 1);
+        return entityArray;
     }
 
     @Override

@@ -37,10 +37,6 @@ public class FadeComponent extends Component {
         this.alpha = fadeIn ? 0 : 1;
         this.alphaTimer = fadeIn ? 0 : alphaTimeLimit;
 
-
-
-        System.out.println("Alpha is " + alpha);
-
     }
 
 

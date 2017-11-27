@@ -2,6 +2,7 @@ package com.bryjamin.dancedungeon.factories.player.spells;
 
 import com.artemis.Entity;
 import com.artemis.World;
+import com.badlogic.gdx.utils.Array;
 
 /**
  * Created by BB on 19/11/2017.
@@ -14,8 +15,8 @@ public class FrostBallDescription extends CooldownSpellDescription {
     }
 
     @Override
-    public void createTargeting(World world, final Entity player) {
-       new TargetingFactory().createTargetTiles(world, player, this, 3);
+    public Array<Entity> createTargeting(World world, final Entity player) {
+        return new TargetingFactory().createTargetTiles(world, player, this, 3);
     }
 
 

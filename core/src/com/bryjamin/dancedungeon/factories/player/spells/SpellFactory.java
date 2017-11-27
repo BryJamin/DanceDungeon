@@ -3,6 +3,7 @@ package com.bryjamin.dancedungeon.factories.player.spells;
 import com.artemis.Entity;
 import com.artemis.World;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
@@ -10,6 +11,7 @@ import com.bryjamin.dancedungeon.ecs.components.actions.ConditionalActionsCompon
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
+import com.bryjamin.dancedungeon.ecs.systems.battle.BattleMessageSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.SelectedTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
 import com.bryjamin.dancedungeon.utils.HitBox;
@@ -50,7 +52,13 @@ public class SpellFactory {
         bag.add(new ActionOnTapComponent(new WorldAction() {
             @Override
             public void performAction(World world, Entity entity) {
-                skillDescription.createTargeting(world, player);
+
+                Array<Entity> entityArray = skillDescription.createTargeting(world, player);
+
+                if(entityArray.size <= 0){
+                    world.getSystem(BattleMessageSystem.class).createWarningMessage();
+                }
+
                 world.getSystem(SelectedTargetSystem.class).clearTargeting();
             }
         }));
