@@ -67,7 +67,7 @@ public class MenuScreen extends AbstractScreen {
 
 
         InputMultiplexer multiplexer = new InputMultiplexer();
-        multiplexer.addProcessor(menuWorld);
+        menuWorld.handleInput(multiplexer);
         Gdx.input.setInputProcessor(multiplexer);
 
     }

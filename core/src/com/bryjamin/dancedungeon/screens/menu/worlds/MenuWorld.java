@@ -4,12 +4,15 @@ import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.WorldConfiguration;
 import com.artemis.WorldConfigurationBuilder;
+import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.assets.FileStrings;
+import com.bryjamin.dancedungeon.assets.Fonts;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
@@ -28,8 +31,8 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.BoundsDrawingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.FadeSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
-import com.bryjamin.dancedungeon.screens.battle.PlayScreen;
 import com.bryjamin.dancedungeon.screens.WorldContainer;
+import com.bryjamin.dancedungeon.screens.battle.PlayScreen;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
@@ -43,9 +46,13 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 public class MenuWorld extends WorldContainer {
 
+    private MenuAdapter adapter;
+
+
     public MenuWorld(MainGame game, Viewport gameport) {
         super(game, gameport);
         createWorld();
+        adapter = new MenuAdapter();
     }
 
 
@@ -76,7 +83,7 @@ public class MenuWorld extends WorldContainer {
         float height = Measure.units(7.5f);
 
         Entity startButton = world.createEntity();
-        startButton.edit().add(new PositionComponent(CenterMath.offsetX(gameport.getWorldWidth(), width), CenterMath.offsetY(gameport.getWorldHeight(), height)));
+        startButton.edit().add(new PositionComponent(CenterMath.offsetX(gameport.getWorldWidth(), width), CenterMath.offsetY(gameport.getWorldHeight(), height) - Measure.units(5f)));
         startButton.edit().add(new HitBoxComponent(new HitBox(width, height)));
         startButton.edit().add(new CenteringBoundaryComponent(new Rectangle(0,0, width, height)));
         startButton.edit().add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE,
@@ -96,18 +103,46 @@ public class MenuWorld extends WorldContainer {
         }));
 
 
+
+        Entity victoryText = world.createEntity();
+        victoryText.edit().add(new PositionComponent(CenterMath.centerPositionX(gameport.getCamera().viewportWidth, gameport.getCamera().position.x),
+                CenterMath.centerPositionY(Measure.units(10f), gameport.getCamera().position.y) + Measure.units(10f)));
+        victoryText.edit().add(new DrawableComponent(Layer.BACKGROUND_LAYER_MIDDLE,
+                new TextureDescription.Builder(TextureStrings.BLOCK)
+                        .color(new Color(Color.WHITE))
+                        .width(gameport.getWorldWidth())
+                        .height(Measure.units(10f)).build(),
+
+                new TextDescription.Builder(Fonts.MEDIUM)
+                        .text("ProtoType Demonstration")
+                        .color(new Color(Color.BLACK))
+                        .width(gameport.getWorldWidth())
+                        .height(Measure.units(10f)).build()
+
+
+        ));
+
+
     }
 
 
     @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-
-        Vector3 input = gameport.unproject(new Vector3(screenX, screenY, 0));
-
-        if(world.getSystem(ActionOnTapSystem.class).touch(input.x, input.y)){
-            return  true;
-        };
-
-        return false;
+    public void handleInput(InputMultiplexer inputMultiplexer) {
+        inputMultiplexer.addProcessor(adapter);
+        super.handleInput(inputMultiplexer);
     }
+
+
+    private class MenuAdapter extends InputAdapter {
+
+        @Override
+        public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+            Vector3 input = gameport.unproject(new Vector3(screenX, screenY, 0));
+            if(world.getSystem(ActionOnTapSystem.class).touch(input.x, input.y)){
+                return  true;
+            };
+            return false;
+        }
+    }
+
 }

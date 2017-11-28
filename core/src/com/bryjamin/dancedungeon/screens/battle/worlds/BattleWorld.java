@@ -5,11 +5,14 @@ import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.WorldConfiguration;
 import com.artemis.WorldConfigurationBuilder;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.DispellableComponent;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
 import com.bryjamin.dancedungeon.ecs.systems.FindPlayerSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MoveToTargetSystem;
@@ -37,13 +40,16 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.UIRenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
 import com.bryjamin.dancedungeon.factories.decor.FloorFactory;
 import com.bryjamin.dancedungeon.factories.enemy.DummyFactory;
+import com.bryjamin.dancedungeon.factories.enemy.RangedDummyFactory;
 import com.bryjamin.dancedungeon.factories.player.PlayerFactory;
 import com.bryjamin.dancedungeon.factories.player.spells.SpellFactory;
 import com.bryjamin.dancedungeon.screens.WorldContainer;
 import com.bryjamin.dancedungeon.screens.battle.PlayScreen;
+import com.bryjamin.dancedungeon.utils.DirectionalInputAdapter;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
+import com.bryjamin.dancedungeon.utils.math.AngleMath;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
 /**
@@ -60,10 +66,58 @@ public class BattleWorld extends WorldContainer {
     int rows = 5;
     int columns = 10;
 
+    private DirectionalInputAdapter directionalInputAdapter;
 
-    public BattleWorld(MainGame game, Viewport gameport) {
+
+    public BattleWorld(MainGame game, final Viewport gameport) {
         super(game, gameport);
         createWorld();
+
+
+        directionalInputAdapter = new DirectionalInputAdapter(new DirectionalInputAdapter.DirectionalGestureListener() {
+            @Override
+            public boolean tap(float x, float y, int count, int button) {
+
+                Vector3 input = gameport.unproject(new Vector3(x, y, 0));
+
+
+
+                if(world.getSystem(TurnSystem.class).turn == TurnSystem.TURN.ALLY) {
+
+                    //    if(world.getSystem(PlayerGraphicalTargetingSystem.class).createTarget(input.x, input.y)) return true;
+
+                    if(world.getSystem(SelectedTargetSystem.class).selectCharacter(input.x, input.y)) return true;
+
+                    if(world.getSystem(ActionOnTapSystem.class).touch(input.x, input.y)){
+                        return  true;
+                    };
+                }
+
+
+                return true;
+            }
+
+            @Override
+            public boolean swipe(float startX, float startY, float endX, float endY) {
+
+                double angle = AngleMath.angleOfTravelInDegrees(startX, startY, endX, endY);
+
+                float wiggleRoom = 22.5f;
+
+                if(angle < wiggleRoom && angle > -wiggleRoom || angle > 180 - wiggleRoom && angle < -180 + wiggleRoom)  {
+                    world.getSystem(DispelSystem.class).dispel(DispellableComponent.Type.HORIZONTAL);
+                } else if(angle < 90 + wiggleRoom && angle > 90 - wiggleRoom || angle > -90 - wiggleRoom && angle < -90 + wiggleRoom) {
+                    world.getSystem(DispelSystem.class).dispel(DispellableComponent.Type.VERTICAL);
+                } else if(angle < 135 + wiggleRoom && angle > 135 - wiggleRoom || angle > -45 - wiggleRoom && angle < -45 + wiggleRoom){
+                    world.getSystem(DispelSystem.class).dispel(DispellableComponent.Type.FRONT_SLASH);
+                } else if(angle < 45 + wiggleRoom && angle > 45 - wiggleRoom || angle > -135 - wiggleRoom && angle < -135 + wiggleRoom){
+                    world.getSystem(DispelSystem.class).dispel(DispellableComponent.Type.BACK_SLASH);
+                }
+
+
+                return true;
+            }
+        });
     }
 
     public void createWorld(){
@@ -122,21 +176,21 @@ public class BattleWorld extends WorldContainer {
         e.getComponent(CoordinateComponent.class).coordinates.setY(MathUtils.random(0, 5));
 
 
-/*        ComponentBag bag2 = new DummyFactory(assetManager).targetDummyWalker(Measure.units(10f), Measure.units(50f));
+        ComponentBag bag2 = new DummyFactory(game.assetManager).targetDummyWalker(Measure.units(10f), Measure.units(50f));
         Entity e2 = BagToEntity.bagToEntity(world.createEntity(), bag2);
         e2.getComponent(CoordinateComponent.class).coordinates.setX(MathUtils.random(0, 7));
         e2.getComponent(CoordinateComponent.class).coordinates.setY(MathUtils.random(0, 5));
 
-        ComponentBag bag3 = new DummyFactory(assetManager).targetDummyWalker(Measure.units(10f), Measure.units(50f));
+        ComponentBag bag3 = new DummyFactory(game.assetManager).targetDummyWalker(Measure.units(10f), Measure.units(50f));
         Entity e3 = BagToEntity.bagToEntity(world.createEntity(), bag3);
         e3.getComponent(CoordinateComponent.class).coordinates.setX(MathUtils.random(0, 7));
         e3.getComponent(CoordinateComponent.class).coordinates.setY(MathUtils.random(0, 5));
 
 
-        ComponentBag bag4 = new RangedDummyFactory(assetManager).rangedDummy(Measure.units(10f), Measure.units(50f));
+        ComponentBag bag4 = new RangedDummyFactory(game.assetManager).rangedDummy(Measure.units(10f), Measure.units(50f));
         Entity e4 = BagToEntity.bagToEntity(world.createEntity(), bag4);
         e4.getComponent(CoordinateComponent.class).coordinates.setX(MathUtils.random(0, 7));
-        e4.getComponent(CoordinateComponent.class).coordinates.setY(MathUtils.random(0, 5));*/
+        e4.getComponent(CoordinateComponent.class).coordinates.setY(MathUtils.random(0, 5));
 
         BagToEntity.bagToEntity(world.createEntity(), new FloorFactory(game.assetManager).createFloor(originX, originY, width, height,
                 rows, columns));
@@ -168,6 +222,15 @@ public class BattleWorld extends WorldContainer {
             s.setEnabled(true);
         }
     }
+
+
+
+    @Override
+    public void handleInput(InputMultiplexer inputMultiplexer) {
+        inputMultiplexer.addProcessor(directionalInputAdapter);
+    }
+
+
 
 
 }
