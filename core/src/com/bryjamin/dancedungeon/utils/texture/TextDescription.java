@@ -12,14 +12,14 @@ public class TextDescription extends DrawableDescription {
     private String text;
     private int align;
 
-    public TextDescription(TextDescriptionBuilder tdb) {
+    public TextDescription(Builder tdb) {
         super(tdb);
         this.font = tdb.font;
         this.text = tdb.text;
         this.align = tdb.align;
     }
 
-    public static final class TextDescriptionBuilder extends DrawableDescriptionBuilder<TextDescriptionBuilder> {
+    public static final class Builder extends DrawableDescriptionBuilder<Builder> {
 
         //Required
         private String font;
@@ -28,18 +28,18 @@ public class TextDescription extends DrawableDescription {
         private String text;
         private int align = Align.center;
 
-        public TextDescriptionBuilder(String font) {
+        public Builder(String font) {
             this.font = font;
         }
 
-        public TextDescriptionBuilder text(String val)
+        public Builder text(String val)
         { text = val; return getThis(); }
 
-        public TextDescriptionBuilder align(int val)
+        public Builder align(int val)
         { align = val; return getThis(); }
 
         @Override
-        public TextDescriptionBuilder getThis() {
+        public Builder getThis() {
             return this;
         }
 

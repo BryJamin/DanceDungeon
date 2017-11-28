@@ -55,7 +55,7 @@ public class BattleMessageSystem extends BaseSystem {
                         .height(height)
                         .build(),
 
-                new TextDescription.TextDescriptionBuilder(Fonts.MEDIUM)
+                new TextDescription.Builder(Fonts.MEDIUM)
                         .text("No targets are in range")
                         .color(new Color(Color.BLACK))
                         .build()

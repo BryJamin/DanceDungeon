@@ -1,7 +1,7 @@
-package com.bryjamin.dancedungeon.screens.menu;
+package com.bryjamin.dancedungeon.screens;
 
 import com.artemis.World;
-import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
@@ -11,7 +11,7 @@ import com.bryjamin.dancedungeon.utils.GameDelta;
  * Created by BB on 26/11/2017.
  */
 
-public abstract class WorldContainer extends InputAdapter {
+public abstract class WorldContainer {
 
     protected World world;
 
@@ -29,6 +29,9 @@ public abstract class WorldContainer extends InputAdapter {
     public void process(float delta){
         GameDelta.delta(world, delta);
     }
+
+
+    public void handleInput(InputMultiplexer inputMultiplexer){}
 
 
 

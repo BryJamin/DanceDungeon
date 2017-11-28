@@ -155,10 +155,12 @@ public class RenderingSystem extends EntitySystem {
                             positionComponent.getX(),
                             positionComponent.getY() + glyphLayout.height + CenterMath.offsetY(bc.bound.height, glyphLayout.height) + textDescription.getOffsetY());
                 } else {
-                    bmf.draw(batch, textDescription.getText(),
-                            positionComponent.getX() + textDescription.getOffsetX(),
-                            positionComponent.getY() + textDescription.getOffsetY(),
-                            textDescription.getWidth(), textDescription.getAlign(), true);
+
+                    glyphLayout.setText(bmf, textDescription.getText(), drawableDescription.getColor(), textDescription.getWidth(), textDescription.getAlign(), false);
+
+                    bmf.draw(batch, glyphLayout,
+                            positionComponent.getX(),
+                            positionComponent.getY() + glyphLayout.height + CenterMath.offsetY(textDescription.getHeight(), glyphLayout.height) + textDescription.getOffsetY());
                 }
 
 

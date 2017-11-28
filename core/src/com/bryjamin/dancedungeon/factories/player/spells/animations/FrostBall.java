@@ -92,7 +92,7 @@ public class FrostBall implements Skill {
 
                 for (Entity e : tileSystem.getCoordinateMap().get(coordinateComponent.coordinates)) {
                     if (world.getMapper(HealthComponent.class).has(e)) {
-                        e.getComponent(HealthComponent.class).applyDamage(3);
+                        e.getComponent(HealthComponent.class).applyDamage(6);
                     }
                 }
                 ;
