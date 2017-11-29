@@ -190,8 +190,19 @@ public class BattleWorld extends WorldContainer {
         e4.getComponent(CoordinateComponent.class).coordinates.setX(MathUtils.random(0, 7));
         e4.getComponent(CoordinateComponent.class).coordinates.setY(MathUtils.random(0, 5));
 
+
+        //TODO CREATE SET TARGET SYSTEM, FOR EASY PLAYER CONTROL
+/*        ComponentBag bag5 = new RangedDummyFactory(game.assetManager).rangedDummy(Measure.units(10f), Measure.units(50f));
+        BagSearch.removeObjectOfTypeClass(EnemyComponent.class, bag5);
+        bag5.add(new PlayerControlledComponent());
+        Entity e5 = BagToEntity.bagToEntity(world.createEntity(), bag5);
+        e4.getComponent(CoordinateComponent.class).coordinates.setX(MathUtils.random(0, 7));
+        e4.getComponent(CoordinateComponent.class).coordinates.setY(MathUtils.random(0, 5));*/
+
         BagToEntity.bagToEntity(world.createEntity(), new FloorFactory(game.assetManager).createFloor(originX, originY, width, height,
                 rows, columns));
+
+
 
 
         BagToEntity.bagToEntity(world.createEntity(), new SpellFactory().endTurnButton(0, 0));
