@@ -40,6 +40,8 @@ public class PlayerFactory extends AbstractFactory {
     public static final float width = Measure.units(5f);
     public static final float height = Measure.units(5f);
 
+    private static final float health = 20;
+
 
     public static final DrawableDescription.DrawableDescriptionBuilder player = new TextureDescription.Builder(TextureStrings.PLAYER)
             .size(height);
@@ -53,7 +55,7 @@ public class PlayerFactory extends AbstractFactory {
 
         ComponentBag bag = new ComponentBag();
         bag.add(new PositionComponent(x,y));
-        bag.add(new HealthComponent(40));
+        bag.add(new HealthComponent(health));
         bag.add(new PlayerControlledComponent());
         bag.add(new CoordinateComponent(coordinates));
         bag.add(new BlinkOnHitComponent());
@@ -80,7 +82,7 @@ public class PlayerFactory extends AbstractFactory {
 
         ComponentBag bag = new ComponentBag();
         bag.add(new PositionComponent(x,y));
-        bag.add(new HealthComponent(40));
+        bag.add(new HealthComponent(health));
         bag.add(new PlayerControlledComponent());
         bag.add(new CoordinateComponent(coordinates));
         bag.add(new BlinkOnHitComponent());

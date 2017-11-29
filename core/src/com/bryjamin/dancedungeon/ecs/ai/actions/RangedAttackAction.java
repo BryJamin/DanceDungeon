@@ -9,7 +9,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.AbilityPointComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
-import com.bryjamin.dancedungeon.factories.player.spells.animations.Skill;
+import com.bryjamin.dancedungeon.factories.player.spells.SkillDescription;
 import com.bryjamin.dancedungeon.utils.math.CoordinateSorter;
 
 /**
@@ -18,9 +18,9 @@ import com.bryjamin.dancedungeon.utils.math.CoordinateSorter;
 
 public class RangedAttackAction implements WorldAction {
 
-    private Skill skill;
+    private SkillDescription skill;
 
-    public RangedAttackAction(Skill skill){
+    public RangedAttackAction(SkillDescription skill){
         this.skill = skill;
     }
 

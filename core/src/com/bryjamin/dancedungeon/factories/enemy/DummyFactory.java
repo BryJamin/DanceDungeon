@@ -104,7 +104,7 @@ public class DummyFactory extends AbstractFactory {
         ComponentBag bag = targetDummy(x, y);
         bag.add(new DispellableComponent(DispellableComponent.Type.HORIZONTAL));
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, player.color(Color.BLACK).build()));
-        bag.add(new MovementRangeComponent(1));
+        bag.add(new MovementRangeComponent(3));
         return bag;
 
     }
@@ -115,7 +115,7 @@ public class DummyFactory extends AbstractFactory {
         ComponentBag bag = targetDummy(x, y);
         bag.add(new DispellableComponent(DispellableComponent.Type.HORIZONTAL));
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, player.color(Color.WHITE).build()));
-        bag.add(new MovementRangeComponent(1));
+        bag.add(new MovementRangeComponent(6));
         return bag;
 
     }

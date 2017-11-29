@@ -6,8 +6,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.ai.ActionScoreCalculator;
 import com.bryjamin.dancedungeon.ecs.ai.UtilityAiCalculator;
+import com.bryjamin.dancedungeon.ecs.ai.actions.EndTurnAction;
 import com.bryjamin.dancedungeon.ecs.ai.actions.RangedAttackAction;
 import com.bryjamin.dancedungeon.ecs.ai.actions.RangedMoveToAction;
+import com.bryjamin.dancedungeon.ecs.ai.calculations.CanUseSkillCalculator;
 import com.bryjamin.dancedungeon.ecs.ai.calculations.IsInRangeCalculator;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
@@ -22,12 +24,15 @@ import com.bryjamin.dancedungeon.ecs.components.battle.MovementRangeComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.AttackAiComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.factories.AbstractFactory;
-import com.bryjamin.dancedungeon.factories.player.spells.animations.Fireball;
+import com.bryjamin.dancedungeon.factories.player.spells.FireballSkill;
+import com.bryjamin.dancedungeon.factories.player.spells.MovementDescription;
+import com.bryjamin.dancedungeon.factories.player.spells.SkillDescription;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
@@ -57,8 +62,14 @@ public class RangedDummyFactory extends AbstractFactory {
 
     public ComponentBag rangedDummy(float x, float y) {
 
+        SkillDescription movement = new MovementDescription();
+        SkillDescription fireball = new FireballSkill();
+
+
+
         ComponentBag bag = new ComponentBag();
         bag.add(new PositionComponent(x, y));
+        bag.add(new SkillsComponent(movement, fireball));
         bag.add(new HealthComponent(10));
         bag.add(new EnemyComponent());
         bag.add(new AbilityPointComponent());
@@ -77,8 +88,9 @@ public class RangedDummyFactory extends AbstractFactory {
 
         bag.add(new UtilityAiComponent(
                 new UtilityAiCalculator(
-                        new ActionScoreCalculator(new RangedMoveToAction(range), new IsInRangeCalculator(0, 100, range)),
-                        new ActionScoreCalculator(new RangedAttackAction(new Fireball()), new IsInRangeCalculator(150, -10, range)
+                        new ActionScoreCalculator(new EndTurnAction()),
+                        new ActionScoreCalculator(new RangedMoveToAction(movement, range), new IsInRangeCalculator(-100, 100, range), new CanUseSkillCalculator(movement, 0, -1000)),
+                        new ActionScoreCalculator(new RangedAttackAction(fireball), new IsInRangeCalculator(150, -10, range), new CanUseSkillCalculator(fireball, 0, -1000)
                         )
                 )));
 

@@ -14,6 +14,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.MovementRangeComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
+import com.bryjamin.dancedungeon.factories.player.spells.SkillDescription;
 import com.bryjamin.dancedungeon.utils.math.CoordinateMath;
 import com.bryjamin.dancedungeon.utils.math.CoordinateSorter;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
@@ -26,15 +27,19 @@ import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
 public class RangedMoveToAction implements WorldAction {
 
+    private SkillDescription movementSkill;
     private int range;
 
-    public RangedMoveToAction(int range){
+    public RangedMoveToAction(SkillDescription movementSkill, int range){
+        this.movementSkill = movementSkill;
         this.range = range;
     }
 
 
     @Override
     public void performAction(World world, Entity entity) {
+
+        if(!movementSkill.canCast(world, entity)) return;
 
 
         Array<Entity> entityArray = entity.getComponent(TargetComponent.class).getTargets(world);
@@ -67,6 +72,9 @@ public class RangedMoveToAction implements WorldAction {
         };
 
         entity.getComponent(AbilityPointComponent.class).abilityPoints -= 1;
+
+        movementSkill.cast(world, entity, playerCoordinates);
+
 
     }
 
