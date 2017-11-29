@@ -14,6 +14,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.ai.AttackAiComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
+import com.bryjamin.dancedungeon.factories.player.spells.MovementDescription;
 import com.bryjamin.dancedungeon.factories.player.spells.SkillDescription;
 
 import static com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem.TURN.ALLY;
@@ -73,7 +74,7 @@ public class TurnSystem extends EntitySystem {
 
     @SuppressWarnings("unchecked")
     public TurnSystem() {
-        super(Aspect.all(TurnComponent.class).one(UtilityAiComponent.class, PlayerControlledComponent.class));
+        super(Aspect.all(TurnComponent.class, SkillsComponent.class).one(UtilityAiComponent.class, PlayerControlledComponent.class));
     }
 
 
@@ -167,13 +168,15 @@ public class TurnSystem extends EntitySystem {
                     currentEntity.getComponent(TurnComponent.class).state = TurnComponent.State.DECIDING;
                     AbilityPointComponent apc = abilityPointMapper.get(currentEntity);
                     apc.abilityPoints = apc.abilityPointsPerTurn;
+
+                    if(skillMapper.has(currentEntity)){
+                        skillMapper.get(currentEntity).endTurn();
+                    }
+
                 } else {
 
                     for(Entity e : allyTurnEntities){
-                        SkillsComponent sc = skillMapper.get(e);
-                        for(SkillDescription sd : sc.skillDescriptions){
-                            sd.endTurnUpdate();
-                        }
+                        skillMapper.get(e).endTurn();
                     }
 
                 }
@@ -197,16 +200,33 @@ public class TurnSystem extends EntitySystem {
                         case DECIDING:
 
                             //TODO change to just be a varaible that states the turn is over?
-                            AbilityPointComponent abilityPointComponent = abilityPointMapper.get(currentEntity);
-                            if (abilityPointComponent.abilityPoints <= 0) {
-                                turnComponent.state = TurnComponent.State.END;
-                                break;
+
+                            SkillsComponent skillsComponent = currentEntity.getComponent(SkillsComponent.class);
+
+                            boolean continueTurn = false;
+
+
+                            for(SkillDescription skillDescription : skillsComponent.skillDescriptions){
+
+                                if(skillDescription instanceof MovementDescription){
+                                    System.out.println("move skill + " + skillDescription.canCast(world, currentEntity));
+                                }
+
+
+                                continueTurn = skillDescription.canCast(world, currentEntity);
+                                if(continueTurn) break;
                             }
 
-                            turnComponent.state = TurnComponent.State.WAITING;
+                            if (!continueTurn) {
+                                turnComponent.state = TurnComponent.State.END;
+                            } else {
 
-                            if (utilityAiMapper.has(currentEntity)) {
-                                utilityAiMapper.get(currentEntity).utilityAiCalculator.performAction(world, currentEntity);
+                                turnComponent.state = TurnComponent.State.WAITING;
+
+                                if (utilityAiMapper.has(currentEntity)) {
+                                    utilityAiMapper.get(currentEntity).utilityAiCalculator.performAction(world, currentEntity);
+                                }
+
                             }
 
                             break;

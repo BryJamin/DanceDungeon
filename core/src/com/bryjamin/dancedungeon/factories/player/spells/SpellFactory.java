@@ -30,6 +30,13 @@ public class SpellFactory {
 
     public ComponentBag endTurnButton(float x, float y) {
 
+        ComponentBag button = defaultButton(x, y, new WorldAction() {
+            @Override
+            public void performAction(World world, Entity entity) {
+                world.getSystem(TurnSystem.class).setUp(TurnSystem.TURN.ENEMY);
+            }
+        });
+
         return defaultButton(x, y, new WorldAction() {
             @Override
             public void performAction(World world, Entity entity) {

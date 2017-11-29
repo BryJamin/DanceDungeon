@@ -19,5 +19,12 @@ public class SkillsComponent extends Component {
     }
 
 
+    public void endTurn(){
+        for(SkillDescription skillDescription : skillDescriptions){
+            skillDescription.endTurnUpdate();
+        }
+    }
+
+
 
 }

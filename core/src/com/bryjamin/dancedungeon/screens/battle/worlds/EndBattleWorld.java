@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.assets.FileStrings;
 import com.bryjamin.dancedungeon.assets.Fonts;
+import com.bryjamin.dancedungeon.assets.TextResource;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
@@ -38,17 +39,26 @@ import com.bryjamin.dancedungeon.utils.texture.Layer;
 import com.bryjamin.dancedungeon.utils.texture.TextDescription;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
+
 /**
  * Created by BB on 28/11/2017.
  */
 
-public class VictoryWorld extends WorldContainer {
+public class EndBattleWorld extends WorldContainer {
 
     private VictoryAdapter victoryAdapter;
 
 
-    public VictoryWorld(MainGame game, Viewport gameport) {
+    public enum State {
+        VICTORY, DEFEAT
+    }
+
+    private State state;
+
+
+    public EndBattleWorld(MainGame game, Viewport gameport, State state) {
         super(game, gameport);
+        this.state = state;
         createWorld();
         victoryAdapter = new VictoryAdapter();
     }
@@ -91,7 +101,7 @@ public class VictoryWorld extends WorldContainer {
                 new TextDescription.Builder(FileStrings.DEFAULT_FONT_NAME)
                         .width(width)
                         .height(height)
-                        .text("Continue")
+                        .text(TextResource.BATTLE_OVER_CONTINUE)
                         .color(new Color(Color.BLACK))
                         .build()));
         exitButton.edit().add(new ActionOnTapComponent(new WorldAction() {
@@ -108,10 +118,9 @@ public class VictoryWorld extends WorldContainer {
         blackScreen.edit().add(new PositionComponent(CenterMath.centerPositionX(gameport.getCamera().viewportWidth, gameport.getCamera().position.x),
                 CenterMath.centerPositionY(gameport.getCamera().viewportHeight, gameport.getCamera().position.y)));
         blackScreen.edit().add(new HitBoxComponent(new HitBox(gameport.getCamera().viewportWidth, gameport.getCamera().viewportHeight)));
-        //blackScreen.edit().add(new CenteringBoundaryComponent(new Rectangle(0,0, width, height)));
         blackScreen.edit().add(new DrawableComponent(Layer.BACKGROUND_LAYER_FAR,
                 new TextureDescription.Builder(TextureStrings.BLOCK)
-                        .color(new Color(1,0,0,0.6f))
+                        .color(state == State.VICTORY ? new Color(0,1,0, 0.6f) : new Color(1,0,0,0.6f))
                         .width(gameport.getWorldWidth())
                         .height(gameport.getWorldHeight()).build()));
 
@@ -125,12 +134,10 @@ public class VictoryWorld extends WorldContainer {
                         .height(Measure.units(10f)).build(),
 
                 new TextDescription.Builder(Fonts.MEDIUM)
-                        .text("VICTORY!!!")
+                        .text(state == State.VICTORY ? TextResource.BATTLE_OVER_VICTORY : TextResource.BATTLE_OVER_DEFEAT)
                         .color(new Color(Color.BLACK))
                         .width(gameport.getWorldWidth())
                         .height(Measure.units(10f)).build()
-
-
                 ));
 
     }

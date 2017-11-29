@@ -4,6 +4,7 @@ package com.bryjamin.dancedungeon.assets;
  * Created by BB on 10/10/2017.
  */
 
+@SuppressWarnings("HardCodedStringLiteral")
 public class TextureStrings {
 
     public static final String BLOCK = "block";

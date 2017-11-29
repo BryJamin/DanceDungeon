@@ -9,7 +9,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.screens.AbstractScreen;
 import com.bryjamin.dancedungeon.screens.battle.worlds.BattleWorld;
-import com.bryjamin.dancedungeon.screens.battle.worlds.VictoryWorld;
+import com.bryjamin.dancedungeon.screens.battle.worlds.EndBattleWorld;
 
 
 /**
@@ -22,12 +22,13 @@ public class PlayScreen extends AbstractScreen {
     private Viewport gameport;
 
     private BattleWorld battleWorld;
-    private VictoryWorld victoryWorld;
+    private EndBattleWorld endBattleWorld;
 
 
     private enum ScreenState {
-        BATTLE, PAUSED, WIN, LOSE
+        BATTLE, PAUSED, END_BATTLE
     }
+
 
     private ScreenState screenState = ScreenState.BATTLE;
 
@@ -40,8 +41,6 @@ public class PlayScreen extends AbstractScreen {
         gamecam.update();
         gameport.apply();
 
-
-        this.victoryWorld = new VictoryWorld(game, gameport);
         this.battleWorld = new BattleWorld(game, gameport);
 
     }
@@ -67,7 +66,8 @@ public class PlayScreen extends AbstractScreen {
         switch(screenState){
             case BATTLE:
                 break;
-            case WIN: victoryWorld.process(delta);
+            case END_BATTLE:
+                endBattleWorld.process(delta);
                 break;
         }
 
@@ -84,7 +84,7 @@ public class PlayScreen extends AbstractScreen {
         switch (screenState) {
             case BATTLE: battleWorld.handleInput(multiplexer);
                 break;
-            case WIN: victoryWorld.handleInput(multiplexer);
+            case END_BATTLE: endBattleWorld.handleInput(multiplexer);
                 break;
         }
 
@@ -95,13 +95,14 @@ public class PlayScreen extends AbstractScreen {
 
 
     public void victory(){
-        screenState = ScreenState.WIN;
-        this.victoryWorld = new VictoryWorld(game, gameport);
+        screenState = ScreenState.END_BATTLE;
+        this.endBattleWorld = new EndBattleWorld(game, gameport, EndBattleWorld.State.VICTORY);
     }
 
 
     public void defeat(){
-        screenState = ScreenState.LOSE;
+        screenState = ScreenState.END_BATTLE;
+        this.endBattleWorld = new EndBattleWorld(game, gameport, EndBattleWorld.State.DEFEAT);
     }
 
 

@@ -8,8 +8,10 @@ import com.bryjamin.dancedungeon.assets.Colors;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.ai.ActionScoreCalculator;
 import com.bryjamin.dancedungeon.ecs.ai.UtilityAiCalculator;
+import com.bryjamin.dancedungeon.ecs.ai.actions.EndTurnAction;
 import com.bryjamin.dancedungeon.ecs.ai.actions.MeleeAttackAction;
 import com.bryjamin.dancedungeon.ecs.ai.actions.MeleeMoveToAction;
+import com.bryjamin.dancedungeon.ecs.ai.calculations.CanUseSkillCalculator;
 import com.bryjamin.dancedungeon.ecs.ai.calculations.IsNextToCalculator;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
@@ -25,11 +27,15 @@ import com.bryjamin.dancedungeon.ecs.components.battle.MovementRangeComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.AttackAiComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.factories.AbstractFactory;
+import com.bryjamin.dancedungeon.factories.player.spells.MovementDescription;
+import com.bryjamin.dancedungeon.factories.player.spells.SkillDescription;
+import com.bryjamin.dancedungeon.factories.player.spells.SlashDescription;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
@@ -60,6 +66,9 @@ public class DummyFactory extends AbstractFactory {
 
     private ComponentBag targetDummy(float x, float y) {
 
+        SkillDescription movement = new MovementDescription();
+        SkillDescription slash = new SlashDescription();
+
         ComponentBag bag = new ComponentBag();
         bag.add(new PositionComponent(x, y));
         bag.add(new HealthComponent(10));
@@ -73,13 +82,15 @@ public class DummyFactory extends AbstractFactory {
         bag.add(new BlinkOnHitComponent());
         bag.add(new CenteringBoundaryComponent(new Rectangle(x, y, width, height)));
         bag.add(new HitBoxComponent(new HitBox(new Rectangle(x, y, width, height))));
+        bag.add(new SkillsComponent(movement, slash));
 
         bag.add(new TargetComponent(Aspect.all(PlayerControlledComponent.class, CoordinateComponent.class)));
 
         bag.add(new UtilityAiComponent(
                 new UtilityAiCalculator(
-                        new ActionScoreCalculator(new MeleeMoveToAction(), new IsNextToCalculator(0, 100)),
-                        new ActionScoreCalculator(new MeleeAttackAction(), new IsNextToCalculator(150, -10)
+                        new ActionScoreCalculator(new EndTurnAction()),
+                        new ActionScoreCalculator(new MeleeMoveToAction(movement), new IsNextToCalculator(-1000, 100), new CanUseSkillCalculator(movement, 100, -1000)),
+                        new ActionScoreCalculator(new MeleeAttackAction(slash), new IsNextToCalculator(150, -1000), new CanUseSkillCalculator(slash, 100, -1000)
                         )
                 )));
 
@@ -93,7 +104,7 @@ public class DummyFactory extends AbstractFactory {
         ComponentBag bag = targetDummy(x, y);
         bag.add(new DispellableComponent(DispellableComponent.Type.HORIZONTAL));
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, player.color(Color.BLACK).build()));
-        bag.add(new MovementRangeComponent(2));
+        bag.add(new MovementRangeComponent(1));
         return bag;
 
     }
@@ -104,7 +115,7 @@ public class DummyFactory extends AbstractFactory {
         ComponentBag bag = targetDummy(x, y);
         bag.add(new DispellableComponent(DispellableComponent.Type.HORIZONTAL));
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, player.color(Color.WHITE).build()));
-        bag.add(new MovementRangeComponent(4));
+        bag.add(new MovementRangeComponent(1));
         return bag;
 
     }

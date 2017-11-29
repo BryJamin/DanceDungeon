@@ -18,7 +18,7 @@ public class Slash implements Skill {
 
         for (Entity meleeRangeEntity : world.getSystem(TileSystem.class).getCoordinateMap().get(target)) {
             if (world.getMapper(HealthComponent.class).has(meleeRangeEntity)) {
-                meleeRangeEntity.getComponent(HealthComponent.class).applyDamage(6.0f);
+                meleeRangeEntity.getComponent(HealthComponent.class).applyDamage(3.0f);
             }
         }
 

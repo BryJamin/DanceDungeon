@@ -53,7 +53,7 @@ public class PlayerFactory extends AbstractFactory {
 
         ComponentBag bag = new ComponentBag();
         bag.add(new PositionComponent(x,y));
-        bag.add(new HealthComponent(10));
+        bag.add(new HealthComponent(40));
         bag.add(new PlayerControlledComponent());
         bag.add(new CoordinateComponent(coordinates));
         bag.add(new BlinkOnHitComponent());
@@ -80,7 +80,7 @@ public class PlayerFactory extends AbstractFactory {
 
         ComponentBag bag = new ComponentBag();
         bag.add(new PositionComponent(x,y));
-        bag.add(new HealthComponent(10));
+        bag.add(new HealthComponent(40));
         bag.add(new PlayerControlledComponent());
         bag.add(new CoordinateComponent(coordinates));
         bag.add(new BlinkOnHitComponent());

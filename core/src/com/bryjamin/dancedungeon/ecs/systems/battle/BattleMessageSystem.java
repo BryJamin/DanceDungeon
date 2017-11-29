@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.assets.Fonts;
+import com.bryjamin.dancedungeon.assets.TextResource;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.ExpireComponent;
@@ -56,7 +57,7 @@ public class BattleMessageSystem extends BaseSystem {
                         .build(),
 
                 new TextDescription.Builder(Fonts.MEDIUM)
-                        .text("No targets are in range")
+                        .text(TextResource.TARGETING_NO_TARGETS_IN_RANGE)
                         .color(new Color(Color.BLACK))
                         .build()
 

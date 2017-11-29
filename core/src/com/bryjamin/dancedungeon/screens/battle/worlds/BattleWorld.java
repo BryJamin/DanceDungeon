@@ -84,8 +84,6 @@ public class BattleWorld extends WorldContainer {
 
                 if(world.getSystem(TurnSystem.class).turn == TurnSystem.TURN.ALLY) {
 
-                    //    if(world.getSystem(PlayerGraphicalTargetingSystem.class).createTarget(input.x, input.y)) return true;
-
                     if(world.getSystem(SelectedTargetSystem.class).selectCharacter(input.x, input.y)) return true;
 
                     if(world.getSystem(ActionOnTapSystem.class).touch(input.x, input.y)){

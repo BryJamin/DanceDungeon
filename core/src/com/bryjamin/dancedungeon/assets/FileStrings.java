@@ -19,4 +19,10 @@ public class FileStrings {
 
     public static final String DEFAULT_FONT_NAME = "font.ttf";
 
+
+
+    public static final String DEFAULT_VERTEX_SHADER = "shader/VertexShader.glsl";
+    public static final String ALL_WHITE_FRAGMENT_SHADER = "shader/WhiteFragmentShader.glsl";
+
+
 }

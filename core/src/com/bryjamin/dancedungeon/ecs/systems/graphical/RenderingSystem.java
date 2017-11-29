@@ -73,8 +73,8 @@ public class RenderingSystem extends EntitySystem {
 
 
     public void loadShader() {
-        whiteShaderProgram = new ShaderProgram( Gdx.files.internal("shader/VertexShader.glsl"),
-                Gdx.files.internal("shader/WhiteFragmentShader.glsl"));
+        whiteShaderProgram = new ShaderProgram( Gdx.files.internal(FileStrings.DEFAULT_VERTEX_SHADER),
+                Gdx.files.internal(FileStrings.ALL_WHITE_FRAGMENT_SHADER));
         if (!whiteShaderProgram.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + whiteShaderProgram.getLog());
     }
 

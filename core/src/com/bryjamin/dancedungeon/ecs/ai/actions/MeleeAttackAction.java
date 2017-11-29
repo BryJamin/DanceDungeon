@@ -7,12 +7,12 @@ import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldCondition;
 import com.bryjamin.dancedungeon.ecs.components.battle.AbilityPointComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
-import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
+import com.bryjamin.dancedungeon.factories.player.spells.SkillDescription;
+import com.bryjamin.dancedungeon.factories.player.spells.SlashDescription;
 import com.bryjamin.dancedungeon.utils.math.CoordinateSorter;
+import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
 /**
  * Created by BB on 14/11/2017.
@@ -20,6 +20,11 @@ import com.bryjamin.dancedungeon.utils.math.CoordinateSorter;
 
 public class MeleeAttackAction implements WorldAction {
 
+    private SkillDescription skillDescription = new SlashDescription();
+
+    public MeleeAttackAction(SkillDescription skillDescription){
+        this.skillDescription = skillDescription;
+    }
 
     @Override
     public void performAction(World world, Entity entity) {
@@ -28,12 +33,8 @@ public class MeleeAttackAction implements WorldAction {
         if(entityArray.size <= 0) return;
         entityArray.sort(CoordinateSorter.SORT_BY_NEAREST(entity));
 
-        for (Entity meleeRangeEntity : world.getSystem(TileSystem.class).getCoordinateMap().get(
-                entityArray.first().getComponent(CoordinateComponent.class).coordinates)) {
-            if (world.getMapper(PlayerControlledComponent.class).has(meleeRangeEntity)) {
-                meleeRangeEntity.getComponent(HealthComponent.class).applyDamage(2.0f);
-            }
-        }
+        Coordinates c = entityArray.first().getComponent(CoordinateComponent.class).coordinates;
+        skillDescription.cast(world, entity, c);
 
         entity.getComponent(AbilityPointComponent.class).abilityPoints = 0;
 

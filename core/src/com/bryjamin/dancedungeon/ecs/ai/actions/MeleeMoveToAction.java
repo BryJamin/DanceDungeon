@@ -7,13 +7,14 @@ import com.badlogic.gdx.utils.Queue;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldCondition;
-import com.bryjamin.dancedungeon.ecs.components.battle.AbilityPointComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MovementRangeComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
+import com.bryjamin.dancedungeon.factories.player.spells.MovementDescription;
+import com.bryjamin.dancedungeon.factories.player.spells.SkillDescription;
 import com.bryjamin.dancedungeon.utils.math.CoordinateMath;
 import com.bryjamin.dancedungeon.utils.math.CoordinateSorter;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
@@ -24,9 +25,17 @@ import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
 public class MeleeMoveToAction implements WorldAction {
 
+    private SkillDescription movementSkill = new MovementDescription();
+
+    public MeleeMoveToAction(SkillDescription movementSkill){
+        this.movementSkill = movementSkill;
+    }
+
 
     @Override
     public void performAction(World world, Entity entity) {
+
+        if(!movementSkill.canCast(world, entity)) return;
 
         Array<Entity> entityArray = entity.getComponent(TargetComponent.class).getTargets(world);
         if(entityArray.size <= 0) return;
@@ -57,7 +66,7 @@ public class MeleeMoveToAction implements WorldAction {
             }
         };
 
-        entity.getComponent(AbilityPointComponent.class).abilityPoints -= 1;
+        movementSkill.cast(world, entity, playerCoordinates);
 
     }
 }

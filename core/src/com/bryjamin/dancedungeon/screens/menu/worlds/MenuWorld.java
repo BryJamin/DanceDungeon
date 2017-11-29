@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.assets.FileStrings;
 import com.bryjamin.dancedungeon.assets.Fonts;
+import com.bryjamin.dancedungeon.assets.TextResource;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
@@ -91,7 +92,7 @@ public class MenuWorld extends WorldContainer {
                         .width(width)
                         .height(height).build(),
                 new TextDescription.Builder(FileStrings.DEFAULT_FONT_NAME)
-                        .text("Start")
+                        .text(TextResource.GAME_TITLE_START)
                         .color(new Color(Color.BLACK))
                         .build()));
         startButton.edit().add(new ActionOnTapComponent(new WorldAction() {
@@ -114,7 +115,7 @@ public class MenuWorld extends WorldContainer {
                         .height(Measure.units(10f)).build(),
 
                 new TextDescription.Builder(Fonts.MEDIUM)
-                        .text("ProtoType Demonstration")
+                        .text(TextResource.GAME_TITLE)
                         .color(new Color(Color.BLACK))
                         .width(gameport.getWorldWidth())
                         .height(Measure.units(10f)).build()

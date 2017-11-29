@@ -53,8 +53,7 @@ public class EndBattleSystem extends EntitySystem {
     public void removed(Entity e) {
         if(enemyMapper.has(e)) enemyBag.remove(e);
         if(pcMapper.has(e)) playerBag.remove(e);
-
-
+        
         if(playerBag.isEmpty()){
             ((PlayScreen) game.getScreen()).defeat();
         }
