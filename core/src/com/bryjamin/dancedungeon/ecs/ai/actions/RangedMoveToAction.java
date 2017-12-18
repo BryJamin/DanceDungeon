@@ -7,7 +7,6 @@ import com.badlogic.gdx.utils.Queue;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldCondition;
-import com.bryjamin.dancedungeon.ecs.components.battle.AbilityPointComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MovementRangeComponent;
@@ -71,7 +70,6 @@ public class RangedMoveToAction implements WorldAction {
             }
         };
 
-        entity.getComponent(AbilityPointComponent.class).abilityPoints -= 1;
 
         movementSkill.cast(world, entity, playerCoordinates);
 

@@ -5,16 +5,17 @@ import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.WorldConfiguration;
 import com.artemis.WorldConfigurationBuilder;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
+import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.DispellableComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
-import com.bryjamin.dancedungeon.ecs.systems.FindPlayerSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MoveToTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ParentChildSystem;
@@ -39,17 +40,13 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UIRenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
 import com.bryjamin.dancedungeon.factories.decor.FloorFactory;
-import com.bryjamin.dancedungeon.factories.enemy.DummyFactory;
-import com.bryjamin.dancedungeon.factories.enemy.RangedDummyFactory;
-import com.bryjamin.dancedungeon.factories.player.PlayerFactory;
 import com.bryjamin.dancedungeon.factories.player.spells.SpellFactory;
 import com.bryjamin.dancedungeon.screens.WorldContainer;
+import com.bryjamin.dancedungeon.screens.battle.BattleDetails;
 import com.bryjamin.dancedungeon.screens.battle.PlayScreen;
-import com.bryjamin.dancedungeon.utils.DirectionalInputAdapter;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
-import com.bryjamin.dancedungeon.utils.math.AngleMath;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
 /**
@@ -66,56 +63,14 @@ public class BattleWorld extends WorldContainer {
     int rows = 5;
     int columns = 10;
 
-    private DirectionalInputAdapter directionalInputAdapter;
+    private VictoryAdapter victoryAdapter = new VictoryAdapter();
 
+    private BattleDetails battleDetails;
 
-    public BattleWorld(MainGame game, final Viewport gameport) {
+    public BattleWorld(MainGame game, final Viewport gameport, BattleDetails battleDetails) {
         super(game, gameport);
+        this.battleDetails = battleDetails;
         createWorld();
-
-
-        directionalInputAdapter = new DirectionalInputAdapter(new DirectionalInputAdapter.DirectionalGestureListener() {
-            @Override
-            public boolean tap(float x, float y, int count, int button) {
-
-                Vector3 input = gameport.unproject(new Vector3(x, y, 0));
-
-
-
-                if(world.getSystem(TurnSystem.class).turn == TurnSystem.TURN.ALLY) {
-
-                    if(world.getSystem(SelectedTargetSystem.class).selectCharacter(input.x, input.y)) return true;
-
-                    if(world.getSystem(ActionOnTapSystem.class).touch(input.x, input.y)){
-                        return  true;
-                    };
-                }
-
-
-                return true;
-            }
-
-            @Override
-            public boolean swipe(float startX, float startY, float endX, float endY) {
-
-                double angle = AngleMath.angleOfTravelInDegrees(startX, startY, endX, endY);
-
-                float wiggleRoom = 22.5f;
-
-                if(angle < wiggleRoom && angle > -wiggleRoom || angle > 180 - wiggleRoom && angle < -180 + wiggleRoom)  {
-                    world.getSystem(DispelSystem.class).dispel(DispellableComponent.Type.HORIZONTAL);
-                } else if(angle < 90 + wiggleRoom && angle > 90 - wiggleRoom || angle > -90 - wiggleRoom && angle < -90 + wiggleRoom) {
-                    world.getSystem(DispelSystem.class).dispel(DispellableComponent.Type.VERTICAL);
-                } else if(angle < 135 + wiggleRoom && angle > 135 - wiggleRoom || angle > -45 - wiggleRoom && angle < -45 + wiggleRoom){
-                    world.getSystem(DispelSystem.class).dispel(DispellableComponent.Type.FRONT_SLASH);
-                } else if(angle < 45 + wiggleRoom && angle > 45 - wiggleRoom || angle > -135 - wiggleRoom && angle < -135 + wiggleRoom){
-                    world.getSystem(DispelSystem.class).dispel(DispellableComponent.Type.BACK_SLASH);
-                }
-
-
-                return true;
-            }
-        });
     }
 
     public void createWorld(){
@@ -134,7 +89,6 @@ public class BattleWorld extends WorldContainer {
                         new DispelSystem(),
                         new TurnSystem(),
                         new HealthSystem(),
-                        new FindPlayerSystem(),
                         new ParentChildSystem(),
                         new BlinkOnHitSystem(),
                         new DeathSystem(),
@@ -157,52 +111,11 @@ public class BattleWorld extends WorldContainer {
 
         world = new World(config);
 
-
-        ComponentBag player = new PlayerFactory(game.assetManager).player(Measure.units(10f), Measure.units(10f), new Coordinates(5,3));
-        BagToEntity.bagToEntity(world.createEntity(), player);
-
-        world.getSystem(FindPlayerSystem.class).setPlayerBag(player);
-
-
-        ComponentBag playerzzzzzz = new PlayerFactory(game.assetManager).player2(Measure.units(10f), Measure.units(10f), new Coordinates(1,3));
-        BagToEntity.bagToEntity(world.createEntity(), playerzzzzzz);
-
-
-        ComponentBag bag = new DummyFactory(game.assetManager).targetDummySprinter(Measure.units(10f), Measure.units(50f));
-        Entity e = BagToEntity.bagToEntity(world.createEntity(), bag);
-        e.getComponent(CoordinateComponent.class).coordinates.setX(MathUtils.random(0, 7));
-        e.getComponent(CoordinateComponent.class).coordinates.setY(MathUtils.random(0, 5));
-
-
-        ComponentBag bag2 = new DummyFactory(game.assetManager).targetDummyWalker(Measure.units(10f), Measure.units(50f));
-        Entity e2 = BagToEntity.bagToEntity(world.createEntity(), bag2);
-        e2.getComponent(CoordinateComponent.class).coordinates.setX(MathUtils.random(0, 7));
-        e2.getComponent(CoordinateComponent.class).coordinates.setY(MathUtils.random(0, 5));
-
-        ComponentBag bag3 = new DummyFactory(game.assetManager).targetDummyWalker(Measure.units(10f), Measure.units(50f));
-        Entity e3 = BagToEntity.bagToEntity(world.createEntity(), bag3);
-        e3.getComponent(CoordinateComponent.class).coordinates.setX(MathUtils.random(0, 7));
-        e3.getComponent(CoordinateComponent.class).coordinates.setY(MathUtils.random(0, 5));
-
-
-        ComponentBag bag4 = new RangedDummyFactory(game.assetManager).rangedDummy(Measure.units(10f), Measure.units(50f));
-        Entity e4 = BagToEntity.bagToEntity(world.createEntity(), bag4);
-        e4.getComponent(CoordinateComponent.class).coordinates.setX(MathUtils.random(0, 7));
-        e4.getComponent(CoordinateComponent.class).coordinates.setY(MathUtils.random(0, 5));
-
-
-        //TODO CREATE SET TARGET SYSTEM, FOR EASY PLAYER CONTROL
-/*        ComponentBag bag5 = new RangedDummyFactory(game.assetManager).rangedDummy(Measure.units(10f), Measure.units(50f));
-        BagSearch.removeObjectOfTypeClass(EnemyComponent.class, bag5);
-        bag5.add(new PlayerControlledComponent());
-        Entity e5 = BagToEntity.bagToEntity(world.createEntity(), bag5);
-        e4.getComponent(CoordinateComponent.class).coordinates.setX(MathUtils.random(0, 7));
-        e4.getComponent(CoordinateComponent.class).coordinates.setY(MathUtils.random(0, 5));*/
+        setUpPlayerLocations(world, battleDetails);
+        setUpEnemyLocations(world, battleDetails);
 
         BagToEntity.bagToEntity(world.createEntity(), new FloorFactory(game.assetManager).createFloor(originX, originY, width, height,
                 rows, columns));
-
-
 
 
         BagToEntity.bagToEntity(world.createEntity(), new SpellFactory().endTurnButton(0, 0));
@@ -214,9 +127,102 @@ public class BattleWorld extends WorldContainer {
             }
         }));
 
+    }
+
+
+    private void setUpPlayerLocations(World world, BattleDetails battleDetails){
+
+        for(int i = 0; i < battleDetails.getPlayerParty().size; i++) {
+            ComponentBag player = battleDetails.getPlayerParty().get(i);
+
+            if (player != null) {
+                Coordinates c = player.getComponent(CoordinateComponent.class).coordinates;
+                player.getComponent(CoordinateComponent.class).freePlacement = true;
+
+
+                switch (i) {
+                    case 0:
+                        c.set(2, 2);
+                        break;
+                    case 1:
+                        c.set(1, 3);
+                        break;
+                    case 2:
+                        c.set(1, 1);
+                        break;
+                    case 3:
+                        c.set(0, 2);
+                        break;
+                }
+
+                TileSystem tileSystem = world.getSystem(TileSystem.class);
+
+                player.getComponent(PositionComponent.class).position.set(
+                        tileSystem.getPositionUsingCoordinates(c.getX() - 4, c.getY(),
+                                player.getComponent(CenteringBoundaryComponent.class).bound)
+                );
+
+                player.getComponent(MoveToComponent.class).movementPositions.add(tileSystem.getPositionUsingCoordinates(c,
+                        player.getComponent(CenteringBoundaryComponent.class).bound));
+
+                BagToEntity.bagToEntity(world.createEntity(), player);
+
+            }
+
+        }
+
+    }
+
+
+
+    private void setUpEnemyLocations(World world, BattleDetails battleDetails){
+
+        TileSystem tileSystem = world.getSystem(TileSystem.class);
+
+        for(int i = 0; i < battleDetails.getEnemyParty().size; i++) {
+            ComponentBag enemy = battleDetails.getEnemyParty().get(i);
+
+            if (enemy != null) {
+                Coordinates c = enemy.getComponent(CoordinateComponent.class).coordinates;
+                enemy.getComponent(CoordinateComponent.class).freePlacement = true;
+
+
+                switch (i) {
+                    case 0:
+                        c.set(tileSystem.getMaxX() - 2, 2);
+                        break;
+                    case 1:
+                        c.set(tileSystem.getMaxX() - 1, 3);
+                        break;
+                    case 2:
+                        c.set(tileSystem.getMaxX() - 1, 1);
+                        break;
+                    case 3:
+                        c.set(tileSystem.getMaxX(), 2);
+                        break;
+                }
+
+
+
+                enemy.getComponent(PositionComponent.class).position.set(
+                        tileSystem.getPositionUsingCoordinates(c.getX() + 4, c.getY(),
+                                enemy.getComponent(CenteringBoundaryComponent.class).bound)
+                );
+
+                enemy.getComponent(MoveToComponent.class).movementPositions.add(tileSystem.getPositionUsingCoordinates(c,
+                        enemy.getComponent(CenteringBoundaryComponent.class).bound));
+
+                BagToEntity.bagToEntity(world.createEntity(), enemy);
+
+            }
+
+        }
 
 
     }
+
+
+
 
     public void pauseWorld() {
         for (BaseSystem s : world.getSystems()) {
@@ -236,7 +242,27 @@ public class BattleWorld extends WorldContainer {
 
     @Override
     public void handleInput(InputMultiplexer inputMultiplexer) {
-        inputMultiplexer.addProcessor(directionalInputAdapter);
+        inputMultiplexer.addProcessor(victoryAdapter);
+    }
+
+
+
+    private class VictoryAdapter extends InputAdapter {
+
+        @Override
+        public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+            Vector3 input = gameport.unproject(new Vector3(screenX, screenY , 0));
+
+            if(world.getSystem(TurnSystem.class).turn == TurnSystem.TURN.ALLY) {
+
+                if(world.getSystem(SelectedTargetSystem.class).selectCharacter(input.x, input.y)) return true;
+
+                if(world.getSystem(ActionOnTapSystem.class).touch(input.x, input.y)){
+                    return  true;
+                };
+            }
+            return false;
+        }
     }
 
 

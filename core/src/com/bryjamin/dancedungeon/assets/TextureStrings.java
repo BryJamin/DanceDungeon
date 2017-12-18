@@ -19,4 +19,6 @@ public class TextureStrings {
 
     public static final String BIGGABLOBBA = "enemy/boss/biggablobba";
 
+    public static final String TARGETING = "player/targeting";
+
 }

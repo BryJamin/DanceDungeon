@@ -13,112 +13,112 @@ block
   index: 0
 decor/turret
   rotate: false
-  xy: 661, 1
+  xy: 727, 67
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
 decor/turret
   rotate: false
-  xy: 727, 67
+  xy: 793, 133
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 1
 decor/turret
   rotate: false
-  xy: 793, 133
+  xy: 727, 1
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 2
 decor/turret
   rotate: false
-  xy: 727, 1
+  xy: 793, 67
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 3
 decor/turret
   rotate: false
-  xy: 793, 67
+  xy: 859, 133
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 4
 decor/turret
   rotate: false
-  xy: 859, 133
+  xy: 793, 1
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 5
 decor/turret
   rotate: false
-  xy: 793, 1
+  xy: 859, 67
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 6
 decor/turret
   rotate: false
-  xy: 859, 67
+  xy: 925, 133
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 7
 decor/turret
   rotate: false
-  xy: 925, 133
+  xy: 859, 1
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 8
 decor/turret
   rotate: false
-  xy: 859, 1
+  xy: 925, 67
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 9
 decor/turret
   rotate: false
-  xy: 925, 67
+  xy: 991, 133
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 10
 decor/turret
   rotate: false
-  xy: 991, 133
+  xy: 925, 1
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 11
 decor/turret
   rotate: false
-  xy: 925, 1
+  xy: 991, 67
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 12
 decor/turret
   rotate: false
-  xy: 991, 67
+  xy: 1057, 133
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 13
 decor/turret
   rotate: false
-  xy: 1057, 133
+  xy: 991, 1
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 14
 decor/turret
   rotate: false
-  xy: 991, 1
+  xy: 1057, 67
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -202,7 +202,7 @@ enemy/boss/biggablobba
   index: 6
 enemy/xi_portrait
   rotate: false
-  xy: 1057, 67
+  xy: 1123, 133
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -347,6 +347,13 @@ player/block_walk
   orig: 64, 64
   offset: 0, 0
   index: 2
+player/targeting
+  rotate: false
+  xy: 661, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 0
 skills/Fire
   rotate: false
   xy: 1, 133

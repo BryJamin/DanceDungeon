@@ -38,6 +38,9 @@ public class TileSystem extends EntityProcessingSystem {
     private int rows;
     private int columns;
 
+    private int maxX;
+    private int maxY;
+
     private float width;
     private float height;
 
@@ -70,6 +73,9 @@ public class TileSystem extends EntityProcessingSystem {
 
         tileWidthSize = width / columns;
         tileHeightSize = height / rows;
+
+        this.maxX = columns;
+        this.maxY = rows;
 /*
         DrawableComponent drawableComponent = new DrawableComponent(Layer.BACKGROUND_LAYER_FAR);
         bag.add(drawableComponent);*/
@@ -212,12 +218,17 @@ public class TileSystem extends EntityProcessingSystem {
      * @return - Returns the x and y position.
      */
     public Vector3 getPositionUsingCoordinates(Coordinates coordinates, Rectangle rectangle){
+        return getPositionUsingCoordinates(coordinates.getX(), coordinates.getY(), rectangle);
 
-        float x = originX + ((coordinates.getX()) * tileWidthSize);
-        float y = originY + ((coordinates.getY()) * tileHeightSize);
+    }
+
+    public Vector3 getPositionUsingCoordinates(int cX, int cY, Rectangle rectangle){
+
+        float x = originX + (cX * tileWidthSize);
+        float y = originY + (cY * tileHeightSize);
 
         return new Vector3(x + CenterMath.offsetX(tileWidthSize, rectangle.getWidth()),
-        y + CenterMath.offsetY(tileHeightSize, rectangle.getHeight()), 0);
+                y + CenterMath.offsetY(tileHeightSize, rectangle.getHeight()), 0);
 
     }
 
@@ -274,5 +285,14 @@ public class TileSystem extends EntityProcessingSystem {
 
     public OrderedMap<Coordinates, Entity> getPlayerControlledMap() {
         return playerControlledMap;
+    }
+
+
+    public int getMaxX() {
+        return maxX - 1;
+    }
+
+    public int getMaxY() {
+        return maxY - 1;
     }
 }

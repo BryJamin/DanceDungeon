@@ -1,7 +1,6 @@
 package com.bryjamin.dancedungeon.factories.enemy;
 
 import com.artemis.Aspect;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.bryjamin.dancedungeon.assets.Colors;
@@ -18,21 +17,18 @@ import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.UtilityAiComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.AbilityPointComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.DispellableComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MovementRangeComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.ai.AttackAiComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
-import com.bryjamin.dancedungeon.factories.AbstractFactory;
 import com.bryjamin.dancedungeon.factories.player.spells.MovementDescription;
 import com.bryjamin.dancedungeon.factories.player.spells.SkillDescription;
 import com.bryjamin.dancedungeon.factories.player.spells.SlashDescription;
@@ -48,19 +44,19 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
  * Created by BB on 15/10/2017.
  */
 
-public class DummyFactory extends AbstractFactory {
+public class DummyFactory {
 
     public static final float width = Measure.units(5f);
     public static final float height = Measure.units(5f);
 
 
-    public static final DrawableDescription.DrawableDescriptionBuilder player = new TextureDescription.Builder(TextureStrings.BLOB)
+    public final DrawableDescription.DrawableDescriptionBuilder blob = new TextureDescription.Builder(TextureStrings.BLOB)
             .index(2)
             .size(height)
             .color(Colors.BLOB_RED);
 
-    public DummyFactory(AssetManager assetManager) {
-        super(assetManager);
+    public DummyFactory() {
+        super();
     }
 
 
@@ -73,8 +69,6 @@ public class DummyFactory extends AbstractFactory {
         bag.add(new PositionComponent(x, y));
         bag.add(new HealthComponent(10));
         bag.add(new EnemyComponent());
-        bag.add(new AbilityPointComponent());
-        bag.add(new AttackAiComponent());
         bag.add(new TurnComponent());
         bag.add(new CoordinateComponent(new Coordinates(1, 0)));
         bag.add(new MoveToComponent(Measure.units(80f)));
@@ -83,16 +77,10 @@ public class DummyFactory extends AbstractFactory {
         bag.add(new CenteringBoundaryComponent(new Rectangle(x, y, width, height)));
         bag.add(new HitBoxComponent(new HitBox(new Rectangle(x, y, width, height))));
         bag.add(new SkillsComponent(movement, slash));
-
+        bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, blob.color(Color.WHITE).build()));
+        bag.add(new MovementRangeComponent(6));
         bag.add(new TargetComponent(Aspect.all(PlayerControlledComponent.class, CoordinateComponent.class)));
-
-        bag.add(new UtilityAiComponent(
-                new UtilityAiCalculator(
-                        new ActionScoreCalculator(new EndTurnAction()),
-                        new ActionScoreCalculator(new MeleeMoveToAction(movement), new IsNextToCalculator(-1000, 100), new CanUseSkillCalculator(movement, 100, -1000)),
-                        new ActionScoreCalculator(new MeleeAttackAction(slash), new IsNextToCalculator(150, -1000), new CanUseSkillCalculator(slash, 100, -1000)
-                        )
-                )));
+        bag.add(new UtilityAiComponent(dummyAi(movement, slash)));
 
         return bag;
 
@@ -103,10 +91,19 @@ public class DummyFactory extends AbstractFactory {
 
         ComponentBag bag = targetDummy(x, y);
         bag.add(new DispellableComponent(DispellableComponent.Type.HORIZONTAL));
-        bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, player.color(Color.BLACK).build()));
+        bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, blob.color(Color.BLACK).build()));
         bag.add(new MovementRangeComponent(3));
         return bag;
 
+    }
+
+
+    public UtilityAiCalculator dummyAi(SkillDescription movement, SkillDescription slash){
+        return new UtilityAiCalculator(
+                new ActionScoreCalculator(new EndTurnAction()),
+                new ActionScoreCalculator(new MeleeMoveToAction(movement), new IsNextToCalculator(-1000, 100), new CanUseSkillCalculator(movement, 100, -1000)),
+                new ActionScoreCalculator(new MeleeAttackAction(slash), new IsNextToCalculator(150, -1000), new CanUseSkillCalculator(slash, 100, -1000)
+                ));
     }
 
 
@@ -114,7 +111,7 @@ public class DummyFactory extends AbstractFactory {
 
         ComponentBag bag = targetDummy(x, y);
         bag.add(new DispellableComponent(DispellableComponent.Type.HORIZONTAL));
-        bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, player.color(Color.WHITE).build()));
+        bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, blob.color(Color.WHITE).build()));
         bag.add(new MovementRangeComponent(6));
         return bag;
 

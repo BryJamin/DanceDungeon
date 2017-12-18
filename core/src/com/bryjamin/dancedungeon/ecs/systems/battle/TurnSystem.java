@@ -6,11 +6,9 @@ import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.ecs.components.actions.UtilityAiComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.AbilityPointComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MovementRangeComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.ai.AttackAiComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
@@ -23,7 +21,7 @@ import static com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem.TURN.ENEMY
 /**
  * Created by BB on 21/10/2017.
  *
- * System used to keep track of player and enemy turns
+ * System used to keep track of blob and enemy turns
  */
 
 public class TurnSystem extends EntitySystem {
@@ -33,12 +31,8 @@ public class TurnSystem extends EntitySystem {
     private ComponentMapper<EnemyComponent> enemyMapper;
     private ComponentMapper<PlayerControlledComponent> playerMapper;
 
-    private ComponentMapper<AttackAiComponent> attackAiComponentMapper;
+
     private ComponentMapper<MovementRangeComponent> movementRangeMapper;
-
-
-    private ComponentMapper<AbilityPointComponent> abilityPointMapper;
-
 
     private ComponentMapper<SkillsComponent> skillMapper;
 
@@ -166,8 +160,6 @@ public class TurnSystem extends EntitySystem {
                 currentEntity = currentTurnEntities.pop();
                 if (!playerMapper.has(currentEntity)) {
                     currentEntity.getComponent(TurnComponent.class).state = TurnComponent.State.DECIDING;
-                    AbilityPointComponent apc = abilityPointMapper.get(currentEntity);
-                    apc.abilityPoints = apc.abilityPointsPerTurn;
 
                     if(skillMapper.has(currentEntity)){
                         skillMapper.get(currentEntity).endTurn();

@@ -7,9 +7,13 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
+import com.bryjamin.dancedungeon.factories.enemy.DummyFactory;
+import com.bryjamin.dancedungeon.factories.enemy.RangedDummyFactory;
+import com.bryjamin.dancedungeon.factories.player.PlayerFactory;
 import com.bryjamin.dancedungeon.screens.AbstractScreen;
 import com.bryjamin.dancedungeon.screens.battle.worlds.BattleWorld;
 import com.bryjamin.dancedungeon.screens.battle.worlds.EndBattleWorld;
+import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
 
 /**
@@ -41,7 +45,19 @@ public class PlayScreen extends AbstractScreen {
         gamecam.update();
         gameport.apply();
 
-        this.battleWorld = new BattleWorld(game, gameport);
+        BattleDetails battleDetails = new BattleDetails();
+        battleDetails.getPlayerParty().add(new PlayerFactory().player(0,0, new Coordinates()));
+        battleDetails.getPlayerParty().add(new PlayerFactory().player(0,0, new Coordinates()));
+        battleDetails.getPlayerParty().add(null);
+        battleDetails.getPlayerParty().add(new PlayerFactory().player2(0,0, new Coordinates()));
+
+        battleDetails.getEnemyParty().add(new DummyFactory().targetDummyWalker(0,0));
+        battleDetails.getEnemyParty().add(new DummyFactory().targetDummyWalker(0,0));
+        battleDetails.getEnemyParty().add(new DummyFactory().targetDummySprinter(0,0));
+        battleDetails.getEnemyParty().add(new RangedDummyFactory().rangedDummy(0,0));
+
+
+        this.battleWorld = new BattleWorld(game, gameport, battleDetails);
 
     }
 
@@ -56,9 +72,7 @@ public class PlayScreen extends AbstractScreen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         game.batch.setProjectionMatrix(gamecam.combined);
-
         gamecam.update();
-
         handleInput(delta);
 
         battleWorld.process(delta);
@@ -70,10 +84,6 @@ public class PlayScreen extends AbstractScreen {
                 endBattleWorld.process(delta);
                 break;
         }
-
-        //GameDelta.delta(world, delta);
-        //world.process();
-
 
     }
 

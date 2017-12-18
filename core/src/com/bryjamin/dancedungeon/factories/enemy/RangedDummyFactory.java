@@ -1,7 +1,6 @@
 package com.bryjamin.dancedungeon.factories.enemy;
 
 import com.artemis.Aspect;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Rectangle;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.ai.ActionScoreCalculator;
@@ -16,20 +15,17 @@ import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.UtilityAiComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.AbilityPointComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MovementRangeComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.ai.AttackAiComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
-import com.bryjamin.dancedungeon.factories.AbstractFactory;
 import com.bryjamin.dancedungeon.factories.player.spells.FireballSkill;
 import com.bryjamin.dancedungeon.factories.player.spells.MovementDescription;
 import com.bryjamin.dancedungeon.factories.player.spells.SkillDescription;
@@ -45,19 +41,15 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
  * Created by BB on 14/11/2017.
  */
 
-public class RangedDummyFactory extends AbstractFactory {
+public class RangedDummyFactory {
 
     public static final float width = Measure.units(5f);
     public static final float height = Measure.units(5f);
 
 
-    public static final DrawableDescription.DrawableDescriptionBuilder player = new TextureDescription.Builder(TextureStrings.BIGGABLOBBA)
+    public final DrawableDescription.DrawableDescriptionBuilder player = new TextureDescription.Builder(TextureStrings.BIGGABLOBBA)
             .index(2)
             .size(height);
-
-    public RangedDummyFactory(AssetManager assetManager) {
-        super(assetManager);
-    }
 
 
     public ComponentBag rangedDummy(float x, float y) {
@@ -72,8 +64,6 @@ public class RangedDummyFactory extends AbstractFactory {
         bag.add(new SkillsComponent(movement, fireball));
         bag.add(new HealthComponent(10));
         bag.add(new EnemyComponent());
-        bag.add(new AbilityPointComponent());
-        bag.add(new AttackAiComponent());
         bag.add(new TurnComponent());
         bag.add(new CoordinateComponent(new Coordinates(1, 0)));
         bag.add(new MoveToComponent(Measure.units(60f)));

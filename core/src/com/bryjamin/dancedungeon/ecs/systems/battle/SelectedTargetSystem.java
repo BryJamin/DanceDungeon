@@ -17,7 +17,7 @@ import com.bryjamin.dancedungeon.utils.math.Coordinates;
 /**
  * Created by BB on 18/11/2017.
  *
- * System that tracks which entity is currently selected by the player.
+ * System that tracks which entity is currently selected by the blob.
  *
  * It changes the buttons and text displayed on the screen based on the entity selected
  *

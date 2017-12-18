@@ -5,7 +5,6 @@ import com.artemis.World;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldCondition;
-import com.bryjamin.dancedungeon.ecs.components.battle.AbilityPointComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
@@ -35,8 +34,6 @@ public class MeleeAttackAction implements WorldAction {
 
         Coordinates c = entityArray.first().getComponent(CoordinateComponent.class).coordinates;
         skillDescription.cast(world, entity, c);
-
-        entity.getComponent(AbilityPointComponent.class).abilityPoints = 0;
 
         entity.getComponent(TurnComponent.class).turnOverCondition = new WorldCondition() {
             @Override
