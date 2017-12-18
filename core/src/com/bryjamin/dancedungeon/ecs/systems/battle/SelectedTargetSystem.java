@@ -5,6 +5,10 @@ import com.artemis.BaseSystem;
 import com.artemis.Entity;
 import com.artemis.utils.IntBag;
 import com.badlogic.gdx.utils.Array;
+import com.bryjamin.dancedungeon.assets.TextureStrings;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
+import com.bryjamin.dancedungeon.ecs.components.FollowPositionComponent;
+import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
@@ -12,7 +16,10 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.UITargetingComponent;
 import com.bryjamin.dancedungeon.factories.player.spells.SpellFactory;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
+import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
+import com.bryjamin.dancedungeon.utils.texture.Layer;
+import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 /**
  * Created by BB on 18/11/2017.
@@ -27,6 +34,7 @@ public class SelectedTargetSystem extends BaseSystem {
 
 
     private Entity selectedEntity;
+    private Entity recticle;
     private Array<Entity> buttons = new Array<Entity>();
 
 
@@ -105,6 +113,29 @@ public class SelectedTargetSystem extends BaseSystem {
         }
 
         this.selectedEntity = playableCharacter;
+
+        float width = selectedEntity.getComponent(CenteringBoundaryComponent.class).bound.width * 2.5f;
+        float height = selectedEntity.getComponent(CenteringBoundaryComponent.class).bound.height * 2.5f;
+
+
+        if(recticle != null){
+            recticle.deleteFromWorld();
+        }
+
+        recticle = world.createEntity();
+        recticle.edit().add(new PositionComponent());
+        //targetReticule.edit().add(new UITargetingComponent());
+        recticle.edit().add(new FollowPositionComponent(selectedEntity.getComponent(PositionComponent.class).position,
+
+                CenterMath.offsetX(selectedEntity.getComponent(CenteringBoundaryComponent.class).bound.width, width),
+                CenterMath.offsetY(selectedEntity.getComponent(CenteringBoundaryComponent.class).bound.height, height)
+                ));
+        recticle.edit().add(new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE, new TextureDescription.Builder(TextureStrings.TARGETING)
+                .width(width)
+                .height(height)
+                .build()));
+
+
 
         //TODO just for now
         playableCharacter.edit().add(new FadeComponent(true, 1.25f, true));

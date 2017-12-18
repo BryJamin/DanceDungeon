@@ -28,11 +28,13 @@ public abstract class WorldContainer {
 
     public void process(float delta){
         GameDelta.delta(world, delta);
+}
+
+
+    public abstract void handleInput(InputMultiplexer inputMultiplexer);
+
+
+    public World getWorld() {
+        return world;
     }
-
-
-    public void handleInput(InputMultiplexer inputMultiplexer){}
-
-
-
 }

@@ -45,7 +45,7 @@ public class BattleMessageSystem extends BaseSystem {
 
         Entity e = world.createEntity();
         e.edit().add(new PositionComponent(CenterMath.centerPositionX(width, gameport.getWorldWidth() / 2),
-                CenterMath.centerPositionY(height, gameport.getWorldHeight() / 2)));
+                CenterMath.centerPositionY(height, gameport.getWorldHeight() / 2) + Measure.units(15f)));
         e.edit().add(new CenteringBoundaryComponent(new Rectangle(0, 0, width, height)));
 
 

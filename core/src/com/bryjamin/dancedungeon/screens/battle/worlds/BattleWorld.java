@@ -1,7 +1,6 @@
 package com.bryjamin.dancedungeon.screens.battle.worlds;
 
 import com.artemis.BaseSystem;
-import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.WorldConfiguration;
 import com.artemis.WorldConfigurationBuilder;
@@ -12,7 +11,6 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
-import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
@@ -34,6 +32,7 @@ import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.BoundsDrawingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.FadeSystem;
+import com.bryjamin.dancedungeon.ecs.systems.graphical.FollowPositionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.HealthBarSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.PlayerGraphicalTargetingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
@@ -43,7 +42,6 @@ import com.bryjamin.dancedungeon.factories.decor.FloorFactory;
 import com.bryjamin.dancedungeon.factories.player.spells.SpellFactory;
 import com.bryjamin.dancedungeon.screens.WorldContainer;
 import com.bryjamin.dancedungeon.screens.battle.BattleDetails;
-import com.bryjamin.dancedungeon.screens.battle.PlayScreen;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
@@ -73,11 +71,16 @@ public class BattleWorld extends WorldContainer {
         createWorld();
     }
 
+    public BattleDetails getBattleDetails() {
+        return battleDetails;
+    }
+
     public void createWorld(){
 
         WorldConfiguration config = new WorldConfigurationBuilder()
                 .with(WorldConfigurationBuilder.Priority.HIGHEST,
                         new MovementSystem(),
+                        new FollowPositionSystem(),
                         new UpdatePositionSystem(),
                         new TileSystem(originX, originY, width, height, rows, columns),
                         new MoveToTargetSystem()
@@ -120,12 +123,14 @@ public class BattleWorld extends WorldContainer {
 
         BagToEntity.bagToEntity(world.createEntity(), new SpellFactory().endTurnButton(0, 0));
 
+/*
         BagToEntity.bagToEntity(world.createEntity(), new SpellFactory().defaultButton(Measure.units(0), Measure.units(50f), new WorldAction() {
             @Override
             public void performAction(World world, Entity entity) {
-                game.setScreen(new PlayScreen(game));
+                game.setScreen(new BattleScreen(game));
             }
         }));
+*/
 
     }
 

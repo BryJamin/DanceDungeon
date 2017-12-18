@@ -8,7 +8,7 @@ import com.artemis.utils.Bag;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
-import com.bryjamin.dancedungeon.screens.battle.PlayScreen;
+import com.bryjamin.dancedungeon.screens.battle.BattleScreen;
 
 /**
  * Created by BB on 28/11/2017.
@@ -55,11 +55,11 @@ public class EndBattleSystem extends EntitySystem {
         if(pcMapper.has(e)) playerBag.remove(e);
         
         if(playerBag.isEmpty()){
-            ((PlayScreen) game.getScreen()).defeat();
+            ((BattleScreen) game.getScreen()).defeat();
         }
 
         if(enemyBag.isEmpty()){
-            ((PlayScreen) game.getScreen()).victory();
+            ((BattleScreen) game.getScreen()).victory();
         }
 
 

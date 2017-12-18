@@ -1,7 +1,9 @@
 package com.bryjamin.dancedungeon.screens.strategy;
 
+import com.artemis.Aspect;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -32,19 +34,29 @@ public class StrategyScreen extends AbstractScreen {
 
         mapWorld = new MapWorld(game, gameport);
 
-
     }
+
+    @Override
+    public void resize(int width, int height) {
+        gameport.update(width, height);
+    }
+
+
 
 
     @Override
     public void render(float delta) {
-        super.render(delta);
+
+        Gdx.gl.glClearColor(0, 0, 0, 1f);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         game.batch.setProjectionMatrix(gamecam.combined);
+
         gamecam.update();
+        mapWorld.process(delta);
         handleInput(delta);
 
-        mapWorld.process(delta);
+        System.out.println(mapWorld.getWorld().getAspectSubscriptionManager().get(Aspect.all()).getEntities().size());
 
 
     }

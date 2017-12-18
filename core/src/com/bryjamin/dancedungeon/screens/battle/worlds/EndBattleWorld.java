@@ -6,6 +6,7 @@ import com.artemis.WorldConfiguration;
 import com.artemis.WorldConfigurationBuilder;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -31,7 +32,7 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.FadeSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
 import com.bryjamin.dancedungeon.screens.WorldContainer;
-import com.bryjamin.dancedungeon.screens.menu.MenuScreen;
+import com.bryjamin.dancedungeon.screens.battle.BattleScreen;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
@@ -107,8 +108,10 @@ public class EndBattleWorld extends WorldContainer {
         exitButton.edit().add(new ActionOnTapComponent(new WorldAction() {
             @Override
             public void performAction(World world, Entity entity) {
+
+                Screen prev = ((BattleScreen) game.getScreen()).getPreviousScreen();
                 game.getScreen().dispose();
-                game.setScreen(new MenuScreen(game));
+                game.setScreen(prev);
             }
         }));
 

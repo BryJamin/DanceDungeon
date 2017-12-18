@@ -33,7 +33,7 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.FadeSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
 import com.bryjamin.dancedungeon.screens.WorldContainer;
-import com.bryjamin.dancedungeon.screens.battle.PlayScreen;
+import com.bryjamin.dancedungeon.screens.strategy.StrategyScreen;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
@@ -99,7 +99,7 @@ public class MenuWorld extends WorldContainer {
             @Override
             public void performAction(World world, Entity entity) {
                 game.getScreen().dispose();
-                game.setScreen(new PlayScreen(game));
+                game.setScreen(new StrategyScreen(game));
             }
         }));
 
@@ -130,7 +130,6 @@ public class MenuWorld extends WorldContainer {
     @Override
     public void handleInput(InputMultiplexer inputMultiplexer) {
         inputMultiplexer.addProcessor(adapter);
-        super.handleInput(inputMultiplexer);
     }
 
 

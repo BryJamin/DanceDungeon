@@ -22,4 +22,13 @@ public class BattleDetails {
     public Array<ComponentBag> getEnemyParty() {
         return enemyParty;
     }
+
+
+    public void setPlayerParty(Array<ComponentBag> playerParty) {
+        this.playerParty = playerParty;
+    }
+
+    public void setEnemyParty(Array<ComponentBag> enemyParty) {
+        this.enemyParty = enemyParty;
+    }
 }

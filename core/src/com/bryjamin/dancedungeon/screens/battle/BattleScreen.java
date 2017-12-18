@@ -2,31 +2,30 @@ package com.bryjamin.dancedungeon.screens.battle;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
-import com.bryjamin.dancedungeon.factories.enemy.DummyFactory;
-import com.bryjamin.dancedungeon.factories.enemy.RangedDummyFactory;
-import com.bryjamin.dancedungeon.factories.player.PlayerFactory;
 import com.bryjamin.dancedungeon.screens.AbstractScreen;
 import com.bryjamin.dancedungeon.screens.battle.worlds.BattleWorld;
 import com.bryjamin.dancedungeon.screens.battle.worlds.EndBattleWorld;
-import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
 
 /**
  * Created by BB on 11/10/2017.
  */
 
-public class PlayScreen extends AbstractScreen {
+public class BattleScreen extends AbstractScreen {
 
     private OrthographicCamera gamecam;
     private Viewport gameport;
 
     private BattleWorld battleWorld;
     private EndBattleWorld endBattleWorld;
+
+    private Screen previousScreen;
 
 
     private enum ScreenState {
@@ -36,8 +35,10 @@ public class PlayScreen extends AbstractScreen {
 
     private ScreenState screenState = ScreenState.BATTLE;
 
-    public PlayScreen(MainGame game) {
+    public BattleScreen(MainGame game, Screen previousScreen, BattleDetails battleDetails) {
         super(game);
+
+
 
         gamecam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         gameport = new FitViewport(MainGame.GAME_WIDTH, MainGame.GAME_HEIGHT, gamecam);
@@ -45,18 +46,7 @@ public class PlayScreen extends AbstractScreen {
         gamecam.update();
         gameport.apply();
 
-        BattleDetails battleDetails = new BattleDetails();
-        battleDetails.getPlayerParty().add(new PlayerFactory().player(0,0, new Coordinates()));
-        battleDetails.getPlayerParty().add(new PlayerFactory().player(0,0, new Coordinates()));
-        battleDetails.getPlayerParty().add(null);
-        battleDetails.getPlayerParty().add(new PlayerFactory().player2(0,0, new Coordinates()));
-
-        battleDetails.getEnemyParty().add(new DummyFactory().targetDummyWalker(0,0));
-        battleDetails.getEnemyParty().add(new DummyFactory().targetDummyWalker(0,0));
-        battleDetails.getEnemyParty().add(new DummyFactory().targetDummySprinter(0,0));
-        battleDetails.getEnemyParty().add(new RangedDummyFactory().rangedDummy(0,0));
-
-
+        this.previousScreen = previousScreen;
         this.battleWorld = new BattleWorld(game, gameport, battleDetails);
 
     }
@@ -116,8 +106,7 @@ public class PlayScreen extends AbstractScreen {
     }
 
 
-
-
-
-
+    public Screen getPreviousScreen() {
+        return previousScreen;
+    }
 }
