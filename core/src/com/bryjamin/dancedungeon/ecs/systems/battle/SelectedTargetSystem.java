@@ -9,11 +9,13 @@ import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.FollowPositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.UITargetingComponent;
 import com.bryjamin.dancedungeon.factories.player.spells.SpellFactory;
+import com.bryjamin.dancedungeon.factories.player.spells.TargetingFactory;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
@@ -147,6 +149,9 @@ public class SelectedTargetSystem extends BaseSystem {
             buttons.add(BagToEntity.bagToEntity(world.createEntity(), new SpellFactory().skillButton(Measure.units(25f) * (i + 1), 0,
                     skillsComponent.skillDescriptions.get(i), playableCharacter)));
         }
+
+
+        new TargetingFactory().createMovementTiles(world, playableCharacter, playableCharacter.getComponent(StatComponent.class).movementRange);
 
     }
 

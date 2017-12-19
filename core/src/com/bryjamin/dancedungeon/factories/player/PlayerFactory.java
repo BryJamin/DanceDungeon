@@ -10,6 +10,7 @@ import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
@@ -60,6 +61,11 @@ public class PlayerFactory {
         bag.add(new TurnComponent());
 
 
+        bag.add(new StatComponent.StatBuilder()
+                .movementRange(4)
+                .build());
+
+
         bag.add(new SkillsComponent(new MovementDescription(), new FireballSkill(), new FrostBallDescription()));
         bag.add(new TargetComponent(Aspect.all(EnemyComponent.class, CoordinateComponent.class)));
 
@@ -84,6 +90,10 @@ public class PlayerFactory {
         bag.add(new MoveToComponent(Measure.units(60f)));
         bag.add(new VelocityComponent());
         bag.add(new TurnComponent());
+
+        bag.add(new StatComponent.StatBuilder()
+                .movementRange(4)
+                .build());
 
 
         bag.add(new SkillsComponent(new MovementDescription(), new SlashDescription(), new FireballSkill()));

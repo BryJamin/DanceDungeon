@@ -6,7 +6,7 @@ import com.artemis.BaseSystem;
  * Created by BB on 18/12/2017.
  */
 
-public class EncounterSystem extends BaseSystem {
+public class StrategyMapSystem extends BaseSystem {
 
 
     @Override

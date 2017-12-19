@@ -14,6 +14,7 @@ import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
@@ -53,7 +54,7 @@ public class TargetingFactory {
 
                 final Coordinates c = tileSystem.getOccupiedMap().findKey(e, true);
 
-                Entity box = BagToEntity.bagToEntity(world.createEntity(), highlightBox(tileSystem.getRectangleUsingCoordinates(c)));
+                Entity box = BagToEntity.bagToEntity(world.createEntity(), highlightBox(tileSystem.getRectangleUsingCoordinates(c), new Color(Color.RED)));
                 entityArray.add(box);
 
                 box.edit().add(new ActionOnTapComponent(new WorldAction() {
@@ -92,11 +93,16 @@ public class TargetingFactory {
 
             boolean bool = tileSystem.findShortestPath(coordinatesQueue, coordinateComponent.coordinates, coordinatesArray);
 
+
+
+
             if (coordinatesQueue.size <= movementRange && bool) {
 
                 Rectangle r = tileSystem.getRectangleUsingCoordinates(c);
 
-                Entity box = BagToEntity.bagToEntity(world.createEntity(), highlightBox(r));
+                //Create movement box
+
+                Entity box = BagToEntity.bagToEntity(world.createEntity(), highlightBox(r, new Color(Color.WHITE)));
                 entityArray.add(box);
                 box.edit().add(new ActionOnTapComponent(new WorldAction() {
                     @Override
@@ -113,7 +119,42 @@ public class TargetingFactory {
                 }));
 
 
+                //Create Attacking box
+
+                TargetComponent targetComponent = player.getComponent(TargetComponent.class);
+
+                for(Entity e : targetComponent.getTargets(world)){
+
+                    System.out.println(c);
+
+                   // Coordinates c1 = player.getComponent(CoordinateComponent.class).coordinates;
+                    Coordinates c2 = e.getComponent(CoordinateComponent.class).coordinates;
+
+                    StatComponent statComponent = player.getComponent(StatComponent.class);
+
+                    if (tileSystem.getOccupiedMap().containsValue(e, true)
+                            && CoordinateMath.isWithinRange(c, c2, statComponent.attackRange)) {
+
+                        final Coordinates attackC = tileSystem.getOccupiedMap().findKey(e, true);
+
+                        Entity redBox = BagToEntity.bagToEntity(world.createEntity(), highlightBox(tileSystem.getRectangleUsingCoordinates(attackC), new Color(Color.RED)));
+                        entityArray.add(redBox);
+
+                        redBox.edit().add(new ActionOnTapComponent(new WorldAction() {
+                            @Override
+                            public void performAction(World world, final Entity e) {
+                                new FireballSkill().cast(world, player, attackC);
+                                world.getSystem(SelectedTargetSystem.class).clearTargeting();
+                            }
+                        }));
+                    }
+                }
+
+
+
+
             }
+
 
         }
 
@@ -144,13 +185,13 @@ public class TargetingFactory {
 
 
 
-    public ComponentBag highlightBox(Rectangle r) {
+    public ComponentBag highlightBox(Rectangle r, Color color) {
         ComponentBag bag = new ComponentBag();
 
         bag.add(new PositionComponent(r.x, r.y));
         bag.add(new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE,
                 new TextureDescription.Builder(TextureStrings.BLOCK)
-                        .color(new Color(Color.WHITE))
+                        .color(color)
                         .width(r.getWidth())
                         .height(r.getHeight())
                         .build()));

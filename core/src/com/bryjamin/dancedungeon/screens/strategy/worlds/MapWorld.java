@@ -109,6 +109,8 @@ public class MapWorld extends WorldContainer {
         float width = Measure.units(15f);
         float height = Measure.units(7.5f);
 
+        createMap();
+
         Entity startButton = world.createEntity();
         startButton.edit().add(new PositionComponent(CenterMath.offsetX(gameport.getWorldWidth(), width), CenterMath.offsetY(gameport.getWorldHeight(), height) - Measure.units(5f)));
         startButton.edit().add(new HitBoxComponent(new HitBox(width, height)));
@@ -142,6 +144,66 @@ public class MapWorld extends WorldContainer {
 
 
     }
+
+
+
+    public void createMap(){
+
+        Coordinates[] coordinates = {
+                new Coordinates(0,1),
+                new Coordinates(1,1),
+                new Coordinates(2,1),
+                new Coordinates(3,1),
+                new Coordinates(4,1),
+                new Coordinates(5,1),
+                new Coordinates(1,0),
+                new Coordinates(2,0),
+                new Coordinates(3,0),
+                new Coordinates(4,0),
+                new Coordinates(1,2),
+                new Coordinates(2,2),
+                new Coordinates(3,2),
+                new Coordinates(4,2),
+        };
+
+        float x = Measure.units(5f);
+        float y = Measure.units(10f);
+
+        float width = Measure.units(5f);
+        float height = Measure.units(5f);
+        float gap = Measure.units(10f);
+
+
+        for(Coordinates c : coordinates){
+
+
+            Entity e = world.createEntity();
+            e.edit().add(new PositionComponent(x + (x * c.getX()) + (gap * c.getX()),
+                    y + (y * (c.getY()) + gap * c.getY())));
+            e.edit().add(new HitBoxComponent(new HitBox(width, height)));
+            e.edit().add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE, new TextureDescription.Builder(TextureStrings.BLOCK)
+                    .width(width)
+                    .height(height)
+                    .build()));
+
+        }
+/*
+        for(int i = 0; i < coordinates.length; i++){
+
+            Entity e = world.createEntity();
+            e.edit().add(new PositionComponent(x + (x * coordinates[i].getX()) + (gap * coordinates[i].getX()),
+                    y + (y * (coordinates[i].getY()) + gap * coordinates[i].getY())));
+            e.edit().add(new HitBoxComponent(new HitBox(width, height)));
+            e.edit().add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE, new TextureDescription.Builder(TextureStrings.BLOCK)
+                    .width(width)
+                    .height(height)
+                    .build()));
+
+        }*/
+
+    }
+
+
 
 
     @Override
