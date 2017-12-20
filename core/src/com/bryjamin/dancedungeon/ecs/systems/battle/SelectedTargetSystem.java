@@ -9,11 +9,16 @@ import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.FollowPositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
+import com.bryjamin.dancedungeon.ecs.components.actions.TurnActionMonitorComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.GreyScaleComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.UITargetingComponent;
+import com.bryjamin.dancedungeon.factories.player.spells.FireballSkill;
 import com.bryjamin.dancedungeon.factories.player.spells.SpellFactory;
 import com.bryjamin.dancedungeon.factories.player.spells.TargetingFactory;
 import com.bryjamin.dancedungeon.utils.Measure;
@@ -40,14 +45,14 @@ public class SelectedTargetSystem extends BaseSystem {
     private Array<Entity> buttons = new Array<Entity>();
 
 
+
+
     public Entity getSelectedEntity() {
         return selectedEntity;
     }
 
     @Override
-    protected void processSystem() {
-
-    }
+    protected void processSystem() {}
 
 
     /**
@@ -102,6 +107,36 @@ public class SelectedTargetSystem extends BaseSystem {
     }
 
 
+    public void reselectEntityAfterActionComplete(){
+
+        if(selectedEntity != null){
+
+            TurnActionMonitorComponent turnActionMonitorComponent = selectedEntity.getComponent(TurnActionMonitorComponent.class);
+            if(turnActionMonitorComponent.movementActionAvailable || turnActionMonitorComponent.attackActionAvailable) {
+
+                Array<Entity> entityArray = new TargetingFactory().getTargetsInRange(world,
+                        selectedEntity.getComponent(CoordinateComponent.class).coordinates,
+                        selectedEntity.getComponent(TargetComponent.class),
+                        selectedEntity.getComponent(StatComponent.class).attackRange
+                );
+
+                if (entityArray.size > 0) {
+                    setUpCharacter(selectedEntity);
+                }
+
+            } else {
+                selectedEntity.edit().add(new GreyScaleComponent());
+            }
+
+        }
+
+
+
+    }
+
+
+
+
     /**
      *  Uses the given entity and sets up it's skills
      *
@@ -109,12 +144,21 @@ public class SelectedTargetSystem extends BaseSystem {
      */
     private void setUpCharacter(final Entity playableCharacter){
 
+        //Can't select a character with no actions
+        if(!playableCharacter.getComponent(TurnActionMonitorComponent.class).hasActions() ||
+        world.getSystem(ActionCameraSystem.class).checkProcessing()) return;
+
+
         if(selectedEntity != null){
             selectedEntity.edit().remove(FadeComponent.class);
             selectedEntity.getComponent(DrawableComponent.class).drawables.first().getColor().a = 1;
         }
 
         this.selectedEntity = playableCharacter;
+
+
+        System.out.println(playableCharacter.getComponent(TurnActionMonitorComponent.class).attackActionAvailable + " ATk");
+        System.out.println(playableCharacter.getComponent(TurnActionMonitorComponent.class).movementActionAvailable + " mov");
 
         float width = selectedEntity.getComponent(CenteringBoundaryComponent.class).bound.width * 2.5f;
         float height = selectedEntity.getComponent(CenteringBoundaryComponent.class).bound.height * 2.5f;
@@ -126,7 +170,7 @@ public class SelectedTargetSystem extends BaseSystem {
 
         recticle = world.createEntity();
         recticle.edit().add(new PositionComponent());
-        //targetReticule.edit().add(new UITargetingComponent());
+        recticle.edit().add(new UITargetingComponent());
         recticle.edit().add(new FollowPositionComponent(selectedEntity.getComponent(PositionComponent.class).position,
 
                 CenterMath.offsetX(selectedEntity.getComponent(CenteringBoundaryComponent.class).bound.width, width),
@@ -139,7 +183,6 @@ public class SelectedTargetSystem extends BaseSystem {
 
 
 
-        //TODO just for now
         playableCharacter.edit().add(new FadeComponent(true, 1.25f, true));
         this.clear();
 
@@ -151,8 +194,16 @@ public class SelectedTargetSystem extends BaseSystem {
         }
 
 
-        new TargetingFactory().createMovementTiles(world, playableCharacter, playableCharacter.getComponent(StatComponent.class).movementRange);
 
+
+        if(playableCharacter.getComponent(TurnActionMonitorComponent.class).attackActionAvailable &&
+                playableCharacter.getComponent(TurnActionMonitorComponent.class).movementActionAvailable) {
+            new TargetingFactory().createMovementTiles(world, playableCharacter, playableCharacter.getComponent(StatComponent.class).movementRange);
+        } else if(playableCharacter.getComponent(TurnActionMonitorComponent.class).attackActionAvailable &&
+                !playableCharacter.getComponent(TurnActionMonitorComponent.class).movementActionAvailable){
+            new TargetingFactory().createTargetTiles(world, playableCharacter, new FireballSkill(), 1);
+
+        }
     }
 
 
