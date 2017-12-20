@@ -4,6 +4,7 @@ import com.artemis.Entity;
 import com.artemis.World;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
+import com.bryjamin.dancedungeon.ecs.components.actions.TurnActionMonitorComponent;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
 /**
@@ -20,7 +21,7 @@ public abstract class CooldownSpellDescription extends SkillDescription {
 
     @Override
     public boolean canCast(World world, Entity entity) {
-        return ready;
+        return ready && entity.getComponent(TurnActionMonitorComponent.class).attackActionAvailable;
     }
 
     @Override

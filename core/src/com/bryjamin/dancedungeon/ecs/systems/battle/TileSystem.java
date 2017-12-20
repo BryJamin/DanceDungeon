@@ -278,6 +278,13 @@ public class TileSystem extends EntityProcessingSystem {
 
     }
 
+    public boolean findShortestPath(Queue<Coordinates> fillQueue, Coordinates start, Coordinates c){
+
+        Array<Coordinates> coordinatesArray = new Array<Coordinates>();
+        coordinatesArray.add(c);
+        return findShortestPath(fillQueue, start, coordinatesArray);
+    }
+
     public boolean findShortestPath(Queue<Coordinates> fillQueue, Coordinates start, Array<Coordinates> targets){
         AStarPathCalculator aStarPathCalculator = new AStarPathCalculator(coordinateMap.keys().toArray(), occupiedMap.keys().toArray());
         return aStarPathCalculator.findShortestPathMultiple(fillQueue,start, targets);

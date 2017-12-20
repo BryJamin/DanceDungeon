@@ -20,7 +20,6 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.factories.player.spells.FireballSkill;
-import com.bryjamin.dancedungeon.factories.player.spells.FrostBallDescription;
 import com.bryjamin.dancedungeon.factories.player.spells.MovementDescription;
 import com.bryjamin.dancedungeon.factories.player.spells.SlashDescription;
 import com.bryjamin.dancedungeon.utils.Measure;
@@ -67,7 +66,7 @@ public class PlayerFactory {
                 .build());
 
 
-        bag.add(new SkillsComponent(new MovementDescription(), new FireballSkill(), new FrostBallDescription()));
+        bag.add(new SkillsComponent());
         bag.add(new TargetComponent(Aspect.all(EnemyComponent.class, CoordinateComponent.class)));
 
       //  bag.add(new TurnComponent());

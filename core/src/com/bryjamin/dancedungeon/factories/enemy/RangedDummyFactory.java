@@ -14,6 +14,7 @@ import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
+import com.bryjamin.dancedungeon.ecs.components.actions.TurnActionMonitorComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.UtilityAiComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
@@ -65,6 +66,7 @@ public class RangedDummyFactory {
         bag.add(new HealthComponent(10));
         bag.add(new EnemyComponent());
         bag.add(new TurnComponent());
+        bag.add(new TurnActionMonitorComponent());
         bag.add(new CoordinateComponent(new Coordinates(1, 0)));
         bag.add(new MoveToComponent(Measure.units(60f)));
         bag.add(new VelocityComponent(0, 0));

@@ -5,6 +5,7 @@ import com.artemis.World;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.Queue;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
@@ -51,7 +52,9 @@ public class TargetingFactory {
 
         TileSystem tileSystem = world.getSystem(TileSystem.class);
 
-        for (Entity e : getTargetsInRange(world, player.getComponent(CoordinateComponent.class).coordinates, targetComponent, player.getComponent(StatComponent.class).attackRange)){
+        // player.getComponent(StatComponent.class).attackRange)
+
+        for (Entity e : getTargetsInRange(world, player.getComponent(CoordinateComponent.class).coordinates, targetComponent, range)) {
 
             final Coordinates attackC = tileSystem.getOccupiedMap().findKey(e, true);
 
@@ -61,10 +64,8 @@ public class TargetingFactory {
             redBox.edit().add(new ActionOnTapComponent(new WorldAction() {
                 @Override
                 public void performAction(World world, final Entity e) {
-                    new FireballSkill().cast(world, player, attackC);
+                    spell.cast(world, player, attackC);
                     world.getSystem(SelectedTargetSystem.class).clearTargeting();
-                    player.getComponent(TurnActionMonitorComponent.class).attackActionAvailable = false;
-                    player.getComponent(TurnActionMonitorComponent.class).movementActionAvailable = false;
                 }
             }));
 
@@ -72,6 +73,10 @@ public class TargetingFactory {
 
         return entityArray;
     }
+
+
+    //You want MovementTile to Move, And then You want to also generate the attack tiles based on
+    //All possible squares as well as the square you stand on
 
 
     public Array<Entity> createMovementTiles(World world, final Entity player, int movementRange) {
@@ -82,33 +87,85 @@ public class TargetingFactory {
 
         TileSystem tileSystem = world.getSystem(TileSystem.class);
 
+
+        //This Map establishes which paths have been generated and may be used to target enemies
+        final OrderedMap<Coordinates, Queue<Coordinates>> coordinatesWithPathMap = new OrderedMap<Coordinates, Queue<Coordinates>>();
+        coordinatesWithPathMap.put(coordinateComponent.coordinates, new Queue<Coordinates>());
+
         for (Coordinates c : CoordinateMath.getCoordinatesInMovementRange(coordinateComponent.coordinates, movementRange)) {
 
-            if (!tileSystem.getCoordinateMap().containsKey(c)) continue;
+            if (!tileSystem.getCoordinateMap().containsKey(c)) continue; //If gathered co-ordinates do not exist on the map continue.
 
-            final Queue<Coordinates> coordinatesQueue = new Queue<Coordinates>();
+            final Queue<Coordinates> coordinatesPath = new Queue<Coordinates>();
 
-            Array<Coordinates> coordinatesArray = new Array<Coordinates>();
-            coordinatesArray.add(c);
+            boolean isPathValid = tileSystem.findShortestPath(coordinatesPath, coordinateComponent.coordinates, c);
 
-            boolean bool = tileSystem.findShortestPath(coordinatesQueue, coordinateComponent.coordinates, coordinatesArray);
+            if (!(coordinatesPath.size <= movementRange && isPathValid)) continue; //If the path is larger than the movement range, ignore and move on.
 
-            if (!(coordinatesQueue.size <= movementRange && bool)) continue;
-
+            //Add this path to the list of available paths (for attack scan).
+            coordinatesWithPathMap.put(c, coordinatesPath);
 
             if (player.getComponent(TurnActionMonitorComponent.class).movementActionAvailable) {
 
-                if (coordinatesQueue.size <= movementRange && bool) {
+                Rectangle r = tileSystem.getRectangleUsingCoordinates(c);
 
-                    Rectangle r = tileSystem.getRectangleUsingCoordinates(c);
+                Entity box = BagToEntity.bagToEntity(world.createEntity(), highlightBox(r, new Color(Color.WHITE)));
+                entityArray.add(box);
+                box.edit().add(new ActionOnTapComponent(new WorldAction() {
+                    @Override
+                    public void performAction(World world, Entity entity) {
 
-                    //Create movement box
+                        world.getSystem(ActionCameraSystem.class).pushLastAction(player, createMovementAction(player, coordinatesPath));
+                        //pushLastAction
+                        player.getComponent(TurnActionMonitorComponent.class).movementActionAvailable = false;
 
-                    Entity box = BagToEntity.bagToEntity(world.createEntity(), highlightBox(r, new Color(Color.WHITE)));
-                    entityArray.add(box);
-                    box.edit().add(new ActionOnTapComponent(new WorldAction() {
+
+                        //If no enemies are in range at the end of the potential movement, set attack action avaliable to false
+                        if (new TargetingFactory().getTargetsInRange(world, coordinatesPath.last(), player.getComponent(TargetComponent.class),
+                                player.getComponent(StatComponent.class).attackRange).size <= 0) {
+                            player.getComponent(TurnActionMonitorComponent.class).attackActionAvailable = false;
+                        }
+
+                    }
+                }));
+
+            }
+
+        }
+
+
+
+
+        if (player.getComponent(TurnActionMonitorComponent.class).attackActionAvailable) {
+
+            final OrderedMap<Coordinates, Queue<Coordinates>> targetCoordinateMovementQueueMap = new OrderedMap<Coordinates, Queue<Coordinates>>();
+
+
+            for(final Coordinates c : coordinatesWithPathMap.keys()) {
+
+                TargetComponent targetComponent = player.getComponent(TargetComponent.class);
+
+                for (Entity e : getTargetsInRange(world, c, targetComponent, player.getComponent(StatComponent.class).attackRange)) {
+
+                    final Coordinates targetCoordinate = tileSystem.getOccupiedMap().findKey(e, true);
+
+                    if(targetCoordinateMovementQueueMap.get(targetCoordinate) != null){
+                        if(coordinatesWithPathMap.get(c).size < targetCoordinateMovementQueueMap.get(targetCoordinate).size){
+                            targetCoordinateMovementQueueMap.put(targetCoordinate, coordinatesWithPathMap.get(c));
+                        }
+                    } else {
+                        targetCoordinateMovementQueueMap.put(targetCoordinate, coordinatesWithPathMap.get(c));
+                    }
+
+
+                    Entity redBox = BagToEntity.bagToEntity(world.createEntity(), highlightBox(tileSystem.getRectangleUsingCoordinates(targetCoordinate), new Color(Color.RED)));
+
+                    entityArray.add(redBox);
+
+                    redBox.edit().add(new ActionOnTapComponent(new WorldAction() {
                         @Override
-                        public void performAction(World world, Entity entity) {
+                        public void performAction(World world, final Entity e) {
+                            world.getSystem(ActionCameraSystem.class).pushLastAction(player, createMovementAction(player, targetCoordinateMovementQueueMap.get(targetCoordinate)));
 
                             world.getSystem(ActionCameraSystem.class).pushLastAction(player, new WorldConditionalAction() {
                                 @Override
@@ -118,106 +175,57 @@ public class TargetingFactory {
 
                                 @Override
                                 public void performAction(World world, Entity entity) {
-                                    for (Coordinates c : coordinatesQueue) {
-                                        player.getComponent(MoveToComponent.class).movementPositions.add(
-                                                world.getSystem(TileSystem.class).getPositionUsingCoordinates(
-                                                        c, player.getComponent(CenteringBoundaryComponent.class).bound));
-                                    }
+                                    new BasicAttack().cast(world, player, targetCoordinate);
                                 }
                             });
-                            //pushLastAction
-                            player.getComponent(TurnActionMonitorComponent.class).movementActionAvailable = false;
-
-
-                            if(new TargetingFactory().getTargetsInRange(world, coordinatesQueue.last(), player.getComponent(TargetComponent.class),
-                                    player.getComponent(StatComponent.class).attackRange).size <= 0){
-                                player.getComponent(TurnActionMonitorComponent.class).attackActionAvailable = false;
-                            }
-
-
-                            world.getSystem(SelectedTargetSystem.class).clearTargeting();
-
                         }
                     }));
-                };
-
-
-                //Create Attacking box
-
-                if (player.getComponent(TurnActionMonitorComponent.class).attackActionAvailable) {
-
-                    TargetComponent targetComponent = player.getComponent(TargetComponent.class);
-
-                    for (Entity e : getTargetsInRange(world, c, targetComponent, player.getComponent(StatComponent.class).attackRange)){
-
-                        final Coordinates attackC = tileSystem.getOccupiedMap().findKey(e, true);
-
-                        Entity redBox = BagToEntity.bagToEntity(world.createEntity(), highlightBox(tileSystem.getRectangleUsingCoordinates(attackC), new Color(Color.RED)));
-                        entityArray.add(redBox);
-
-                        redBox.edit().add(new ActionOnTapComponent(new WorldAction() {
-                            @Override
-                            public void performAction(World world, final Entity e) {
-
-                                world.getSystem(ActionCameraSystem.class).pushLastAction(player, new WorldConditionalAction() {
-                                    @Override
-                                    public boolean condition(World world, Entity entity) {
-                                        return entity.getComponent(MoveToComponent.class).isEmpty();
-                                    }
-
-                                    @Override
-                                    public void performAction(World world, Entity entity) {
-                                        for (Coordinates c : coordinatesQueue) {
-                                            player.getComponent(MoveToComponent.class).movementPositions.add(
-                                                    world.getSystem(TileSystem.class).getPositionUsingCoordinates(
-                                                            c, player.getComponent(CenteringBoundaryComponent.class).bound));
-                                        }
-                                    }
-                                });
-
-
-                                world.getSystem(ActionCameraSystem.class).pushLastAction(player, new WorldConditionalAction() {
-                                    @Override
-                                    public boolean condition(World world, Entity entity) {
-                                        return entity.getComponent(MoveToComponent.class).isEmpty();
-                                    }
-
-                                    @Override
-                                    public void performAction(World world, Entity entity) {
-                                        new FireballSkill().cast(world, player, attackC);
-                                    }
-                                });
-
-
-                                world.getSystem(SelectedTargetSystem.class).clearTargeting();
-                                player.getComponent(TurnActionMonitorComponent.class).attackActionAvailable = false;
-                                player.getComponent(TurnActionMonitorComponent.class).movementActionAvailable = false;
-                            }
-                        }));
-
-                    }
 
                 }
 
-
             }
 
-
         }
+
+
+
+
+
 
         return entityArray;
 
     }
 
+
+    public WorldConditionalAction createMovementAction(final Entity entity, final Queue<Coordinates> coordinatesQueue) {
+        return new WorldConditionalAction() {
+            @Override
+            public boolean condition(World world, Entity entity) {
+                return entity.getComponent(MoveToComponent.class).isEmpty();
+            }
+
+            @Override
+            public void performAction(World world, Entity entity) {
+                for (Coordinates c : coordinatesQueue) {
+                    entity.getComponent(MoveToComponent.class).movementPositions.add(
+                            world.getSystem(TileSystem.class).getPositionUsingCoordinates(
+                                    c, entity.getComponent(CenteringBoundaryComponent.class).bound));
+                }
+            }
+        };
+    }
+
+
     /**
      * Gets All targets of an entity's target component that are in range of a given co-ordinates
+     *
      * @param world
      * @param startCoordinates - The co-ordinate the scan orignates from
-     * @param targetComponent - Target Component of the entity
-     * @param range - The distance of the scan
+     * @param targetComponent  - Target Component of the entity
+     * @param range            - The distance of the scan
      * @return - All entities within range of the target co-ordinate
      */
-    public Array<Entity> getTargetsInRange(World world, Coordinates startCoordinates, TargetComponent targetComponent, int range){
+    public Array<Entity> getTargetsInRange(World world, Coordinates startCoordinates, TargetComponent targetComponent, int range) {
 
         TileSystem tileSystem = world.getSystem(TileSystem.class);
         Array<Entity> entityArray = new Array<Entity>();
@@ -239,7 +247,6 @@ public class TargetingFactory {
         return entityArray;
 
     }
-
 
 
     public ComponentBag highlightBox(Rectangle r, Color color) {

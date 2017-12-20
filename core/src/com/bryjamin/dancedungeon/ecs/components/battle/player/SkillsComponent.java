@@ -1,6 +1,8 @@
 package com.bryjamin.dancedungeon.ecs.components.battle.player;
 
 import com.artemis.Component;
+import com.artemis.Entity;
+import com.artemis.World;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.factories.player.spells.SkillDescription;
 
@@ -23,6 +25,19 @@ public class SkillsComponent extends Component {
         for(SkillDescription skillDescription : skillDescriptions){
             skillDescription.endTurnUpdate();
         }
+    }
+
+
+    public boolean canCast(World world, Entity entity){
+        if(skillDescriptions.size <= 0) return false;
+
+        for(SkillDescription s : skillDescriptions){
+            if(s.canCast(world, entity)){
+                return true;
+            }
+        }
+
+        return false;
     }
 
 

@@ -45,7 +45,7 @@ public class Fireball implements Skill {
 
 
     @Override
-    public void cast(World world, Entity entity, Coordinates target) {
+    public void cast(World world, Entity entity, final Coordinates target) {
 
         final TileSystem tileSystem = world.getSystem(TileSystem.class);
         PositionComponent positionComponent = entity.getComponent(PositionComponent.class);
@@ -96,9 +96,7 @@ public class Fireball implements Skill {
 
                 TileSystem tileSystem = world.getSystem(TileSystem.class);
 
-                CoordinateComponent coordinateComponent = entity.getComponent(CoordinateComponent.class);
-
-                for(Entity e : tileSystem.getCoordinateMap().get(coordinateComponent.coordinates)){
+                for(Entity e : tileSystem.getCoordinateMap().get(target)){
                     if(world.getMapper(HealthComponent.class).has(e)){
                         e.getComponent(HealthComponent.class).applyDamage(damage);
                     }
