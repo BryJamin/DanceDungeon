@@ -7,6 +7,7 @@ import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
+import com.bryjamin.dancedungeon.ecs.components.actions.TurnActionMonitorComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
@@ -72,6 +73,8 @@ public class PlayerFactory {
       //  bag.add(new TurnComponent());
         bag.add(new CenteringBoundaryComponent(new Rectangle(x, y, width, height)));
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, createPlayerTexture().build()));
+        bag.add(new TurnActionMonitorComponent());
+
 
         return bag;
 
@@ -90,6 +93,8 @@ public class PlayerFactory {
         bag.add(new MoveToComponent(Measure.units(60f)));
         bag.add(new VelocityComponent());
         bag.add(new TurnComponent());
+
+        bag.add(new TurnActionMonitorComponent());
 
         bag.add(new StatComponent.StatBuilder()
                 .movementRange(4)

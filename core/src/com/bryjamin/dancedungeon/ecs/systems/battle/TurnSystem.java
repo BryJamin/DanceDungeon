@@ -5,11 +5,13 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.badlogic.gdx.utils.Array;
+import com.bryjamin.dancedungeon.ecs.components.actions.TurnActionMonitorComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.UtilityAiComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MovementRangeComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.GreyScaleComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.factories.player.spells.MovementDescription;
@@ -30,6 +32,7 @@ public class TurnSystem extends EntitySystem {
 
     private ComponentMapper<EnemyComponent> enemyMapper;
     private ComponentMapper<PlayerControlledComponent> playerMapper;
+    private ComponentMapper<TurnActionMonitorComponent> turnActionMonitorComponentComponentMapper;
 
 
     private ComponentMapper<MovementRangeComponent> movementRangeMapper;
@@ -106,6 +109,13 @@ public class TurnSystem extends EntitySystem {
 
         if (turn == ENEMY) {
             currentTurnEntities.addAll(enemyTurnEntities);
+
+            for(Entity e : allyTurnEntities){
+                skillMapper.get(e).endTurn();
+                e.edit().remove(GreyScaleComponent.class);
+                turnActionMonitorComponentComponentMapper.get(e).reset();
+            }
+
         } else if (turn == ALLY) {
             currentTurnEntities.addAll(allyTurnEntities);
         }
@@ -167,9 +177,13 @@ public class TurnSystem extends EntitySystem {
 
                 } else {
 
+/*
                     for(Entity e : allyTurnEntities){
                         skillMapper.get(e).endTurn();
+                        e.edit().remove(GreyScaleComponent.class);
+                        turnActionMonitorComponentComponentMapper.get(e).reset();
                     }
+*/
 
                 }
 

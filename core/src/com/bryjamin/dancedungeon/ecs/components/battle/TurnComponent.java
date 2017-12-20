@@ -21,7 +21,6 @@ public class TurnComponent extends Component {
 
     public State state = State.DECIDING;
 
-
     public boolean isTurnOver = false;
 
     public WorldCondition turnOverCondition;

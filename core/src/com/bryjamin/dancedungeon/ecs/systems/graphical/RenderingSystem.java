@@ -22,6 +22,7 @@ import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.GreyScaleComponent;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.texture.DrawableDescription;
 import com.bryjamin.dancedungeon.utils.texture.TextDescription;
@@ -42,6 +43,8 @@ public class RenderingSystem extends EntitySystem {
     private ComponentMapper<DrawableComponent> drawablem;
     private ComponentMapper<BlinkOnHitComponent> blinkOnHitm;
 
+    private ComponentMapper<GreyScaleComponent> greyScaleMapper;
+
 
     private SpriteBatch batch;
     private Viewport gameport;
@@ -53,6 +56,7 @@ public class RenderingSystem extends EntitySystem {
     private Color white = new Color(Color.WHITE);
 
     public ShaderProgram whiteShaderProgram;
+    public ShaderProgram greyScaleShaderProgram;
 
     private GlyphLayout glyphLayout = new GlyphLayout();
 
@@ -76,6 +80,11 @@ public class RenderingSystem extends EntitySystem {
         whiteShaderProgram = new ShaderProgram( Gdx.files.internal(FileStrings.DEFAULT_VERTEX_SHADER),
                 Gdx.files.internal(FileStrings.ALL_WHITE_FRAGMENT_SHADER));
         if (!whiteShaderProgram.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + whiteShaderProgram.getLog());
+
+        greyScaleShaderProgram = new ShaderProgram( Gdx.files.internal(FileStrings.DEFAULT_VERTEX_SHADER),
+                Gdx.files.internal(FileStrings.ALL_WHITE_FRAGMENT_SHADER));
+        if (!greyScaleShaderProgram.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + whiteShaderProgram.getLog());
+
     }
 
 
@@ -115,6 +124,13 @@ public class RenderingSystem extends EntitySystem {
         if(shaderOn) {
             batch.end();
             batch.setShader(whiteShaderProgram);
+            batch.begin();
+        }
+
+        if(greyScaleMapper.has(e)){
+            shaderOn = true;
+            batch.end();
+            batch.setShader(greyScaleShaderProgram);
             batch.begin();
         }
 

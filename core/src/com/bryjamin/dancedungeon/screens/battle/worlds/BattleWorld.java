@@ -19,6 +19,7 @@ import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ParentChildSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.ActionOnTapSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.ConditionalActionSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BattleMessageSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BlinkOnHitSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BulletSystem;
@@ -100,6 +101,7 @@ public class BattleWorld extends WorldContainer {
                 )
                 .with(WorldConfigurationBuilder.Priority.LOWEST,
                         new ActionOnTapSystem(gameport),
+                        new ActionCameraSystem(),
                         new FadeSystem(),
                         new PlayerGraphicalTargetingSystem(),
                         new BattleMessageSystem(gameport),

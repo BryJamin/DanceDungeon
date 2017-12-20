@@ -30,6 +30,16 @@ public class CoordinateMath {
     }
 
 
+    public static boolean isWithinSqaureRange(Coordinates c1, Coordinates c2, int range){
+
+        boolean isWithinXRange = Math.abs(c1.getX() - c2.getX()) <= range;
+        boolean isWithinYRange = Math.abs(c1.getY() - c2.getY()) <= range;
+
+        return isWithinXRange && isWithinYRange;
+
+    }
+
+
     public static Array<Coordinates> getCoordinatesInMovementRange(Coordinates coordinates, int range){
 
         OrderedSet<Coordinates> coordinatesArray = new OrderedSet<Coordinates>();

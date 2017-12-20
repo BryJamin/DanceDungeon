@@ -24,5 +24,7 @@ public class FileStrings {
     public static final String DEFAULT_VERTEX_SHADER = "shader/VertexShader.glsl";
     public static final String ALL_WHITE_FRAGMENT_SHADER = "shader/WhiteFragmentShader.glsl";
 
+    public static final String GREYSCALE_FRAGMENT_SHADER = "shader/GreyScaleFragmentShader.glsl";
+
 
 }

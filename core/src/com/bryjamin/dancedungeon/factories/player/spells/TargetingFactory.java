@@ -11,7 +11,9 @@ import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
+import com.bryjamin.dancedungeon.ecs.components.actions.TurnActionMonitorComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
+import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
@@ -19,6 +21,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.UITargetingComponent;
+import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.SelectedTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.utils.HitBox;
@@ -35,6 +38,10 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 public class TargetingFactory {
 
+    //Melee Component
+
+    //Range Targeting
+
 
     public Array<Entity> createTargetTiles(World world, final Entity player, final SkillDescription spell, int range) {
 
@@ -44,34 +51,27 @@ public class TargetingFactory {
 
         TileSystem tileSystem = world.getSystem(TileSystem.class);
 
-        for(Entity e : targetComponent.getTargets(world)){
+        for (Entity e : getTargetsInRange(world, player.getComponent(CoordinateComponent.class).coordinates, targetComponent, player.getComponent(StatComponent.class).attackRange)){
 
-            Coordinates c1 = player.getComponent(CoordinateComponent.class).coordinates;
-            Coordinates c2 = e.getComponent(CoordinateComponent.class).coordinates;
+            final Coordinates attackC = tileSystem.getOccupiedMap().findKey(e, true);
 
-            if (tileSystem.getOccupiedMap().containsValue(e, true)
-                    && CoordinateMath.isWithinRange(c1, c2, range)) {
+            Entity redBox = BagToEntity.bagToEntity(world.createEntity(), highlightBox(tileSystem.getRectangleUsingCoordinates(attackC), new Color(Color.RED)));
+            entityArray.add(redBox);
 
-                final Coordinates c = tileSystem.getOccupiedMap().findKey(e, true);
+            redBox.edit().add(new ActionOnTapComponent(new WorldAction() {
+                @Override
+                public void performAction(World world, final Entity e) {
+                    new FireballSkill().cast(world, player, attackC);
+                    world.getSystem(SelectedTargetSystem.class).clearTargeting();
+                    player.getComponent(TurnActionMonitorComponent.class).attackActionAvailable = false;
+                    player.getComponent(TurnActionMonitorComponent.class).movementActionAvailable = false;
+                }
+            }));
 
-                Entity box = BagToEntity.bagToEntity(world.createEntity(), highlightBox(tileSystem.getRectangleUsingCoordinates(c), new Color(Color.RED)));
-                entityArray.add(box);
-
-                box.edit().add(new ActionOnTapComponent(new WorldAction() {
-                    @Override
-                    public void performAction(World world, final Entity e) {
-                        spell.cast(world, player, c);
-                        world.getSystem(SelectedTargetSystem.class).clearTargeting();
-                    }
-                }));
-            }
         }
 
         return entityArray;
     }
-
-
-
 
 
     public Array<Entity> createMovementTiles(World world, final Entity player, int movementRange) {
@@ -84,7 +84,7 @@ public class TargetingFactory {
 
         for (Coordinates c : CoordinateMath.getCoordinatesInMovementRange(coordinateComponent.coordinates, movementRange)) {
 
-            if(!tileSystem.getCoordinateMap().containsKey(c)) continue;
+            if (!tileSystem.getCoordinateMap().containsKey(c)) continue;
 
             final Queue<Coordinates> coordinatesQueue = new Queue<Coordinates>();
 
@@ -93,47 +93,62 @@ public class TargetingFactory {
 
             boolean bool = tileSystem.findShortestPath(coordinatesQueue, coordinateComponent.coordinates, coordinatesArray);
 
+            if (!(coordinatesQueue.size <= movementRange && bool)) continue;
 
 
+            if (player.getComponent(TurnActionMonitorComponent.class).movementActionAvailable) {
 
-            if (coordinatesQueue.size <= movementRange && bool) {
+                if (coordinatesQueue.size <= movementRange && bool) {
 
-                Rectangle r = tileSystem.getRectangleUsingCoordinates(c);
+                    Rectangle r = tileSystem.getRectangleUsingCoordinates(c);
 
-                //Create movement box
+                    //Create movement box
 
-                Entity box = BagToEntity.bagToEntity(world.createEntity(), highlightBox(r, new Color(Color.WHITE)));
-                entityArray.add(box);
-                box.edit().add(new ActionOnTapComponent(new WorldAction() {
-                    @Override
-                    public void performAction(World world, Entity entity) {
+                    Entity box = BagToEntity.bagToEntity(world.createEntity(), highlightBox(r, new Color(Color.WHITE)));
+                    entityArray.add(box);
+                    box.edit().add(new ActionOnTapComponent(new WorldAction() {
+                        @Override
+                        public void performAction(World world, Entity entity) {
 
-                        for (Coordinates c : coordinatesQueue) {
-                            player.getComponent(MoveToComponent.class).movementPositions.add(
-                                    world.getSystem(TileSystem.class).getPositionUsingCoordinates(
-                                            c, player.getComponent(CenteringBoundaryComponent.class).bound));
+                            world.getSystem(ActionCameraSystem.class).pushLastAction(player, new WorldConditionalAction() {
+                                @Override
+                                public boolean condition(World world, Entity entity) {
+                                    return entity.getComponent(MoveToComponent.class).isEmpty();
+                                }
+
+                                @Override
+                                public void performAction(World world, Entity entity) {
+                                    for (Coordinates c : coordinatesQueue) {
+                                        player.getComponent(MoveToComponent.class).movementPositions.add(
+                                                world.getSystem(TileSystem.class).getPositionUsingCoordinates(
+                                                        c, player.getComponent(CenteringBoundaryComponent.class).bound));
+                                    }
+                                }
+                            });
+                            //pushLastAction
+                            player.getComponent(TurnActionMonitorComponent.class).movementActionAvailable = false;
+
+
+                            if(new TargetingFactory().getTargetsInRange(world, coordinatesQueue.last(), player.getComponent(TargetComponent.class),
+                                    player.getComponent(StatComponent.class).attackRange).size <= 0){
+                                player.getComponent(TurnActionMonitorComponent.class).attackActionAvailable = false;
+                            }
+
+
+                            world.getSystem(SelectedTargetSystem.class).clearTargeting();
+
                         }
-                        world.getSystem(SelectedTargetSystem.class).clearTargeting();
-
-                    }
-                }));
+                    }));
+                };
 
 
                 //Create Attacking box
 
-                TargetComponent targetComponent = player.getComponent(TargetComponent.class);
+                if (player.getComponent(TurnActionMonitorComponent.class).attackActionAvailable) {
 
-                for(Entity e : targetComponent.getTargets(world)){
+                    TargetComponent targetComponent = player.getComponent(TargetComponent.class);
 
-                    System.out.println(c);
-
-                   // Coordinates c1 = player.getComponent(CoordinateComponent.class).coordinates;
-                    Coordinates c2 = e.getComponent(CoordinateComponent.class).coordinates;
-
-                    StatComponent statComponent = player.getComponent(StatComponent.class);
-
-                    if (tileSystem.getOccupiedMap().containsValue(e, true)
-                            && CoordinateMath.isWithinRange(c, c2, statComponent.attackRange)) {
+                    for (Entity e : getTargetsInRange(world, c, targetComponent, player.getComponent(StatComponent.class).attackRange)){
 
                         final Coordinates attackC = tileSystem.getOccupiedMap().findKey(e, true);
 
@@ -143,14 +158,46 @@ public class TargetingFactory {
                         redBox.edit().add(new ActionOnTapComponent(new WorldAction() {
                             @Override
                             public void performAction(World world, final Entity e) {
-                                new FireballSkill().cast(world, player, attackC);
+
+                                world.getSystem(ActionCameraSystem.class).pushLastAction(player, new WorldConditionalAction() {
+                                    @Override
+                                    public boolean condition(World world, Entity entity) {
+                                        return entity.getComponent(MoveToComponent.class).isEmpty();
+                                    }
+
+                                    @Override
+                                    public void performAction(World world, Entity entity) {
+                                        for (Coordinates c : coordinatesQueue) {
+                                            player.getComponent(MoveToComponent.class).movementPositions.add(
+                                                    world.getSystem(TileSystem.class).getPositionUsingCoordinates(
+                                                            c, player.getComponent(CenteringBoundaryComponent.class).bound));
+                                        }
+                                    }
+                                });
+
+
+                                world.getSystem(ActionCameraSystem.class).pushLastAction(player, new WorldConditionalAction() {
+                                    @Override
+                                    public boolean condition(World world, Entity entity) {
+                                        return entity.getComponent(MoveToComponent.class).isEmpty();
+                                    }
+
+                                    @Override
+                                    public void performAction(World world, Entity entity) {
+                                        new FireballSkill().cast(world, player, attackC);
+                                    }
+                                });
+
+
                                 world.getSystem(SelectedTargetSystem.class).clearTargeting();
+                                player.getComponent(TurnActionMonitorComponent.class).attackActionAvailable = false;
+                                player.getComponent(TurnActionMonitorComponent.class).movementActionAvailable = false;
                             }
                         }));
+
                     }
+
                 }
-
-
 
 
             }
@@ -162,26 +209,36 @@ public class TargetingFactory {
 
     }
 
+    /**
+     * Gets All targets of an entity's target component that are in range of a given co-ordinates
+     * @param world
+     * @param startCoordinates - The co-ordinate the scan orignates from
+     * @param targetComponent - Target Component of the entity
+     * @param range - The distance of the scan
+     * @return - All entities within range of the target co-ordinate
+     */
+    public Array<Entity> getTargetsInRange(World world, Coordinates startCoordinates, TargetComponent targetComponent, int range){
 
+        TileSystem tileSystem = world.getSystem(TileSystem.class);
+        Array<Entity> entityArray = new Array<Entity>();
 
+        for (Entity e : targetComponent.getTargets(world)) {
 
+            Coordinates targetCoordinates = e.getComponent(CoordinateComponent.class).coordinates;
 
+            //Checks if the Map contains the target
+            //TODO maybe change occupied Map to a different check, (Like just check the entity is there)
+            if (tileSystem.getOccupiedMap().containsValue(e, true)
+                    && CoordinateMath.isWithinRange(startCoordinates, targetCoordinates, range)) {
 
+                entityArray.add(e);
+            }
 
+        }
 
+        return entityArray;
 
-
-
-
-
-
-
-
-
-
-
-
-
+    }
 
 
 
@@ -202,10 +259,6 @@ public class TargetingFactory {
 
         return bag;
     }
-
-
-
-
 
 
 }
