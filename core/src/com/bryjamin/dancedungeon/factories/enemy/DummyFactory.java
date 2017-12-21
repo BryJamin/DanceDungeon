@@ -110,8 +110,8 @@ public class DummyFactory {
     public UtilityAiCalculator dummyAi(SkillDescription movement, SkillDescription slash){
         return new UtilityAiCalculator(
                 new ActionScoreCalculator(new EndTurnAction()),
-                new ActionScoreCalculator(new MeleeMoveToAction(movement), new IsNextToCalculator(-1000, 100), new CanUseSkillCalculator(movement, 100, -1000)),
-                new ActionScoreCalculator(new MeleeAttackAction(slash), new IsNextToCalculator(150, -1000), new CanUseSkillCalculator(slash, 100, -1000)
+                new ActionScoreCalculator(new MeleeMoveToAction(movement), new IsNextToCalculator(null, 100f), new CanUseSkillCalculator(movement, 100f, null)),
+                new ActionScoreCalculator(new MeleeAttackAction(slash), new IsNextToCalculator(150f, null), new CanUseSkillCalculator(slash, 100f, null)
                 ));
     }
 

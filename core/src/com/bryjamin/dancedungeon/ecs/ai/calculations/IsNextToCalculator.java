@@ -14,17 +14,17 @@ import com.bryjamin.dancedungeon.utils.math.CoordinateSorter;
 
 public class IsNextToCalculator implements ActionScoreCalculation{
 
-    public float isNextToScore;
-    public float isNotNextToScore;
+    public Float isNextToScore;
+    public Float isNotNextToScore;
 
-    public IsNextToCalculator(float isNextToScore, float isNotNextToScore){
+    public IsNextToCalculator(Float isNextToScore, Float isNotNextToScore){
         this.isNextToScore = isNextToScore;
         this.isNotNextToScore = isNotNextToScore;
     }
 
 
     @Override
-    public float calculateScore(World world, Entity entity) {
+    public Float calculateScore(World world, Entity entity) {
         Array<Entity> entityArray = entity.getComponent(TargetComponent.class).getTargets(world);
         if(entityArray.size <= 0) return isNotNextToScore;
         entityArray.sort(CoordinateSorter.SORT_BY_NEAREST(entity));

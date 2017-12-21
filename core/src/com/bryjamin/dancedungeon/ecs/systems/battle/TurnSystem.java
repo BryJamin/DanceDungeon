@@ -82,6 +82,8 @@ public class TurnSystem extends EntitySystem {
             allyTurnEntities.add(e);
         }
 
+        turnActionMonitorMapper.get(e).reset();
+
     }
 
     @Override

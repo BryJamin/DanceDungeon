@@ -9,6 +9,6 @@ import com.artemis.World;
 
 public interface ActionScoreCalculation {
 
-    float calculateScore(World world, Entity entity);
+    Float calculateScore(World world, Entity entity);
 
 }

@@ -81,8 +81,8 @@ public class RangedDummyFactory {
         bag.add(new UtilityAiComponent(
                 new UtilityAiCalculator(
                         new ActionScoreCalculator(new EndTurnAction()),
-                        new ActionScoreCalculator(new RangedMoveToAction(movement, range), new IsInRangeCalculator(-100, 100, range), new CanUseSkillCalculator(movement, 0, -1000)),
-                        new ActionScoreCalculator(new RangedAttackAction(fireball), new IsInRangeCalculator(150, -10, range), new CanUseSkillCalculator(fireball, 0, -1000)
+                        new ActionScoreCalculator(new RangedMoveToAction(movement, range), new IsInRangeCalculator(-100, 100, range), new CanUseSkillCalculator(movement, 0f, null)),
+                        new ActionScoreCalculator(new RangedAttackAction(fireball), new IsInRangeCalculator(150, -10, range), new CanUseSkillCalculator(fireball, 0f, null)
                         )
                 )));
 

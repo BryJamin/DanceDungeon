@@ -26,7 +26,7 @@ public class IsInRangeCalculator implements ActionScoreCalculation {
 
 
     @Override
-    public float calculateScore(World world, Entity entity) {
+    public Float calculateScore(World world, Entity entity) {
 
         Array<Entity> entityArray = entity.getComponent(TargetComponent.class).getTargets(world);
         if(entityArray.size <= 0) return isNotInRangeScore;

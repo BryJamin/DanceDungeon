@@ -1,8 +1,8 @@
 package com.bryjamin.dancedungeon.ecs.systems.battle;
 
 import com.artemis.Aspect;
-import com.artemis.BaseSystem;
 import com.artemis.Entity;
+import com.artemis.EntitySystem;
 import com.artemis.utils.IntBag;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
@@ -17,6 +17,7 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.GreyScaleComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.UITargetingComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.factories.player.spells.BasicAttack;
 import com.bryjamin.dancedungeon.factories.player.spells.SpellFactory;
 import com.bryjamin.dancedungeon.factories.player.spells.TargetingFactory;
@@ -36,7 +37,7 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
  *
  */
 
-public class SelectedTargetSystem extends BaseSystem {
+public class SelectedTargetSystem extends EntitySystem {
 
 
     private Entity selectedEntity;
@@ -44,6 +45,9 @@ public class SelectedTargetSystem extends BaseSystem {
     private Array<Entity> buttons = new Array<Entity>();
 
 
+    public SelectedTargetSystem() {
+        super(Aspect.all(PlayerControlledComponent.class));
+    }
 
 
     public Entity getSelectedEntity() {
@@ -53,6 +57,22 @@ public class SelectedTargetSystem extends BaseSystem {
     @Override
     protected void processSystem() {}
 
+
+    @Override
+    public void removed(Entity e) {
+
+        if(e == selectedEntity){
+            selectedEntity = null;
+
+            System.out.println("Inside");
+        }
+
+    }
+
+    @Override
+    protected boolean checkProcessing() {
+        return false;
+    }
 
     /**
      * Clears the button entities and selected entity from the system
@@ -141,7 +161,7 @@ public class SelectedTargetSystem extends BaseSystem {
 
         //Can't select a character with no actions
 
-        System.out.println(playableCharacter.getComponent(TurnActionMonitorComponent.class).hasActions());
+        //System.out.println(playableCharacter.getComponent(TurnActionMonitorComponent.class).hasActions());
 
         if(!playableCharacter.getComponent(TurnActionMonitorComponent.class).hasActions() ||
         world.getSystem(ActionCameraSystem.class).checkProcessing()) return;

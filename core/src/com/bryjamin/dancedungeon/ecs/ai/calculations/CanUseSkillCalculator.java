@@ -12,17 +12,17 @@ public class CanUseSkillCalculator implements ActionScoreCalculation {
 
     private SkillDescription skillDescription;
 
-    private float canUseScore;
-    private float cannotUseScore;
+    private Float canUseScore;
+    private Float cannotUseScore;
 
-    public CanUseSkillCalculator(SkillDescription skillDescription, float canUseScore, float cannotUseScore){
+    public CanUseSkillCalculator(SkillDescription skillDescription, Float canUseScore, Float cannotUseScore){
         this.canUseScore = canUseScore;
         this.cannotUseScore = cannotUseScore;
         this.skillDescription = skillDescription;
     }
 
     @Override
-    public float calculateScore(World world, Entity entity) {
+    public Float calculateScore(World world, Entity entity) {
         return skillDescription.canCast(world, entity) ? canUseScore : cannotUseScore;
     }
 }
