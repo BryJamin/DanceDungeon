@@ -3,10 +3,9 @@ package com.bryjamin.dancedungeon.ecs.ai.actions;
 import com.artemis.Entity;
 import com.artemis.World;
 import com.badlogic.gdx.utils.Array;
+import com.bryjamin.dancedungeon.ecs.components.actions.TurnActionMonitorComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
-import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldCondition;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.factories.player.spells.SkillDescription;
 import com.bryjamin.dancedungeon.utils.math.CoordinateSorter;
@@ -34,12 +33,8 @@ public class RangedAttackAction implements WorldAction {
 
         skill.cast(world, entity, entityArray.first().getComponent(CoordinateComponent.class).coordinates);
 
-        entity.getComponent(TurnComponent.class).turnOverCondition = new WorldCondition() {
-            @Override
-            public boolean condition(World world, Entity entity) {
-                return true;
-            }
-        };
+        entity.getComponent(TurnActionMonitorComponent.class).attackActionAvailable = false;
+
 
     }
 

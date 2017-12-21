@@ -28,6 +28,7 @@ public class UtilityAiCalculator {
 
         for(ActionScoreCalculator actionScoreCalculator : actionCalculators){
             actionScoreCalculator.calculateScore(world, entity);
+
         }
 
         actionCalculators.sort(new Comparator<ActionScoreCalculator>() {

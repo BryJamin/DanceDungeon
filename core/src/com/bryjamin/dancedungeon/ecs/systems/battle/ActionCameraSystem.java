@@ -2,9 +2,13 @@ package com.bryjamin.dancedungeon.ecs.systems.battle;
 
 import com.artemis.BaseSystem;
 import com.artemis.Entity;
+import com.artemis.World;
 import com.badlogic.gdx.utils.Queue;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
+import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.utils.Pair;
+import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
 /**
  * Created by BB on 20/12/2017.
@@ -21,6 +25,7 @@ public class ActionCameraSystem extends BaseSystem {
     private WorldConditionalAction currentConditionalAction;
 
     private boolean hasBegun = false;
+
     @Override
     protected void processSystem() {
 
@@ -30,7 +35,7 @@ public class ActionCameraSystem extends BaseSystem {
 
             currentConditionalAction = actionQueue.first().getRight();
 
-            if(!hasBegun){
+            if (!hasBegun) {
                 hasBegun = true;
                 world.getSystem(SelectedTargetSystem.class).clearTargeting();
             }
@@ -59,6 +64,27 @@ public class ActionCameraSystem extends BaseSystem {
 
     public boolean isProcessing() {
         return checkProcessing();
+    }
+
+
+    public void createMovementAction(Entity entity, final Iterable<Coordinates> coordinatesSequence) {
+
+        pushLastAction(entity, new WorldConditionalAction() {
+            @Override
+            public boolean condition(World world, Entity entity) {
+                return entity.getComponent(MoveToComponent.class).isEmpty();
+            }
+
+            @Override
+            public void performAction(World world, Entity entity) {
+                for (Coordinates c : coordinatesSequence) {
+                    entity.getComponent(MoveToComponent.class).movementPositions.add(
+                            world.getSystem(TileSystem.class).getPositionUsingCoordinates(
+                                    c, entity.getComponent(CenteringBoundaryComponent.class).bound));
+                }
+            }
+        });
+
     }
 
 

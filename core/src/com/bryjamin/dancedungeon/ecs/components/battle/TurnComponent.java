@@ -1,10 +1,7 @@
 package com.bryjamin.dancedungeon.ecs.components.battle;
 
 import com.artemis.Component;
-import com.artemis.Entity;
-import com.artemis.World;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.EmptyTask;
-import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldCondition;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldTask;
 
 
@@ -23,19 +20,11 @@ public class TurnComponent extends Component {
 
     public boolean isTurnOver = false;
 
-    public WorldCondition turnOverCondition;
+
     public WorldTask turnAction;
 
     public TurnComponent(){
-
         turnAction = new EmptyTask();
-
-        turnOverCondition = new WorldCondition() {
-            @Override
-            public boolean condition(World world, Entity entity) {
-                return false;
-            }
-        };
     }
 
 

@@ -23,6 +23,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.DispellableComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MovementRangeComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
@@ -95,10 +96,16 @@ public class DummyFactory {
         bag.add(new DispellableComponent(DispellableComponent.Type.HORIZONTAL));
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, blob.color(Color.BLACK).build()));
         bag.add(new MovementRangeComponent(3));
+
+        bag.add(new StatComponent.StatBuilder().movementRange(3)
+                .build());
+
         return bag;
 
     }
 
+
+    //TODO fix AI
 
     public UtilityAiCalculator dummyAi(SkillDescription movement, SkillDescription slash){
         return new UtilityAiCalculator(
@@ -115,6 +122,8 @@ public class DummyFactory {
         bag.add(new DispellableComponent(DispellableComponent.Type.HORIZONTAL));
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, blob.color(Color.WHITE).build()));
         bag.add(new MovementRangeComponent(6));
+        bag.add(new StatComponent.StatBuilder().movementRange(6)
+                .build());
         return bag;
 
     }

@@ -4,14 +4,12 @@ import com.artemis.Entity;
 import com.artemis.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Queue;
-import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
+import com.bryjamin.dancedungeon.ecs.components.actions.TurnActionMonitorComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
-import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldCondition;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.MovementRangeComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
+import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.factories.player.spells.MovementDescription;
 import com.bryjamin.dancedungeon.factories.player.spells.SkillDescription;
@@ -35,7 +33,7 @@ public class MeleeMoveToAction implements WorldAction {
     @Override
     public void performAction(World world, Entity entity) {
 
-        if(!movementSkill.canCast(world, entity)) return;
+        if(!entity.getComponent(TurnActionMonitorComponent.class).movementActionAvailable) return;
 
         Array<Entity> entityArray = entity.getComponent(TargetComponent.class).getTargets(world);
         if(entityArray.size <= 0) return;
@@ -49,24 +47,12 @@ public class MeleeMoveToAction implements WorldAction {
         tileSystem.findShortestPath(coordinatesQueue, entity.getComponent(CoordinateComponent.class).coordinates, CoordinateMath.getCoordinatesInLine(playerCoordinates, 1));
 
 
-        while (coordinatesQueue.size > entity.getComponent(MovementRangeComponent.class).range) {
+        while (coordinatesQueue.size > entity.getComponent(StatComponent.class).movementRange) {
             coordinatesQueue.removeLast();
         }
 
-        for(Coordinates c : coordinatesQueue){
-            entity.getComponent(MoveToComponent.class).movementPositions.add(
-                    tileSystem.getPositionUsingCoordinates(c, entity.getComponent(CenteringBoundaryComponent.class).bound));
-        }
-
-
-        entity.getComponent(TurnComponent.class).turnOverCondition = new WorldCondition() {
-            @Override
-            public boolean condition(World world, Entity entity) {
-                return entity.getComponent(MoveToComponent.class).isEmpty();
-            }
-        };
-
-        movementSkill.cast(world, entity, playerCoordinates);
+        world.getSystem(ActionCameraSystem.class).createMovementAction(entity, coordinatesQueue);
+        entity.getComponent(TurnActionMonitorComponent.class).movementActionAvailable = false;
 
     }
 }
