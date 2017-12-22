@@ -36,8 +36,6 @@ public class CoordinateMath {
         int normX = c2.getX() - c1.getX();
         int normY = c2.getY() - c1.getY();
 
-      //  System.out.println(Math.abs(normX) + Math.abs(normY));
-
         return Math.abs(normX) + Math.abs(normY) <= range;
 
     }

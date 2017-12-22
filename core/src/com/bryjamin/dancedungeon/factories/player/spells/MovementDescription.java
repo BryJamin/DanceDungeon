@@ -4,8 +4,8 @@ import com.artemis.Entity;
 import com.artemis.World;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
-import com.bryjamin.dancedungeon.ecs.components.actions.TurnActionMonitorComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
+import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
 /**
@@ -43,7 +43,7 @@ public class MovementDescription extends CooldownSpellDescription {
 
     @Override
     public boolean canCast(World world, Entity entity) {
-        return entity.getComponent(TurnActionMonitorComponent.class).movementActionAvailable;
+        return entity.getComponent(TurnComponent.class).movementActionAvailable;
     }
 
     @Override

@@ -3,9 +3,9 @@ package com.bryjamin.dancedungeon.factories.player.spells;
 import com.artemis.Entity;
 import com.artemis.World;
 import com.badlogic.gdx.utils.Array;
-import com.bryjamin.dancedungeon.ecs.components.actions.TurnActionMonitorComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
@@ -30,8 +30,8 @@ public class BasicAttack extends CooldownSpellDescription {
             }
         };
 
-        entity.getComponent(TurnActionMonitorComponent.class).attackActionAvailable = false;
-        entity.getComponent(TurnActionMonitorComponent.class).movementActionAvailable = false;
+        entity.getComponent(TurnComponent.class).attackActionAvailable = false;
+        entity.getComponent(TurnComponent.class).movementActionAvailable = false;
 
     }
 }

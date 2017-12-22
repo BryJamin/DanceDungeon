@@ -12,12 +12,12 @@ import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
-import com.bryjamin.dancedungeon.ecs.components.actions.TurnActionMonitorComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
@@ -105,7 +105,7 @@ public class TargetingFactory {
             //Add this path to the list of available paths (for attack scan).
             coordinatesWithPathMap.put(c, coordinatesPath);
 
-            if (player.getComponent(TurnActionMonitorComponent.class).movementActionAvailable) {
+            if (player.getComponent(TurnComponent.class).movementActionAvailable) {
 
                 Rectangle r = tileSystem.getRectangleUsingCoordinates(c);
 
@@ -117,13 +117,13 @@ public class TargetingFactory {
 
                         world.getSystem(ActionCameraSystem.class).pushLastAction(player, createMovementAction(player, coordinatesPath));
                         //pushLastAction
-                        player.getComponent(TurnActionMonitorComponent.class).movementActionAvailable = false;
+                        player.getComponent(TurnComponent.class).movementActionAvailable = false;
 
 
                         //If no enemies are in range at the end of the potential movement, set attack action avaliable to false
                         if (new TargetingFactory().getTargetsInRange(world, coordinatesPath.last(), player.getComponent(TargetComponent.class),
                                 player.getComponent(StatComponent.class).attackRange).size <= 0) {
-                            player.getComponent(TurnActionMonitorComponent.class).attackActionAvailable = false;
+                            player.getComponent(TurnComponent.class).attackActionAvailable = false;
                         }
 
                     }
@@ -136,7 +136,7 @@ public class TargetingFactory {
 
 
 
-        if (player.getComponent(TurnActionMonitorComponent.class).attackActionAvailable) {
+        if (player.getComponent(TurnComponent.class).attackActionAvailable) {
 
             final OrderedMap<Coordinates, Queue<Coordinates>> targetCoordinateMovementQueueMap = new OrderedMap<Coordinates, Queue<Coordinates>>();
 

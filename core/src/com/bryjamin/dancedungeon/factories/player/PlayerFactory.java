@@ -7,7 +7,6 @@ import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
-import com.bryjamin.dancedungeon.ecs.components.actions.TurnActionMonitorComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
@@ -47,6 +46,27 @@ public class PlayerFactory {
 
     }
 
+    public ComponentBag baseUnitBag(StatComponent statComponent){
+
+        ComponentBag bag = new ComponentBag();
+        bag.add(new PositionComponent());
+
+        bag.add(new CoordinateComponent());
+        bag.add(new PlayerControlledComponent());
+        bag.add(new MoveToComponent(Measure.units(60f))); //TODO speed should be based on the class
+        bag.add(new VelocityComponent());
+
+
+        //Graphical
+        bag.add(new BlinkOnHitComponent());
+
+
+        bag.add(new TurnComponent());
+
+        return bag;
+
+    }
+
     public ComponentBag player(float x, float y, Coordinates coordinates){
 
         ComponentBag bag = new ComponentBag();
@@ -69,10 +89,8 @@ public class PlayerFactory {
         bag.add(new SkillsComponent());
         bag.add(new TargetComponent(Aspect.all(EnemyComponent.class, CoordinateComponent.class)));
 
-      //  bag.add(new TurnComponent());
         bag.add(new CenteringBoundaryComponent(new Rectangle(x, y, width, height)));
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, createPlayerTexture().build()));
-        bag.add(new TurnActionMonitorComponent());
 
 
         return bag;
@@ -92,8 +110,6 @@ public class PlayerFactory {
         bag.add(new MoveToComponent(Measure.units(60f)));
         bag.add(new VelocityComponent());
         bag.add(new TurnComponent());
-
-        bag.add(new TurnActionMonitorComponent());
 
         bag.add(new StatComponent.StatBuilder()
                 .movementRange(4)

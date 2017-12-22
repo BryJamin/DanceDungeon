@@ -3,9 +3,9 @@ package com.bryjamin.dancedungeon.ecs.ai.actions;
 import com.artemis.Entity;
 import com.artemis.World;
 import com.badlogic.gdx.utils.Array;
-import com.bryjamin.dancedungeon.ecs.components.actions.TurnActionMonitorComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.factories.player.spells.SkillDescription;
 import com.bryjamin.dancedungeon.factories.player.spells.SlashDescription;
@@ -34,7 +34,7 @@ public class MeleeAttackAction implements WorldAction {
         Coordinates c = entityArray.first().getComponent(CoordinateComponent.class).coordinates;
         skillDescription.cast(world, entity, c);
 
-        entity.getComponent(TurnActionMonitorComponent.class).attackActionAvailable = false;
+        entity.getComponent(TurnComponent.class).attackActionAvailable = false;
 
     }
 }

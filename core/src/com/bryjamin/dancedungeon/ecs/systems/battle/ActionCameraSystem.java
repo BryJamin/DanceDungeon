@@ -50,7 +50,7 @@ public class ActionCameraSystem extends BaseSystem {
                 if (actionQueue.size == 0) {
                     //TODO should only occur when it is the player's turn
                     hasBegun = false;
-                    world.getSystem(SelectedTargetSystem.class).reselectEntityAfterActionComplete();
+
                 }
 
             }

@@ -5,7 +5,6 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.badlogic.gdx.utils.Array;
-import com.bryjamin.dancedungeon.ecs.components.actions.TurnActionMonitorComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.UtilityAiComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MovementRangeComponent;
@@ -30,7 +29,6 @@ public class TurnSystem extends EntitySystem {
 
     private ComponentMapper<EnemyComponent> enemyMapper;
     private ComponentMapper<PlayerControlledComponent> playerMapper;
-    private ComponentMapper<TurnActionMonitorComponent> turnActionMonitorMapper;
 
 
     private ComponentMapper<MovementRangeComponent> movementRangeMapper;
@@ -82,7 +80,7 @@ public class TurnSystem extends EntitySystem {
             allyTurnEntities.add(e);
         }
 
-        turnActionMonitorMapper.get(e).reset();
+        turnMapper.get(e).reset();
 
     }
 
@@ -113,11 +111,13 @@ public class TurnSystem extends EntitySystem {
             for (Entity e : allyTurnEntities) {
                 skillMapper.get(e).endTurn();
                 e.edit().remove(GreyScaleComponent.class);
-                turnActionMonitorMapper.get(e).reset();
+                turnMapper.get(e).reset();
             }
 
         } else if (turn == ALLY) {
             currentTurnEntities.addAll(allyTurnEntities);
+            world.getSystem(SelectedTargetSystem.class).reselectEntityAfterActionComplete();
+
         }
 
         state = STATE.NEXT;
@@ -175,8 +175,8 @@ public class TurnSystem extends EntitySystem {
                         skillMapper.get(currentEntity).endTurn();
                     }
 
-                    if(turnActionMonitorMapper.has(currentEntity)){
-                        turnActionMonitorMapper.get(currentEntity).reset();
+                    if(turnMapper.has(currentEntity)){
+                        turnMapper.get(currentEntity).reset();
                     }
 
 
@@ -198,9 +198,7 @@ public class TurnSystem extends EntitySystem {
 
                         case DECIDING:
 
-                            TurnActionMonitorComponent turnActionMonitorComponent = currentEntity.getComponent(TurnActionMonitorComponent.class);
-
-                            if (!turnActionMonitorComponent.hasActions()) {
+                            if (!turnComponent.hasActions()) {
                                 turnComponent.state = TurnComponent.State.END;
                             } else {
 
@@ -239,3 +237,4 @@ public class TurnSystem extends EntitySystem {
 
 
 }
+

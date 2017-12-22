@@ -9,8 +9,8 @@ import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.FollowPositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
-import com.bryjamin.dancedungeon.ecs.components.actions.TurnActionMonitorComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
@@ -63,8 +63,6 @@ public class SelectedTargetSystem extends EntitySystem {
 
         if(e == selectedEntity){
             selectedEntity = null;
-
-            System.out.println("Inside");
         }
 
     }
@@ -130,8 +128,8 @@ public class SelectedTargetSystem extends EntitySystem {
 
         if(selectedEntity != null){
 
-            TurnActionMonitorComponent turnActionMonitorComponent = selectedEntity.getComponent(TurnActionMonitorComponent.class);
-            if(turnActionMonitorComponent.movementActionAvailable || turnActionMonitorComponent.attackActionAvailable ||
+            TurnComponent turnComponent = selectedEntity.getComponent(TurnComponent.class);
+            if(turnComponent.movementActionAvailable || turnComponent.attackActionAvailable ||
                     selectedEntity.getComponent(SkillsComponent.class).canCast(world, selectedEntity)) {
 
                 //if (entityArray.size > 0) {
@@ -163,7 +161,7 @@ public class SelectedTargetSystem extends EntitySystem {
 
         //System.out.println(playableCharacter.getComponent(TurnActionMonitorComponent.class).hasActions());
 
-        if(!playableCharacter.getComponent(TurnActionMonitorComponent.class).hasActions() ||
+        if(!playableCharacter.getComponent(TurnComponent.class).hasActions() ||
         world.getSystem(ActionCameraSystem.class).checkProcessing()) return;
 
 
@@ -200,7 +198,7 @@ public class SelectedTargetSystem extends EntitySystem {
 
 
 
-        playableCharacter.edit().add(new FadeComponent(true, 1.25f, true));
+        //playableCharacter.edit().add(new FadeComponent(true, 1.25f, true));
         this.clear();
 
         final SkillsComponent skillsComponent = playableCharacter.getComponent(SkillsComponent.class);
@@ -213,11 +211,11 @@ public class SelectedTargetSystem extends EntitySystem {
 
 
 
-        if(playableCharacter.getComponent(TurnActionMonitorComponent.class).attackActionAvailable &&
-                playableCharacter.getComponent(TurnActionMonitorComponent.class).movementActionAvailable) {
+        if(playableCharacter.getComponent(TurnComponent.class).attackActionAvailable &&
+                playableCharacter.getComponent(TurnComponent.class).movementActionAvailable) {
             new TargetingFactory().createMovementTiles(world, playableCharacter, playableCharacter.getComponent(StatComponent.class).movementRange);
-        } else if(playableCharacter.getComponent(TurnActionMonitorComponent.class).attackActionAvailable &&
-                !playableCharacter.getComponent(TurnActionMonitorComponent.class).movementActionAvailable){
+        } else if(playableCharacter.getComponent(TurnComponent.class).attackActionAvailable &&
+                !playableCharacter.getComponent(TurnComponent.class).movementActionAvailable){
             new TargetingFactory().createTargetTiles(world, playableCharacter, new BasicAttack(), playableCharacter.getComponent(StatComponent.class).attackRange);
 
         }

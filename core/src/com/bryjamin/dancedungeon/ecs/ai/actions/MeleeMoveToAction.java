@@ -4,10 +4,10 @@ import com.artemis.Entity;
 import com.artemis.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Queue;
-import com.bryjamin.dancedungeon.ecs.components.actions.TurnActionMonitorComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
@@ -33,7 +33,7 @@ public class MeleeMoveToAction implements WorldAction {
     @Override
     public void performAction(World world, Entity entity) {
 
-        if(!entity.getComponent(TurnActionMonitorComponent.class).movementActionAvailable) return;
+        if(!entity.getComponent(TurnComponent.class).movementActionAvailable) return;
 
         Array<Entity> entityArray = entity.getComponent(TargetComponent.class).getTargets(world);
         if(entityArray.size <= 0) return;
@@ -52,7 +52,7 @@ public class MeleeMoveToAction implements WorldAction {
         }
 
         world.getSystem(ActionCameraSystem.class).createMovementAction(entity, coordinatesQueue);
-        entity.getComponent(TurnActionMonitorComponent.class).movementActionAvailable = false;
+        entity.getComponent(TurnComponent.class).movementActionAvailable = false;
 
     }
 }
