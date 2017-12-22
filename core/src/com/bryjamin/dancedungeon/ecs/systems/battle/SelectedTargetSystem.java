@@ -18,9 +18,8 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.GreyScaleComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.UITargetingComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
-import com.bryjamin.dancedungeon.factories.player.spells.BasicAttack;
-import com.bryjamin.dancedungeon.factories.player.spells.SpellFactory;
-import com.bryjamin.dancedungeon.factories.player.spells.TargetingFactory;
+import com.bryjamin.dancedungeon.factories.spells.SpellFactory;
+import com.bryjamin.dancedungeon.factories.spells.TargetingFactory;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
@@ -216,7 +215,9 @@ public class SelectedTargetSystem extends EntitySystem {
             new TargetingFactory().createMovementTiles(world, playableCharacter, playableCharacter.getComponent(StatComponent.class).movementRange);
         } else if(playableCharacter.getComponent(TurnComponent.class).attackActionAvailable &&
                 !playableCharacter.getComponent(TurnComponent.class).movementActionAvailable){
-            new TargetingFactory().createTargetTiles(world, playableCharacter, new BasicAttack(), playableCharacter.getComponent(StatComponent.class).attackRange);
+            new TargetingFactory().createTargetTiles(world, playableCharacter,
+                    playableCharacter.getComponent(SkillsComponent.class).basicAttack,
+                    playableCharacter.getComponent(StatComponent.class).attackRange);
 
         }
     }

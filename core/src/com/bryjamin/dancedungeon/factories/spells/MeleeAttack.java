@@ -1,4 +1,4 @@
-package com.bryjamin.dancedungeon.factories.player.spells;
+package com.bryjamin.dancedungeon.factories.spells;
 
 import com.artemis.Entity;
 import com.artemis.World;
@@ -11,9 +11,16 @@ import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
 /**
  * Created by BB on 20/12/2017.
+ *
+ * This Melee Attack
+ *
+ * Used as a basic attack for enemies that do not have a ranged weapon.
+ *
+ * This attack deals damage based on the power of the entity using it
+ *
  */
 
-public class BasicAttack extends CooldownSpellDescription {
+public class MeleeAttack extends SkillDescription {
 
 
     @Override
@@ -26,6 +33,7 @@ public class BasicAttack extends CooldownSpellDescription {
 
         for(Entity e : world.getSystem(TileSystem.class).getCoordinateMap().get(target)){
             if(world.getMapper(HealthComponent.class).has(e)){
+                //System.out.println(entity.getComponent(StatComponent.class).power);
                 e.getComponent(HealthComponent.class).applyDamage(entity.getComponent(StatComponent.class).power);
             }
         };
@@ -33,5 +41,20 @@ public class BasicAttack extends CooldownSpellDescription {
         entity.getComponent(TurnComponent.class).attackActionAvailable = false;
         entity.getComponent(TurnComponent.class).movementActionAvailable = false;
 
+    }
+
+    @Override
+    public void endTurnUpdate() {
+
+    }
+
+    @Override
+    public String getIcon() {
+        return null;
+    }
+
+    @Override
+    public boolean canCast(World world, Entity entity) {
+        return entity.getComponent(TurnComponent.class).attackActionAvailable = false;
     }
 }

@@ -4,13 +4,16 @@ import com.artemis.Component;
 import com.artemis.Entity;
 import com.artemis.World;
 import com.badlogic.gdx.utils.Array;
-import com.bryjamin.dancedungeon.factories.player.spells.SkillDescription;
+import com.bryjamin.dancedungeon.factories.spells.MeleeAttack;
+import com.bryjamin.dancedungeon.factories.spells.SkillDescription;
 
 /**
  * Created by BB on 18/11/2017.
  */
 
 public class SkillsComponent extends Component {
+
+    public SkillDescription basicAttack = new MeleeAttack();
 
     public Array<SkillDescription> skillDescriptions = new Array<SkillDescription>();
 

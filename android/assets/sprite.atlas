@@ -202,7 +202,7 @@ enemy/boss/biggablobba
   index: 6
 enemy/xi_portrait
   rotate: false
-  xy: 1123, 133
+  xy: 1189, 133
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -354,6 +354,27 @@ player/targeting
   orig: 64, 64
   offset: 0, 0
   index: 0
+player/xi_firing
+  rotate: false
+  xy: 1123, 133
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 0
+player/xi_firing
+  rotate: false
+  xy: 1057, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 1
+player/xi_firing
+  rotate: false
+  xy: 1123, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 2
 skills/Fire
   rotate: false
   xy: 1, 133

@@ -2,7 +2,7 @@ package com.bryjamin.dancedungeon.ecs.ai.calculations;
 
 import com.artemis.Entity;
 import com.artemis.World;
-import com.bryjamin.dancedungeon.factories.player.spells.SkillDescription;
+import com.bryjamin.dancedungeon.factories.spells.SkillDescription;
 
 /**
  * Created by BB on 29/11/2017.

@@ -1,8 +1,9 @@
-package com.bryjamin.dancedungeon.factories.player.spells;
+package com.bryjamin.dancedungeon.factories.spells;
 
 import com.artemis.Entity;
 import com.artemis.World;
 import com.badlogic.gdx.utils.Array;
+import com.bryjamin.dancedungeon.factories.spells.animations.FrostBall;
 
 /**
  * Created by BB on 19/11/2017.
@@ -11,7 +12,7 @@ import com.badlogic.gdx.utils.Array;
 public class FrostBallDescription extends CooldownSpellDescription {
 
     public FrostBallDescription(){
-        skill = new com.bryjamin.dancedungeon.factories.player.spells.animations.FrostBall();
+        skillAnimation = new FrostBall();
     }
 
     @Override

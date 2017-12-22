@@ -20,6 +20,8 @@ import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
+import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MoveToTargetSystem;
@@ -34,13 +36,14 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
 import com.bryjamin.dancedungeon.factories.enemy.DummyFactory;
 import com.bryjamin.dancedungeon.factories.enemy.RangedDummyFactory;
-import com.bryjamin.dancedungeon.factories.player.PlayerFactory;
+import com.bryjamin.dancedungeon.factories.player.Unit;
+import com.bryjamin.dancedungeon.factories.player.UnitFactory;
+import com.bryjamin.dancedungeon.factories.spells.FireballSkill;
 import com.bryjamin.dancedungeon.screens.WorldContainer;
 import com.bryjamin.dancedungeon.screens.battle.BattleDetails;
 import com.bryjamin.dancedungeon.screens.battle.BattleScreen;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
-import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
@@ -54,7 +57,7 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 public class MapWorld extends WorldContainer {
 
 
-    private Array<ComponentBag> playerParty = new Array<ComponentBag>();
+    private Array<Unit> playerParty = new Array<Unit>();
 
     //BattleScreen battleScreen;
     private VictoryAdapter adapter;
@@ -65,11 +68,34 @@ public class MapWorld extends WorldContainer {
         super(game, gameport);
         this.adapter = new VictoryAdapter();
 
-        playerParty.add(new PlayerFactory().player(0,0, new Coordinates()));
-        playerParty.add(new PlayerFactory().player(0,0, new Coordinates()));
-        playerParty.add(null);
-        playerParty.add(new PlayerFactory().player2(0,0, new Coordinates()));
 
+        Unit warrior = new Unit(UnitFactory.UNIT_WARRIOR);
+        warrior.setStatComponent(new StatComponent.StatBuilder()
+                .movementRange(3)
+                .power(10)
+                .maxHealth(5).build());
+
+
+        Unit warrior2 = new Unit(UnitFactory.UNIT_WARRIOR);
+        warrior2.setStatComponent(new StatComponent.StatBuilder()
+                .movementRange(5)
+                .maxHealth(10).build());
+
+        Unit mage = new Unit(UnitFactory.UNIT_MAGE);
+        mage.setStatComponent(new StatComponent.StatBuilder()
+                .movementRange(3)
+                .maxHealth(20)
+                .attackRange(3)
+                .power(5).build());
+
+        SkillsComponent skillsComponent = new SkillsComponent();
+        skillsComponent.basicAttack = new FireballSkill();
+        skillsComponent.skillDescriptions.add(new FireballSkill());
+        mage.setSkillsComponent(skillsComponent);
+
+        playerParty.add(mage);
+        playerParty.add(warrior);
+        playerParty.add(warrior2);
 
         createWorld();
 

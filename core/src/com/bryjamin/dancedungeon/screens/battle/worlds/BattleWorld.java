@@ -40,7 +40,9 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UIRenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
 import com.bryjamin.dancedungeon.factories.decor.FloorFactory;
-import com.bryjamin.dancedungeon.factories.player.spells.SpellFactory;
+import com.bryjamin.dancedungeon.factories.player.Unit;
+import com.bryjamin.dancedungeon.factories.player.UnitFactory;
+import com.bryjamin.dancedungeon.factories.spells.SpellFactory;
 import com.bryjamin.dancedungeon.screens.WorldContainer;
 import com.bryjamin.dancedungeon.screens.battle.BattleDetails;
 import com.bryjamin.dancedungeon.utils.Measure;
@@ -139,10 +141,15 @@ public class BattleWorld extends WorldContainer {
 
     private void setUpPlayerLocations(World world, BattleDetails battleDetails){
 
-        for(int i = 0; i < battleDetails.getPlayerParty().size; i++) {
-            ComponentBag player = battleDetails.getPlayerParty().get(i);
+        UnitFactory unitFactory = new UnitFactory();
 
-            if (player != null) {
+        for(int i = 0; i < battleDetails.getPlayerParty().size; i++) {
+
+            if (battleDetails.getPlayerParty().get(i) != null) {
+
+                Unit unit = battleDetails.getPlayerParty().get(i);
+                ComponentBag player = unitFactory.getUnit(unit);
+
                 Coordinates c = player.getComponent(CoordinateComponent.class).coordinates;
                 player.getComponent(CoordinateComponent.class).freePlacement = true;
 

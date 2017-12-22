@@ -1,4 +1,4 @@
-package com.bryjamin.dancedungeon.factories.player.spells;
+package com.bryjamin.dancedungeon.factories.spells;
 
 import com.artemis.Entity;
 import com.artemis.World;
@@ -19,6 +19,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.UITargetingComponent;
@@ -175,9 +176,11 @@ public class TargetingFactory {
 
                                 @Override
                                 public void performAction(World world, Entity entity) {
-                                    new BasicAttack().cast(world, player, targetCoordinate);
+                                    entity.getComponent(SkillsComponent.class).basicAttack.cast(world, player, targetCoordinate);
                                 }
                             });
+
+                            player.getComponent(TurnComponent.class).movementActionAvailable = false;
                         }
                     }));
 

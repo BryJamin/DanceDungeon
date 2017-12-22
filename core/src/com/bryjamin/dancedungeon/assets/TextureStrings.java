@@ -13,6 +13,8 @@ public class TextureStrings {
 
     public static final String PLAYER = "player/block_walk";
 
+    public static final String WARRIOR = "player/xi_firing";
+
 
     public static final String BLOB = "enemy/blob";
 

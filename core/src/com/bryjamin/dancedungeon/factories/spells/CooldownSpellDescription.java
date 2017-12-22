@@ -1,4 +1,4 @@
-package com.bryjamin.dancedungeon.factories.player.spells;
+package com.bryjamin.dancedungeon.factories.spells;
 
 import com.artemis.Entity;
 import com.artemis.World;
@@ -27,7 +27,7 @@ public abstract class CooldownSpellDescription extends SkillDescription {
     @Override
     public void cast(World world, Entity entity, Coordinates target) {
         ready = false;
-        skill.cast(world, entity, target);
+        skillAnimation.cast(world, entity, target);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.bryjamin.dancedungeon.factories.player.spells.animations;
+package com.bryjamin.dancedungeon.factories.spells.animations;
 
 import com.artemis.Entity;
 import com.artemis.World;
@@ -27,17 +27,25 @@ import com.bryjamin.dancedungeon.utils.texture.Layer;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 /**
- * Created by BB on 19/11/2017.
+ * Created by BB on 13/11/2017.
  */
 
-public class FrostBall implements Skill {
+public class Fireball implements SkillAnimation {
 
 
     private static final int AP = 1;
 
+    private float damage = 3;
+
+    public Fireball(){};
+
+    public Fireball(float damage){
+        this.damage = damage;
+    }
+
 
     @Override
-    public void cast(World world, Entity entity, Coordinates target) {
+    public void cast(World world, Entity entity, final Coordinates target) {
 
         final TileSystem tileSystem = world.getSystem(TileSystem.class);
         PositionComponent positionComponent = entity.getComponent(PositionComponent.class);
@@ -60,7 +68,7 @@ public class FrostBall implements Skill {
 
         fireBall.edit().add((new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE,
                 new TextureDescription.Builder(TextureStrings.BLOCK)
-                        .color(new Color(Color.SKY))
+                        .color(new Color(Color.ORANGE))
                         .width(size)
                         .height(size)
                         .build())));
@@ -88,20 +96,17 @@ public class FrostBall implements Skill {
 
                 TileSystem tileSystem = world.getSystem(TileSystem.class);
 
-                CoordinateComponent coordinateComponent = entity.getComponent(CoordinateComponent.class);
-
-                for (Entity e : tileSystem.getCoordinateMap().get(coordinateComponent.coordinates)) {
-                    if (world.getMapper(HealthComponent.class).has(e)) {
-                        e.getComponent(HealthComponent.class).applyDamage(6);
+                for(Entity e : tileSystem.getCoordinateMap().get(target)){
+                    if(world.getMapper(HealthComponent.class).has(e)){
+                        e.getComponent(HealthComponent.class).applyDamage(damage);
                     }
-                }
-                ;
+                };
 
             }
         }));
 
 
-    }
 
+    }
 
 }

@@ -1,8 +1,9 @@
-package com.bryjamin.dancedungeon.factories.player.spells;
+package com.bryjamin.dancedungeon.factories.spells;
 
 import com.artemis.Entity;
 import com.artemis.World;
 import com.badlogic.gdx.utils.Array;
+import com.bryjamin.dancedungeon.factories.spells.animations.Slash;
 
 /**
  * Created by BB on 20/11/2017.
@@ -11,12 +12,12 @@ import com.badlogic.gdx.utils.Array;
     public class SlashDescription extends CooldownSpellDescription {
 
     public SlashDescription(){
-        skill = new com.bryjamin.dancedungeon.factories.player.spells.animations.Slash();
+        skillAnimation = new Slash();
     }
 
     @Override
     public Array<Entity> createTargeting(World world, final Entity player) {
-        Array<Entity> entityArray = new TargetingFactory().createTargetTiles(world, player, this, 1);
+        Array<Entity> entityArray = new com.bryjamin.dancedungeon.factories.spells.TargetingFactory().createTargetTiles(world, player, this, 1);
         return entityArray;
     }
 
