@@ -7,7 +7,6 @@ import com.artemis.EntitySystem;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.ecs.components.actions.UtilityAiComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.MovementRangeComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.GreyScaleComponent;
@@ -29,9 +28,6 @@ public class TurnSystem extends EntitySystem {
 
     private ComponentMapper<EnemyComponent> enemyMapper;
     private ComponentMapper<PlayerControlledComponent> playerMapper;
-
-
-    private ComponentMapper<MovementRangeComponent> movementRangeMapper;
 
     private ComponentMapper<SkillsComponent> skillMapper;
 

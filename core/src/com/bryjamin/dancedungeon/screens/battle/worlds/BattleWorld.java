@@ -24,7 +24,6 @@ import com.bryjamin.dancedungeon.ecs.systems.battle.BattleMessageSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BlinkOnHitSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BulletSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.DeathSystem;
-import com.bryjamin.dancedungeon.ecs.systems.battle.DispelSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.EndBattleSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ExplosionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.HealthSystem;
@@ -41,7 +40,7 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.UIRenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
 import com.bryjamin.dancedungeon.factories.decor.FloorFactory;
 import com.bryjamin.dancedungeon.factories.player.Unit;
-import com.bryjamin.dancedungeon.factories.player.UnitFactory;
+import com.bryjamin.dancedungeon.factories.player.UnitMap;
 import com.bryjamin.dancedungeon.factories.spells.SpellFactory;
 import com.bryjamin.dancedungeon.screens.WorldContainer;
 import com.bryjamin.dancedungeon.screens.battle.BattleDetails;
@@ -92,7 +91,6 @@ public class BattleWorld extends WorldContainer {
                         new ConditionalActionSystem(),
                         new ExplosionSystem(),
                         new BulletSystem(),
-                        new DispelSystem(),
                         new TurnSystem(),
                         new HealthSystem(),
                         new ParentChildSystem(),
@@ -141,14 +139,14 @@ public class BattleWorld extends WorldContainer {
 
     private void setUpPlayerLocations(World world, BattleDetails battleDetails){
 
-        UnitFactory unitFactory = new UnitFactory();
+        UnitMap unitMap = new UnitMap();
 
         for(int i = 0; i < battleDetails.getPlayerParty().size; i++) {
 
             if (battleDetails.getPlayerParty().get(i) != null) {
 
                 Unit unit = battleDetails.getPlayerParty().get(i);
-                ComponentBag player = unitFactory.getUnit(unit);
+                ComponentBag player = unitMap.getUnit(unit);
 
                 Coordinates c = player.getComponent(CoordinateComponent.class).coordinates;
                 player.getComponent(CoordinateComponent.class).freePlacement = true;
@@ -269,11 +267,12 @@ public class BattleWorld extends WorldContainer {
 
             if(world.getSystem(TurnSystem.class).turn == TurnSystem.TURN.ALLY) {
 
-                if(world.getSystem(SelectedTargetSystem.class).selectCharacter(input.x, input.y)) return true;
-
                 if(world.getSystem(ActionOnTapSystem.class).touch(input.x, input.y)){
                     return  true;
                 };
+
+                if(world.getSystem(SelectedTargetSystem.class).selectCharacter(input.x, input.y)) return true;
+
             }
             return false;
         }

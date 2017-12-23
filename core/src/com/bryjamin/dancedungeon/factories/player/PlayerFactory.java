@@ -4,18 +4,10 @@ import com.artemis.Aspect;
 import com.badlogic.gdx.math.Rectangle;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
-import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
-import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
-import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
 import com.bryjamin.dancedungeon.utils.texture.DrawableDescription;
@@ -33,6 +25,8 @@ public class PlayerFactory {
 
     private static final float health = 20;
 
+    private UnitFactory unitFactory = new UnitFactory();
+
     private DrawableDescription.DrawableDescriptionBuilder createPlayerTexture(String id){
 
         return new TextureDescription.Builder(id)
@@ -40,33 +34,9 @@ public class PlayerFactory {
 
     }
 
-    public ComponentBag baseUnitBag(StatComponent statComponent){
-
-        ComponentBag bag = new ComponentBag();
-        bag.add(new PositionComponent());
-
-        bag.add(new HealthComponent(statComponent.maxHealth));
-        bag.add(new CoordinateComponent());
-        bag.add(new PlayerControlledComponent());
-        bag.add(new MoveToComponent(Measure.units(60f))); //TODO speed should be based on the class
-        bag.add(new VelocityComponent());
-
-
-        //Graphical
-        bag.add(new BlinkOnHitComponent());
-
-        bag.add(statComponent);
-
-
-        bag.add(new TurnComponent());
-
-        return bag;
-
-    }
-
     public ComponentBag player(Unit unit){
 
-        ComponentBag bag = baseUnitBag(unit.getStatComponent());
+        ComponentBag bag = unitFactory.basePlayerUnitBag(unit.getStatComponent());
 
         bag.add(unit.getSkillsComponent());
         bag.add(new TargetComponent(Aspect.all(EnemyComponent.class, CoordinateComponent.class)));
@@ -81,7 +51,7 @@ public class PlayerFactory {
 
         //System.out.println(unit.getStatComponent().maxHealth);
 
-        ComponentBag bag = baseUnitBag(unit.getStatComponent());
+        ComponentBag bag = unitFactory.basePlayerUnitBag(unit.getStatComponent());
 
         bag.add(unit.getSkillsComponent());
         bag.add(new TargetComponent(Aspect.all(EnemyComponent.class, CoordinateComponent.class)));

@@ -9,7 +9,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 
 public class Unit {
 
-    public String id = UnitFactory.UNIT_WARRIOR;
+    public String id = UnitMap.UNIT_WARRIOR;
     public StatComponent statComponent = new StatComponent();
     public SkillsComponent skillsComponent = new SkillsComponent();
 

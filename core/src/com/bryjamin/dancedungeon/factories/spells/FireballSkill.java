@@ -4,6 +4,7 @@ import com.artemis.Entity;
 import com.artemis.World;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.factories.spells.animations.Fireball;
+import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
 /**
  * Created by BB on 18/11/2017.
@@ -28,4 +29,14 @@ public class FireballSkill extends CooldownSpellDescription {
     }
 
 
+    @Override
+    public void cast(World world, Entity entity, Coordinates target) {
+        ready = false;
+        skillAnimation.cast(world, entity, target);
+
+        
+
+
+
+    }
 }

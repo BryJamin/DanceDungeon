@@ -37,7 +37,7 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
 import com.bryjamin.dancedungeon.factories.enemy.DummyFactory;
 import com.bryjamin.dancedungeon.factories.enemy.RangedDummyFactory;
 import com.bryjamin.dancedungeon.factories.player.Unit;
-import com.bryjamin.dancedungeon.factories.player.UnitFactory;
+import com.bryjamin.dancedungeon.factories.player.UnitMap;
 import com.bryjamin.dancedungeon.factories.spells.FireballSkill;
 import com.bryjamin.dancedungeon.screens.WorldContainer;
 import com.bryjamin.dancedungeon.screens.battle.BattleDetails;
@@ -69,19 +69,19 @@ public class MapWorld extends WorldContainer {
         this.adapter = new VictoryAdapter();
 
 
-        Unit warrior = new Unit(UnitFactory.UNIT_WARRIOR);
+        Unit warrior = new Unit(UnitMap.UNIT_WARRIOR);
         warrior.setStatComponent(new StatComponent.StatBuilder()
                 .movementRange(3)
                 .power(10)
                 .maxHealth(5).build());
 
 
-        Unit warrior2 = new Unit(UnitFactory.UNIT_WARRIOR);
+        Unit warrior2 = new Unit(UnitMap.UNIT_WARRIOR);
         warrior2.setStatComponent(new StatComponent.StatBuilder()
                 .movementRange(5)
                 .maxHealth(10).build());
 
-        Unit mage = new Unit(UnitFactory.UNIT_MAGE);
+        Unit mage = new Unit(UnitMap.UNIT_MAGE);
         mage.setStatComponent(new StatComponent.StatBuilder()
                 .movementRange(3)
                 .maxHealth(20)

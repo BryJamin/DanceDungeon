@@ -1,49 +1,70 @@
 package com.bryjamin.dancedungeon.factories.player;
 
-import com.badlogic.gdx.utils.OrderedMap;
+import com.artemis.Aspect;
+import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
+import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
+import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
 
 /**
- * Created by BB on 22/12/2017.
+ * Created by BB on 23/12/2017.
  */
 
 public class UnitFactory {
 
-    public static final String UNIT_MAGE = "Mage";
-    public static final String UNIT_WARRIOR = "Warrior";
 
-    public interface Command {
-        public ComponentBag getUnit(Unit unit);
-    }
+    public ComponentBag baseUnitBag(StatComponent statComponent){
 
-    public OrderedMap<String, Command> playerUnits = new OrderedMap<String, Command>();
+        ComponentBag bag = new ComponentBag();
+        bag.add(new PositionComponent());
 
-    public UnitFactory(){
-        setUpMap();
-    }
+        bag.add(new HealthComponent(statComponent.maxHealth));
+        bag.add(new CoordinateComponent());
+        bag.add(new MoveToComponent(Measure.units(60f))); //TODO speed should be based on the class
+        bag.add(new VelocityComponent());
 
-    public void setUpMap(){
+        //Graphical
+        bag.add(new BlinkOnHitComponent());
+        bag.add(statComponent);
+        bag.add(new TurnComponent());
 
-        playerUnits.put(UNIT_MAGE, new Command() {
-            @Override
-            public ComponentBag getUnit(Unit unit) {
-                return new PlayerFactory().mage(unit);
-            }
-        });
-
-        playerUnits.put(UNIT_WARRIOR, new Command() {
-            @Override
-            public ComponentBag getUnit(Unit unit) {
-                return new PlayerFactory().player(unit);
-            }
-        });
-
+        return bag;
 
     }
 
-    public ComponentBag getUnit(Unit unit){
-        return playerUnits.get(unit.getId()).getUnit(unit);
+
+    public ComponentBag basePlayerUnitBag(StatComponent statComponent){
+        ComponentBag bag = baseUnitBag(statComponent);
+        bag.add(new PlayerControlledComponent());
+        bag.add(new TargetComponent(Aspect.all(EnemyComponent.class, CoordinateComponent.class)));
+        return bag;
     }
+
+    public ComponentBag baseEnemyUnitBag(StatComponent statComponent){
+        ComponentBag bag = baseUnitBag(statComponent);
+        bag.add(new EnemyComponent());
+        bag.add(new TargetComponent(Aspect.all(PlayerControlledComponent.class, CoordinateComponent.class)));
+        return bag;
+    }
+
+
+
+
+
+
+
+
+
+
 
 
 }

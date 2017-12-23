@@ -6,7 +6,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Queue;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.MovementRangeComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
@@ -50,7 +50,7 @@ public class RangedMoveToAction implements WorldAction {
         tileSystem.findShortestPath(coordinatesQueue, entity.getComponent(CoordinateComponent.class).coordinates, CoordinateMath.getCoordinatesInSquareRange(playerCoordinates, range));
 
 
-        while (coordinatesQueue.size > entity.getComponent(MovementRangeComponent.class).range) {
+        while (coordinatesQueue.size > entity.getComponent(StatComponent.class).movementRange) {
             coordinatesQueue.removeLast();
         }
 
