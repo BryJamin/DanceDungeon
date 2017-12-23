@@ -34,28 +34,30 @@ public class FadeSystem extends EntityProcessingSystem {
             return;
         }
 
-        fc.alphaTimer = fc.fadeIn ? fc.alphaTimer + world.delta : fc.alphaTimer - world.delta;
+        fc.time = fc.fadeIn ? fc.time + world.delta : fc.time - world.delta;
 
-        fc.alpha = Interpolation.fade.apply(((fc.alphaTimer / fc.alphaTimeLimit) * (fc.maxAlpha - fc.minAlpha)) + fc.minAlpha);
+        fc.alpha = Interpolation.fade.apply(((fc.time / fc.maximumTime ) * (fc.maxAlpha - fc.minAlpha)) + fc.minAlpha);
         if (fc.alpha <= fc.minAlpha) {
             if (fc.isEndless || fc.count > 0) {
                 fc.fadeIn = true;
                 fc.alpha = fc.minAlpha;
                 fc.count--;
+                fc.time = fc.maximumTime * (fc.maxAlpha - fc.minAlpha);
 
             } else {
                 fc.alpha = fc.minAlpha;
-                //fc.alphaTimer = 0;
+                fc.time = fc.maximumTime * (fc.maxAlpha - fc.minAlpha);
             }
         } else if (fc.alpha >= fc.maxAlpha) {
             if (fc.isEndless || fc.count > 0) {
                 fc.fadeIn = false;
                 fc.alpha = fc.maxAlpha;
                 fc.count--;
+                //fc.time = fc.maximumTime;
 
             } else {
                 fc.alpha = fc.maxAlpha;
-                //fc.alphaTimer = fc.alphaTimeLimit;
+                fc.time = fc.maximumTime;
             }
         }
 

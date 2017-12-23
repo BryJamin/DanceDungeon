@@ -82,7 +82,7 @@ public class RenderingSystem extends EntitySystem {
         if (!whiteShaderProgram.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + whiteShaderProgram.getLog());
 
         greyScaleShaderProgram = new ShaderProgram( Gdx.files.internal(FileStrings.DEFAULT_VERTEX_SHADER),
-                Gdx.files.internal(FileStrings.ALL_WHITE_FRAGMENT_SHADER));
+                Gdx.files.internal(FileStrings.GREYSCALE_FRAGMENT_SHADER));
         if (!greyScaleShaderProgram.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + whiteShaderProgram.getLog());
 
     }

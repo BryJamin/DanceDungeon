@@ -9,7 +9,6 @@ import com.bryjamin.dancedungeon.ecs.components.actions.UtilityAiComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
-import com.bryjamin.dancedungeon.ecs.components.graphics.GreyScaleComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 
@@ -106,7 +105,6 @@ public class TurnSystem extends EntitySystem {
 
             for (Entity e : allyTurnEntities) {
                 skillMapper.get(e).endTurn();
-                e.edit().remove(GreyScaleComponent.class);
                 turnMapper.get(e).reset();
             }
 

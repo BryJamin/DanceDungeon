@@ -64,6 +64,7 @@ public class SpellFactory {
 
                 if(entityArray.size <= 0){
                     world.getSystem(BattleMessageSystem.class).createWarningMessage();
+                    return;
                 }
 
                 world.getSystem(SelectedTargetSystem.class).clearTargeting();

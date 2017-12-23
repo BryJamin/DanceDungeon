@@ -159,7 +159,7 @@ public class MapWorld extends WorldContainer {
                 battleDetails.getEnemyParty().add(new DummyFactory().targetDummyWalker(0,0));
                 battleDetails.getEnemyParty().add(new DummyFactory().targetDummyWalker(0,0));
                 battleDetails.getEnemyParty().add(new DummyFactory().targetDummySprinter(0,0));
-                battleDetails.getEnemyParty().add(new RangedDummyFactory().rangedDummy(0,0));
+                battleDetails.getEnemyParty().add(new RangedDummyFactory().rangedDummy());
 
 
 

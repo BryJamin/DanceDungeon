@@ -13,8 +13,6 @@ import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
-import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
-import com.bryjamin.dancedungeon.ecs.components.graphics.GreyScaleComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.UITargetingComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
@@ -62,6 +60,7 @@ public class SelectedTargetSystem extends EntitySystem {
 
         if(e == selectedEntity){
             selectedEntity = null;
+            this.clear();
         }
 
     }
@@ -76,14 +75,16 @@ public class SelectedTargetSystem extends EntitySystem {
      */
     public void clear(){
         for(Entity e : buttons){
-            e.edit().add(new DeadComponent());
+            //e.edit().add(new DeadComponent());
+            e.deleteFromWorld();
         }
         buttons.clear();
 
         IntBag bag = world.getAspectSubscriptionManager().get(Aspect.all(UITargetingComponent.class)).getEntities();
 
         for(int i = 0; i < bag.size(); i++){
-            world.getEntity(bag.get(i)).edit().add(new DeadComponent());
+            //world.getEntity(bag.get(i)).edit().add(new DeadComponent());
+            world.getEntity(bag.get(i)).deleteFromWorld();
         }
 
     }
@@ -125,19 +126,21 @@ public class SelectedTargetSystem extends EntitySystem {
 
     public void reselectEntityAfterActionComplete(){
 
-        if(selectedEntity != null){
+        Entity reselect = selectedEntity;
+        selectedEntity = null;
 
-            TurnComponent turnComponent = selectedEntity.getComponent(TurnComponent.class);
+        if(reselect != null){
+
+            TurnComponent turnComponent = reselect.getComponent(TurnComponent.class);
             if(turnComponent.movementActionAvailable || turnComponent.attackActionAvailable ||
-                    selectedEntity.getComponent(SkillsComponent.class).canCast(world, selectedEntity)) {
+                    reselect.getComponent(SkillsComponent.class).canCast(world, reselect)) {
 
                 //if (entityArray.size > 0) {
-                setUpCharacter(selectedEntity);
+                setUpCharacter(reselect);
                 //}
 
             } else {
                 this.clear();
-                selectedEntity.edit().add(new GreyScaleComponent());
             }
 
         }
@@ -165,7 +168,9 @@ public class SelectedTargetSystem extends EntitySystem {
 
 
         if(selectedEntity != null){
-            selectedEntity.edit().remove(FadeComponent.class);
+
+            //Characters can not be reselected
+            if(selectedEntity.equals(playableCharacter)) return;
             selectedEntity.getComponent(DrawableComponent.class).drawables.first().getColor().a = 1;
         }
 
@@ -175,12 +180,7 @@ public class SelectedTargetSystem extends EntitySystem {
         float width = selectedEntity.getComponent(CenteringBoundaryComponent.class).bound.width * 2.5f;
         float height = selectedEntity.getComponent(CenteringBoundaryComponent.class).bound.height * 2.5f;
 
-/*
-
-        if(recticle != null){
-            recticle.edit().add(new DeadComponent());
-        }
-*/
+        this.clear(); // Clear buttons and recticle before remaking them.
 
         recticle = world.createEntity();
         recticle.edit().add(new PositionComponent());
@@ -195,10 +195,6 @@ public class SelectedTargetSystem extends EntitySystem {
                 .height(height)
                 .build()));
 
-
-
-        //playableCharacter.edit().add(new FadeComponent(true, 1.25f, true));
-        this.clear();
 
         final SkillsComponent skillsComponent = playableCharacter.getComponent(SkillsComponent.class);
 

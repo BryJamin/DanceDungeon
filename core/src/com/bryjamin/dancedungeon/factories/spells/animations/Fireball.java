@@ -17,6 +17,7 @@ import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditio
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.WaitActionComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
@@ -60,6 +61,7 @@ public class Fireball implements SkillAnimation {
 
         Entity fireBall = world.createEntity();
         fireBall.edit().add(new PositionComponent(x, y));
+        fireBall.edit().add(new WaitActionComponent());
         fireBall.edit().add(new CoordinateComponent(new Coordinates(), true));
         fireBall.edit().add(new MoveToComponent(Measure.units(60f), new Vector3(
                 CenterMath.centerPositionX(size, r.getCenter(new Vector2()).x),

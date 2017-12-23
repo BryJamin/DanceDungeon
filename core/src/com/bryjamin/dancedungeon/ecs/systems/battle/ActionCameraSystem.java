@@ -1,12 +1,14 @@
 package com.bryjamin.dancedungeon.ecs.systems.battle;
 
-import com.artemis.BaseSystem;
+import com.artemis.Aspect;
 import com.artemis.Entity;
+import com.artemis.EntitySystem;
 import com.artemis.World;
 import com.badlogic.gdx.utils.Queue;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.WaitActionComponent;
 import com.bryjamin.dancedungeon.utils.Pair;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
@@ -17,7 +19,7 @@ import com.bryjamin.dancedungeon.utils.math.Coordinates;
  * before allowing the next turn to be activated
  */
 
-public class ActionCameraSystem extends BaseSystem {
+public class ActionCameraSystem extends EntitySystem {
 
 
     private Queue<Pair<Entity, WorldConditionalAction>> actionQueue = new Queue<Pair<Entity, WorldConditionalAction>>();
@@ -26,8 +28,19 @@ public class ActionCameraSystem extends BaseSystem {
 
     private boolean hasBegun = false;
 
+    /**
+     * Creates an entity system that uses the specified aspect as a matcher
+     * against entities.
+     *
+     */
+    public ActionCameraSystem() {
+        super(Aspect.all(WaitActionComponent.class));
+    }
+
     @Override
     protected void processSystem() {
+
+        if(!this.getEntities().isEmpty()) return;
 
         if (currentConditionalAction == null) {
             actionQueue.first().getRight().performAction(world,

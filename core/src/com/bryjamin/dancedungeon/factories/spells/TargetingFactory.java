@@ -95,13 +95,15 @@ public class TargetingFactory {
 
         for (Coordinates c : CoordinateMath.getCoordinatesInMovementRange(coordinateComponent.coordinates, movementRange)) {
 
-            if (!tileSystem.getCoordinateMap().containsKey(c)) continue; //If gathered co-ordinates do not exist on the map continue.
+            if (!tileSystem.getCoordinateMap().containsKey(c))
+                continue; //If gathered co-ordinates do not exist on the map continue.
 
             final Queue<Coordinates> coordinatesPath = new Queue<Coordinates>();
 
             boolean isPathValid = tileSystem.findShortestPath(coordinatesPath, coordinateComponent.coordinates, c);
 
-            if (!(coordinatesPath.size <= movementRange && isPathValid)) continue; //If the path is larger than the movement range, ignore and move on.
+            if (!(coordinatesPath.size <= movementRange && isPathValid))
+                continue; //If the path is larger than the movement range, ignore and move on.
 
             //Add this path to the list of available paths (for attack scan).
             coordinatesWithPathMap.put(c, coordinatesPath);
@@ -135,14 +137,12 @@ public class TargetingFactory {
         }
 
 
-
-
         if (player.getComponent(TurnComponent.class).attackActionAvailable) {
 
             final OrderedMap<Coordinates, Queue<Coordinates>> targetCoordinateMovementQueueMap = new OrderedMap<Coordinates, Queue<Coordinates>>();
 
 
-            for(final Coordinates c : coordinatesWithPathMap.keys()) {
+            for (final Coordinates c : coordinatesWithPathMap.keys()) {
 
                 TargetComponent targetComponent = player.getComponent(TargetComponent.class);
 
@@ -150,8 +150,8 @@ public class TargetingFactory {
 
                     final Coordinates targetCoordinate = tileSystem.getOccupiedMap().findKey(e, true);
 
-                    if(targetCoordinateMovementQueueMap.get(targetCoordinate) != null){
-                        if(coordinatesWithPathMap.get(c).size < targetCoordinateMovementQueueMap.get(targetCoordinate).size){
+                    if (targetCoordinateMovementQueueMap.get(targetCoordinate) != null) {
+                        if (coordinatesWithPathMap.get(c).size < targetCoordinateMovementQueueMap.get(targetCoordinate).size) {
                             targetCoordinateMovementQueueMap.put(targetCoordinate, coordinatesWithPathMap.get(c));
                         }
                     } else {
@@ -189,10 +189,6 @@ public class TargetingFactory {
             }
 
         }
-
-
-
-
 
 
         return entityArray;
@@ -262,7 +258,12 @@ public class TargetingFactory {
                         .width(r.getWidth())
                         .height(r.getHeight())
                         .build()));
-        bag.add(new FadeComponent(true, 1.0f, true));
+        bag.add(new FadeComponent(new FadeComponent.FadeBuilder()
+                .fadeIn(true)
+                .alpha(0.17f)
+                .minAlpha(0.15f)
+                .maxAlpha(0.55f)
+                .maximumTime(2.0f)));
         bag.add(new HitBoxComponent(new HitBox(r)));
         bag.add(new CenteringBoundaryComponent());
         bag.add(new UITargetingComponent());

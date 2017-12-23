@@ -27,6 +27,7 @@ import com.bryjamin.dancedungeon.ecs.systems.battle.DeathSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.EndBattleSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ExplosionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.HealthSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.NoMoreActionsSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.SelectedTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
@@ -103,6 +104,7 @@ public class BattleWorld extends WorldContainer {
                         new ActionOnTapSystem(gameport),
                         new ActionCameraSystem(),
                         new FadeSystem(),
+                        new NoMoreActionsSystem(),
                         new PlayerGraphicalTargetingSystem(),
                         new BattleMessageSystem(gameport),
                         new RenderingSystem(game, gameport),

@@ -23,4 +23,7 @@ public class TextureStrings {
 
     public static final String TARGETING = "player/targeting";
 
+
+    public static final String FLOOR_TEXTURE_BRICK = "backgrounds/brick_floor";
+
 }

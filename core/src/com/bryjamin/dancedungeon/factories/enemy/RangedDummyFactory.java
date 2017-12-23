@@ -1,6 +1,5 @@
 package com.bryjamin.dancedungeon.factories.enemy;
 
-import com.badlogic.gdx.math.Rectangle;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.ai.ActionScoreCalculator;
 import com.bryjamin.dancedungeon.ecs.ai.UtilityAiCalculator;
@@ -43,25 +42,25 @@ public class RangedDummyFactory {
             .size(height);
 
 
-    public ComponentBag rangedDummy(float x, float y) {
+    public ComponentBag rangedDummy() {
 
         SkillDescription movement = new MovementDescription();
         SkillDescription fireball = new FireballSkill();
 
-        int range = 4;
+        int range = 10;
 
         StatComponent statComponent = new StatComponent.StatBuilder()
                 .maxHealth(10)
                 .magic(5)
                 .power(2)
-                .attackRange(4)
+                .attackRange(range)
                 .movementRange(4)
                 .build();
 
         ComponentBag bag = unitFactory.baseEnemyUnitBag(statComponent);
         bag.add(new SkillsComponent(movement, fireball));
-        bag.add(new CenteringBoundaryComponent(new Rectangle(x, y, width, height)));
-        bag.add(new HitBoxComponent(new HitBox(new Rectangle(x, y, width, height))));
+        bag.add(new CenteringBoundaryComponent(width, height));
+        bag.add(new HitBoxComponent(new HitBox(width, height)));
 
         bag.add(new UtilityAiComponent(
                 new UtilityAiCalculator(
