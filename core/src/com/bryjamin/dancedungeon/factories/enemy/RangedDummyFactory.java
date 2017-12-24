@@ -47,11 +47,11 @@ public class RangedDummyFactory {
         SkillDescription movement = new MovementDescription();
         SkillDescription fireball = new FireballSkill();
 
-        int range = 10;
+        int range = 5;
 
         StatComponent statComponent = new StatComponent.StatBuilder()
                 .maxHealth(10)
-                .magic(5)
+                .magic(3)
                 .power(2)
                 .attackRange(range)
                 .movementRange(4)

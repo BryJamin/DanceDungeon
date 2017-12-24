@@ -36,9 +36,14 @@ public class BoundsDrawingSystem extends EntitySystem {
         this.batch = batch;
     }
 
+    @Override
+    protected boolean checkProcessing() {
+        return false;
+    }
 
     @Override
     protected void processSystem() {
+
 
         if (!isDrawing) return;
 

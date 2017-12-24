@@ -50,6 +50,23 @@ public abstract class DrawableDescription {
         private Color color = new Color(Color.WHITE);
         private Color resetColor = new Color(Color.WHITE);
 
+
+        public DrawableDescriptionBuilder(){}
+
+        public DrawableDescriptionBuilder(DrawableDescription d){
+            identifier = d.identifier;
+            width = d.width;
+            height = d.height;
+            offsetX = d.offsetX;
+            offsetY = d.offsetY;
+            scaleX = d.scaleX;
+            scaleY = d.scaleY;
+            rotation = d.rotation;
+            color = new Color(d.color);
+            resetColor = new Color(d.resetColor);
+        }
+
+
         public T identifier(int val)
         { identifier = val; return getThis(); }
 

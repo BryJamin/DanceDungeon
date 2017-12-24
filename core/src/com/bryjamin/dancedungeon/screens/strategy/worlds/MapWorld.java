@@ -12,7 +12,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
-import com.bryjamin.dancedungeon.assets.FileStrings;
+import com.bryjamin.dancedungeon.assets.Fonts;
 import com.bryjamin.dancedungeon.assets.TextResource;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
@@ -169,7 +169,7 @@ public class MapWorld extends WorldContainer {
                 new TextureDescription.Builder(TextureStrings.BLOCK)
                         .width(width)
                         .height(height).build(),
-                new TextDescription.Builder(FileStrings.DEFAULT_FONT_NAME)
+                new TextDescription.Builder(Fonts.MEDIUM)
                         .text(TextResource.GAME_TITLE_START)
                         .color(new Color(Color.BLACK))
                         .build()));

@@ -17,6 +17,7 @@ import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditio
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.WaitActionComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
@@ -50,6 +51,8 @@ public class Fireball implements SkillAnimation {
 
         final TileSystem tileSystem = world.getSystem(TileSystem.class);
         PositionComponent positionComponent = entity.getComponent(PositionComponent.class);
+
+        damage = entity.getComponent(StatComponent.class).magic;
 
         float size = Measure.units(5f);
 

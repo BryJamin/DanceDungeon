@@ -28,6 +28,14 @@ public class TextureDescription extends DrawableDescription {
             this.region = region;
         }
 
+
+        public Builder(TextureDescription tf)
+        {
+            super(tf);
+            this.region = tf.region;
+            this.index = tf.index;
+        }
+
         public Builder region(String val)
         { region = val; return getThis(); }
 

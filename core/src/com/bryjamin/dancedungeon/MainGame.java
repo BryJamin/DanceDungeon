@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.bryjamin.dancedungeon.assets.FileStrings;
+import com.bryjamin.dancedungeon.assets.Fonts;
 import com.bryjamin.dancedungeon.screens.LoadingScreen;
 import com.bryjamin.dancedungeon.utils.Measure;
 
@@ -63,7 +64,19 @@ public class MainGame extends Game {
         size1Params.fontParameters.borderWidth = 0;
         size1Params.fontParameters.minFilter = Texture.TextureFilter.Linear;
         size1Params.fontParameters.magFilter = Texture.TextureFilter.Linear;
-        assetManager.load(FileStrings.DEFAULT_FONT_NAME, BitmapFont.class, size1Params);
+        assetManager.load(Fonts.MEDIUM, BitmapFont.class, size1Params);
+
+
+
+        FreetypeFontLoader.FreeTypeFontLoaderParameter small = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
+        small.fontFileName = FileStrings.SMALL_FONT_FILE;
+        small.fontParameters.size = (int) Measure.units(1.5f);
+        small.fontParameters.borderColor = new Color(Color.BLACK);
+        small.fontParameters.borderWidth = 0;
+        small.fontParameters.minFilter = Texture.TextureFilter.Linear;
+        small.fontParameters.magFilter = Texture.TextureFilter.Linear;
+        assetManager.load(Fonts.SMALL, BitmapFont.class, small);
+
 
         setScreen(new LoadingScreen(this));
     }

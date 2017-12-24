@@ -32,6 +32,14 @@ public class TextDescription extends DrawableDescription {
             this.font = font;
         }
 
+        public Builder(TextDescription tf)
+        {
+            super(tf);
+            this.align = tf.align;
+            this.text = tf.text;
+            this.font = tf.font;
+        }
+
         public Builder text(String val)
         { text = val; return getThis(); }
 
