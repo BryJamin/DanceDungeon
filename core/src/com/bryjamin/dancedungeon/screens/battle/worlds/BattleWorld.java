@@ -267,7 +267,7 @@ public class BattleWorld extends WorldContainer {
         public boolean touchDown(int screenX, int screenY, int pointer, int button) {
             Vector3 input = gameport.unproject(new Vector3(screenX, screenY , 0));
 
-            if(world.getSystem(TurnSystem.class).turn == TurnSystem.TURN.ALLY) {
+            if(world.getSystem(TurnSystem.class).getTurn() == TurnSystem.TURN.ALLY) {
 
                 if(world.getSystem(ActionOnTapSystem.class).touch(input.x, input.y)){
                     return  true;

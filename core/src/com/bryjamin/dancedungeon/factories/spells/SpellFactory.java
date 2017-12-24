@@ -12,6 +12,7 @@ import com.bryjamin.dancedungeon.ecs.components.actions.ConditionalActionsCompon
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.GreyScaleComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BattleMessageSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.SelectedTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
@@ -31,19 +32,53 @@ public class SpellFactory {
 
     public ComponentBag endTurnButton(float x, float y) {
 
-        ComponentBag button = defaultButton(x, y, new WorldAction() {
+        ComponentBag bag = new ComponentBag();
+
+        bag.add(new PositionComponent(x, y));
+        bag.add(new HitBoxComponent(new HitBox(new Rectangle(x, y, SIZE, SIZE))));
+
+        bag.add(new ConditionalActionsComponent(new WorldConditionalAction() {
+
+            private boolean isDisabled;
+
+            @Override
+            public boolean condition(World world, Entity entity) {
+
+                if(isDisabled){
+                    isDisabled = false;
+                    return world.getSystem(TurnSystem.class).getTurn() == TurnSystem.TURN.ALLY;
+                } else {
+                    isDisabled = true;
+                    return world.getSystem(TurnSystem.class).getTurn() == TurnSystem.TURN.ENEMY;
+                }
+            }
+
             @Override
             public void performAction(World world, Entity entity) {
-                world.getSystem(TurnSystem.class).setUp(TurnSystem.TURN.ENEMY);
-            }
-        });
 
-        button.add(new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE, new TextureDescription.Builder(TextureStrings.END_TURN_BUTTON)
+                if(isDisabled){
+                    entity.edit().add(new GreyScaleComponent());
+                    entity.edit().remove(ActionOnTapComponent.class);
+                } else {
+                    entity.edit().remove(GreyScaleComponent.class);
+                    entity.edit().add(new ActionOnTapComponent(new WorldAction() {
+                        @Override
+                        public void performAction(World world, Entity entity) {
+                            world.getSystem(TurnSystem.class).setUp(TurnSystem.TURN.ENEMY);
+                        }
+                    }));
+                }
+
+
+            }
+        }));
+
+        bag.add(new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE, new TextureDescription.Builder(TextureStrings.END_TURN_BUTTON)
                 .size(SIZE)
                 .build()));
 
 
-        return button;
+        return bag;
 
     }
 

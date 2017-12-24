@@ -8,6 +8,7 @@ public class TextResource {
 
     public static final String GAME_TITLE = "Prototype Demonstration";
     public static final String GAME_TITLE_START = "Start";
+    public static final String BATTLE = "Battle!";
     public static final String BATTLE_OVER_CONTINUE = "Continue";
     public static final String BATTLE_OVER_DEFEAT = "Defeat";
     public static final String BATTLE_OVER_VICTORY = "Victory";

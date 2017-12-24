@@ -2,6 +2,7 @@ package com.bryjamin.dancedungeon.factories.decor;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.MathUtils;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
@@ -55,7 +56,8 @@ public class FloorFactory extends AbstractFactory {
                 int index2 = j % 2 != 0 ? 6 : 0;
 
                 drawableComponent.drawables.add(descriptionBuilder
-                        .index(i % 2 != 0 ? index1 : index2)
+                        //.index(i % 2 != 0 ? index1 : index2)
+                        .index(MathUtils.random(11))
                         .offsetX(i * tileWidthSize)
                         .offsetY(j * tileHeightSize)
                         .color(new Color(Color.WHITE))

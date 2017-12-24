@@ -58,7 +58,11 @@ public class TurnSystem extends EntitySystem {
         ENEMY, ALLY
     }
 
-    public TURN turn = ENEMY;
+    private TURN turn = ENEMY;
+
+    public TURN getTurn() {
+        return turn;
+    }
 
     @SuppressWarnings("unchecked")
     public TurnSystem() {

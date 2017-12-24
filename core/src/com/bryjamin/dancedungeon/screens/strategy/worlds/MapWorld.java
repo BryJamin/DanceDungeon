@@ -115,7 +115,7 @@ public class MapWorld extends WorldContainer {
         Array<String> fight3 = new Array<String>();
         fight3.add(EnemyFactory.FAST_BLOB);
         fight3.add(EnemyFactory.MAGE_BLOB);
-        fight3.add(EnemyFactory.MAGE_BLOB);
+        fight3.add(EnemyFactory.BLOB);
         fight3.add(EnemyFactory.MAGE_BLOB);
 
         enemyParty.add(fight1);
@@ -163,7 +163,7 @@ public class MapWorld extends WorldContainer {
         createMap();
 
         Entity startButton = world.createEntity();
-        startButton.edit().add(new PositionComponent(CenterMath.offsetX(gameport.getWorldWidth(), width), CenterMath.offsetY(gameport.getWorldHeight(), height) - Measure.units(5f)));
+        startButton.edit().add(new PositionComponent(CenterMath.offsetX(gameport.getWorldWidth(), width), CenterMath.offsetY(gameport.getWorldHeight(), height)));
         startButton.edit().add(new HitBoxComponent(new HitBox(width, height)));
         startButton.edit().add(new CenteringBoundaryComponent(new Rectangle(0,0, width, height)));
         startButton.edit().add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE,
@@ -171,7 +171,7 @@ public class MapWorld extends WorldContainer {
                         .width(width)
                         .height(height).build(),
                 new TextDescription.Builder(Fonts.MEDIUM)
-                        .text(TextResource.GAME_TITLE_START)
+                        .text(TextResource.BATTLE)
                         .color(new Color(Color.BLACK))
                         .build()));
         startButton.edit().add(new ActionOnTapComponent(new WorldAction() {
@@ -228,7 +228,7 @@ public class MapWorld extends WorldContainer {
         float gap = Measure.units(10f);
 
 
-        for(Coordinates c : coordinates){
+/*        for(Coordinates c : coordinates){
 
 
             Entity e = world.createEntity();
@@ -240,7 +240,7 @@ public class MapWorld extends WorldContainer {
                     .height(height)
                     .build()));
 
-        }
+        }*/
 /*
         for(int i = 0; i < coordinates.length; i++){
 
