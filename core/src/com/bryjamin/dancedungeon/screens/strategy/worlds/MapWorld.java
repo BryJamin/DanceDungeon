@@ -34,8 +34,7 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.BoundsDrawingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.FadeSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
-import com.bryjamin.dancedungeon.factories.enemy.DummyFactory;
-import com.bryjamin.dancedungeon.factories.enemy.RangedDummyFactory;
+import com.bryjamin.dancedungeon.factories.enemy.EnemyFactory;
 import com.bryjamin.dancedungeon.factories.player.Unit;
 import com.bryjamin.dancedungeon.factories.player.UnitMap;
 import com.bryjamin.dancedungeon.factories.spells.FireballSkill;
@@ -59,6 +58,8 @@ public class MapWorld extends WorldContainer {
 
     private Array<Unit> playerParty = new Array<Unit>();
 
+    private Array<Array<String>> enemyParty = new Array<Array<String>>();
+
     //BattleScreen battleScreen;
     private VictoryAdapter adapter;
 
@@ -72,12 +73,13 @@ public class MapWorld extends WorldContainer {
         Unit warrior = new Unit(UnitMap.UNIT_WARRIOR);
         warrior.setStatComponent(new StatComponent.StatBuilder()
                 .movementRange(3)
-                .power(10)
+                .power(5)
                 .maxHealth(5).build());
 
 
         Unit warrior2 = new Unit(UnitMap.UNIT_WARRIOR);
         warrior2.setStatComponent(new StatComponent.StatBuilder()
+                .power(5)
                 .movementRange(5)
                 .maxHealth(10).build());
 
@@ -86,6 +88,7 @@ public class MapWorld extends WorldContainer {
                 .movementRange(3)
                 .maxHealth(20)
                 .attackRange(3)
+                .magic(6)
                 .power(5).build());
 
         SkillsComponent skillsComponent = new SkillsComponent();
@@ -96,6 +99,27 @@ public class MapWorld extends WorldContainer {
         playerParty.add(mage);
         playerParty.add(warrior);
         playerParty.add(warrior2);
+
+        Array<String> fight1 = new Array<String>();
+        fight1.add(EnemyFactory.BLOB);
+        fight1.add(EnemyFactory.MAGE_BLOB);
+
+
+        Array<String> fight2 = new Array<String>();
+        fight2.add(EnemyFactory.BLOB);
+        fight2.add(EnemyFactory.FAST_BLOB);
+        fight2.add(EnemyFactory.BLOB);
+        fight2.add(EnemyFactory.MAGE_BLOB);
+
+        Array<String> fight3 = new Array<String>();
+        fight3.add(EnemyFactory.FAST_BLOB);
+        fight3.add(EnemyFactory.MAGE_BLOB);
+        fight3.add(EnemyFactory.MAGE_BLOB);
+        fight3.add(EnemyFactory.MAGE_BLOB);
+
+        enemyParty.add(fight1);
+        enemyParty.add(fight2);
+        enemyParty.add(fight3);
 
         createWorld();
 
@@ -156,12 +180,15 @@ public class MapWorld extends WorldContainer {
 
                 BattleDetails battleDetails = new BattleDetails();
                 battleDetails.setPlayerParty(playerParty);
-                battleDetails.getEnemyParty().add(new DummyFactory().targetDummyWalker(0,0));
-                battleDetails.getEnemyParty().add(new DummyFactory().targetDummyWalker(0,0));
-                battleDetails.getEnemyParty().add(new DummyFactory().targetDummySprinter(0,0));
-                battleDetails.getEnemyParty().add(new RangedDummyFactory().rangedDummy());
 
 
+                enemyParty.shuffle();
+
+                EnemyFactory enemyFactory = new EnemyFactory();
+
+                for(String s : enemyParty.first()){
+                    battleDetails.getEnemyParty().add(enemyFactory.get(s));
+                }
 
                 game.setScreen(new BattleScreen(game, game.getScreen(), battleDetails));
             }

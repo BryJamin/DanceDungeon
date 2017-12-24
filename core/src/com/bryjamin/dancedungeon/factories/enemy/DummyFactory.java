@@ -69,7 +69,7 @@ public class DummyFactory {
     }
 
 
-    public ComponentBag targetDummyWalker(float x, float y) {
+    public ComponentBag targetDummyWalker() {
 
         ComponentBag bag = targetDummy(new StatComponent.StatBuilder().movementRange(3)
                 .build());
@@ -93,7 +93,7 @@ public class DummyFactory {
     }
 
 
-    public ComponentBag targetDummySprinter(float x, float y) {
+    public ComponentBag targetDummySprinter() {
 
         ComponentBag bag = targetDummy(new StatComponent.StatBuilder().movementRange(6)
                 .build());
