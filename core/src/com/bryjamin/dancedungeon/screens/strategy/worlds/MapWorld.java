@@ -38,6 +38,7 @@ import com.bryjamin.dancedungeon.factories.enemy.EnemyFactory;
 import com.bryjamin.dancedungeon.factories.player.Unit;
 import com.bryjamin.dancedungeon.factories.player.UnitMap;
 import com.bryjamin.dancedungeon.factories.spells.FireballSkill;
+import com.bryjamin.dancedungeon.factories.spells.basic.MageAttack;
 import com.bryjamin.dancedungeon.screens.WorldContainer;
 import com.bryjamin.dancedungeon.screens.battle.BattleDetails;
 import com.bryjamin.dancedungeon.screens.battle.BattleScreen;
@@ -74,7 +75,7 @@ public class MapWorld extends WorldContainer {
         warrior.setStatComponent(new StatComponent.StatBuilder()
                 .movementRange(3)
                 .power(5)
-                .maxHealth(5).build());
+                .maxHealth(10).build());
 
 
         Unit warrior2 = new Unit(UnitMap.UNIT_WARRIOR);
@@ -92,7 +93,7 @@ public class MapWorld extends WorldContainer {
                 .power(5).build());
 
         SkillsComponent skillsComponent = new SkillsComponent();
-        skillsComponent.basicAttack = new FireballSkill();
+        skillsComponent.basicAttack = new MageAttack();
         skillsComponent.skillDescriptions.add(new FireballSkill());
         mage.setSkillsComponent(skillsComponent);
 

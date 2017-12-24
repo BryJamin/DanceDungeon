@@ -4,7 +4,7 @@ import com.artemis.Component;
 import com.artemis.Entity;
 import com.artemis.World;
 import com.badlogic.gdx.utils.Array;
-import com.bryjamin.dancedungeon.factories.spells.MeleeAttack;
+import com.bryjamin.dancedungeon.factories.spells.basic.MeleeAttack;
 import com.bryjamin.dancedungeon.factories.spells.SkillDescription;
 
 /**

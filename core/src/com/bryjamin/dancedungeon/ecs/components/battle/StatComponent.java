@@ -46,7 +46,7 @@ public class StatComponent extends Component {
         { this.maxHealth = val; return this; }
 
         public StatBuilder attackRange(int val)
-        { this.movementRange = val; return this; }
+        { this.attackRange = val; return this; }
 
         public StatBuilder movementRange(int val)
         { this.movementRange = val; return this; }

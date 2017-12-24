@@ -1,4 +1,4 @@
-package com.bryjamin.dancedungeon.factories.spells;
+package com.bryjamin.dancedungeon.factories.spells.basic;
 
 import com.artemis.Entity;
 import com.artemis.World;
@@ -7,6 +7,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
+import com.bryjamin.dancedungeon.factories.spells.SkillDescription;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
 /**
@@ -33,7 +34,6 @@ public class MeleeAttack extends SkillDescription {
 
         for(Entity e : world.getSystem(TileSystem.class).getCoordinateMap().get(target)){
             if(world.getMapper(HealthComponent.class).has(e)){
-                //System.out.println(entity.getComponent(StatComponent.class).power);
                 e.getComponent(HealthComponent.class).applyDamage(entity.getComponent(StatComponent.class).power);
             }
         };

@@ -137,6 +137,8 @@ public class TargetingFactory {
         }
 
 
+        //Basic Attack
+
         if (player.getComponent(TurnComponent.class).attackActionAvailable) {
 
             final OrderedMap<Coordinates, Queue<Coordinates>> targetCoordinateMovementQueueMap = new OrderedMap<Coordinates, Queue<Coordinates>>();
@@ -161,12 +163,17 @@ public class TargetingFactory {
 
                     Entity redBox = BagToEntity.bagToEntity(world.createEntity(), highlightBox(tileSystem.getRectangleUsingCoordinates(targetCoordinate), new Color(Color.RED)));
 
+
                     entityArray.add(redBox);
 
                     redBox.edit().add(new ActionOnTapComponent(new WorldAction() {
                         @Override
                         public void performAction(World world, final Entity e) {
-                            world.getSystem(ActionCameraSystem.class).pushLastAction(player, createMovementAction(player, targetCoordinateMovementQueueMap.get(targetCoordinate)));
+
+                            if(targetCoordinateMovementQueueMap.get(targetCoordinate).size != 0) {
+                                player.getComponent(TurnComponent.class).movementActionAvailable = false;
+                                world.getSystem(ActionCameraSystem.class).pushLastAction(player, createMovementAction(player, targetCoordinateMovementQueueMap.get(targetCoordinate)));
+                            }
 
                             world.getSystem(ActionCameraSystem.class).pushLastAction(player, new WorldConditionalAction() {
                                 @Override
@@ -180,7 +187,7 @@ public class TargetingFactory {
                                 }
                             });
 
-                            player.getComponent(TurnComponent.class).movementActionAvailable = false;
+
                         }
                     }));
 
