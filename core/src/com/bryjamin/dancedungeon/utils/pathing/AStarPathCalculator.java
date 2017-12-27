@@ -21,7 +21,12 @@ public class AStarPathCalculator {
 
     public Array<Coordinates> availableCoordinates = new Array<Coordinates>();
 
+    //Coordinates occupied by allies
+    public Array<Coordinates> alliedCoordinates = new Array<Coordinates>();
+
     private static final int HORIZONTAL_COST = 10;
+
+
 
     private static final Comparator<Node> nodeFValueComparator = new Comparator<Node>() {
         @Override
@@ -40,9 +45,15 @@ public class AStarPathCalculator {
         this.unavailableCoordinates = unavailableCoordinates;
     }
 
+    public AStarPathCalculator(Array<Coordinates> availableCoordinates, Array<Coordinates> unavailableCoordinates, Array<Coordinates> alliedCoordinates){
+        this.availableCoordinates = availableCoordinates;
+        this.unavailableCoordinates = unavailableCoordinates;
+        this.alliedCoordinates = alliedCoordinates;
+    }
 
 
-    public boolean findShortestPathMultiple(Queue<Coordinates> fillQueue, Coordinates start, Array<Coordinates> targets){
+
+    public boolean findShortestPathMultiple(Queue<Coordinates> fillQueue, Coordinates start, Array<Coordinates> targets, int maxRange){
 
 
         Array<Queue<Coordinates>> queueArray = new Array<Queue<Coordinates>>();
@@ -51,7 +62,9 @@ public class AStarPathCalculator {
 
         for(Coordinates c : targets){
             Queue<Coordinates> coordinatesQueue = new Queue<Coordinates>();
-            if(findShortestPath(coordinatesQueue, start, c)) queueArray.add(coordinatesQueue);
+            if(findShortestPath(coordinatesQueue, start, c, maxRange)) {//If a path is found, (if there is a max range evalued if the path is valid)
+                queueArray.add(coordinatesQueue);
+            }
         }
 
         if(queueArray.size == 0) return false;
@@ -68,14 +81,14 @@ public class AStarPathCalculator {
             fillQueue.addLast(c);
         }
 
-        queueArray.first();
+        //queueArray.first();
 
         return true;
 
     }
 
 
-    public boolean findShortestPath(Queue<Coordinates> fillQueue, Coordinates start, Coordinates end){
+    public boolean findShortestPath(Queue<Coordinates> fillQueue, Coordinates start, Coordinates end, int maxRange){
 
         Array<Node> openList = new Array<Node>();
         Array<Node> closedList = new Array<Node>();
@@ -110,8 +123,11 @@ public class AStarPathCalculator {
             }
         }
 
+        int count = 0;
 
         while(openList.size != 0){
+
+            count++;
 
             Node nextNode = getNextNode(openList, closedList);
             Array<Coordinates> surroundingCoordinates = returnSurroundingCoordinates(nextNode.coordinates);
@@ -121,6 +137,21 @@ public class AStarPathCalculator {
             if(surroundingCoordinates.contains(end, false)) {
                 createCoordinateSequence(nextNode, fillQueue);
                 fillQueue.addLast(end);
+
+                if(maxRange >= 0){
+
+                    while (fillQueue.size > maxRange) {
+                        fillQueue.removeLast();
+                    }
+
+                    if(alliedCoordinates.contains(fillQueue.last(), false)) //prevents paths ending on allied coordinates
+                        return false;
+                }
+
+
+
+
+
                 return true;
             }
 
@@ -162,6 +193,16 @@ public class AStarPathCalculator {
     }
 
 
+    /**
+     * Gets the next node to be evaluated by the A* algorithm.
+     *
+     * This node selected if the one with the smallest F Value.
+     *
+     * This node is added to the closed list and removed from the open list.
+     * @param openList
+     * @param closedList
+     * @return
+     */
     private Node getNextNode(Array<Node> openList, Array<Node> closedList){
 
         openList.sort(nodeFValueComparator);

@@ -44,12 +44,8 @@ public class MeleeMoveToAction implements WorldAction {
         TileSystem tileSystem = world.getSystem(TileSystem.class);
         Coordinates playerCoordinates = entityArray.first().getComponent(CoordinateComponent.class).coordinates;
         Queue<Coordinates> coordinatesQueue = new Queue<Coordinates>();
-        tileSystem.findShortestPath(coordinatesQueue, entity.getComponent(CoordinateComponent.class).coordinates, CoordinateMath.getCoordinatesInLine(playerCoordinates, 1));
-
-
-        while (coordinatesQueue.size > entity.getComponent(StatComponent.class).movementRange) {
-            coordinatesQueue.removeLast();
-        }
+        tileSystem.findShortestPath(entity, coordinatesQueue, CoordinateMath.getCoordinatesInLine(playerCoordinates, 1),
+                entity.getComponent(StatComponent.class).movementRange);
 
         world.getSystem(ActionCameraSystem.class).createMovementAction(entity, coordinatesQueue);
         entity.getComponent(TurnComponent.class).movementActionAvailable = false;

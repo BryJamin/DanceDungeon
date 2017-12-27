@@ -47,12 +47,9 @@ public class RangedMoveToAction implements WorldAction {
         Coordinates playerCoordinates = entityArray.first().getComponent(CoordinateComponent.class).coordinates;
 
         Queue<Coordinates> coordinatesQueue = new Queue<Coordinates>();
-        tileSystem.findShortestPath(coordinatesQueue, entity.getComponent(CoordinateComponent.class).coordinates, CoordinateMath.getCoordinatesInSquareRange(playerCoordinates, range));
+        tileSystem.findShortestPath(entity, coordinatesQueue, CoordinateMath.getCoordinatesInSquareRange(playerCoordinates, range),
+                entity.getComponent(StatComponent.class).movementRange);
 
-
-        while (coordinatesQueue.size > entity.getComponent(StatComponent.class).movementRange) {
-            coordinatesQueue.removeLast();
-        }
 
         world.getSystem(ActionCameraSystem.class).createMovementAction(entity, coordinatesQueue);
         entity.getComponent(TurnComponent.class).movementActionAvailable = false;

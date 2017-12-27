@@ -100,9 +100,9 @@ public class TargetingFactory {
 
             final Queue<Coordinates> coordinatesPath = new Queue<Coordinates>();
 
-            boolean isPathValid = tileSystem.findShortestPath(coordinatesPath, coordinateComponent.coordinates, c);
+            boolean isPathValid = tileSystem.findShortestPath(player, coordinatesPath, c, movementRange);
 
-            if (!(coordinatesPath.size <= movementRange && isPathValid))
+            if (!isPathValid)
                 continue; //If the path is larger than the movement range, ignore and move on.
 
             //Add this path to the list of available paths (for attack scan).
@@ -143,6 +143,11 @@ public class TargetingFactory {
 
             final OrderedMap<Coordinates, Queue<Coordinates>> targetCoordinateMovementQueueMap = new OrderedMap<Coordinates, Queue<Coordinates>>();
 
+            //Generate Map of movement and target squares
+
+            //This goes through and get the targets in range of all possible movement sqaures that have been found.
+            //It then checks if any targets are in range of an attack from the movement squares.
+            //If two paths can be used to attack the same sqaure, the shortest path is chosen.
 
             for (final Coordinates c : coordinatesWithPathMap.keys()) {
 
@@ -156,44 +161,52 @@ public class TargetingFactory {
                         if (coordinatesWithPathMap.get(c).size < targetCoordinateMovementQueueMap.get(targetCoordinate).size) {
                             targetCoordinateMovementQueueMap.put(targetCoordinate, coordinatesWithPathMap.get(c));
                         }
+
                     } else {
                         targetCoordinateMovementQueueMap.put(targetCoordinate, coordinatesWithPathMap.get(c));
                     }
 
+                }
+            }
 
-                    Entity redBox = BagToEntity.bagToEntity(world.createEntity(), highlightBox(tileSystem.getRectangleUsingCoordinates(targetCoordinate), new Color(Color.RED)));
+
+            //Takes the valid paths found from the previous sort and create a highlighted square that
+            //when tapped ahs the action to, follow the path and then fire the attack
+
+            for (final Coordinates coordinateOfTarget : targetCoordinateMovementQueueMap.keys()) {
+
+                Entity redBox = BagToEntity.bagToEntity(world.createEntity(), highlightBox(tileSystem.getRectangleUsingCoordinates(coordinateOfTarget), new Color(Color.RED)));
 
 
-                    entityArray.add(redBox);
+                entityArray.add(redBox);
 
-                    redBox.edit().add(new ActionOnTapComponent(new WorldAction() {
-                        @Override
-                        public void performAction(World world, final Entity e) {
+                redBox.edit().add(new ActionOnTapComponent(new WorldAction() {
+                    @Override
+                    public void performAction(World world, final Entity e) {
 
-                            if(targetCoordinateMovementQueueMap.get(targetCoordinate).size != 0) {
-                                player.getComponent(TurnComponent.class).movementActionAvailable = false;
-                                world.getSystem(ActionCameraSystem.class).pushLastAction(player, createMovementAction(player, targetCoordinateMovementQueueMap.get(targetCoordinate)));
+                        if (targetCoordinateMovementQueueMap.get(coordinateOfTarget).size != 0) {
+                            player.getComponent(TurnComponent.class).movementActionAvailable = false;
+                            world.getSystem(ActionCameraSystem.class).pushLastAction(player, createMovementAction(player, targetCoordinateMovementQueueMap.get(coordinateOfTarget)));
+                        }
+
+                        world.getSystem(ActionCameraSystem.class).pushLastAction(player, new WorldConditionalAction() {
+                            @Override
+                            public boolean condition(World world, Entity entity) {
+                                return entity.getComponent(MoveToComponent.class).isEmpty();
                             }
 
-                            world.getSystem(ActionCameraSystem.class).pushLastAction(player, new WorldConditionalAction() {
-                                @Override
-                                public boolean condition(World world, Entity entity) {
-                                    return entity.getComponent(MoveToComponent.class).isEmpty();
-                                }
-
-                                @Override
-                                public void performAction(World world, Entity entity) {
-                                    entity.getComponent(SkillsComponent.class).basicAttack.cast(world, player, targetCoordinate);
-                                }
-                            });
+                            @Override
+                            public void performAction(World world, Entity entity) {
+                                entity.getComponent(SkillsComponent.class).basicAttack.cast(world, player, coordinateOfTarget);
+                            }
+                        });
 
 
-                        }
-                    }));
-
-                }
+                    }
+                }));
 
             }
+
 
         }
 

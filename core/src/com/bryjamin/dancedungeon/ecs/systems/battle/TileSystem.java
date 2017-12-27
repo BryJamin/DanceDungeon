@@ -55,10 +55,10 @@ public class TileSystem extends EntityProcessingSystem {
 
     private OrderedMap<Coordinates, Entity> playerControlledMap = new OrderedMap<Coordinates,  Entity>();
 
-    private OrderedMap<Coordinates, Rectangle> rectangleMap = new OrderedMap<Coordinates,  Rectangle>();
-
-    //Mpa used to show if a space is occupied
+    //Map used to show if a space is occupied
     private OrderedMap<Coordinates, Entity> occupiedMap = new OrderedMap<Coordinates,  Entity>();
+
+    private OrderedMap<Coordinates, Rectangle> rectangleMap = new OrderedMap<Coordinates,  Rectangle>();
 
     public OrderedMap<Coordinates, Array<Entity>> getCoordinateMap() {
         return coordinateMap;
@@ -76,31 +76,11 @@ public class TileSystem extends EntityProcessingSystem {
 
         this.maxX = columns;
         this.maxY = rows;
-/*
-        DrawableComponent drawableComponent = new DrawableComponent(Layer.BACKGROUND_LAYER_FAR);
-        bag.add(drawableComponent);*/
 
         for(int i = 0; i < columns; i++) {
             for(int j = 0; j < rows; j++) {
-
                 coordinateMap.put(new Coordinates(i, j), new Array<Entity>());
-
-                Rectangle r = new Rectangle(originX + i * tileWidthSize,
-                        originY + j * tileHeightSize,
-                        tileWidthSize,
-                        tileHeightSize);
-
-                movementRectangles.add(r);
-
-                rectangleMap.put(new Coordinates(i, j), r);
-
-
-              //  if(i == columns - 1){
-                    movementRectangles.add(new Rectangle(originX + i * tileWidthSize,
-                            originY + j * tileHeightSize,
-                            tileWidthSize,
-                            tileHeightSize));
-               // }
+                rectangleMap.put(new Coordinates(i, j), createRectangleUsingCoordinates(new Coordinates(i, j)));
             }
         }
 
@@ -244,6 +224,16 @@ public class TileSystem extends EntityProcessingSystem {
         return null;
     }
 
+
+    public Rectangle createRectangleUsingCoordinates(Coordinates coordinates){
+
+        return new Rectangle(originX + coordinates.getX() * tileWidthSize,
+                originY + coordinates.getY() * tileHeightSize,
+                tileWidthSize,
+                tileHeightSize);
+
+    }
+
     /**
      * Given a rectangle returns the co-ordinate position of it.
      * @param rectangle - The rectangle
@@ -278,16 +268,21 @@ public class TileSystem extends EntityProcessingSystem {
 
     }
 
-    public boolean findShortestPath(Queue<Coordinates> fillQueue, Coordinates start, Coordinates c, int maxDistance){
+    public boolean findShortestPath(Entity e, Queue<Coordinates> fillQueue, Coordinates c, int maxDistance){
 
         Array<Coordinates> coordinatesArray = new Array<Coordinates>();
         coordinatesArray.add(c);
-        return findShortestPath(fillQueue, start, coordinatesArray, maxDistance);
+        return findShortestPath(e, fillQueue, coordinatesArray, maxDistance);
     }
 
-    public boolean findShortestPath(Queue<Coordinates> fillQueue, Coordinates start, Array<Coordinates> targets, int maxDistance){
+    public boolean findShortestPath(Entity e, Queue<Coordinates> fillQueue, Array<Coordinates> targets, int maxDistance){
+
         AStarPathCalculator aStarPathCalculator = new AStarPathCalculator(coordinateMap.keys().toArray(), occupiedMap.keys().toArray());
-        return aStarPathCalculator.findShortestPathMultiple(fillQueue,start, targets);
+
+        return aStarPathCalculator.findShortestPathMultiple(fillQueue,
+                e.getComponent(CoordinateComponent.class).coordinates,
+                targets,
+                maxDistance);
     }
 
     public OrderedMap<Coordinates, Entity> getPlayerControlledMap() {
