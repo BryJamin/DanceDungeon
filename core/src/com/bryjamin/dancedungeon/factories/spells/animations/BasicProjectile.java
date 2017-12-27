@@ -39,6 +39,8 @@ public class BasicProjectile {
 
     private float damage;
 
+    private float speed;
+
     private DrawableComponent drawableComponent;
 
 
@@ -47,6 +49,8 @@ public class BasicProjectile {
         this.height = b.height;
         this.damage = b.damage;
         this.drawableComponent = b.drawableComponent;
+        this.speed = b.speed;
+
     }
 
 
@@ -56,6 +60,8 @@ public class BasicProjectile {
         private float height;
 
         private float damage;
+
+        private float speed = Measure.units(60f);
 
         private DrawableComponent drawableComponent = new DrawableComponent();
 
@@ -67,6 +73,9 @@ public class BasicProjectile {
 
         public BasicProjectileBuilder damage(float val)
         { damage = val; return this; }
+
+        public BasicProjectileBuilder speed(float val)
+        { speed = val; return this; }
 
         public BasicProjectileBuilder drawableComponent(DrawableComponent val)
         { drawableComponent = val; return this; }
@@ -92,7 +101,7 @@ public class BasicProjectile {
        projectile.edit().add(new WaitActionComponent());
        //fireBall.edit().add(new CoordinateComponent(new Coordinates(), true));
 
-       projectile.edit().add(new MoveToComponent(Measure.units(60f), new Vector3(
+       projectile.edit().add(new MoveToComponent(speed, new Vector3(
                CenterMath.centerPositionX(width, r.getCenter(new Vector2()).x),
                CenterMath.centerPositionY(height, r.getCenter(new Vector2()).y),
                0)));

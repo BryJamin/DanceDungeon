@@ -40,6 +40,7 @@ public class MageAttack extends SkillDescription {
                                 .height(Measure.units(2.5f))
                                 .build()))
                 .width(Measure.units(2.5f))
+                .speed(Measure.units(150f))
                 .height(Measure.units(2.5f))
                 .damage(entity.getComponent(StatComponent.class).magic)
                 .build()
