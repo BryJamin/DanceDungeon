@@ -31,7 +31,6 @@ public class MageAttack extends SkillDescription {
     @Override
     public void cast(World world, Entity entity, Coordinates target) {
 
-
         new BasicProjectile.BasicProjectileBuilder()
                 .drawableComponent(new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE,
                         new TextureDescription.Builder(TextureStrings.BLOCK)

@@ -89,9 +89,10 @@ public class BasicProjectile {
    public void cast(World world, Entity entity, final Coordinates target){
 
        PositionComponent positionComponent = entity.getComponent(PositionComponent.class);
+       CenteringBoundaryComponent cbc = entity.getComponent(CenteringBoundaryComponent.class);
 
-       float x = CenterMath.centerPositionX(width, positionComponent.getX() + Measure.units(2.5f));
-       float y = CenterMath.centerPositionY(height, positionComponent.getY() + Measure.units(2.5f));
+       float x = CenterMath.centerPositionX(width, cbc.bound.getX() + cbc.bound.getWidth());
+       float y = CenterMath.centerPositionY(height, cbc.bound.getY() + cbc.bound.getHeight());
 
 
        Rectangle r = world.getSystem(TileSystem.class).getRectangleUsingCoordinates(target);
@@ -99,7 +100,6 @@ public class BasicProjectile {
        Entity projectile = world.createEntity();
        projectile.edit().add(new PositionComponent(x, y));
        projectile.edit().add(new WaitActionComponent());
-       //fireBall.edit().add(new CoordinateComponent(new Coordinates(), true));
 
        projectile.edit().add(new MoveToComponent(speed, new Vector3(
                CenterMath.centerPositionX(width, r.getCenter(new Vector2()).x),

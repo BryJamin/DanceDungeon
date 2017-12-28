@@ -102,7 +102,9 @@ public class TargetingFactory {
 
             boolean isPathValid = tileSystem.findShortestPath(player, coordinatesPath, c, movementRange);
 
-            if (!isPathValid)
+            System.out.println("Coordinate path size: " + coordinatesPath.size);
+
+            if (!(coordinatesPath.size <= movementRange && isPathValid))
                 continue; //If the path is larger than the movement range, ignore and move on.
 
             //Add this path to the list of available paths (for attack scan).

@@ -49,6 +49,11 @@ public class AStarPathCalculator {
         this.availableCoordinates = availableCoordinates;
         this.unavailableCoordinates = unavailableCoordinates;
         this.alliedCoordinates = alliedCoordinates;
+
+        for(Coordinates c : alliedCoordinates){
+            this.unavailableCoordinates.removeValue(c, false);
+        }
+
     }
 
 
@@ -102,7 +107,7 @@ public class AStarPathCalculator {
         //Could place this inside the Node set up.
         for(Node n: allNodeMap.values().toArray()) n.setHeuristic(n.coordinates, end);
 
-        if(unavailableCoordinates.contains(end, false)) {
+        if(unavailableCoordinates.contains(end, false) || alliedCoordinates.contains(end, false)) {
             return false;
         }
 
