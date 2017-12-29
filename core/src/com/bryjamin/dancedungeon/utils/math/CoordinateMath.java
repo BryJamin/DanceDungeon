@@ -51,17 +51,17 @@ public class CoordinateMath {
     }
 
 
-    public static Array<Coordinates> getCoordinatesInMovementRange(Coordinates coordinates, int range){
+    public static Array<Coordinates> getCoordinatesInMovementRange(Coordinates coordinates, int movementRange){
 
         OrderedSet<Coordinates> coordinatesArray = new OrderedSet<Coordinates>();
 
-        if(range <= 0) return coordinatesArray.orderedItems();
+        if(movementRange <= 0) return coordinatesArray.orderedItems();
 
-        for(int x = 0; x <= range; x++){
-            for(int y = 0; y <= range; y++){
+        for(int x = 0; x <= movementRange; x++){
+            for(int y = 0; y <= movementRange; y++){
 
                 if(x == 0 && y == 0) continue;
-                if(x + y > range) continue;
+                if(x + y > movementRange) continue;
 
                 coordinatesArray.add(new Coordinates(coordinates.getX() + x, coordinates.getY() + y));
                 coordinatesArray.add(new Coordinates(coordinates.getX() + x, coordinates.getY() - y));

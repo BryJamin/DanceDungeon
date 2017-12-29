@@ -5,8 +5,8 @@ import com.artemis.World;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.factories.spells.SkillDescription;
 import com.bryjamin.dancedungeon.factories.spells.SlashDescription;
 import com.bryjamin.dancedungeon.utils.math.CoordinateSorter;
@@ -32,9 +32,8 @@ public class MeleeAttackAction implements WorldAction {
         entityArray.sort(CoordinateSorter.SORT_BY_NEAREST(entity));
 
         Coordinates c = entityArray.first().getComponent(CoordinateComponent.class).coordinates;
-        skillDescription.cast(world, entity, c);
 
-        entity.getComponent(TurnComponent.class).attackActionAvailable = false;
+        entity.getComponent(SkillsComponent.class).basicAttack.cast(world, entity, c);
 
     }
 }

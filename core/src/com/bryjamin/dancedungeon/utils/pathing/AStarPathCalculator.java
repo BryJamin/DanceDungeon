@@ -26,7 +26,11 @@ public class AStarPathCalculator {
 
     private static final int HORIZONTAL_COST = 10;
 
+    private boolean strictMaxRange;
 
+    public void setStrictMaxRange(boolean strictMaxRange) {
+        this.strictMaxRange = strictMaxRange;
+    }
 
     private static final Comparator<Node> nodeFValueComparator = new Comparator<Node>() {
         @Override
@@ -57,13 +61,18 @@ public class AStarPathCalculator {
     }
 
 
-
-    public boolean findShortestPathMultiple(Queue<Coordinates> fillQueue, Coordinates start, Array<Coordinates> targets, int maxRange){
+    /**
+     * Given a set of different target Coordinates find the shortest path to one of them.
+     * @param fillQueue - Queue to be filled
+     * @param start - Start Coordinate
+     * @param targets - Target Coordinates
+     * @param maxRange - Max range of the final queue. (Set to -1 for infinite range)
+     * @return - True if a path can be found to at least one of the targets
+     */
+    public boolean findShortestPathMultipleChoice(Queue<Coordinates> fillQueue, Coordinates start, Array<Coordinates> targets, int maxRange){
 
 
         Array<Queue<Coordinates>> queueArray = new Array<Queue<Coordinates>>();
-
-
 
         for(Coordinates c : targets){
             Queue<Coordinates> coordinatesQueue = new Queue<Coordinates>();
@@ -107,6 +116,7 @@ public class AStarPathCalculator {
         //Could place this inside the Node set up.
         for(Node n: allNodeMap.values().toArray()) n.setHeuristic(n.coordinates, end);
 
+        //If the final coordinate is occupied by either an ally or enemy return false
         if(unavailableCoordinates.contains(end, false) || alliedCoordinates.contains(end, false)) {
             return false;
         }
@@ -145,8 +155,12 @@ public class AStarPathCalculator {
 
                 if(maxRange >= 0){
 
-                    while (fillQueue.size > maxRange) {
-                        fillQueue.removeLast();
+                    if(strictMaxRange) {
+                        if (fillQueue.size > maxRange) return false;
+                    } else {//This is for players and targeting
+                        while (fillQueue.size > maxRange) { //This is for players
+                            fillQueue.removeLast();
+                        }
                     }
 
                     if(alliedCoordinates.contains(fillQueue.last(), false)) //prevents paths ending on allied coordinates

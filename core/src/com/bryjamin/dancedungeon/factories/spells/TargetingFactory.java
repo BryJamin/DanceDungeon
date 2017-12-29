@@ -31,6 +31,7 @@ import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
 import com.bryjamin.dancedungeon.utils.math.CoordinateMath;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
+import com.bryjamin.dancedungeon.utils.pathing.AStarPathCalculator;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
@@ -100,10 +101,12 @@ public class TargetingFactory {
 
             final Queue<Coordinates> coordinatesPath = new Queue<Coordinates>();
 
-            boolean isPathValid = tileSystem.findShortestPath(player, coordinatesPath, c, movementRange);
+            AStarPathCalculator asp = tileSystem.createAStarPathCalculator(player);
+            asp.setStrictMaxRange(true);
+            boolean isPathValid = asp.findShortestPath(coordinatesPath, coordinateComponent.coordinates, c, movementRange);
 
-            
-            if (!(coordinatesPath.size <= movementRange && isPathValid))
+
+            if (!isPathValid)
                 continue; //If the path is larger than the movement range, ignore and move on.
 
             //Add this path to the list of available paths (for attack scan).

@@ -34,6 +34,8 @@ public class RangedDummyFactory {
     public static final float width = Measure.units(5f);
     public static final float height = Measure.units(5f);
 
+    private static final int basicAttackRange = 3;
+
     private UnitFactory unitFactory = new UnitFactory();
 
 
@@ -47,13 +49,11 @@ public class RangedDummyFactory {
         SkillDescription movement = new MovementDescription();
         SkillDescription fireball = new FireballSkill();
 
-        int range = 5;
-
         StatComponent statComponent = new StatComponent.StatBuilder()
                 .maxHealth(10)
                 .magic(3)
                 .power(2)
-                .attackRange(range)
+                .attackRange(basicAttackRange)
                 .movementRange(4)
                 .build();
 
@@ -65,8 +65,8 @@ public class RangedDummyFactory {
         bag.add(new UtilityAiComponent(
                 new UtilityAiCalculator(
                         new ActionScoreCalculator(new EndTurnAction()),
-                        new ActionScoreCalculator(new RangedMoveToAction(movement, range), new IsInRangeCalculator(-100, 100, range), new CanUseSkillCalculator(movement, 0f, null)),
-                        new ActionScoreCalculator(new RangedAttackAction(fireball), new IsInRangeCalculator(150, -10, range), new CanUseSkillCalculator(fireball, 0f, null)
+                        new ActionScoreCalculator(new RangedMoveToAction(movement, basicAttackRange), new IsInRangeCalculator(-100, 100, basicAttackRange), new CanUseSkillCalculator(movement, 0f, null)),
+                        new ActionScoreCalculator(new RangedAttackAction(fireball), new IsInRangeCalculator(150, -10, basicAttackRange), new CanUseSkillCalculator(fireball, 0f, null)
                         )
                 )));
 

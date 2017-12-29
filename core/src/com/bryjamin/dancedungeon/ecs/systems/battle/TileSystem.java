@@ -304,11 +304,31 @@ public class TileSystem extends EntityProcessingSystem {
             aStarPathCalculator = new AStarPathCalculator(coordinateMap.keys().toArray(), occupiedMap.keys().toArray(),
                     enemyMap.keys().toArray());
         }
-        return aStarPathCalculator.findShortestPathMultiple(fillQueue,
+        return aStarPathCalculator.findShortestPathMultipleChoice(fillQueue,
                 e.getComponent(CoordinateComponent.class).coordinates,
                 targets,
                 maxDistance);
     }
+
+
+    public AStarPathCalculator createAStarPathCalculator(Entity e){
+
+        AStarPathCalculator aStarPathCalculator;
+
+        if(pcm.has(e)) {
+            aStarPathCalculator = new AStarPathCalculator(coordinateMap.keys().toArray(), occupiedMap.keys().toArray(),
+                    playerControlledMap.keys().toArray());
+
+            //System.out.println("PFFTT");
+
+        } else { //TODO what to with walls and etc? If there even are walls.
+            aStarPathCalculator = new AStarPathCalculator(coordinateMap.keys().toArray(), occupiedMap.keys().toArray(),
+                    enemyMap.keys().toArray());
+        }
+
+        return aStarPathCalculator;
+    }
+
 
     public OrderedMap<Coordinates, Entity> getPlayerControlledMap() {
         return playerControlledMap;

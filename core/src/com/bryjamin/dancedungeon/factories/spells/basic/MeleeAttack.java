@@ -65,6 +65,7 @@ public class MeleeAttack extends SkillDescription {
         slash.edit().add(new DrawableComponent(Layer.FOREGROUND_LAYER_FAR, new TextureDescription.Builder(TextureStrings.SKILLS_SLASH)
                 .identifier(SLASH_DRAWABLE_ID)
                 .width(rectangle.getWidth())
+                //.color(new Color(Colors.AMOEBA_FAST_PURPLE))
                 .height(rectangle.getHeight())
                 //.scaleX(-1)
                 .build()));
