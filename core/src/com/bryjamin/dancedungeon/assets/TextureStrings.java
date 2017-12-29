@@ -28,4 +28,9 @@ public class TextureStrings {
 
     public static final String FLOOR_TEXTURE_BRICK = "backgrounds/brick_floor";
 
+
+
+
+    public static final String SKILLS_SLASH = "skills/slash";
+
 }
