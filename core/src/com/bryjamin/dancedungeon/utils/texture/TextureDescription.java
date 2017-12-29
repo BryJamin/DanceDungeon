@@ -61,7 +61,9 @@ public class TextureDescription extends DrawableDescription {
         return region;
     }
 
-
+    public void setIndex(int index) {
+        this.index = index;
+    }
 
     public int getIndex() {
         return index;

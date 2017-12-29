@@ -38,7 +38,7 @@ public abstract class DrawableDescription {
     public abstract static class DrawableDescriptionBuilder<T extends DrawableDescriptionBuilder<T>> {
 
         //Optional
-        private int identifier;
+        private int identifier = -1;
         private float width = 0;
         private float height = 0;
         private float offsetX = 0;

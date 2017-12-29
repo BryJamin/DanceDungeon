@@ -21,7 +21,7 @@ public class DrawableComponent extends Component {
 
     public int layer = Layer.ENEMY_LAYER_MIDDLE;
     public Array<DrawableDescription> drawables = new Array<DrawableDescription>();
-    public OrderedMap<String, DrawableDescription> trackedDrawables = new OrderedMap<String, DrawableDescription>();
+    public OrderedMap<Integer, DrawableDescription> trackedDrawables = new OrderedMap<Integer, DrawableDescription>();
 
 
     public DrawableComponent(){
@@ -30,7 +30,12 @@ public class DrawableComponent extends Component {
 
     public DrawableComponent(int layer, DrawableDescription... drawableDescriptions){
         this.layer = layer;
-        for(DrawableDescription drawableDescription : drawableDescriptions) drawables.add(drawableDescription);
+        for(DrawableDescription drawableDescription : drawableDescriptions) {
+            if(drawableDescription.getIdentifier() >= 0){
+                trackedDrawables.put(drawableDescription.getIdentifier(), drawableDescription);
+            }
+            drawables.add(drawableDescription);
+        }
     }
 
 

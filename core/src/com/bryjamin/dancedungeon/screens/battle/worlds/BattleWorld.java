@@ -31,6 +31,7 @@ import com.bryjamin.dancedungeon.ecs.systems.battle.NoMoreActionsSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.SelectedTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
+import com.bryjamin.dancedungeon.ecs.systems.graphical.AnimationSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.BoundsDrawingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.FadeSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.FollowPositionSystem;
@@ -96,7 +97,6 @@ public class BattleWorld extends WorldContainer {
                         new HealthSystem(),
                         new ParentChildSystem(),
                         new BlinkOnHitSystem(),
-                        new DeathSystem(),
                         new ExpireSystem(),
                         new EndBattleSystem(game)
                 )
@@ -107,12 +107,14 @@ public class BattleWorld extends WorldContainer {
                         new NoMoreActionsSystem(),
                         new PlayerGraphicalTargetingSystem(),
                         new BattleMessageSystem(gameport),
+                        new AnimationSystem(game),
                         new RenderingSystem(game, gameport),
                         new HealthBarSystem(game, gameport),
                         new UIRenderingSystem(game, gameport),
                         new BoundsDrawingSystem(batch),
 
-                        new SelectedTargetSystem()
+                        new SelectedTargetSystem(),
+                        new DeathSystem()
                 )
                 .build();
 
