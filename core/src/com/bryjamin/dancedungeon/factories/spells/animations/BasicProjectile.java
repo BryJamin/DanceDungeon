@@ -91,8 +91,8 @@ public class BasicProjectile {
        PositionComponent positionComponent = entity.getComponent(PositionComponent.class);
        CenteringBoundaryComponent cbc = entity.getComponent(CenteringBoundaryComponent.class);
 
-       float x = CenterMath.centerPositionX(width, cbc.bound.getX() + cbc.bound.getWidth());
-       float y = CenterMath.centerPositionY(height, cbc.bound.getY() + cbc.bound.getHeight());
+       float x = CenterMath.centerPositionX(width, cbc.bound.getX() + cbc.bound.getWidth() / 2);
+       float y = CenterMath.centerPositionY(height, cbc.bound.getY() + cbc.bound.getHeight() / 2);
 
 
        Rectangle r = world.getSystem(TileSystem.class).getRectangleUsingCoordinates(target);

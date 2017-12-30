@@ -19,7 +19,9 @@ public class SkillsComponent extends Component {
 
     public SkillsComponent(){};
 
-    public SkillsComponent(SkillDescription... skillDescriptions){
+
+    public SkillsComponent(SkillDescription basicAttack, SkillDescription... skillDescriptions){
+        this.basicAttack = basicAttack;
         this.skillDescriptions.addAll(skillDescriptions);
     }
 

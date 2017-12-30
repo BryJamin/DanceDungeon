@@ -31,16 +31,19 @@ public class MageAttack extends SkillDescription {
     @Override
     public void cast(World world, Entity entity, Coordinates target) {
 
+        float size = Measure.units(2.5f);
+
         new BasicProjectile.BasicProjectileBuilder()
                 .drawableComponent(new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE,
                         new TextureDescription.Builder(TextureStrings.BLOCK)
                                 .color(new Color(Colors.PLAYER_BULLET_COLOR))
-                                .width(Measure.units(2.5f))
-                                .height(Measure.units(2.5f))
+                                .width(size)
+                                .height(size)
                                 .build()))
-                .width(Measure.units(2.5f))
+                .width(size)
                 .speed(Measure.units(150f))
-                .height(Measure.units(2.5f))
+                //.speed(Measure.units(0f))
+                .height(size)
                 .damage(entity.getComponent(StatComponent.class).magic)
                 .build()
                 .cast(world, entity, target);

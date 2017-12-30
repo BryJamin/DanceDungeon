@@ -5,8 +5,8 @@ import com.bryjamin.dancedungeon.assets.Colors;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.ai.ActionScoreCalculator;
 import com.bryjamin.dancedungeon.ecs.ai.UtilityAiCalculator;
+import com.bryjamin.dancedungeon.ecs.ai.actions.BasicAttackAction;
 import com.bryjamin.dancedungeon.ecs.ai.actions.EndTurnAction;
-import com.bryjamin.dancedungeon.ecs.ai.actions.MeleeAttackAction;
 import com.bryjamin.dancedungeon.ecs.ai.actions.MeleeMoveToAction;
 import com.bryjamin.dancedungeon.ecs.ai.calculations.CanUseSkillCalculator;
 import com.bryjamin.dancedungeon.ecs.ai.calculations.IsNextToCalculator;
@@ -21,6 +21,7 @@ import com.bryjamin.dancedungeon.factories.player.UnitFactory;
 import com.bryjamin.dancedungeon.factories.spells.MovementDescription;
 import com.bryjamin.dancedungeon.factories.spells.SkillDescription;
 import com.bryjamin.dancedungeon.factories.spells.SlashDescription;
+import com.bryjamin.dancedungeon.factories.spells.basic.MeleeAttack;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
@@ -60,7 +61,7 @@ public class DummyFactory {
         bag.add(new MoveToComponent(Measure.units(80f)));
         bag.add(new CenteringBoundaryComponent(width, height));
         bag.add(new HitBoxComponent(new HitBox(width, height)));
-        bag.add(new SkillsComponent(movement, slash));
+        bag.add(new SkillsComponent(new MeleeAttack()));
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, blob.color(Color.WHITE).build()));
         bag.add(new UtilityAiComponent(dummyAi(movement, slash)));
 
@@ -88,7 +89,7 @@ public class DummyFactory {
         return new UtilityAiCalculator(
                 new ActionScoreCalculator(new EndTurnAction()),
                 new ActionScoreCalculator(new MeleeMoveToAction(movement), new IsNextToCalculator(null, 100f), new CanUseSkillCalculator(movement, 100f, null)),
-                new ActionScoreCalculator(new MeleeAttackAction(slash), new IsNextToCalculator(150f, null), new CanUseSkillCalculator(slash, 100f, null)
+                new ActionScoreCalculator(new BasicAttackAction(), new IsNextToCalculator(150f, null), new CanUseSkillCalculator(slash, 100f, null)
                 ));
     }
 

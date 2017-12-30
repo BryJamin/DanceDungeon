@@ -48,6 +48,7 @@ public class FireballSkill extends CooldownSpellDescription {
                                 .height(height)
                                 .build()))
                 .width(width)
+                .height(height)
                 .speed(Measure.units(85f))
                 .damage(entity.getComponent(StatComponent.class).magic)
                 .build()

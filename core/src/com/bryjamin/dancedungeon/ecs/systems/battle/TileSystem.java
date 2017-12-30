@@ -334,6 +334,9 @@ public class TileSystem extends EntityProcessingSystem {
         return playerControlledMap;
     }
 
+    public OrderedMap<Coordinates, Entity> getEnemyMap() {
+        return enemyMap;
+    }
 
     public int getMaxX() {
         return maxX - 1;

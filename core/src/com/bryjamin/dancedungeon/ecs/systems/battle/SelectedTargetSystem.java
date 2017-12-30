@@ -1,6 +1,7 @@
 package com.bryjamin.dancedungeon.ecs.systems.battle;
 
 import com.artemis.Aspect;
+import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.artemis.World;
@@ -32,25 +33,23 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 /**
  * Created by BB on 18/11/2017.
- *
+ * <p>
  * System that tracks which entity is currently selected by the blob.
- *
+ * <p>
  * It changes the buttons and text displayed on the screen based on the entity selected
- *
  */
 
 public class SelectedTargetSystem extends EntitySystem {
 
+    private ComponentMapper<PlayerControlledComponent> playerControlledM;
 
     private Entity selectedEntity;
-    private Entity recticle;
     private Array<Entity> buttons = new Array<Entity>();
 
 
     private static final float infoX = Measure.units(2.5f);
     private static final float infoY = Measure.units(50f);
     private static final float infoSize = Measure.units(5f);
-
 
 
     public SelectedTargetSystem() {
@@ -63,13 +62,14 @@ public class SelectedTargetSystem extends EntitySystem {
     }
 
     @Override
-    protected void processSystem() {}
+    protected void processSystem() {
+    }
 
 
     @Override
     public void removed(Entity e) {
 
-        if(e == selectedEntity){
+        if (e == selectedEntity) {
             selectedEntity = null;
             this.clear();
         }
@@ -84,8 +84,8 @@ public class SelectedTargetSystem extends EntitySystem {
     /**
      * Clears the button entities and selected entity from the system
      */
-    public void clear(){
-        for(Entity e : buttons){
+    public void clear() {
+        for (Entity e : buttons) {
             //e.edit().add(new DeadComponent());
             e.deleteFromWorld();
         }
@@ -93,7 +93,7 @@ public class SelectedTargetSystem extends EntitySystem {
 
         IntBag bag = world.getAspectSubscriptionManager().get(Aspect.all(UITargetingComponent.class)).getEntities();
 
-        for(int i = 0; i < bag.size(); i++){
+        for (int i = 0; i < bag.size(); i++) {
             //world.getEntity(bag.get(i)).edit().add(new DeadComponent());
             world.getEntity(bag.get(i)).deleteFromWorld();
         }
@@ -104,11 +104,11 @@ public class SelectedTargetSystem extends EntitySystem {
     /**
      * Removes the current targeting from being displayed
      */
-    public void clearTargeting(){
+    public void clearTargeting() {
 
         IntBag bag = world.getAspectSubscriptionManager().get(Aspect.all(UITargetingComponent.class)).getEntities();
 
-        for(int i = 0; i < bag.size(); i++){
+        for (int i = 0; i < bag.size(); i++) {
             world.getEntity(bag.get(i)).edit().add(new DeadComponent());
         }
 
@@ -118,32 +118,35 @@ public class SelectedTargetSystem extends EntitySystem {
     /**
      * Checks the given x and y input to see if a playerable character has been selected.
      * If this is the case the system sets up the character's spells
+     *
      * @param x - x input
      * @param y - y input
      * @return - True if a playerable character has been selected
      */
-    public boolean selectCharacter(float x, float y){
+    public boolean selectCharacter(float x, float y) {
 
         Coordinates c = world.getSystem(TileSystem.class).getCoordinatesUsingPosition(x, y);
 
-        if(world.getSystem(TileSystem.class).getPlayerControlledMap().containsKey(c)){
-            setUpCharacter(world.getSystem(TileSystem.class).getPlayerControlledMap().get(c));
+        if (world.getSystem(TileSystem.class).getOccupiedMap().containsKey(c)) {
+            setUpCharacter(world.getSystem(TileSystem.class).getOccupiedMap ().get(c));
             return true;
-        };
+        } else {
+            this.clear();
+        }
 
         return false;
     }
 
 
-    public void reselectEntityAfterActionComplete(){
+    public void reselectEntityAfterActionComplete() {
 
         Entity reselect = selectedEntity;
         selectedEntity = null;
 
-        if(reselect != null){
+        if (reselect != null) {
 
             TurnComponent turnComponent = reselect.getComponent(TurnComponent.class);
-            if(turnComponent.movementActionAvailable || turnComponent.attackActionAvailable ||
+            if (turnComponent.movementActionAvailable || turnComponent.attackActionAvailable ||
                     reselect.getComponent(SkillsComponent.class).canCast(world, reselect)) {
 
                 //if (entityArray.size > 0) {
@@ -157,84 +160,90 @@ public class SelectedTargetSystem extends EntitySystem {
         }
 
 
-
     }
 
 
-
-
     /**
-     *  Uses the given entity and sets up it's skills
+     * Uses the given entity and sets up it's skills
      *
      * @param playableCharacter - Selected playable character
      */
-    private void setUpCharacter(final Entity playableCharacter){
+    private void setUpCharacter(final Entity playableCharacter) {
 
         //Can't select a character with no actions
 
         //System.out.println(playableCharacter.getComponent(TurnActionMonitorComponent.class).hasActions());
 
-        if(!playableCharacter.getComponent(TurnComponent.class).hasActions() ||
-        world.getSystem(ActionCameraSystem.class).checkProcessing()) return;
+        //This only exists for players
+        if (!playableCharacter.getComponent(TurnComponent.class).hasActions() ||
+                world.getSystem(ActionCameraSystem.class).checkProcessing()) return;
 
-
-        if(selectedEntity != null){
-
-            //Characters can not be reselected
-            //if(selectedEntity.equals(playableCharacter)) return;
-            selectedEntity.getComponent(DrawableComponent.class).drawables.first().getColor().a = 1;
-        }
 
         this.selectedEntity = playableCharacter;
 
-
-        float width = selectedEntity.getComponent(CenteringBoundaryComponent.class).bound.width * 2.5f;
-        float height = selectedEntity.getComponent(CenteringBoundaryComponent.class).bound.height * 2.5f;
-
         this.clear(); // Clear buttons and recticle before remaking them.
 
-        recticle = world.createEntity();
-        recticle.edit().add(new PositionComponent());
-        recticle.edit().add(new UITargetingComponent());
-        recticle.edit().add(new FollowPositionComponent(selectedEntity.getComponent(PositionComponent.class).position,
-
-                CenterMath.offsetX(selectedEntity.getComponent(CenteringBoundaryComponent.class).bound.width, width),
-                CenterMath.offsetY(selectedEntity.getComponent(CenteringBoundaryComponent.class).bound.height, height)
-                ));
-        recticle.edit().add(new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE, new TextureDescription.Builder(TextureStrings.TARGETING)
-                .width(width)
-                .height(height)
-                .build()));
-
-
-        final SkillsComponent skillsComponent = playableCharacter.getComponent(SkillsComponent.class);
-
-        for(int i = 0; i < skillsComponent.skillDescriptions.size; i++){
-            buttons.add(BagToEntity.bagToEntity(world.createEntity(), new SpellFactory().skillButton(Measure.units(25f) * (i + 1), 0,
-                    skillsComponent.skillDescriptions.get(i), playableCharacter)));
-        }
-
-
+        createTargetRecticle(world, selectedEntity);
         createUnitInformationEntity(world, selectedEntity);
 
 
+        if(playerControlledM.has(selectedEntity)) {
 
-        if(playableCharacter.getComponent(TurnComponent.class).attackActionAvailable &&
-                playableCharacter.getComponent(TurnComponent.class).movementActionAvailable) {
-            new TargetingFactory().createMovementTiles(world, playableCharacter, playableCharacter.getComponent(StatComponent.class).movementRange);
-        } else if(playableCharacter.getComponent(TurnComponent.class).attackActionAvailable &&
-                !playableCharacter.getComponent(TurnComponent.class).movementActionAvailable){
-            new TargetingFactory().createTargetTiles(world, playableCharacter,
-                    playableCharacter.getComponent(SkillsComponent.class).basicAttack,
-                    playableCharacter.getComponent(StatComponent.class).attackRange);
+            SkillsComponent skillsComponent = playableCharacter.getComponent(SkillsComponent.class);
 
+            for (int i = 0; i < skillsComponent.skillDescriptions.size; i++) {
+                buttons.add(BagToEntity.bagToEntity(world.createEntity(), new SpellFactory().skillButton(Measure.units(25f) * (i + 1), 0,
+                        skillsComponent.skillDescriptions.get(i), playableCharacter)));
+            }
+
+            createMovementAndAttackTiles(selectedEntity);
         }
     }
 
 
+    /**
+     * Upon being selected creates Movement and Attacking tiles for the player, based on
+     * the avaliablity of an entites attack and movement actions
+     *
+     * @param e
+     */
+    private void createMovementAndAttackTiles(Entity e) {
+
+        TurnComponent turnComponent = e.getComponent(TurnComponent.class);
+
+        if (turnComponent.attackActionAvailable && turnComponent.movementActionAvailable) {
+            new TargetingFactory().createMovementTiles(world, e, e.getComponent(StatComponent.class).movementRange);
+        } else if (turnComponent.attackActionAvailable) {
+            new TargetingFactory().createTargetTiles(world, e,
+                    e.getComponent(SkillsComponent.class).basicAttack,
+                    e.getComponent(StatComponent.class).attackRange);
+        }
 
 
-    public void createUnitInformationEntity(World world, Entity entity){
+    }
+
+    private void createTargetRecticle(World world, Entity entity){
+
+        float width = entity.getComponent(CenteringBoundaryComponent.class).bound.width * 2.5f;
+        float height = entity.getComponent(CenteringBoundaryComponent.class).bound.height * 2.5f;
+
+        Entity recticle = world.createEntity();
+        recticle.edit().add(new PositionComponent());
+        recticle.edit().add(new UITargetingComponent());
+        recticle.edit().add(new FollowPositionComponent(entity.getComponent(PositionComponent.class).position,
+                CenterMath.offsetX(entity.getComponent(CenteringBoundaryComponent.class).bound.width, width),
+                CenterMath.offsetY(entity.getComponent(CenteringBoundaryComponent.class).bound.height, height)
+        ));
+        recticle.edit().add(new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE, new TextureDescription.Builder(TextureStrings.TARGETING)
+                .width(width)
+                .height(height)
+                .color(playerControlledM.has(entity) ? new Color(Color.WHITE) : new Color(Color.RED))
+                .build()));
+
+    }
+
+
+    public void createUnitInformationEntity(World world, Entity entity) {
 
         StatComponent stats = entity.getComponent(StatComponent.class);
         HealthComponent health = entity.getComponent(HealthComponent.class);
@@ -273,13 +282,9 @@ public class SelectedTargetSystem extends EntitySystem {
     }
 
 
-    public boolean isCharacterSelected(){
+    public boolean isCharacterSelected() {
         return selectedEntity != null;
     }
-
-
-
-
 
 
 }

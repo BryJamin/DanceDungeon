@@ -5,23 +5,16 @@ import com.artemis.World;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
-import com.bryjamin.dancedungeon.factories.spells.SkillDescription;
+import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.utils.math.CoordinateSorter;
+import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
 /**
- * Created by BB on 15/11/2017.
+ * Created by BB on 14/11/2017.
  */
 
-public class RangedAttackAction implements WorldAction {
-
-    private SkillDescription skill;
-
-    public RangedAttackAction(SkillDescription skill){
-        this.skill = skill;
-    }
-
+public class BasicAttackAction implements WorldAction {
 
     @Override
     public void performAction(World world, Entity entity) {
@@ -30,13 +23,8 @@ public class RangedAttackAction implements WorldAction {
         if(entityArray.size <= 0) return;
         entityArray.sort(CoordinateSorter.SORT_BY_NEAREST(entity));
 
-
-        skill.cast(world, entity, entityArray.first().getComponent(CoordinateComponent.class).coordinates);
-
-        entity.getComponent(TurnComponent.class).attackActionAvailable = false;
-
+        Coordinates c = entityArray.first().getComponent(CoordinateComponent.class).coordinates;
+        entity.getComponent(SkillsComponent.class).basicAttack.cast(world, entity, c);
 
     }
-
-
 }

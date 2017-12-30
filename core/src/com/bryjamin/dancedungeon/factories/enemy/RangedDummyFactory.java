@@ -3,9 +3,9 @@ package com.bryjamin.dancedungeon.factories.enemy;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.ai.ActionScoreCalculator;
 import com.bryjamin.dancedungeon.ecs.ai.UtilityAiCalculator;
+import com.bryjamin.dancedungeon.ecs.ai.actions.BasicAttackAction;
 import com.bryjamin.dancedungeon.ecs.ai.actions.EndTurnAction;
-import com.bryjamin.dancedungeon.ecs.ai.actions.RangedAttackAction;
-import com.bryjamin.dancedungeon.ecs.ai.actions.RangedMoveToAction;
+import com.bryjamin.dancedungeon.ecs.ai.actions.MovementAction;
 import com.bryjamin.dancedungeon.ecs.ai.calculations.CanUseSkillCalculator;
 import com.bryjamin.dancedungeon.ecs.ai.calculations.IsInRangeCalculator;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
@@ -18,6 +18,7 @@ import com.bryjamin.dancedungeon.factories.player.UnitFactory;
 import com.bryjamin.dancedungeon.factories.spells.FireballSkill;
 import com.bryjamin.dancedungeon.factories.spells.MovementDescription;
 import com.bryjamin.dancedungeon.factories.spells.SkillDescription;
+import com.bryjamin.dancedungeon.factories.spells.basic.MageAttack;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
@@ -35,6 +36,7 @@ public class RangedDummyFactory {
     public static final float height = Measure.units(5f);
 
     private static final int basicAttackRange = 3;
+    private static final int movementRange = 4;
 
     private UnitFactory unitFactory = new UnitFactory();
 
@@ -58,15 +60,15 @@ public class RangedDummyFactory {
                 .build();
 
         ComponentBag bag = unitFactory.baseEnemyUnitBag(statComponent);
-        bag.add(new SkillsComponent(movement, fireball));
+        bag.add(new SkillsComponent(new MageAttack()));
         bag.add(new CenteringBoundaryComponent(width, height));
         bag.add(new HitBoxComponent(new HitBox(width, height)));
 
         bag.add(new UtilityAiComponent(
                 new UtilityAiCalculator(
                         new ActionScoreCalculator(new EndTurnAction()),
-                        new ActionScoreCalculator(new RangedMoveToAction(movement, basicAttackRange), new IsInRangeCalculator(-100, 100, basicAttackRange), new CanUseSkillCalculator(movement, 0f, null)),
-                        new ActionScoreCalculator(new RangedAttackAction(fireball), new IsInRangeCalculator(150, -10, basicAttackRange), new CanUseSkillCalculator(fireball, 0f, null)
+                        new ActionScoreCalculator(new MovementAction(), new IsInRangeCalculator(-100, 100, basicAttackRange), new CanUseSkillCalculator(movement, 0f, null)),
+                        new ActionScoreCalculator(new BasicAttackAction(), new IsInRangeCalculator(150, -10, basicAttackRange), new CanUseSkillCalculator(fireball, 0f, null)
                         )
                 )));
 
