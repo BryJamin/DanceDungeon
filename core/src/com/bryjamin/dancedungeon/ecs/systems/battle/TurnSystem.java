@@ -7,20 +7,17 @@ import com.artemis.EntitySystem;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.ecs.components.actions.UtilityAiComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.MovementRangeComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
-import com.bryjamin.dancedungeon.factories.player.spells.MovementDescription;
-import com.bryjamin.dancedungeon.factories.player.spells.SkillDescription;
 
 import static com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem.TURN.ALLY;
 import static com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem.TURN.ENEMY;
 
 /**
  * Created by BB on 21/10/2017.
- *
+ * <p>
  * System used to keep track of blob and enemy turns
  */
 
@@ -30,9 +27,6 @@ public class TurnSystem extends EntitySystem {
 
     private ComponentMapper<EnemyComponent> enemyMapper;
     private ComponentMapper<PlayerControlledComponent> playerMapper;
-
-
-    private ComponentMapper<MovementRangeComponent> movementRangeMapper;
 
     private ComponentMapper<SkillsComponent> skillMapper;
 
@@ -64,7 +58,11 @@ public class TurnSystem extends EntitySystem {
         ENEMY, ALLY
     }
 
-    public TURN turn = ENEMY;
+    private TURN turn = ENEMY;
+
+    public TURN getTurn() {
+        return turn;
+    }
 
     @SuppressWarnings("unchecked")
     public TurnSystem() {
@@ -80,6 +78,8 @@ public class TurnSystem extends EntitySystem {
         } else if (playerMapper.has(e)) {
             allyTurnEntities.add(e);
         }
+
+        turnMapper.get(e).reset();
 
     }
 
@@ -106,8 +106,16 @@ public class TurnSystem extends EntitySystem {
 
         if (turn == ENEMY) {
             currentTurnEntities.addAll(enemyTurnEntities);
+
+            for (Entity e : allyTurnEntities) {
+                skillMapper.get(e).endTurn();
+                turnMapper.get(e).reset();
+            }
+
         } else if (turn == ALLY) {
             currentTurnEntities.addAll(allyTurnEntities);
+            world.getSystem(SelectedTargetSystem.class).reselectEntityAfterActionComplete();
+
         }
 
         state = STATE.NEXT;
@@ -161,18 +169,16 @@ public class TurnSystem extends EntitySystem {
                 if (!playerMapper.has(currentEntity)) {
                     currentEntity.getComponent(TurnComponent.class).state = TurnComponent.State.DECIDING;
 
-                    if(skillMapper.has(currentEntity)){
+                    if (skillMapper.has(currentEntity)) {
                         skillMapper.get(currentEntity).endTurn();
                     }
 
-                } else {
-
-                    for(Entity e : allyTurnEntities){
-                        skillMapper.get(e).endTurn();
+                    if(turnMapper.has(currentEntity)){
+                        turnMapper.get(currentEntity).reset();
                     }
 
-                }
 
+                }
 
                 state = STATE.WAITING;
 
@@ -184,32 +190,13 @@ public class TurnSystem extends EntitySystem {
 
                 TurnComponent turnComponent = currentEntity.getComponent(TurnComponent.class);
 
-
                 if (!playerMapper.has(currentEntity)) {
 
                     switch (turnComponent.state) {
 
                         case DECIDING:
 
-                            //TODO change to just be a varaible that states the turn is over?
-
-                            SkillsComponent skillsComponent = currentEntity.getComponent(SkillsComponent.class);
-
-                            boolean continueTurn = false;
-
-
-                            for(SkillDescription skillDescription : skillsComponent.skillDescriptions){
-
-                                if(skillDescription instanceof MovementDescription){
-                                    System.out.println("move skill + " + skillDescription.canCast(world, currentEntity));
-                                }
-
-
-                                continueTurn = skillDescription.canCast(world, currentEntity);
-                                if(continueTurn) break;
-                            }
-
-                            if (!continueTurn) {
+                            if (!turnComponent.hasActions()) {
                                 turnComponent.state = TurnComponent.State.END;
                             } else {
 
@@ -225,8 +212,9 @@ public class TurnSystem extends EntitySystem {
 
                         case WAITING:
 
-                            if (turnComponent.turnOverCondition.condition(world, currentEntity))
+                            if (!world.getSystem(ActionCameraSystem.class).isProcessing()) {
                                 turnComponent.state = TurnComponent.State.DECIDING;
+                            }
 
                             break;
 
@@ -247,3 +235,4 @@ public class TurnSystem extends EntitySystem {
 
 
 }
+

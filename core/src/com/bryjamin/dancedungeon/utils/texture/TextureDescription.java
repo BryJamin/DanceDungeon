@@ -7,8 +7,8 @@ package com.bryjamin.dancedungeon.utils.texture;
 public class TextureDescription extends DrawableDescription {
 
 
-    private final String region;
-    private final int index;
+    private String region;
+    private int index;
 
     public TextureDescription(Builder tdb) {
         super(tdb);
@@ -28,6 +28,14 @@ public class TextureDescription extends DrawableDescription {
             this.region = region;
         }
 
+
+        public Builder(TextureDescription tf)
+        {
+            super(tf);
+            this.region = tf.region;
+            this.index = tf.index;
+        }
+
         public Builder region(String val)
         { region = val; return getThis(); }
 
@@ -44,9 +52,17 @@ public class TextureDescription extends DrawableDescription {
         }
     }
 
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
 
     public String getRegion() {
         return region;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
     }
 
     public int getIndex() {

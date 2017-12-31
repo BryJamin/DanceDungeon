@@ -3,6 +3,7 @@ package com.bryjamin.dancedungeon.ecs.ai;
 import com.artemis.Entity;
 import com.artemis.World;
 import com.badlogic.gdx.utils.Array;
+import com.bryjamin.dancedungeon.ecs.ai.calculations.ActionScoreCalculation;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 
 /**
@@ -16,16 +17,24 @@ public class ActionScoreCalculator {
         this.actionScoreCalculations.addAll(actionScoreCalculations);
     };
 
-    private float score = 0;
+    private Float score = 0f;
     private WorldAction worldAction;
     private Array<com.bryjamin.dancedungeon.ecs.ai.calculations.ActionScoreCalculation> actionScoreCalculations = new Array<com.bryjamin.dancedungeon.ecs.ai.calculations.ActionScoreCalculation>();
 
 
     public void calculateScore(World world, Entity entity){
 
-        float score = 0;
+        Float score = 0f;
 
-        for(com.bryjamin.dancedungeon.ecs.ai.calculations.ActionScoreCalculation actionScoreCalculation: actionScoreCalculations){
+        for(ActionScoreCalculation actionScoreCalculation: actionScoreCalculations){
+
+            Float f = actionScoreCalculation.calculateScore(world, entity);
+
+            if(f == null){
+                score = null;
+                break;
+            }
+
             score += actionScoreCalculation.calculateScore(world, entity);
         }
 
@@ -33,7 +42,7 @@ public class ActionScoreCalculator {
 
     }
 
-    public float getScore() {
+    public Float getScore() {
         return score;
     }
 

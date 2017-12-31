@@ -19,17 +19,19 @@ import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ParentChildSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.ActionOnTapSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.ConditionalActionSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BattleMessageSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BlinkOnHitSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BulletSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.DeathSystem;
-import com.bryjamin.dancedungeon.ecs.systems.battle.DispelSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.EndBattleSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ExplosionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.HealthSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.NoMoreActionsSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.SelectedTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
+import com.bryjamin.dancedungeon.ecs.systems.graphical.AnimationSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.BoundsDrawingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.FadeSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.FollowPositionSystem;
@@ -39,7 +41,9 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UIRenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
 import com.bryjamin.dancedungeon.factories.decor.FloorFactory;
-import com.bryjamin.dancedungeon.factories.player.spells.SpellFactory;
+import com.bryjamin.dancedungeon.factories.player.Unit;
+import com.bryjamin.dancedungeon.factories.player.UnitMap;
+import com.bryjamin.dancedungeon.factories.spells.SpellFactory;
 import com.bryjamin.dancedungeon.screens.WorldContainer;
 import com.bryjamin.dancedungeon.screens.battle.BattleDetails;
 import com.bryjamin.dancedungeon.utils.Measure;
@@ -89,26 +93,28 @@ public class BattleWorld extends WorldContainer {
                         new ConditionalActionSystem(),
                         new ExplosionSystem(),
                         new BulletSystem(),
-                        new DispelSystem(),
                         new TurnSystem(),
                         new HealthSystem(),
                         new ParentChildSystem(),
                         new BlinkOnHitSystem(),
-                        new DeathSystem(),
                         new ExpireSystem(),
                         new EndBattleSystem(game)
                 )
                 .with(WorldConfigurationBuilder.Priority.LOWEST,
                         new ActionOnTapSystem(gameport),
+                        new ActionCameraSystem(),
                         new FadeSystem(),
+                        new NoMoreActionsSystem(),
                         new PlayerGraphicalTargetingSystem(),
                         new BattleMessageSystem(gameport),
+                        new AnimationSystem(game),
                         new RenderingSystem(game, gameport),
                         new HealthBarSystem(game, gameport),
                         new UIRenderingSystem(game, gameport),
                         new BoundsDrawingSystem(batch),
 
-                        new SelectedTargetSystem()
+                        new SelectedTargetSystem(),
+                        new DeathSystem()
                 )
                 .build();
 
@@ -137,10 +143,15 @@ public class BattleWorld extends WorldContainer {
 
     private void setUpPlayerLocations(World world, BattleDetails battleDetails){
 
-        for(int i = 0; i < battleDetails.getPlayerParty().size; i++) {
-            ComponentBag player = battleDetails.getPlayerParty().get(i);
+        UnitMap unitMap = new UnitMap();
 
-            if (player != null) {
+        for(int i = 0; i < battleDetails.getPlayerParty().size; i++) {
+
+            if (battleDetails.getPlayerParty().get(i) != null) {
+
+                Unit unit = battleDetails.getPlayerParty().get(i);
+                ComponentBag player = unitMap.getUnit(unit);
+
                 Coordinates c = player.getComponent(CoordinateComponent.class).coordinates;
                 player.getComponent(CoordinateComponent.class).freePlacement = true;
 
@@ -258,13 +269,14 @@ public class BattleWorld extends WorldContainer {
         public boolean touchDown(int screenX, int screenY, int pointer, int button) {
             Vector3 input = gameport.unproject(new Vector3(screenX, screenY , 0));
 
-            if(world.getSystem(TurnSystem.class).turn == TurnSystem.TURN.ALLY) {
-
-                if(world.getSystem(SelectedTargetSystem.class).selectCharacter(input.x, input.y)) return true;
+            if(world.getSystem(TurnSystem.class).getTurn() == TurnSystem.TURN.ALLY) {
 
                 if(world.getSystem(ActionOnTapSystem.class).touch(input.x, input.y)){
                     return  true;
                 };
+
+                if(world.getSystem(SelectedTargetSystem.class).selectCharacter(input.x, input.y)) return true;
+
             }
             return false;
         }

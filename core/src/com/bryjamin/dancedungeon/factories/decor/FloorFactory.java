@@ -2,12 +2,12 @@ package com.bryjamin.dancedungeon.factories.decor;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.MathUtils;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.factories.AbstractFactory;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
-import com.bryjamin.dancedungeon.utils.texture.DrawableDescription;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
@@ -37,7 +37,7 @@ public class FloorFactory extends AbstractFactory {
         float tileHeightSize = height / rows;
 
 
-        DrawableDescription.DrawableDescriptionBuilder descriptionBuilder = new TextureDescription.Builder(TextureStrings.BLOCK)
+        TextureDescription.Builder descriptionBuilder = new TextureDescription.Builder(TextureStrings.FLOOR_TEXTURE_BRICK)
                 .height(tileHeightSize)
                 .width(tileWidthSize);
 
@@ -52,10 +52,15 @@ public class FloorFactory extends AbstractFactory {
                 Color color2 = j % 2 != 0 ? new Color(Color.SKY) : new Color(Color.LIGHT_GRAY);
 
 
+                int index1 = j % 2 != 0 ? 0 : 6;
+                int index2 = j % 2 != 0 ? 6 : 0;
+
                 drawableComponent.drawables.add(descriptionBuilder
+                        //.index(i % 2 != 0 ? index1 : index2)
+                        .index(MathUtils.random(11))
                         .offsetX(i * tileWidthSize)
                         .offsetY(j * tileHeightSize)
-                        .color(i % 2 != 0 ? color1 : color2)
+                        .color(new Color(Color.WHITE))
                         .build());
 
             }

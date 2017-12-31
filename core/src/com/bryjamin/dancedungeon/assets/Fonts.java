@@ -9,5 +9,7 @@ public class Fonts {
 
     public static final String MEDIUM = "font.ttf";
 
+    public static final String SMALL = "small.ttf";
+
 
 }

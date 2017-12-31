@@ -1,6 +1,5 @@
 package com.bryjamin.dancedungeon.screens.strategy;
 
-import com.artemis.Aspect;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.GL20;
@@ -55,9 +54,6 @@ public class StrategyScreen extends AbstractScreen {
         gamecam.update();
         mapWorld.process(delta);
         handleInput(delta);
-
-        System.out.println(mapWorld.getWorld().getAspectSubscriptionManager().get(Aspect.all()).getEntities().size());
-
 
     }
 

@@ -28,12 +28,20 @@ public class UtilityAiCalculator {
 
         for(ActionScoreCalculator actionScoreCalculator : actionCalculators){
             actionScoreCalculator.calculateScore(world, entity);
+
         }
+
+        //Highest Score is First
 
         actionCalculators.sort(new Comparator<ActionScoreCalculator>() {
             @Override
             public int compare(ActionScoreCalculator ac1, ActionScoreCalculator ac2) {
-                return ac1.getScore() > ac2.getScore() ? -1 : ac1.getScore() == ac2.getScore() ? 0 : 1;
+
+                if(ac1.getScore() == null && ac2.getScore() == null) return 0;
+                if(ac1.getScore() == null) return 1;
+                if(ac2.getScore() == null) return -1;
+
+                return ac1.getScore() > ac2.getScore() ? -1 : ac1.getScore().equals(ac2.getScore()) ? 0 : 1;
             }
         });
 

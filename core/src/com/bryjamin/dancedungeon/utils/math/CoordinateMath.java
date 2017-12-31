@@ -20,7 +20,28 @@ public class CoordinateMath {
 
     }
 
+
+    /**
+     * Checks if the coordinate c1 is in range of coordinate c2,
+     *
+     * Range in this instance uses only horizontal and vertical movement.
+     *
+     * A range of 1 for coordinate (0,0), returns true for values (0,0) (1,0), (0,1), (-1,0), (0, -1)
+     *
+     * For coordinate (1,1) the range would need to be 2, for c1 = (0,0) to return true.
+     */
     public static boolean isWithinRange(Coordinates c1, Coordinates c2, int range){
+
+        //Convert c1 and c2 into 0 co-ordinates
+        int normX = c2.getX() - c1.getX();
+        int normY = c2.getY() - c1.getY();
+
+        return Math.abs(normX) + Math.abs(normY) <= range;
+
+    }
+
+
+    public static boolean isWithinSqaureRange(Coordinates c1, Coordinates c2, int range){
 
         boolean isWithinXRange = Math.abs(c1.getX() - c2.getX()) <= range;
         boolean isWithinYRange = Math.abs(c1.getY() - c2.getY()) <= range;

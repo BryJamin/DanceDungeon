@@ -1,6 +1,7 @@
 package com.bryjamin.dancedungeon.screens.battle;
 
 import com.badlogic.gdx.utils.Array;
+import com.bryjamin.dancedungeon.factories.player.Unit;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
 
 /**
@@ -10,12 +11,12 @@ import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
 public class BattleDetails {
 
     //Max party size is 4
-    private Array<ComponentBag> playerParty = new Array<ComponentBag>();
+    private Array<Unit> playerParty = new Array<Unit>();
 
     private Array<ComponentBag> enemyParty = new Array<ComponentBag>();
 
 
-    public Array<ComponentBag> getPlayerParty() {
+    public Array<Unit> getPlayerParty() {
         return playerParty;
     }
 
@@ -24,7 +25,7 @@ public class BattleDetails {
     }
 
 
-    public void setPlayerParty(Array<ComponentBag> playerParty) {
+    public void setPlayerParty(Array<Unit> playerParty) {
         this.playerParty = playerParty;
     }
 

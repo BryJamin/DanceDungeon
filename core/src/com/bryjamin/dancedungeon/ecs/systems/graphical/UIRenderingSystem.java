@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.assets.FileStrings;
+import com.bryjamin.dancedungeon.assets.Fonts;
 
 /**
  * Created by BB on 13/11/2017.
@@ -30,7 +31,7 @@ public class UIRenderingSystem extends BaseSystem{
         this.gamecam = gameport.getCamera();
         this.assetManager = game.assetManager;
         this.atlas = assetManager.get(FileStrings.SPRITE_ATLAS_FILE, TextureAtlas.class);
-        this.currencyFont = assetManager.get(FileStrings.DEFAULT_FONT_NAME, BitmapFont.class);
+        this.currencyFont = assetManager.get(Fonts.MEDIUM, BitmapFont.class);
     }
 
     @Override
