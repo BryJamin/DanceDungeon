@@ -175,15 +175,20 @@ public class SelectedTargetSystem extends EntitySystem {
         //System.out.println(playableCharacter.getComponent(TurnActionMonitorComponent.class).hasActions());
 
         //This only exists for players
-        if (!playableCharacter.getComponent(TurnComponent.class).hasActions() ||
-                world.getSystem(ActionCameraSystem.class).checkProcessing()) return;
+        //if(playerControlledM.has(selectedEntity)) {
+        if(playerControlledM.has(playableCharacter)) {
+            if (!playableCharacter.getComponent(TurnComponent.class).hasActions() ||
+                    world.getSystem(ActionCameraSystem.class).checkProcessing()) return;
+        } else {
+            if(world.getSystem(ActionCameraSystem.class).checkProcessing()) return;
+        }
 
 
         this.selectedEntity = playableCharacter;
 
         this.clear(); // Clear buttons and recticle before remaking them.
 
-        createTargetRecticle(world, selectedEntity);
+        createTargetReticle(world, selectedEntity);
         createUnitInformationEntity(world, selectedEntity);
 
 
@@ -222,7 +227,7 @@ public class SelectedTargetSystem extends EntitySystem {
 
     }
 
-    private void createTargetRecticle(World world, Entity entity){
+    private void createTargetReticle(World world, Entity entity){
 
         float width = entity.getComponent(CenteringBoundaryComponent.class).bound.width * 2.5f;
         float height = entity.getComponent(CenteringBoundaryComponent.class).bound.height * 2.5f;
