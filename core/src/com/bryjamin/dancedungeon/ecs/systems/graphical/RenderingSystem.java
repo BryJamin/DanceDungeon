@@ -146,7 +146,10 @@ public class RenderingSystem extends EntitySystem {
                 TextureDescription textureDescription = (TextureDescription) drawableDescription;
 
                 TextureRegion tr = atlas.findRegion(textureDescription.getRegion(), textureDescription.getIndex());
-                if (tr == null) tr = atlas.findRegion(TextureStrings.BLOCK);
+                if (tr == null) {
+                    System.out.println(textureDescription.getRegion() + textureDescription.getIndex());
+                    tr = atlas.findRegion(TextureStrings.BLOCK);
+                }
 
                 batch.draw(tr,
                         positionComponent.getX() + drawableDescription.getOffsetX(),

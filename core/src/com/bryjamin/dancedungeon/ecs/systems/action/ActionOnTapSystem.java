@@ -43,7 +43,6 @@ public class ActionOnTapSystem extends EntitySystem {
     public boolean touch(float x, float y){
 
         for(Entity e : this.getEntities()) {
-
             ActionOnTapComponent actionOnTapComponent = e.getComponent(ActionOnTapComponent.class);
 
             if(!actionOnTapComponent.enabled) continue;

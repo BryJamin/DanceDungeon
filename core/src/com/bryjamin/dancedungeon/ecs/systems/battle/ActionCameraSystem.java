@@ -103,6 +103,6 @@ public class ActionCameraSystem extends EntitySystem {
 
     @Override
     protected boolean checkProcessing() {
-        return actionQueue.size != 0;
+        return actionQueue.size != 0 || !this.getEntities().isEmpty();
     }
 }

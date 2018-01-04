@@ -26,6 +26,7 @@ import com.bryjamin.dancedungeon.ecs.systems.battle.BulletSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.DeathSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.EndBattleSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ExplosionSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.GenerateTargetsSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.HealthSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.NoMoreActionsSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.SelectedTargetSystem;
@@ -112,7 +113,7 @@ public class BattleWorld extends WorldContainer {
                         new HealthBarSystem(game, gameport),
                         new UIRenderingSystem(game, gameport),
                         new BoundsDrawingSystem(batch),
-
+                        new GenerateTargetsSystem(),
                         new SelectedTargetSystem(),
                         new DeathSystem()
                 )

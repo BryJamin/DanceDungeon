@@ -41,8 +41,6 @@ public class BattleMessageSystem extends BaseSystem {
 
     public Entity createWarningMessage() {
 
-        System.out.println("Inside");
-
         float width = gameport.getWorldWidth();
 
         Entity e = world.createEntity();

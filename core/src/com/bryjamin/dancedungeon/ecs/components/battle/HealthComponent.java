@@ -15,6 +15,8 @@ public class HealthComponent extends Component {
     public float maxHealth;
 
     private float accumulatedDamage;
+    private float accumulatedHealing;
+
 
     public HealthComponent(float health) {
         this.health = health;
@@ -30,12 +32,24 @@ public class HealthComponent extends Component {
         this.accumulatedDamage += accumulatedDamage;
     }
 
+    public void applyHealing(float accumulatedHealing){
+        this.accumulatedHealing += accumulatedHealing;
+    }
+
     public float getAccumulatedDamage() {
         return accumulatedDamage;
     }
 
+    public float getAccumulatedHealing() {
+        return accumulatedHealing;
+    }
+
     public void clearDamage(){
         accumulatedDamage = 0;
+    }
+
+    public void clearHealing(){
+        accumulatedHealing = 0;
     }
 
 }

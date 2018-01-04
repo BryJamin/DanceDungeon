@@ -1,6 +1,5 @@
 package com.bryjamin.dancedungeon.factories.player;
 
-import com.artemis.Aspect;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
@@ -31,6 +30,7 @@ public class UnitFactory {
         bag.add(new CoordinateComponent());
         bag.add(new MoveToComponent(Measure.units(60f))); //TODO speed should be based on the class
         bag.add(new VelocityComponent());
+        bag.add(new TargetComponent());
 
         //Graphical
         bag.add(new BlinkOnHitComponent());
@@ -45,14 +45,12 @@ public class UnitFactory {
     public ComponentBag basePlayerUnitBag(StatComponent statComponent){
         ComponentBag bag = baseUnitBag(statComponent);
         bag.add(new PlayerControlledComponent());
-        bag.add(new TargetComponent(Aspect.all(EnemyComponent.class, CoordinateComponent.class)));
         return bag;
     }
 
     public ComponentBag baseEnemyUnitBag(StatComponent statComponent){
         ComponentBag bag = baseUnitBag(statComponent);
         bag.add(new EnemyComponent());
-        bag.add(new TargetComponent(Aspect.all(PlayerControlledComponent.class, CoordinateComponent.class)));
         return bag;
     }
 

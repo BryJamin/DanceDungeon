@@ -36,6 +36,9 @@ public class HealthSystem extends EntityProcessingSystem {
         if(hc.getAccumulatedDamage() > 0 && blinkOnHitMapper.has(e))
             blinkOnHitMapper.get(e).isHit = true;
 
+
+        hc.health = hc.health + hc.getAccumulatedHealing() > hc.maxHealth ? hc.maxHealth : hc.health + hc.getAccumulatedHealing();
+        hc.clearHealing();
         hc.health = hc.health - hc.getAccumulatedDamage();
         hc.clearDamage();
         if(hc.health <= 0) e.edit().add(new DeadComponent());

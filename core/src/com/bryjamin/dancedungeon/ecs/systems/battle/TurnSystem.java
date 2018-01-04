@@ -51,7 +51,7 @@ public class TurnSystem extends EntitySystem {
         WAITING, NEXT
     }
 
-    private STATE state = STATE.NEXT;
+    private STATE battleState = STATE.NEXT;
 
 
     public enum TURN {
@@ -91,7 +91,7 @@ public class TurnSystem extends EntitySystem {
 
         try {
             if (currentEntity.equals(e)) {
-                state = STATE.NEXT;
+                battleState = STATE.NEXT;
             }
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -118,7 +118,7 @@ public class TurnSystem extends EntitySystem {
 
         }
 
-        state = STATE.NEXT;
+        battleState = STATE.NEXT;
 
         processingFlag = true;
 
@@ -135,33 +135,29 @@ public class TurnSystem extends EntitySystem {
     @Override
     protected void processSystem() {
 
+        //if (world.getSystem(ActionCameraSystem.class).isProcessing()) return;
 
-        switch (state) {
+
+        switch (battleState) {
 
             case NEXT:
                 switch (turn) {
 
                     case ENEMY:
 
-
                         if (currentTurnEntities.size <= 0) {
                             setUp(ALLY);
                             return;
                         }
 
-
                         break;
 
                     case ALLY:
-
                         if (currentTurnEntities.size <= 0) {
                             setUp(ENEMY);
                             return;
                         }
-
-
                         // break;
-
                 }
 
 
@@ -180,58 +176,66 @@ public class TurnSystem extends EntitySystem {
 
                 }
 
-                state = STATE.WAITING;
+                battleState = STATE.WAITING;
 
 
                 break;
 
 
             case WAITING:
-
                 TurnComponent turnComponent = currentEntity.getComponent(TurnComponent.class);
-
                 if (!playerMapper.has(currentEntity)) {
-
-                    switch (turnComponent.state) {
-
-                        case DECIDING:
-
-                            if (!turnComponent.hasActions()) {
-                                turnComponent.state = TurnComponent.State.END;
-                            } else {
-
-                                turnComponent.state = TurnComponent.State.WAITING;
-
-                                if (utilityAiMapper.has(currentEntity)) {
-                                    utilityAiMapper.get(currentEntity).utilityAiCalculator.performAction(world, currentEntity);
-                                }
-
-                            }
-
-                            break;
-
-                        case WAITING:
-
-                            if (!world.getSystem(ActionCameraSystem.class).isProcessing()) {
-                                turnComponent.state = TurnComponent.State.DECIDING;
-                            }
-
-                            break;
-
-                        case END:
-
-                            state = STATE.NEXT;
-                            break;
-                    }
-
+                    aiTurn(turnComponent);
                 }
-
                 break;
 
 
         }
 
     }
+
+
+    /**
+     * Runs a entity's turn if it is not being controlled by the player
+     * If an entity has no actions left, it's turn is automatically ended.
+     * @param turnComponent
+     */
+    private void aiTurn(TurnComponent turnComponent){
+
+        switch (turnComponent.state) {
+
+            case DECIDING:
+
+                if (!turnComponent.hasActions()) {
+                    turnComponent.state = TurnComponent.State.END;
+                } else {
+
+                    turnComponent.state = TurnComponent.State.WAITING;
+
+                    if (utilityAiMapper.has(currentEntity)) {
+                        utilityAiMapper.get(currentEntity).utilityAiCalculator.performAction(world, currentEntity);
+                    }
+
+                }
+
+                break;
+
+            case WAITING:
+
+                if (!world.getSystem(ActionCameraSystem.class).isProcessing()) {
+                    turnComponent.state = TurnComponent.State.DECIDING;
+                }
+
+                break;
+
+            case END:
+
+                battleState = STATE.NEXT;
+                break;
+        }
+
+    }
+
 
 
 }
