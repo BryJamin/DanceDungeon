@@ -48,10 +48,10 @@ public class TurnSystem extends EntitySystem {
 
 
     private enum STATE {
-        WAITING, NEXT
+        WAITING, NEXT_TURN
     }
 
-    private STATE battleState = STATE.NEXT;
+    private STATE battleState = STATE.NEXT_TURN;
 
 
     public enum TURN {
@@ -91,7 +91,7 @@ public class TurnSystem extends EntitySystem {
 
         try {
             if (currentEntity.equals(e)) {
-                battleState = STATE.NEXT;
+                battleState = STATE.NEXT_TURN;
             }
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -106,19 +106,18 @@ public class TurnSystem extends EntitySystem {
 
         if (turn == ENEMY) {
             currentTurnEntities.addAll(enemyTurnEntities);
-
-            for (Entity e : allyTurnEntities) {
-                skillMapper.get(e).endTurn();
-                turnMapper.get(e).reset();
-            }
-
         } else if (turn == ALLY) {
             currentTurnEntities.addAll(allyTurnEntities);
             world.getSystem(SelectedTargetSystem.class).reselectEntityAfterActionComplete();
-
         }
 
-        battleState = STATE.NEXT;
+        for (Entity e : currentTurnEntities) { //Resets the turn for each entity
+            skillMapper.get(e).endTurn();
+            turnMapper.get(e).reset();
+        }
+
+
+        battleState = STATE.NEXT_TURN;
 
         processingFlag = true;
 
@@ -140,52 +139,35 @@ public class TurnSystem extends EntitySystem {
 
         switch (battleState) {
 
-            case NEXT:
-                switch (turn) {
+            case NEXT_TURN:
 
-                    case ENEMY:
-
-                        if (currentTurnEntities.size <= 0) {
+                //TODO what if the set up has an entity that is less than zero?
+                if (currentTurnEntities.size <= 0) { //Sets up New set of turn entities when current entiteis are finished
+                    switch (turn) {
+                        case ENEMY:
                             setUp(ALLY);
-                            return;
-                        }
-
-                        break;
-
-                    case ALLY:
-                        if (currentTurnEntities.size <= 0) {
+                            break;
+                        case ALLY:
                             setUp(ENEMY);
-                            return;
-                        }
-                        // break;
+                            break;
+                    }
                 }
 
+                //If the next turn has an array size of zero, switch to the previous turn
+                if(currentTurnEntities.size <= 0){
+                    turn = turn == ENEMY ? ALLY : ENEMY;
+                    return;
+                }
 
                 currentEntity = currentTurnEntities.pop();
-                if (!playerMapper.has(currentEntity)) {
-                    currentEntity.getComponent(TurnComponent.class).state = TurnComponent.State.DECIDING;
-
-                    if (skillMapper.has(currentEntity)) {
-                        skillMapper.get(currentEntity).endTurn();
-                    }
-
-                    if(turnMapper.has(currentEntity)){
-                        turnMapper.get(currentEntity).reset();
-                    }
-
-
-                }
-
                 battleState = STATE.WAITING;
-
-
                 break;
 
 
             case WAITING:
                 TurnComponent turnComponent = currentEntity.getComponent(TurnComponent.class);
                 if (!playerMapper.has(currentEntity)) {
-                    aiTurn(turnComponent);
+                    calculateAiTurn(turnComponent);
                 }
                 break;
 
@@ -200,7 +182,7 @@ public class TurnSystem extends EntitySystem {
      * If an entity has no actions left, it's turn is automatically ended.
      * @param turnComponent
      */
-    private void aiTurn(TurnComponent turnComponent){
+    private void calculateAiTurn(TurnComponent turnComponent){
 
         switch (turnComponent.state) {
 
@@ -222,15 +204,15 @@ public class TurnSystem extends EntitySystem {
 
             case WAITING:
 
+                //Before making a decision check it see if an action is currently playing
                 if (!world.getSystem(ActionCameraSystem.class).isProcessing()) {
                     turnComponent.state = TurnComponent.State.DECIDING;
                 }
 
                 break;
 
-            case END:
-
-                battleState = STATE.NEXT;
+            case END: //Once the turn is over set the turn State to the Next Turn
+                battleState = STATE.NEXT_TURN;
                 break;
         }
 

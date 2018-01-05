@@ -38,7 +38,7 @@ public class BoundsDrawingSystem extends EntitySystem {
 
     @Override
     protected boolean checkProcessing() {
-        return true;
+        return false;
     }
 
     @Override

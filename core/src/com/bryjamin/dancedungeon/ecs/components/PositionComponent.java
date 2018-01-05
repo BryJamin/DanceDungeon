@@ -27,6 +27,10 @@ public class PositionComponent extends Component {
         this(0,0);
     }
 
+    public PositionComponent(PositionComponent pc){
+        this(pc.getX(),pc.getY());
+    }
+
     public float getX(){
         return position.x;
     }

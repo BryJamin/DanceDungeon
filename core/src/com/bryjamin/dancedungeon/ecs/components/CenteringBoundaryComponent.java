@@ -21,6 +21,10 @@ public class CenteringBoundaryComponent extends Component {
         this.bound = bound;
     }
 
+    public CenteringBoundaryComponent(CenteringBoundaryComponent cbc){
+        this(new Rectangle(cbc.bound));
+    }
+
     public CenteringBoundaryComponent(float width, float height){
         this.bound = new Rectangle(0, 0, width, height);
     }

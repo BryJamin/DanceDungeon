@@ -89,7 +89,7 @@ public class TargetingFactory {
 
             final Coordinates attackC = tileSystem.getOccupiedMap().findKey(e, true);
 
-            Entity redBox = BagToEntity.bagToEntity(world.createEntity(), highlightBox(tileSystem.getRectangleUsingCoordinates(attackC), new Color(Color.RED)));
+            Entity redBox = BagToEntity.bagToEntity(world.createEntity(), highlightBox(tileSystem.getRectangleUsingCoordinates(attackC), new Color(Color.SKY)));
             entityArray.add(redBox);
 
             redBox.edit().add(new ActionOnTapComponent(new WorldAction() {

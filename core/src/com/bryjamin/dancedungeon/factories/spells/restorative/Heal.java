@@ -40,6 +40,8 @@ public class Heal extends CooldownSpellDescription {
     @Override
     public void cast(World world, Entity entity, Coordinates target) {
 
+        ready = false;
+
         for (Entity e : world.getSystem(TileSystem.class).getCoordinateMap().get(target)) {
             if (world.getMapper(HealthComponent.class).has(e)) {
                 e.getComponent(HealthComponent.class).applyHealing(entity.getComponent(StatComponent.class).magic);
@@ -62,9 +64,7 @@ public class Heal extends CooldownSpellDescription {
                 .identifier(SLASH_DRAWABLE_ID)
                 .color(Color.GREEN)
                 .width(rectangle.getWidth())
-                //.color(new Color(Colors.AMOEBA_FAST_PURPLE))
                 .height(rectangle.getHeight())
-                //.scaleX(-1)
                 .build()));
         slash.edit().add(new AnimationStateComponent().put(SLASH_DRAWABLE_ID, SLASH_ANIMATION));
         slash.edit().add(new AnimationMapComponent().put(SLASH_ANIMATION, TextureStrings.SKILLS_HEAL, 0.2f, Animation.PlayMode.NORMAL));
@@ -100,7 +100,14 @@ public class Heal extends CooldownSpellDescription {
     public boolean canCast(World world, Entity entity) {
         return ready;
     }
-/*
+
+    @Override
+    public String getIcon() {
+        return "skills/Medicine";
+    }
+
+
+    /*
     @Override
     public void endTurnUpdate() {
 
