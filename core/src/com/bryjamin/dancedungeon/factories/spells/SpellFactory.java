@@ -103,7 +103,7 @@ public class SpellFactory {
                     return;
                 }
 
-                world.getSystem(SelectedTargetSystem.class).clearTargeting();
+                world.getSystem(SelectedTargetSystem.class).reset();
             }
         }));
         bag.add(new ConditionalActionsComponent(new WorldConditionalAction() {

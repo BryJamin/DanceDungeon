@@ -26,4 +26,18 @@ public class CenterMath {
     }
 
 
+
+
+    /*public static float multipleCenteringGetPosX(float startX, float fullWidth, float widthToCenter, float gap){
+
+
+
+
+
+        return (width / 2) - (widthToCenter / 2);
+    }
+
+*/
+
+
 }

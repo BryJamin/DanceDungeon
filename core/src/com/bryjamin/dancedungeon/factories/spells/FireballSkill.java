@@ -22,7 +22,7 @@ public class FireballSkill extends CooldownSpellDescription {
 
     @Override
     public Array<Entity> createTargeting(World world, final Entity player) {
-        Array<Entity> entityArray = new com.bryjamin.dancedungeon.factories.spells.TargetingFactory().createTargetTiles(world, player, this, 3);
+        Array<Entity> entityArray = new com.bryjamin.dancedungeon.factories.spells.TargetingFactory().createTargetTiles(world, player, this, player.getComponent(StatComponent.class).attackRange);
         return entityArray;
     }
 

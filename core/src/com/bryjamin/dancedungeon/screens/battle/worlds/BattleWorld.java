@@ -99,7 +99,7 @@ public class BattleWorld extends WorldContainer {
                         new ParentChildSystem(),
                         new BlinkOnHitSystem(),
                         new ExpireSystem(),
-                        new EndBattleSystem(game)
+                        new EndBattleSystem(game, battleDetails)
                 )
                 .with(WorldConfigurationBuilder.Priority.LOWEST,
                         new ActionOnTapSystem(gameport),
@@ -120,9 +120,9 @@ public class BattleWorld extends WorldContainer {
                 .build();
 
         world = new World(config);
-
+/*
         setUpPlayerLocations(world, battleDetails);
-        setUpEnemyLocations(world, battleDetails);
+        setUpEnemyLocations(world, battleDetails);*/
 
         BagToEntity.bagToEntity(world.createEntity(), new FloorFactory(game.assetManager).createFloor(originX, originY, width, height,
                 rows, columns));
@@ -196,8 +196,8 @@ public class BattleWorld extends WorldContainer {
 
         TileSystem tileSystem = world.getSystem(TileSystem.class);
 
-        for(int i = 0; i < battleDetails.getEnemyParty().size; i++) {
-            ComponentBag enemy = battleDetails.getEnemyParty().get(i);
+        for(int i = 0; i < battleDetails.getEnemyParties().get(0).size(); i++) {
+            ComponentBag enemy = battleDetails.getEnemyParties().get(0).get(i);
 
             if (enemy != null) {
                 Coordinates c = enemy.getComponent(CoordinateComponent.class).coordinates;
@@ -273,9 +273,12 @@ public class BattleWorld extends WorldContainer {
             if(world.getSystem(TurnSystem.class).getTurn() == TurnSystem.TURN.ALLY) {
 
                 if(world.getSystem(ActionOnTapSystem.class).touch(input.x, input.y)){
+                    System.out.println("??");
                     return  true;
                 };
 
+
+                System.out.println("sigh");
                 if(world.getSystem(SelectedTargetSystem.class).selectCharacter(input.x, input.y)) return true;
 
             }

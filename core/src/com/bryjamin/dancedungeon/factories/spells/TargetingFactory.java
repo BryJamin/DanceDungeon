@@ -57,16 +57,16 @@ public class TargetingFactory {
 
         for (Entity e : getTargetsInRange(world, player.getComponent(CoordinateComponent.class).coordinates, targetComponent.getTargets(world), range)) {
 
-            final Coordinates attackC = tileSystem.getOccupiedMap().findKey(e, true);
+            final Coordinates attackC = tileSystem.getOccupiedMap().get(e);
 
-            Entity redBox = BagToEntity.bagToEntity(world.createEntity(), highlightBox(tileSystem.getRectangleUsingCoordinates(attackC), new Color(Color.RED)));
+            Entity redBox = BagToEntity.bagToEntity(world.createEntity(), highlightBox(tileSystem.createRectangleUsingCoordinates(attackC), new Color(Color.RED)));
             entityArray.add(redBox);
 
             redBox.edit().add(new ActionOnTapComponent(new WorldAction() {
                 @Override
                 public void performAction(World world, final Entity e) {
                     spell.cast(world, player, attackC);
-                    world.getSystem(SelectedTargetSystem.class).clearTargeting();
+                    world.getSystem(SelectedTargetSystem.class).reset();
                 }
             }));
 
@@ -87,16 +87,16 @@ public class TargetingFactory {
 
         for (Entity e : getTargetsInRange(world, player.getComponent(CoordinateComponent.class).coordinates, targetComponent.getAllies(world), range)) {
 
-            final Coordinates attackC = tileSystem.getOccupiedMap().findKey(e, true);
+            final Coordinates attackC = tileSystem.getOccupiedMap().get(e);
 
-            Entity redBox = BagToEntity.bagToEntity(world.createEntity(), highlightBox(tileSystem.getRectangleUsingCoordinates(attackC), new Color(Color.SKY)));
+            Entity redBox = BagToEntity.bagToEntity(world.createEntity(), highlightBox(tileSystem.createRectangleUsingCoordinates(attackC), new Color(Color.SKY)));
             entityArray.add(redBox);
 
             redBox.edit().add(new ActionOnTapComponent(new WorldAction() {
                 @Override
                 public void performAction(World world, final Entity e) {
                     spell.cast(world, player, attackC);
-                    world.getSystem(SelectedTargetSystem.class).clearTargeting();
+                    world.getSystem(SelectedTargetSystem.class).reset();
                 }
             }));
 
@@ -155,7 +155,7 @@ public class TargetingFactory {
 
         for(final Coordinates c : coordinatesWithPathMap.keys()){
 
-            Rectangle r = tileSystem.getRectangleUsingCoordinates(c);
+            Rectangle r = tileSystem.createRectangleUsingCoordinates(c);
 
             Entity box = BagToEntity.bagToEntity(world.createEntity(), highlightBox(r, new Color(Color.WHITE)));
             entityArray.add(box);
@@ -211,7 +211,7 @@ public class TargetingFactory {
 
             for (final Coordinates coordinateOfTarget : targetCoordinateMovementQueueMap.keys()) {
 
-                Entity redBox = BagToEntity.bagToEntity(world.createEntity(), highlightBox(tileSystem.getRectangleUsingCoordinates(coordinateOfTarget), new Color(Color.RED)));
+                Entity redBox = BagToEntity.bagToEntity(world.createEntity(), highlightBox(tileSystem.createRectangleUsingCoordinates(coordinateOfTarget), new Color(Color.RED)));
 
 
                 entityArray.add(redBox);
@@ -302,12 +302,12 @@ public class TargetingFactory {
         for (Entity e : targetEntities) {
 
             Coordinates targetCoordinates = e.getComponent(CoordinateComponent.class).coordinates;
-
             //Checks if the Map contains the target
-            //TODO maybe change occupied Map to a different check, (Like just check the entity is there)
-            if (tileSystem.getOccupiedMap().containsValue(e, true)
-                    && CoordinateMath.isWithinRange(startCoordinates, targetCoordinates, range)) {
 
+            System.out.println(tileSystem.getOccupiedMap().size);
+            //TODO maybe change occupied Map to a different check, (Like just check the entity is there)
+            if (tileSystem.getOccupiedMap().containsKey(e)
+                    && CoordinateMath.isWithinRange(startCoordinates, targetCoordinates, range)) {
                 entityArray.add(e);
             }
 

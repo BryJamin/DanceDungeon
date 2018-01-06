@@ -108,7 +108,7 @@ public class TurnSystem extends EntitySystem {
             currentTurnEntities.addAll(enemyTurnEntities);
         } else if (turn == ALLY) {
             currentTurnEntities.addAll(allyTurnEntities);
-            world.getSystem(SelectedTargetSystem.class).reselectEntityAfterActionComplete();
+           // world.getSystem(SelectedTargetSystem.class).reselectEntityAfterActionComplete();
         }
 
         for (Entity e : currentTurnEntities) { //Resets the turn for each entity
