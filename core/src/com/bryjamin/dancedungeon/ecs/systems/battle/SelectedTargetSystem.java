@@ -66,20 +66,12 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
             e.edit().remove(SelectedEntityComponent.class);
         }
 
+
+
         //if()
 
 
     }
-
-/*    @Override
-    protected void processSystem() {
-
-        if(selectedEntity != null && selectedEntity.getComponent(TurnComponent.class).hasActions()){
-            this.clear();
-
-        }
-
-    }*/
 
 
     @Override
@@ -101,8 +93,6 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
 
     @Override
     public void removed(Entity e) {
-        System.out.println("Removed " + this.getEntities().size());
-
         if(this.getEntities().size() <= 0) {
             this.clear();
         }
@@ -142,22 +132,6 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
             e.edit().remove(SelectedEntityComponent.class);
         }
     }
-
-
-/*    *//**
-     * Removes the current targeting from being displayed
-     *//*
-    public void clearTargeting() {
-
-        IntBag bag = world.getAspectSubscriptionManager().get(Aspect.all(UITargetingComponent.class)).getEntities();
-
-        for (int i = 0; i < bag.size(); i++) {
-            world.getEntity(bag.get(i)).edit().add(new DeadComponent());
-        }
-
-    }*/
-
-
 
 
 
@@ -219,17 +193,12 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
 
         //Can't select a character with no actions
 
-        //System.out.println(playableCharacter.getComponent(TurnActionMonitorComponent.class).hasActions());
-
         //This only exists for players
         //if(playerControlledM.has(selectedEntity)) {
         if(playerControlledM.has(playableCharacter)) {
             if (!playableCharacter.getComponent(TurnComponent.class).hasActions()) return;
-        } else {
         }
 
-
-        System.out.println("RESELECT");
         this.clear(); // Clear buttons and recticle before remaking them.
 
         createTargetReticle(world, playableCharacter);

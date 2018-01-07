@@ -10,7 +10,7 @@ uniform mat4 u_projTrans;
 
 void main() {
         vec4 color = texture2D(u_texture, v_texCoords).rgba;
-        
+
         float gray = (color.r + color.g + color.b) / 7.0; //Make higher or lower to change brightness of greyscale
 
         vec3 grayscale = vec3(gray);

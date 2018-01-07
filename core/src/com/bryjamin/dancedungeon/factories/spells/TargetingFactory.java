@@ -304,7 +304,6 @@ public class TargetingFactory {
             Coordinates targetCoordinates = e.getComponent(CoordinateComponent.class).coordinates;
             //Checks if the Map contains the target
 
-            System.out.println(tileSystem.getOccupiedMap().size);
             //TODO maybe change occupied Map to a different check, (Like just check the entity is there)
             if (tileSystem.getOccupiedMap().containsKey(e)
                     && CoordinateMath.isWithinRange(startCoordinates, targetCoordinates, range)) {

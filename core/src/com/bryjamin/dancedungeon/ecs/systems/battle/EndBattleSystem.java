@@ -13,6 +13,9 @@ import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
+import com.bryjamin.dancedungeon.ecs.systems.input.BattleEvent;
+import com.bryjamin.dancedungeon.ecs.systems.input.GameMap;
+import com.bryjamin.dancedungeon.ecs.systems.input.MapEvent;
 import com.bryjamin.dancedungeon.factories.player.Unit;
 import com.bryjamin.dancedungeon.factories.player.UnitMap;
 import com.bryjamin.dancedungeon.screens.battle.BattleDetails;
@@ -37,33 +40,106 @@ public class EndBattleSystem extends EntitySystem {
     private MainGame game;
 
     private BattleDetails battleDetails;
+    private GameMap gameMap;
 
     private boolean processingFlag = true;
 
-    public EndBattleSystem(MainGame game, BattleDetails battleDetails) {
+
+    private MapEvent.EventType currentEventType;
+
+
+    public EndBattleSystem(MainGame game, GameMap gameMap, BattleDetails battleDetails) {
         super(Aspect.one(EnemyComponent.class, PlayerControlledComponent.class));
         this.battleDetails = battleDetails;
         this.game = game;
-
+        this.gameMap = gameMap;
         //battleDetails.getPlayerParty().
 
 
     }
 
     @Override
+    protected void initialize() {
+        //setupEvent(gameMap.getNextEvent());
+        currentEventType = MapEvent.EventType.BATTLE;
+        setUpEnemyLocations(world, ((BattleEvent) gameMap.getNextEvent()).convertEnemiesIntoComponentBags());
+        setUpPlayerLocations(world, battleDetails);
+    }
+
+
+
+    @Override
     protected void processSystem() {
 
-        setUpEnemyLocations(world, battleDetails.getEnemyParties().remove(0));
-        setUpPlayerLocations(world, battleDetails);
 
-        processingFlag = false;
+        switch (currentEventType){
+            case BATTLE:
+            case BOSS:
+
+                //If all enemies have been defeated
+
+                if(enemyBag.isEmpty() && gameMap.getMapEvents().size <= 0){
+                    ((BattleScreen) game.getScreen()).victory();
+                } else if(enemyBag.isEmpty()){ //Continue to the next battle arena
+                    next();
+                }
+
+                break;
+        }
+
+
+        if(playerBag.isEmpty()){
+            ((BattleScreen) game.getScreen()).defeat();
+        }
 
     }
+
+
+    /**
+     * Should be called when the next event is ready to be called
+     */
+    public void next(){
+        MapEvent currentMapEvent = gameMap.getNextEvent();
+        setupEvent(currentMapEvent);
+    };
+
+    private void setupEvent(MapEvent mapEvent){
+
+     //   mapEvent.setUpEvent(world);
+     //   currentEventType = mapEvent.getEventType();
+
+
+        if(mapEvent instanceof BattleEvent){
+
+            world.getSystem(TurnSystem.class).setUp(TurnSystem.TURN.ALLY);
+            world.getSystem(SelectedTargetSystem.class).reset();
+
+            setUpEnemyLocations(world, ((BattleEvent) mapEvent).convertEnemiesIntoComponentBags());
+
+            for(int i = 0; i < playerBag.size(); i++){
+                setPlayerCoordinate(playerBag.get(i).getComponent(CoordinateComponent.class), i);
+                setUpIntro(playerBag.get(i));
+            }
+
+            currentEventType = MapEvent.EventType.BATTLE;
+            mapEvent.setUpEvent(world);
+            currentEventType = mapEvent.getEventType();
+
+        } else {
+            next();
+        }
+
+
+    }
+
 
     @Override
     protected boolean checkProcessing() {
         return processingFlag;
     }
+
+
+
 
 
     @Override
@@ -76,27 +152,6 @@ public class EndBattleSystem extends EntitySystem {
     public void removed(Entity e) {
         if(enemyMapper.has(e)) enemyBag.remove(e);
         if(pcMapper.has(e)) playerBag.remove(e);
-        
-        if(playerBag.isEmpty()){
-            ((BattleScreen) game.getScreen()).defeat();
-        }
-
-        if(enemyBag.isEmpty() && battleDetails.getEnemyParties().isEmpty()){
-            ((BattleScreen) game.getScreen()).victory();
-        } else if(enemyBag.isEmpty()){ //Continue to the next battle arena
-
-            world.getSystem(TurnSystem.class).setUp(TurnSystem.TURN.ALLY);
-            world.getSystem(SelectedTargetSystem.class).reset();
-
-            setUpEnemyLocations(world, battleDetails.getEnemyParties().remove(0));
-
-            for(int i = 0; i < playerBag.size(); i++){
-                setPlayerCoordinate(playerBag.get(i).getComponent(CoordinateComponent.class), i);
-                setUpIntro(playerBag.get(i));
-            }
-
-        }
-
     }
 
 
@@ -110,7 +165,6 @@ public class EndBattleSystem extends EntitySystem {
 
         Coordinates c = coordinateComponent.coordinates;
         coordinateComponent.freePlacement = true;
-
 
         switch (partyPosition) {
             case 0:

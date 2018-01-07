@@ -23,6 +23,7 @@ import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
+import com.bryjamin.dancedungeon.ecs.components.map.MapNodeComponent;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MoveToTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
@@ -34,6 +35,9 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.BoundsDrawingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.FadeSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
+import com.bryjamin.dancedungeon.ecs.systems.input.BattleEvent;
+import com.bryjamin.dancedungeon.ecs.systems.input.GameMap;
+import com.bryjamin.dancedungeon.ecs.systems.input.TestEvent;
 import com.bryjamin.dancedungeon.factories.enemy.EnemyFactory;
 import com.bryjamin.dancedungeon.factories.player.Unit;
 import com.bryjamin.dancedungeon.factories.player.UnitMap;
@@ -74,15 +78,15 @@ public class MapWorld extends WorldContainer {
 
         Unit warrior = new Unit(UnitMap.UNIT_WARRIOR);
         warrior.setStatComponent(new StatComponent.StatBuilder()
-                .movementRange(3)
-                .power(5)
+                .movementRange(10)
+                .power(50)
                 .maxHealth(10).build());
 
 
         Unit warrior2 = new Unit(UnitMap.UNIT_WARRIOR);
         warrior2.setStatComponent(new StatComponent.StatBuilder()
-                .power(5)
-                .movementRange(5)
+                .power(50)
+                .movementRange(10)
                 .maxHealth(10).build());
 
         Unit mage = new Unit(UnitMap.UNIT_MAGE);
@@ -90,7 +94,7 @@ public class MapWorld extends WorldContainer {
                 .movementRange(3)
                 .maxHealth(20)
                 .attackRange(3)
-                .magic(6)
+                .magic(60)
                 .power(5).build());
 
         SkillsComponent skillsComponent = new SkillsComponent();
@@ -174,52 +178,58 @@ public class MapWorld extends WorldContainer {
         startButton.edit().add(new ActionOnTapComponent(new WorldAction() {
             @Override
             public void performAction(World world, Entity entity) {
-                //game.getScreen().dispose();
-
-                BattleDetails battleDetails = new BattleDetails();
-                battleDetails.setPlayerParty(playerParty);
-
-
-                enemyParty.shuffle();
-
-                EnemyFactory enemyFactory = new EnemyFactory();
-
-                battleDetails.addEnemyWave(enemyFactory.get(EnemyFactory.BLOB)
-                        //enemyFactory.get(EnemyFactory.BLOB),
-                        //enemyFactory.get(EnemyFactory.BLOB),
-                        //enemyFactory.get(EnemyFactory.BLOB)
-                );
-
-                battleDetails.addEnemyWave(enemyFactory.get(EnemyFactory.BLOB),
-                        //enemyFactory.get(EnemyFactory.BLOB),
-                        enemyFactory.get(EnemyFactory.MAGE_BLOB)
-                        //enemyFactory.get(EnemyFactory.FAST_BLOB)
-                );
-
-
-                battleDetails.addEnemyWave(
-                        enemyFactory.get(EnemyFactory.MAGE_BLOB)
-                        //enemyFactory.get(EnemyFactory.FAST_BLOB)
-                );
-/*
-
-                for (Array<String> stringArray : enemyParty) {
-
-                    for (int i = 0; i < stringArray.size; i++) {
-                        battleDetails.addEnemyWave((enemyFactory.get(stringArray.get(i))));
-                    }
-                }
-*/
-
-                game.setScreen(new BattleScreen(game, game.getScreen(), battleDetails));
+                startBattle();
             }
         }));
 
 
         createParty();
+        createMap();
 
 
     }
+
+
+    public void startBattle(){
+
+        BattleDetails battleDetails = new BattleDetails();
+        battleDetails.setPlayerParty(playerParty);
+
+        enemyParty.shuffle();
+
+        EnemyFactory enemyFactory = new EnemyFactory();
+
+        GameMap gameMap = new GameMap(
+                new BattleEvent(EnemyFactory.BLOB),
+                new BattleEvent(EnemyFactory.FAST_BLOB, EnemyFactory.MAGE_BLOB),
+                new BattleEvent(EnemyFactory.FAST_BLOB),
+                new TestEvent(),
+                new BattleEvent(EnemyFactory.MAGE_BLOB)
+        );
+
+        battleDetails.addEnemyWave(enemyFactory.get(EnemyFactory.BLOB)
+                //enemyFactory.get(EnemyFactory.BLOB),
+                //enemyFactory.get(EnemyFactory.BLOB),
+                //enemyFactory.get(EnemyFactory.BLOB)
+        );
+
+        battleDetails.addEnemyWave(enemyFactory.get(EnemyFactory.BLOB),
+                //enemyFactory.get(EnemyFactory.BLOB),
+                enemyFactory.get(EnemyFactory.MAGE_BLOB)
+                //enemyFactory.get(EnemyFactory.FAST_BLOB)
+        );
+
+
+        battleDetails.addEnemyWave(
+                enemyFactory.get(EnemyFactory.MAGE_BLOB)
+                //enemyFactory.get(EnemyFactory.FAST_BLOB)
+        );
+
+        game.setScreen(new BattleScreen(game, game.getScreen(), gameMap, battleDetails));
+
+
+    }
+
 
 
     public void createParty() {
@@ -268,19 +278,20 @@ public class MapWorld extends WorldContainer {
         float gap = Measure.units(10f);
 
 
-/*        for(Coordinates c : coordinates){
+        for (Coordinates c : coordinates) {
 
 
             Entity e = world.createEntity();
             e.edit().add(new PositionComponent(x + (x * c.getX()) + (gap * c.getX()),
                     y + (y * (c.getY()) + gap * c.getY())));
             e.edit().add(new HitBoxComponent(new HitBox(width, height)));
+            e.edit().add(new MapNodeComponent());
             e.edit().add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE, new TextureDescription.Builder(TextureStrings.BLOCK)
                     .width(width)
                     .height(height)
                     .build()));
 
-        }*/
+        }
 /*
         for(int i = 0; i < coordinates.length; i++){
 

@@ -145,9 +145,16 @@ public class RenderingSystem extends EntitySystem {
 
                 TextureDescription textureDescription = (TextureDescription) drawableDescription;
 
-                TextureRegion tr = atlas.findRegion(textureDescription.getRegion(), textureDescription.getIndex());
-                if (tr == null) {
-                    System.out.println(textureDescription.getRegion() + textureDescription.getIndex());
+
+                TextureRegion tr;
+
+                try {
+                    tr = atlas.findRegion(textureDescription.getRegion(), textureDescription.getIndex());
+
+                    if(tr == null) throw new Exception("No Texture Data for: "  + textureDescription.getRegion() +
+                            "index: " + textureDescription.getIndex());
+                } catch (Exception ex){
+                    ex.printStackTrace();
                     tr = atlas.findRegion(TextureStrings.BLOCK);
                 }
 

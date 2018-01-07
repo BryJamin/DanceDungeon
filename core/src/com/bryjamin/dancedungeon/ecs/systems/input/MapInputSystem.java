@@ -1,24 +1,26 @@
-package com.bryjamin.dancedungeon.ecs.systems.action;
+package com.bryjamin.dancedungeon.ecs.systems.input;
 
 import com.artemis.Aspect;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
-import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
-import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
+import com.bryjamin.dancedungeon.ecs.components.map.MapNodeComponent;
 
 /**
- * Created by BB on 20/10/2017.
+ * Created by BB on 07/01/2018.
  */
 
-public class ActionOnTapSystem extends EntitySystem {
+public class MapInputSystem extends EntitySystem {
 
     private Viewport gamePort;
+    private MainGame game;
 
-    public ActionOnTapSystem(Viewport gamePort) {
-        super(Aspect.all(ActionOnTapComponent.class, HitBoxComponent.class));
+    public MapInputSystem(MainGame game, Viewport gamePort) {
+        super(Aspect.all(MapNodeComponent.class, HitBoxComponent.class));
         this.gamePort = gamePort;
+        this.game = game;
     }
 
     @Override
@@ -40,21 +42,19 @@ public class ActionOnTapSystem extends EntitySystem {
      * @param y - y position of the area of the screen that was touched
      * @return - True if an entity has been touched, False otherwise
      */
-    public boolean touch(float x, float y){
+    public boolean touch(float x, float y) {
 
+        for (Entity e : this.getEntities()) {
 
-        for(Entity e : this.getEntities()) {
-            ActionOnTapComponent actionOnTapComponent = e.getComponent(ActionOnTapComponent.class);
-
-            if(!actionOnTapComponent.enabled) continue;
             if (e.getComponent(HitBoxComponent.class).contains(x, y)) {
-                actionOnTapComponent.setTouchX(x);
-                actionOnTapComponent.setTouchY(y);
-                for(WorldAction wa : e.getComponent(ActionOnTapComponent.class).actions) wa.performAction(world, e);
+
+                e.getComponent(MapNodeComponent.class);
                 return true;
             }
         }
         return false;
     }
 
+
 }
+

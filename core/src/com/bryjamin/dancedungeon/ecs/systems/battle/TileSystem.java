@@ -331,8 +331,6 @@ public class TileSystem extends EntitySystem {
             aStarPathCalculator = new AStarPathCalculator(coordinateMap.keys().toArray(), occupiedMap.values().toArray(),
                     playerControlledMap.values().toArray());
 
-            //System.out.println("PFFTT");
-
         } else { //TODO what to with walls and etc? If there even are walls.
 
 
@@ -355,8 +353,6 @@ public class TileSystem extends EntitySystem {
         if(pcm.has(e)) {
             aStarPathCalculator = new AStarPathCalculator(coordinateMap.keys().toArray(), occupiedMap.values().toArray(),
                     playerControlledMap.values().toArray());
-
-            //System.out.println("PFFTT");
 
         } else { //TODO what to with walls and etc? If there even are walls.
             aStarPathCalculator = new AStarPathCalculator(coordinateMap.keys().toArray(), occupiedMap.values().toArray(),

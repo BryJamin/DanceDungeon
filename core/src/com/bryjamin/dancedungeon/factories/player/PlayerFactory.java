@@ -50,8 +50,6 @@ public class PlayerFactory {
 
     public ComponentBag mage(Unit unit){
 
-        //System.out.println(unit.getStatComponent().maxHealth);
-
         ComponentBag bag = unitFactory.basePlayerUnitBag(unit.getStatComponent());
 
         bag.add(unit.getSkillsComponent());
