@@ -14,6 +14,8 @@ public abstract class MapEvent {
 
     public abstract EventType getEventType();
 
-    public abstract boolean setUpEvent(World world);
+    public abstract void setUpEvent(World world);
+
+    public abstract boolean isComplete(World world);
 
 }

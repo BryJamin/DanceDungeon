@@ -36,7 +36,7 @@ public class BattleScreen extends AbstractScreen {
 
     private ScreenState screenState = ScreenState.BATTLE;
 
-    public BattleScreen(MainGame game, Screen previousScreen, GameMap gameMap, BattleDetails battleDetails) {
+    public BattleScreen(MainGame game, Screen previousScreen, GameMap gameMap, PartyDetails partyDetails) {
         super(game);
 
 
@@ -48,7 +48,7 @@ public class BattleScreen extends AbstractScreen {
         gameport.apply();
 
         this.previousScreen = previousScreen;
-        this.battleWorld = new BattleWorld(game, gameport, gameMap, battleDetails);
+        this.battleWorld = new BattleWorld(game, gameport, gameMap, partyDetails);
 
     }
 

@@ -13,7 +13,11 @@ public class TestEvent extends MapEvent {
     }
 
     @Override
-    public boolean setUpEvent(World world) {
-        return false;
+    public void setUpEvent(World world) {
+    }
+
+    @Override
+    public boolean isComplete(World world) {
+        return true;
     }
 }

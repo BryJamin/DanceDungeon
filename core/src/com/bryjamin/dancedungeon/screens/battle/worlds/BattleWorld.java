@@ -41,7 +41,7 @@ import com.bryjamin.dancedungeon.ecs.systems.input.GameMap;
 import com.bryjamin.dancedungeon.factories.decor.FloorFactory;
 import com.bryjamin.dancedungeon.factories.spells.SpellFactory;
 import com.bryjamin.dancedungeon.screens.WorldContainer;
-import com.bryjamin.dancedungeon.screens.battle.BattleDetails;
+import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
 
@@ -61,18 +61,18 @@ public class BattleWorld extends WorldContainer {
 
     private VictoryAdapter victoryAdapter = new VictoryAdapter();
 
-    private BattleDetails battleDetails;
+    private PartyDetails partyDetails;
     private GameMap gameMap;
 
-    public BattleWorld(MainGame game, final Viewport gameport, GameMap gameMap, BattleDetails battleDetails) {
+    public BattleWorld(MainGame game, final Viewport gameport, GameMap gameMap, PartyDetails partyDetails) {
         super(game, gameport);
-        this.battleDetails = battleDetails;
+        this.partyDetails = partyDetails;
         this.gameMap = gameMap;
         createWorld();
     }
 
-    public BattleDetails getBattleDetails() {
-        return battleDetails;
+    public PartyDetails getPartyDetails() {
+        return partyDetails;
     }
 
     public void createWorld(){
@@ -94,7 +94,7 @@ public class BattleWorld extends WorldContainer {
                         new ParentChildSystem(),
                         new BlinkOnHitSystem(),
                         new ExpireSystem(),
-                        new EndBattleSystem(game, gameMap, battleDetails)
+                        new EndBattleSystem(game, gameMap, partyDetails)
                 )
                 .with(WorldConfigurationBuilder.Priority.LOWEST,
                         new ActionOnTapSystem(gameport),
@@ -116,8 +116,8 @@ public class BattleWorld extends WorldContainer {
 
         world = new World(config);
 /*
-        setUpPlayerLocations(world, battleDetails);
-        setUpEnemyLocations(world, battleDetails);*/
+        setUpPlayerLocations(world, partyDetails);
+        setUpEnemyLocations(world, partyDetails);*/
 
         BagToEntity.bagToEntity(world.createEntity(), new FloorFactory(game.assetManager).createFloor(originX, originY, width, height,
                 rows, columns));

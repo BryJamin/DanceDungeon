@@ -153,7 +153,7 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
             world.getSystem(TileSystem.class).getOccupiedMap().findKey(c, false).edit().add(new SelectedEntityComponent());
             return true;
         } else {
-            this.clear();
+            this.reset();
         }
 
         return false;

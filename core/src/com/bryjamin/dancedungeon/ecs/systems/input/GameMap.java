@@ -1,7 +1,7 @@
 package com.bryjamin.dancedungeon.ecs.systems.input;
 
 import com.badlogic.gdx.utils.Array;
-import com.bryjamin.dancedungeon.utils.math.Coordinates;
+import com.badlogic.gdx.utils.OrderedMap;
 
 /**
  * Created by BB on 07/01/2018.
@@ -9,10 +9,11 @@ import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
 public class GameMap {
 
-    private Coordinates currentPlayerPosition;
-    private MapEvent currentMapEvent;
+    private MapNode currentMapNode;
 
     private Array<MapEvent> mapEvents = new Array<MapEvent>();
+
+    private OrderedMap<MapNode, MapEvent> nodeMap = new OrderedMap<MapNode, MapEvent>();
 
     public GameMap(){
         mapEvents = new Array<MapEvent>();
@@ -27,12 +28,43 @@ public class GameMap {
         return mapEvents;
     }
 
+/*    public Array<MapEvent> getNextMapEvents(){
+
+        Array<MapEvent> relatedEvents = new Array<MapEvent>();
+
+        for(MapNode mapNode : currentMapNode.futureNodes){
+
+        }
+
+
+
+    }*/
+
+    public Array<MapNode> getNextNodes(){
+        return currentMapNode.futureNodes;
+    }
+
+    public MapEvent setNodeAndGetNextEvent(MapNode mapNode){
+        currentMapNode = mapNode;
+        return nodeMap.get(mapNode);
+    }
+
 
     public MapEvent getNextEvent() {
         if(mapEvents.size > 0){
             return mapEvents.removeIndex(0);
         }
         return new TestEvent();
+    }
+
+
+
+    public class MapNode {
+       // Array<MapNode> previousNodes;
+        public Array<MapNode> futureNodes;
+
+
+
     }
 
 

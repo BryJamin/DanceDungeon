@@ -45,7 +45,7 @@ import com.bryjamin.dancedungeon.factories.spells.FireballSkill;
 import com.bryjamin.dancedungeon.factories.spells.basic.MageAttack;
 import com.bryjamin.dancedungeon.factories.spells.restorative.Heal;
 import com.bryjamin.dancedungeon.screens.WorldContainer;
-import com.bryjamin.dancedungeon.screens.battle.BattleDetails;
+import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
 import com.bryjamin.dancedungeon.screens.battle.BattleScreen;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
@@ -192,8 +192,8 @@ public class MapWorld extends WorldContainer {
 
     public void startBattle(){
 
-        BattleDetails battleDetails = new BattleDetails();
-        battleDetails.setPlayerParty(playerParty);
+        PartyDetails partyDetails = new PartyDetails();
+        partyDetails.setPlayerParty(playerParty);
 
         enemyParty.shuffle();
 
@@ -207,25 +207,8 @@ public class MapWorld extends WorldContainer {
                 new BattleEvent(EnemyFactory.MAGE_BLOB)
         );
 
-        battleDetails.addEnemyWave(enemyFactory.get(EnemyFactory.BLOB)
-                //enemyFactory.get(EnemyFactory.BLOB),
-                //enemyFactory.get(EnemyFactory.BLOB),
-                //enemyFactory.get(EnemyFactory.BLOB)
-        );
 
-        battleDetails.addEnemyWave(enemyFactory.get(EnemyFactory.BLOB),
-                //enemyFactory.get(EnemyFactory.BLOB),
-                enemyFactory.get(EnemyFactory.MAGE_BLOB)
-                //enemyFactory.get(EnemyFactory.FAST_BLOB)
-        );
-
-
-        battleDetails.addEnemyWave(
-                enemyFactory.get(EnemyFactory.MAGE_BLOB)
-                //enemyFactory.get(EnemyFactory.FAST_BLOB)
-        );
-
-        game.setScreen(new BattleScreen(game, game.getScreen(), gameMap, battleDetails));
+        game.setScreen(new BattleScreen(game, game.getScreen(), gameMap, partyDetails));
 
 
     }
