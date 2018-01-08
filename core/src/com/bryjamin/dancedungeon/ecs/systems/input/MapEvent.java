@@ -18,4 +18,8 @@ public abstract class MapEvent {
 
     public abstract boolean isComplete(World world);
 
+    public abstract void cleanUpEvent(World world);
+
+    public abstract boolean cleanUpComplete(World world);
+
 }

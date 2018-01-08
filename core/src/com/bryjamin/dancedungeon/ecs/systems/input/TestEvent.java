@@ -20,4 +20,14 @@ public class TestEvent extends MapEvent {
     public boolean isComplete(World world) {
         return true;
     }
+
+    @Override
+    public void cleanUpEvent(World world) {
+
+    }
+
+    @Override
+    public boolean cleanUpComplete(World world) {
+        return true;
+    }
 }

@@ -39,6 +39,12 @@ public class EndBattleSystem extends EntitySystem {
 
     private MapEvent currentEvent;
 
+    private enum State {
+        CLEAN_UP, START_UP, DURING
+    }
+
+    private State state = State.START_UP;
+
     public Bag<Entity> getPlayerBag() {
         return playerBag;
     }
@@ -84,10 +90,28 @@ public class EndBattleSystem extends EntitySystem {
             ((BattleScreen) game.getScreen()).victory();
         }
 
-        if (currentEvent.isComplete(world)) {
-            next();
+        switch (state){
+            case START_UP:
+                currentEvent.setUpEvent(world);
+                state = State.DURING;
+                break;
+
+            case DURING:
+                if (currentEvent.isComplete(world)) {
+                    state = State.CLEAN_UP;
+                    currentEvent.cleanUpEvent(world);
+                }
+                break;
+
+            case CLEAN_UP:
+
+                if(currentEvent.cleanUpComplete(world)){
+                    next();
+                    state = State.DURING;
+                }
+
+                break;
         }
-        ;
 
     }
 

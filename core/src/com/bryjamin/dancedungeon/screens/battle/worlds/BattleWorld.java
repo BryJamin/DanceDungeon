@@ -25,6 +25,7 @@ import com.bryjamin.dancedungeon.ecs.systems.battle.ExplosionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.GenerateTargetsSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.HealthSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.NoMoreActionsSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.PlayerControlledSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.SelectedTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
@@ -94,6 +95,7 @@ public class BattleWorld extends WorldContainer {
                         new ParentChildSystem(),
                         new BlinkOnHitSystem(),
                         new ExpireSystem(),
+                        new PlayerControlledSystem(game),
                         new EndBattleSystem(game, gameMap, partyDetails)
                 )
                 .with(WorldConfigurationBuilder.Priority.LOWEST,

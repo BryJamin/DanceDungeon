@@ -37,6 +37,7 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.input.BattleEvent;
 import com.bryjamin.dancedungeon.ecs.systems.input.GameMap;
+import com.bryjamin.dancedungeon.ecs.systems.input.RestEvent;
 import com.bryjamin.dancedungeon.ecs.systems.input.TestEvent;
 import com.bryjamin.dancedungeon.factories.enemy.EnemyFactory;
 import com.bryjamin.dancedungeon.factories.player.Unit;
@@ -79,22 +80,22 @@ public class MapWorld extends WorldContainer {
         Unit warrior = new Unit(UnitMap.UNIT_WARRIOR);
         warrior.setStatComponent(new StatComponent.StatBuilder()
                 .movementRange(10)
-                .power(50)
-                .maxHealth(10).build());
+                .power(5)
+                .maxHealth(15).build());
 
 
         Unit warrior2 = new Unit(UnitMap.UNIT_WARRIOR);
         warrior2.setStatComponent(new StatComponent.StatBuilder()
-                .power(50)
+                .power(5)
                 .movementRange(10)
-                .maxHealth(10).build());
+                .maxHealth(15).build());
 
         Unit mage = new Unit(UnitMap.UNIT_MAGE);
         mage.setStatComponent(new StatComponent.StatBuilder()
                 .movementRange(3)
                 .maxHealth(20)
                 .attackRange(3)
-                .magic(60)
+                .magic(6)
                 .power(5).build());
 
         SkillsComponent skillsComponent = new SkillsComponent();
@@ -204,6 +205,7 @@ public class MapWorld extends WorldContainer {
                 new BattleEvent(EnemyFactory.FAST_BLOB, EnemyFactory.MAGE_BLOB),
                 new BattleEvent(EnemyFactory.FAST_BLOB),
                 new TestEvent(),
+                new RestEvent(),
                 new BattleEvent(EnemyFactory.MAGE_BLOB)
         );
 

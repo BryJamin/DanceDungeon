@@ -11,6 +11,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.EndBattleSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.PlayerControlledSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.SelectedTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
@@ -68,6 +69,42 @@ public class BattleEvent extends MapEvent {
     @Override
     public boolean isComplete(World world) {
         return world.getAspectSubscriptionManager().get(Aspect.all(EnemyComponent.class)).getEntities().size() <= 0;
+    }
+
+    @Override
+    public void cleanUpEvent(World world) {
+
+        Array<Entity> entityArray = world.getSystem(PlayerControlledSystem.class).getPlayerBag();
+
+        for(Entity e : entityArray){
+
+            Coordinates c = e.getComponent(CoordinateComponent.class).coordinates;
+
+            e.getComponent(MoveToComponent.class).movementPositions.add(
+                    world.getSystem(TileSystem.class).getPositionUsingCoordinates(world.getSystem(TileSystem.class).getMaxX() + 3, c.getY(),
+                            e.getComponent(CenteringBoundaryComponent.class).bound
+                            )
+            );
+        }
+
+    }
+
+    @Override
+    public boolean cleanUpComplete(World world) {
+
+        boolean allInPosition = true;
+
+        Array<Entity> entityArray = world.getSystem(PlayerControlledSystem.class).getPlayerBag();
+
+        for(Entity e : entityArray){
+            if(!e.getComponent(MoveToComponent.class).isEmpty()){
+                allInPosition = false;
+            };
+        }
+
+        return allInPosition;
+
+
     }
 
     private void setPlayerCoordinate(CoordinateComponent coordinateComponent, int partyPosition) {

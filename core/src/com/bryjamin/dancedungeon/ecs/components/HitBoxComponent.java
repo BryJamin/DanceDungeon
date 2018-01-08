@@ -23,6 +23,14 @@ public class HitBoxComponent extends Component {
         this.hitBoxes.addAll(hitBoxes);
     }
 
+
+    /**
+     * For when you need a singular hit box
+     */
+    public HitBoxComponent(float width, float height){
+        this.hitBoxes.add(new HitBox(width, height));
+    }
+
     public boolean overlaps(Rectangle r){
         for(HitBox hitBox : hitBoxes){
             if(r.overlaps(hitBox.hitbox)){
