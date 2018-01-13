@@ -7,6 +7,7 @@ import com.artemis.WorldConfigurationBuilder;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -48,6 +49,7 @@ import com.bryjamin.dancedungeon.factories.spells.restorative.Heal;
 import com.bryjamin.dancedungeon.screens.WorldContainer;
 import com.bryjamin.dancedungeon.screens.battle.BattleScreen;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
+import com.bryjamin.dancedungeon.screens.strategy.StrategyScreen;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
@@ -165,7 +167,8 @@ public class MapWorld extends WorldContainer {
         createMap();
 
         Entity startButton = world.createEntity();
-        startButton.edit().add(new PositionComponent(CenterMath.offsetX(gameport.getWorldWidth(), width), CenterMath.offsetY(gameport.getWorldHeight(), height)));
+       // startButton.edit().add(new PositionComponent(CenterMath.offsetX(gameport.getWorldWidth(), width), CenterMath.offsetY(gameport.getWorldHeight(), height)));
+        startButton.edit().add(new PositionComponent(Measure.units(75f), Measure.units(40f)));
         startButton.edit().add(new HitBoxComponent(new HitBox(width, height)));
         startButton.edit().add(new CenteringBoundaryComponent(new Rectangle(0, 0, width, height)));
         startButton.edit().add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE,
@@ -180,6 +183,29 @@ public class MapWorld extends WorldContainer {
             @Override
             public void performAction(World world, Entity entity) {
                 startBattle();
+            }
+        }));
+
+
+
+
+        Entity generate = world.createEntity();
+        generate.edit().add(new PositionComponent(Measure.units(75f), Measure.units(50f)));
+        generate.edit().add(new HitBoxComponent(new HitBox(width, height)));
+        generate.edit().add(new CenteringBoundaryComponent(new Rectangle(0, 0, width, height)));
+        generate.edit().add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE,
+                new TextureDescription.Builder(TextureStrings.BLOCK)
+                        .width(width)
+                        .height(height).build(),
+                new TextDescription.Builder(Fonts.MEDIUM)
+                        .text("GENERATE")
+                        .color(new Color(Color.BLACK))
+                        .build()));
+        generate.edit().add(new ActionOnTapComponent(new WorldAction() {
+            @Override
+            public void performAction(World world, Entity entity) {
+                game.getScreen().dispose();
+                game.setScreen(new StrategyScreen(game));
             }
         }));
 
@@ -255,8 +281,8 @@ public class MapWorld extends WorldContainer {
                 new Coordinates(4, 2),
         };
 
-        float x = Measure.units(5f);
-        float y = Measure.units(10f);
+        //float x = Measure.units(5f);
+        //float y = Measure.units(10f);
 
         float width = Measure.units(5f);
         float height = Measure.units(5f);
@@ -265,29 +291,51 @@ public class MapWorld extends WorldContainer {
 
         Array<GameMap.MapNode> mapNodeArray = new Array<GameMap.MapNode>();
 
-        GameMap.MapNode mapNode = new GameMap.MapNode();
-        mapNode.setPosX(Measure.units(20f));
-        mapNode.setPosY(Measure.units(10f));
+        float x = Measure.units(10f);
+        float y = Measure.units(5f);
 
-        mapNodeArray.add(mapNode);
+        GameMap.Section section1 = new GameMap.Section(
+                Measure.units(10f),
+                y,
+                Measure.units(10f),
+                Measure.units(50f), MathUtils.random(2, 4));
 
-        GameMap.MapNode mapNodeTwo = new GameMap.MapNode();
-        mapNodeTwo.setPosX(Measure.units(10f));
-        mapNodeTwo.setPosY(Measure.units(50f));
+        section1.generateNodePositions();
 
-        mapNode.addSuccessors(mapNodeTwo);
+        GameMap.Section section2 = new GameMap.Section(
+                Measure.units(35f),
+                y,
+                Measure.units(10f),
+                Measure.units(50f), MathUtils.random(2, 4));
 
-        mapNodeArray.add(mapNodeTwo);
+        section2.generateNodePositions();
 
 
-        GameMap.MapNode mapNodeThree = new GameMap.MapNode();
-        mapNodeThree.setPosX(Measure.units(40f));
-        mapNodeThree.setPosY(Measure.units(25f));
+        GameMap.Section section3 = new GameMap.Section(
+                Measure.units(60f),
+                y,
+                Measure.units(10f),
+                Measure.units(50f), MathUtils.random(2, 4));
 
-        mapNodeTwo.addSuccessors(mapNodeThree);
+        section3.generateNodePositions();
 
-        mapNodeArray.add(mapNodeThree);
 
+        mapNodeArray.addAll(section1.getMapNodes());
+        mapNodeArray.addAll(section2.getMapNodes());
+        mapNodeArray.addAll(section3.getMapNodes());
+
+
+        for(GameMap.MapNode node : section1.getMapNodes()){
+
+
+            node.addSuccessors(section2.getMapNodes());
+            node.addSuccessors(section2.getMapNodes().random());
+        }
+
+        for(GameMap.MapNode node : section2.getMapNodes()){
+            node.addSuccessors(section3.getMapNodes());
+            node.addSuccessors(section3.getMapNodes().random());
+        }
 
         for(GameMap.MapNode node : mapNodeArray){
 
@@ -312,16 +360,6 @@ public class MapWorld extends WorldContainer {
 
                 Vector2 startPos = new Vector2(node.getPosX(), node.getPosY());
                 Vector2 endPos = new Vector2(innerNode.getPosX(), innerNode.getPosY());
-
-                System.out.println(startPos);
-                System.out.println(endPos);
-
-                System.out.println("InnerNode x: " + innerNode.getPosX());
-                System.out.println("InnerNode y: " + innerNode.getPosY());
-
-                System.out.println("Distance: " + startPos.dst(endPos));
-
-                System.out.println("Angle: " + startPos.angle(endPos));
 
                 System.out.println(Math.atan2(endPos.y - startPos.y, endPos.x - startPos.x) * 180 / Math.PI);
 

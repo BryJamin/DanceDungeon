@@ -144,10 +144,6 @@ public class RenderingSystem extends EntitySystem {
             float originY = drawableDescription.getOrigin() == null ?
                     drawableDescription.getHeight() * 0.5f : drawableDescription.getOrigin().y;
 
-            if(drawableDescription.getOrigin() != null){
-                System.out.println("Hey");
-            }
-
             batch.setColor(drawableDescription.getColor());
 
             if(drawableDescription instanceof TextureDescription) {
