@@ -32,7 +32,7 @@ public class GameMap {
 
         Array<MapEvent> relatedEvents = new Array<MapEvent>();
 
-        for(MapNode mapNode : currentMapNode.futureNodes){
+        for(MapNode mapNode : currentMapNode.successors){
 
         }
 
@@ -41,7 +41,7 @@ public class GameMap {
     }*/
 
     public Array<MapNode> getNextNodes(){
-        return currentMapNode.futureNodes;
+        return currentMapNode.successors;
     }
 
     public MapEvent setNodeAndGetNextEvent(MapNode mapNode){
@@ -59,12 +59,50 @@ public class GameMap {
 
 
 
-    public class MapNode {
+    //I'm trying to make a directed graph
+
+    public static class MapNode {
+
+        private float posX;
+        private float posY;
+
        // Array<MapNode> previousNodes;
-        public Array<MapNode> futureNodes;
+        public Array<MapNode> successors = new Array<MapNode>();
 
+        public MapEvent mapEvent;
 
+        public void addSuccessors(MapNode... mapNode){
+            this.successors.addAll(mapNode);
+        }
 
+        public float getPosX() {
+            return posX;
+        }
+
+        public void setPosX(float posX) {
+            //System.out.println("setPOsx " + posX);
+            this.posX = posX;
+        }
+
+        public Array<MapNode> getSuccessors() {
+            return successors;
+        }
+
+        public float getPosY() {
+            return posY;
+        }
+
+        public void setPosY(float posY) {
+            this.posY = posY;
+        }
+
+        public MapEvent getMapEvent() {
+            return mapEvent;
+        }
+
+        public void setMapEvent(MapEvent mapEvent) {
+            this.mapEvent = mapEvent;
+        }
     }
 
 

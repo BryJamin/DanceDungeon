@@ -26,6 +26,8 @@ public class RestEvent extends MapEvent {
     @Override
     public void setUpEvent(World world) {
 
+        
+
         BagToEntity.bagToEntity(world.createEntity(), new ButtonFactory.ButtonBuilder()
                 .text("Rest")
                 .posX(Measure.units(20f))

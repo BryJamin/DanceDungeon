@@ -8,6 +8,7 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -23,7 +24,6 @@ import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
-import com.bryjamin.dancedungeon.ecs.components.map.MapNodeComponent;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MoveToTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
@@ -46,8 +46,8 @@ import com.bryjamin.dancedungeon.factories.spells.FireballSkill;
 import com.bryjamin.dancedungeon.factories.spells.basic.MageAttack;
 import com.bryjamin.dancedungeon.factories.spells.restorative.Heal;
 import com.bryjamin.dancedungeon.screens.WorldContainer;
-import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
 import com.bryjamin.dancedungeon.screens.battle.BattleScreen;
+import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
@@ -79,7 +79,7 @@ public class MapWorld extends WorldContainer {
 
         Unit warrior = new Unit(UnitMap.UNIT_WARRIOR);
         warrior.setStatComponent(new StatComponent.StatBuilder()
-                .movementRange(10)
+                .movementRange(5)
                 .power(5)
                 .maxHealth(15).build());
 
@@ -87,12 +87,12 @@ public class MapWorld extends WorldContainer {
         Unit warrior2 = new Unit(UnitMap.UNIT_WARRIOR);
         warrior2.setStatComponent(new StatComponent.StatBuilder()
                 .power(5)
-                .movementRange(10)
+                .movementRange(5)
                 .maxHealth(15).build());
 
         Unit mage = new Unit(UnitMap.UNIT_MAGE);
         mage.setStatComponent(new StatComponent.StatBuilder()
-                .movementRange(3)
+                .movementRange(4)
                 .maxHealth(20)
                 .attackRange(3)
                 .magic(6)
@@ -185,7 +185,7 @@ public class MapWorld extends WorldContainer {
 
 
         createParty();
-        createMap();
+       // createMap();
 
 
     }
@@ -263,7 +263,86 @@ public class MapWorld extends WorldContainer {
         float gap = Measure.units(10f);
 
 
-        for (Coordinates c : coordinates) {
+        Array<GameMap.MapNode> mapNodeArray = new Array<GameMap.MapNode>();
+
+        GameMap.MapNode mapNode = new GameMap.MapNode();
+        mapNode.setPosX(Measure.units(20f));
+        mapNode.setPosY(Measure.units(10f));
+
+        mapNodeArray.add(mapNode);
+
+        GameMap.MapNode mapNodeTwo = new GameMap.MapNode();
+        mapNodeTwo.setPosX(Measure.units(10f));
+        mapNodeTwo.setPosY(Measure.units(50f));
+
+        mapNode.addSuccessors(mapNodeTwo);
+
+        mapNodeArray.add(mapNodeTwo);
+
+
+        GameMap.MapNode mapNodeThree = new GameMap.MapNode();
+        mapNodeThree.setPosX(Measure.units(40f));
+        mapNodeThree.setPosY(Measure.units(25f));
+
+        mapNodeTwo.addSuccessors(mapNodeThree);
+
+        mapNodeArray.add(mapNodeThree);
+
+
+        for(GameMap.MapNode node : mapNodeArray){
+
+            Entity e = world.createEntity();
+
+            e.edit().add(new PositionComponent(CenterMath.centerPositionX(width, node.getPosX()),
+                    CenterMath.centerPositionY(height, node.getPosY())));
+            e.edit().add(new HitBoxComponent(width, height));
+
+            e.edit().add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE, new TextureDescription.Builder(TextureStrings.BLOCK)
+                    .width(width)
+                    .height(height)
+                    .build()));
+
+
+            for(GameMap.MapNode innerNode : node.getSuccessors()){
+
+                Entity line = world.createEntity();
+
+                line.edit().add(new PositionComponent(node.getPosX(), node.getPosY()));
+
+
+                Vector2 startPos = new Vector2(node.getPosX(), node.getPosY());
+                Vector2 endPos = new Vector2(innerNode.getPosX(), innerNode.getPosY());
+
+                System.out.println(startPos);
+                System.out.println(endPos);
+
+                System.out.println("InnerNode x: " + innerNode.getPosX());
+                System.out.println("InnerNode y: " + innerNode.getPosY());
+
+                System.out.println("Distance: " + startPos.dst(endPos));
+
+                System.out.println("Angle: " + startPos.angle(endPos));
+
+                System.out.println(Math.atan2(endPos.y - startPos.y, endPos.x - startPos.x) * 180 / Math.PI);
+
+                line.edit().add(new DrawableComponent(Layer.BACKGROUND_LAYER_FAR,
+                        new TextureDescription.Builder(TextureStrings.BLOCK)
+                                .width(startPos.dst(endPos))
+                                .height(15)
+                                .origin(new Vector2(0,0))
+                                .rotation(Math.atan2(endPos.y - startPos.y, endPos.x - startPos.x) * 180 / Math.PI)
+                                .build()
+                ));
+
+
+            }
+
+        }
+
+
+
+
+/*        for (Coordinates c : coordinates) {
 
 
             Entity e = world.createEntity();
@@ -276,7 +355,7 @@ public class MapWorld extends WorldContainer {
                     .height(height)
                     .build()));
 
-        }
+        }*/
 /*
         for(int i = 0; i < coordinates.length; i++){
 

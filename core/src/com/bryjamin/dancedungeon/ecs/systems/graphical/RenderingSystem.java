@@ -136,8 +136,17 @@ public class RenderingSystem extends EntitySystem {
 
         for(DrawableDescription drawableDescription : drawableComponent.drawables) {
 
-            float originX = drawableDescription.getWidth() * 0.5f;
-            float originY = drawableDescription.getHeight() * 0.5f;
+
+
+
+            float originX = drawableDescription.getOrigin() == null ?
+                    drawableDescription.getWidth() * 0.5f : drawableDescription.getOrigin().x;
+            float originY = drawableDescription.getOrigin() == null ?
+                    drawableDescription.getHeight() * 0.5f : drawableDescription.getOrigin().y;
+
+            if(drawableDescription.getOrigin() != null){
+                System.out.println("Hey");
+            }
 
             batch.setColor(drawableDescription.getColor());
 
@@ -164,7 +173,7 @@ public class RenderingSystem extends EntitySystem {
                         originX, originY,
                         drawableDescription.getWidth(), drawableDescription.getHeight(),
                         drawableDescription.getScaleX(), drawableDescription.getScaleY(),
-                        drawableDescription.getRotation());
+                        (float) drawableDescription.getRotation());
 
             } else if(drawableDescription instanceof TextDescription){
 
@@ -193,6 +202,7 @@ public class RenderingSystem extends EntitySystem {
             }
 
             batch.setColor(white);
+
 
         }
 
