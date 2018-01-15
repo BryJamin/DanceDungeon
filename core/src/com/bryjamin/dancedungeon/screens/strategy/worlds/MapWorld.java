@@ -361,8 +361,6 @@ public class MapWorld extends WorldContainer {
                 Vector2 startPos = new Vector2(node.getPosX(), node.getPosY());
                 Vector2 endPos = new Vector2(innerNode.getPosX(), innerNode.getPosY());
 
-                System.out.println(Math.atan2(endPos.y - startPos.y, endPos.x - startPos.x) * 180 / Math.PI);
-
                 line.edit().add(new DrawableComponent(Layer.BACKGROUND_LAYER_FAR,
                         new TextureDescription.Builder(TextureStrings.BLOCK)
                                 .width(startPos.dst(endPos))

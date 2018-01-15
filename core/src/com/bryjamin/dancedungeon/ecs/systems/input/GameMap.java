@@ -62,6 +62,60 @@ public class GameMap {
 
 
 
+    public void calculateMap(Array<Section> sections){
+
+
+        Array<Section> walkThroughSectionArray = new Array<Section>(sections);
+
+        while (walkThroughSectionArray.size > 1){
+
+            Section leftSection = walkThroughSectionArray.get(0);
+            Section rightSection = walkThroughSectionArray.get(1);
+
+            Array<MapNode> connectedNodes = new Array<MapNode>();
+
+            Array<MapNode> leftMapNodeArray = leftSection.getMapNodes();
+
+
+        }
+
+        //Sort sections? Or assume they are the right way
+        //Throw an error if not in order?
+
+
+        //TODO note you, could when creating sections have sections of size 5 nodes, but then, also
+        //TODO have the random chance of dropping between 2 and 3, to make the nodes appear more spractic
+        //TODO similar to how I tested with the 4 nodes dropping 1 option
+
+
+        //TODO Take a list of sections.
+
+        //TODO it is assume these section origins go from left to right
+
+        //TODO if one section startX is before the other section startX, Fail.
+
+        //TODO Compare the sizes of the left section to the right section
+
+
+        //TODO if left size is 2, and right size is 4. There need to be at minimum 2 connections
+        //TODO each.
+
+
+        //TODO it may be better to go top to bottom when creating links
+
+        //TODO the number of 'potential' intersections determines whether ot not a link to a node is valid
+        //TODO currently I'll say the number is 2.
+
+        //TODO by 'potential' intersections it may be best to cycle through each node and  check.
+
+        //TODO however the probability of even checking a node is increased based on 'relative distance?' (might not do this one)
+
+        //TODO it may be better to pick nodes based on least number of potential intersections
+
+
+
+    }
+
 
 
     public static class Section {
@@ -91,9 +145,6 @@ public class GameMap {
 
             Random random = new Random();
 
-            System.out.println("section height = " +(height / nodeNumber));
-            System.out.println("minimum spacing is " + minimumSpacing);
-
             for(int i = 0; i < nodeNumber; i++){
 
                 MapNode node = new MapNode();
@@ -112,20 +163,12 @@ public class GameMap {
                 float maxY = startY + ((height / nodeNumber) * (i + 1));
                 float minY = startY + ((height / nodeNumber) * i); //Nodes are set in different sections
 
-                System.out.println("i is: " + i);
 
                 if(i != 0){
                     MapNode prev = mapNodes.get(i - 1);
-                    System.out.println("prev minY is: "+ minY);
-                    System.out.println("prev posY is: " + prev.getPosY());
-                    System.out.println("min spacing: " + minimumSpacing);
                     if(minY < prev.getPosY() + minimumSpacing)
                         minY = prev.getPosY() + minimumSpacing;
                 }
-
-
-                System.out.println("minY: + " + minY);
-                System.out.println("maxY: + " + maxY + "\n");
 
                 if(maxY < minY) throw new RuntimeException("Generation failed minimum Y larger than maximum Y");
 
@@ -133,11 +176,20 @@ public class GameMap {
 
                 float y = random.nextFloat() * (maxY - minY) + minY;
 
-                System.out.println("chosen y: for " + i + ", is: " + y);
                 node.setPosY(y);
 
                 mapNodes.add(node);
 
+            }
+
+
+            if(mapNodes.size > 3){
+
+                System.out.println("Was 4");
+
+                if(random.nextInt(2) > 0){
+                    mapNodes.removeIndex(random.nextInt(mapNodes.size));
+                };
             }
 
         }
