@@ -1,4 +1,4 @@
-package com.bryjamin.dancedungeon.ecs.systems.input;
+package com.bryjamin.dancedungeon.factories.map.event;
 
 import com.artemis.World;
 

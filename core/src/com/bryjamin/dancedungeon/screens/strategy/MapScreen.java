@@ -14,14 +14,14 @@ import com.bryjamin.dancedungeon.screens.strategy.worlds.MapWorld;
  * Created by BB on 17/12/2017.
  */
 
-public class StrategyScreen extends AbstractScreen {
+public class MapScreen extends AbstractScreen {
 
     private OrthographicCamera gamecam;
     private Viewport gameport;
 
     private MapWorld mapWorld;
 
-    public StrategyScreen(MainGame game) {
+    public MapScreen(MainGame game) {
         super(game);
 
 
@@ -64,6 +64,12 @@ public class StrategyScreen extends AbstractScreen {
         mapWorld.handleInput(multiplexer);
         Gdx.input.setInputProcessor(multiplexer);
 
+    }
+
+
+
+    public void battleVictory(){
+        mapWorld.victory();
     }
 
 }

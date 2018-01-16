@@ -1,4 +1,4 @@
-package com.bryjamin.dancedungeon.ecs.systems.input;
+package com.bryjamin.dancedungeon.factories.map.event;
 
 import com.artemis.Aspect;
 import com.artemis.Entity;
@@ -24,7 +24,7 @@ import com.bryjamin.dancedungeon.utils.math.Coordinates;
  * Created by BB on 07/01/2018.
  */
 
-public class BattleEvent extends MapEvent {
+public class BattleEvent extends com.bryjamin.dancedungeon.factories.map.event.MapEvent {
 
     private Array<String> enemies = new Array<String>();
 

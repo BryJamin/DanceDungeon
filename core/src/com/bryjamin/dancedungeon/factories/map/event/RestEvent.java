@@ -1,4 +1,4 @@
-package com.bryjamin.dancedungeon.ecs.systems.input;
+package com.bryjamin.dancedungeon.factories.map.event;
 
 import com.artemis.Entity;
 import com.artemis.World;
@@ -6,7 +6,6 @@ import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
-import com.bryjamin.dancedungeon.ecs.systems.battle.EndBattleSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.PlayerControlledSystem;
 import com.bryjamin.dancedungeon.factories.ButtonFactory;
 import com.bryjamin.dancedungeon.utils.Measure;
@@ -18,6 +17,8 @@ import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
 
 public class RestEvent extends MapEvent {
 
+    public boolean complete = false;
+
     @Override
     public EventType getEventType() {
         return null;
@@ -26,7 +27,6 @@ public class RestEvent extends MapEvent {
     @Override
     public void setUpEvent(World world) {
 
-        
 
         BagToEntity.bagToEntity(world.createEntity(), new ButtonFactory.ButtonBuilder()
                 .text("Rest")
@@ -40,9 +40,7 @@ public class RestEvent extends MapEvent {
 
                         entity.edit().remove(ActionOnTapComponent.class);
                         entity.edit().add(new DeadComponent());
-
-                        world.getSystem(EndBattleSystem.class).next();
-
+                        complete = true;
                         for(Entity e : world.getSystem(PlayerControlledSystem.class).getEntities()){
                             e.getComponent(HealthComponent.class).applyHealing(e.getComponent(HealthComponent.class).maxHealth * 0.3f);
                         }
@@ -58,7 +56,7 @@ public class RestEvent extends MapEvent {
 
     @Override
     public boolean isComplete(World world) {
-        return false;
+        return complete;
     }
 
     @Override

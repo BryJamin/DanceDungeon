@@ -38,7 +38,7 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.PlayerGraphicalTargetingS
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UIRenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
-import com.bryjamin.dancedungeon.ecs.systems.input.GameMap;
+import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.factories.decor.FloorFactory;
 import com.bryjamin.dancedungeon.factories.spells.SpellFactory;
 import com.bryjamin.dancedungeon.screens.WorldContainer;

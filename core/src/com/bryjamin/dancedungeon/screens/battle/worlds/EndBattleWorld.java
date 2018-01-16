@@ -32,6 +32,7 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
 import com.bryjamin.dancedungeon.screens.WorldContainer;
 import com.bryjamin.dancedungeon.screens.battle.BattleScreen;
+import com.bryjamin.dancedungeon.screens.strategy.MapScreen;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
@@ -111,6 +112,8 @@ public class EndBattleWorld extends WorldContainer {
                 Screen prev = ((BattleScreen) game.getScreen()).getPreviousScreen();
                 game.getScreen().dispose();
                 game.setScreen(prev);
+
+                ((MapScreen) prev).battleVictory();
             }
         }));
 

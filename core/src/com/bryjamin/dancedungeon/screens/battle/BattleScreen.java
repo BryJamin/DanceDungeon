@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
-import com.bryjamin.dancedungeon.ecs.systems.input.GameMap;
+import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.screens.AbstractScreen;
 import com.bryjamin.dancedungeon.screens.battle.worlds.BattleWorld;
 import com.bryjamin.dancedungeon.screens.battle.worlds.EndBattleWorld;

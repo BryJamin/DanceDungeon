@@ -8,8 +8,8 @@ import com.artemis.utils.Bag;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
-import com.bryjamin.dancedungeon.ecs.systems.input.GameMap;
-import com.bryjamin.dancedungeon.ecs.systems.input.MapEvent;
+import com.bryjamin.dancedungeon.factories.map.GameMap;
+import com.bryjamin.dancedungeon.factories.map.event.MapEvent;
 import com.bryjamin.dancedungeon.factories.player.Unit;
 import com.bryjamin.dancedungeon.factories.player.UnitMap;
 import com.bryjamin.dancedungeon.screens.battle.BattleScreen;
@@ -55,8 +55,7 @@ public class EndBattleSystem extends EntitySystem {
         this.game = game;
         this.gameMap = gameMap;
         //partyDetails.getPlayerParty().
-        this.currentEvent = gameMap.getNextEvent();
-
+        this.currentEvent = gameMap.getCurrentMapNode().getMapEvent();
 
     }
 
@@ -86,10 +85,6 @@ public class EndBattleSystem extends EntitySystem {
             ((BattleScreen) game.getScreen()).defeat();
         }
 
-        if(gameMap.getMapEvents().size <= 0 && currentEvent.isComplete(world)) {
-            ((BattleScreen) game.getScreen()).victory();
-        }
-
         switch (state){
             case START_UP:
                 currentEvent.setUpEvent(world);
@@ -106,8 +101,7 @@ public class EndBattleSystem extends EntitySystem {
             case CLEAN_UP:
 
                 if(currentEvent.cleanUpComplete(world)){
-                    next();
-                    state = State.DURING;
+                    ((BattleScreen) game.getScreen()).victory();
                 }
 
                 break;
@@ -115,17 +109,6 @@ public class EndBattleSystem extends EntitySystem {
 
     }
 
-
-
-    /**
-     * Should be called when the next event is ready to be called
-     */
-    public void next() {
-        this.currentEvent =  gameMap.getNextEvent();
-        setupEvent(this.currentEvent);
-    }
-
-    ;
 
     private void setupEvent(MapEvent mapEvent) {
         mapEvent.setUpEvent(world);

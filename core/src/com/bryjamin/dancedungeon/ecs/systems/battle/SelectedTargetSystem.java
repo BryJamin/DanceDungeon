@@ -210,7 +210,6 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
             SkillsComponent skillsComponent = playableCharacter.getComponent(SkillsComponent.class);
 
             for (int i = 0; i < skillsComponent.skillDescriptions.size; i++) {
-                System.out.println("??");
                 buttons.add(BagToEntity.bagToEntity(world.createEntity(), new SpellFactory().skillButton(Measure.units(25f) * (i + 1), 0,
                         skillsComponent.skillDescriptions.get(i), playableCharacter)));
             }

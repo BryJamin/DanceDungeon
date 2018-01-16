@@ -7,15 +7,12 @@ import com.artemis.WorldConfigurationBuilder;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.assets.Fonts;
-import com.bryjamin.dancedungeon.assets.TextResource;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
@@ -36,11 +33,10 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.BoundsDrawingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.FadeSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
-import com.bryjamin.dancedungeon.ecs.systems.input.BattleEvent;
-import com.bryjamin.dancedungeon.ecs.systems.input.GameMap;
-import com.bryjamin.dancedungeon.ecs.systems.input.RestEvent;
-import com.bryjamin.dancedungeon.ecs.systems.input.TestEvent;
+import com.bryjamin.dancedungeon.ecs.systems.strategy.StrategyMapSystem;
 import com.bryjamin.dancedungeon.factories.enemy.EnemyFactory;
+import com.bryjamin.dancedungeon.factories.map.GameMap;
+import com.bryjamin.dancedungeon.factories.map.MapGenerator;
 import com.bryjamin.dancedungeon.factories.player.Unit;
 import com.bryjamin.dancedungeon.factories.player.UnitMap;
 import com.bryjamin.dancedungeon.factories.spells.FireballSkill;
@@ -49,12 +45,10 @@ import com.bryjamin.dancedungeon.factories.spells.restorative.Heal;
 import com.bryjamin.dancedungeon.screens.WorldContainer;
 import com.bryjamin.dancedungeon.screens.battle.BattleScreen;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
-import com.bryjamin.dancedungeon.screens.strategy.StrategyScreen;
+import com.bryjamin.dancedungeon.screens.strategy.MapScreen;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
-import com.bryjamin.dancedungeon.utils.math.CenterMath;
-import com.bryjamin.dancedungeon.utils.math.Coordinates;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
 import com.bryjamin.dancedungeon.utils.texture.TextDescription;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
@@ -71,12 +65,12 @@ public class MapWorld extends WorldContainer {
     private Array<Array<String>> enemyParty = new Array<Array<String>>();
 
     //BattleScreen battleScreen;
-    private VictoryAdapter adapter;
+    private ActionOnTapAdapter adapter;
 
 
     public MapWorld(MainGame game, Viewport gameport) {
         super(game, gameport);
-        this.adapter = new VictoryAdapter();
+        this.adapter = new ActionOnTapAdapter();
 
 
         Unit warrior = new Unit(UnitMap.UNIT_WARRIOR);
@@ -140,6 +134,8 @@ public class MapWorld extends WorldContainer {
 
     private void createWorld() {
 
+        final GameMap gameMap = new MapGenerator().generateGameMap();
+
         WorldConfiguration config = new WorldConfigurationBuilder()
                 .with(WorldConfigurationBuilder.Priority.HIGHEST,
                         new MovementSystem(),
@@ -155,6 +151,9 @@ public class MapWorld extends WorldContainer {
                 .with(WorldConfigurationBuilder.Priority.LOWEST,
                         new ActionOnTapSystem(gameport),
                         new FadeSystem(),
+
+                        new StrategyMapSystem(game, gameMap, playerParty),
+
                         new RenderingSystem(game, gameport),
                         new BoundsDrawingSystem(batch))
                 .build();
@@ -163,30 +162,6 @@ public class MapWorld extends WorldContainer {
 
         float width = Measure.units(15f);
         float height = Measure.units(7.5f);
-
-        createMap();
-
-        Entity startButton = world.createEntity();
-       // startButton.edit().add(new PositionComponent(CenterMath.offsetX(gameport.getWorldWidth(), width), CenterMath.offsetY(gameport.getWorldHeight(), height)));
-        startButton.edit().add(new PositionComponent(Measure.units(75f), Measure.units(40f)));
-        startButton.edit().add(new HitBoxComponent(new HitBox(width, height)));
-        startButton.edit().add(new CenteringBoundaryComponent(new Rectangle(0, 0, width, height)));
-        startButton.edit().add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE,
-                new TextureDescription.Builder(TextureStrings.BLOCK)
-                        .width(width)
-                        .height(height).build(),
-                new TextDescription.Builder(Fonts.MEDIUM)
-                        .text(TextResource.BATTLE)
-                        .color(new Color(Color.BLACK))
-                        .build()));
-        startButton.edit().add(new ActionOnTapComponent(new WorldAction() {
-            @Override
-            public void performAction(World world, Entity entity) {
-                startBattle();
-            }
-        }));
-
-
 
 
         Entity generate = world.createEntity();
@@ -205,40 +180,21 @@ public class MapWorld extends WorldContainer {
             @Override
             public void performAction(World world, Entity entity) {
                 game.getScreen().dispose();
-                game.setScreen(new StrategyScreen(game));
+                game.setScreen(new MapScreen(game));
             }
         }));
 
 
         createParty();
-       // createMap();
 
 
     }
 
 
-    public void startBattle(){
-
+    public void startBattle(GameMap gameMap){
         PartyDetails partyDetails = new PartyDetails();
         partyDetails.setPlayerParty(playerParty);
-
-        enemyParty.shuffle();
-
-        EnemyFactory enemyFactory = new EnemyFactory();
-
-        GameMap gameMap = new GameMap(
-                new BattleEvent(EnemyFactory.BLOB),
-                new BattleEvent(EnemyFactory.FAST_BLOB, EnemyFactory.MAGE_BLOB),
-                new BattleEvent(EnemyFactory.FAST_BLOB),
-                new TestEvent(),
-                new RestEvent(),
-                new BattleEvent(EnemyFactory.MAGE_BLOB)
-        );
-
-
         game.setScreen(new BattleScreen(game, game.getScreen(), gameMap, partyDetails));
-
-
     }
 
 
@@ -262,159 +218,16 @@ public class MapWorld extends WorldContainer {
     }
 
 
-    public void createMap() {
-
-        Coordinates[] coordinates = {
-                new Coordinates(0, 1),
-                new Coordinates(1, 1),
-                new Coordinates(2, 1),
-                new Coordinates(3, 1),
-                new Coordinates(4, 1),
-                new Coordinates(5, 1),
-                new Coordinates(1, 0),
-                new Coordinates(2, 0),
-                new Coordinates(3, 0),
-                new Coordinates(4, 0),
-                new Coordinates(1, 2),
-                new Coordinates(2, 2),
-                new Coordinates(3, 2),
-                new Coordinates(4, 2),
-        };
-
-        //float x = Measure.units(5f);
-        //float y = Measure.units(10f);
-
-        float width = Measure.units(5f);
-        float height = Measure.units(5f);
-        float gap = Measure.units(10f);
-
-
-        Array<GameMap.MapNode> mapNodeArray = new Array<GameMap.MapNode>();
-
-        float x = Measure.units(10f);
-        float y = Measure.units(5f);
-
-        GameMap.Section section1 = new GameMap.Section(
-                Measure.units(10f),
-                y,
-                Measure.units(10f),
-                Measure.units(50f), MathUtils.random(2, 4));
-
-        section1.generateNodePositions();
-
-        GameMap.Section section2 = new GameMap.Section(
-                Measure.units(35f),
-                y,
-                Measure.units(10f),
-                Measure.units(50f), MathUtils.random(2, 4));
-
-        section2.generateNodePositions();
-
-
-        GameMap.Section section3 = new GameMap.Section(
-                Measure.units(60f),
-                y,
-                Measure.units(10f),
-                Measure.units(50f), MathUtils.random(2, 4));
-
-        section3.generateNodePositions();
-
-
-        mapNodeArray.addAll(section1.getMapNodes());
-        mapNodeArray.addAll(section2.getMapNodes());
-        mapNodeArray.addAll(section3.getMapNodes());
-
-
-        for(GameMap.MapNode node : section1.getMapNodes()){
-
-
-            node.addSuccessors(section2.getMapNodes());
-            node.addSuccessors(section2.getMapNodes().random());
-        }
-
-        for(GameMap.MapNode node : section2.getMapNodes()){
-            node.addSuccessors(section3.getMapNodes());
-            node.addSuccessors(section3.getMapNodes().random());
-        }
-
-        for(GameMap.MapNode node : mapNodeArray){
-
-            Entity e = world.createEntity();
-
-            e.edit().add(new PositionComponent(CenterMath.centerPositionX(width, node.getPosX()),
-                    CenterMath.centerPositionY(height, node.getPosY())));
-            e.edit().add(new HitBoxComponent(width, height));
-
-            e.edit().add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE, new TextureDescription.Builder(TextureStrings.BLOCK)
-                    .width(width)
-                    .height(height)
-                    .build()));
-
-
-            for(GameMap.MapNode innerNode : node.getSuccessors()){
-
-                Entity line = world.createEntity();
-
-                line.edit().add(new PositionComponent(node.getPosX(), node.getPosY()));
-
-
-                Vector2 startPos = new Vector2(node.getPosX(), node.getPosY());
-                Vector2 endPos = new Vector2(innerNode.getPosX(), innerNode.getPosY());
-
-                line.edit().add(new DrawableComponent(Layer.BACKGROUND_LAYER_FAR,
-                        new TextureDescription.Builder(TextureStrings.BLOCK)
-                                .width(startPos.dst(endPos))
-                                .height(15)
-                                .origin(new Vector2(0,0))
-                                .rotation(Math.atan2(endPos.y - startPos.y, endPos.x - startPos.x) * 180 / Math.PI)
-                                .build()
-                ));
-
-
-            }
-
-        }
-
-
-
-
-/*        for (Coordinates c : coordinates) {
-
-
-            Entity e = world.createEntity();
-            e.edit().add(new PositionComponent(x + (x * c.getX()) + (gap * c.getX()),
-                    y + (y * (c.getY()) + gap * c.getY())));
-            e.edit().add(new HitBoxComponent(new HitBox(width, height)));
-            e.edit().add(new MapNodeComponent());
-            e.edit().add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE, new TextureDescription.Builder(TextureStrings.BLOCK)
-                    .width(width)
-                    .height(height)
-                    .build()));
-
-        }*/
-/*
-        for(int i = 0; i < coordinates.length; i++){
-
-            Entity e = world.createEntity();
-            e.edit().add(new PositionComponent(x + (x * coordinates[i].getX()) + (gap * coordinates[i].getX()),
-                    y + (y * (coordinates[i].getY()) + gap * coordinates[i].getY())));
-            e.edit().add(new HitBoxComponent(new HitBox(width, height)));
-            e.edit().add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE, new TextureDescription.Builder(TextureStrings.BLOCK)
-                    .width(width)
-                    .height(height)
-                    .build()));
-
-        }*/
-
-    }
-
-
     @Override
     public void handleInput(InputMultiplexer inputMultiplexer) {
         inputMultiplexer.addProcessor(adapter);
     }
 
-    private class VictoryAdapter extends InputAdapter {
+    public void victory() {
+        world.getSystem(StrategyMapSystem.class).onVictory();
+    }
+
+    private class ActionOnTapAdapter extends InputAdapter {
 
         @Override
         public boolean touchDown(int screenX, int screenY, int pointer, int button) {
