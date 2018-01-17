@@ -4,6 +4,8 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.bryjamin.dancedungeon.factories.enemy.EnemyFactory;
+import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
 import com.bryjamin.dancedungeon.factories.map.event.MapSection;
 import com.bryjamin.dancedungeon.utils.Measure;
 
@@ -18,36 +20,77 @@ import java.util.Comparator;
 
 public class MapGenerator {
 
+    private float mapSectionWidth = Measure.units(7.5f);
+    private float mapSectionHeight = Measure.units(45f);
+    private float mapSectionGap = Measure.units(20f);
 
+    private float mapStartX = Measure.units(5f);
+    private float mapStartY = Measure.units(5f);
+    private float minimumSpacing = Measure.units(7.5f);
+
+    private static final int numberOfSections = 15;
 
     public GameMap generateGameMap(){
         Array<MapSection> mapSections = calculateMap(generateMapSections());
-        return new GameMap(mapSections);
+
+
+
+        for(MapSection mapSection : mapSections){
+            for(MapNode mapNode : mapSection.getMapNodes()){
+
+                Array<BattleEvent> battleEventArray = new Array<BattleEvent>();
+
+                battleEventArray.add(new BattleEvent(EnemyFactory.BLOB,
+                                EnemyFactory.BLOB,
+                                EnemyFactory.MAGE_BLOB
+                                ));
+
+                battleEventArray.add(new BattleEvent(EnemyFactory.MAGE_BLOB,
+                        EnemyFactory.FAST_BLOB
+                ));
+
+                battleEventArray.add(new BattleEvent(EnemyFactory.FAST_BLOB,
+                        EnemyFactory.FAST_BLOB
+                ));
+
+
+                battleEventArray.add(new BattleEvent(EnemyFactory.MAGE_BLOB,
+                        EnemyFactory.MAGE_BLOB
+                ));
+
+                battleEventArray.shuffle();
+
+                mapNode.setMapEvent(battleEventArray.first());
+
+
+            }
+        }
+
+
+
+
+        return new GameMap(mapSections, getMapWidth());
+    }
+
+
+    private float getMapWidth(){
+        return (mapSectionWidth * numberOfSections) + (mapSectionGap * numberOfSections - 1);
     }
 
 
 
-
-    public Array<MapSection> generateMapSections(){
-
-        float width = Measure.units(7.5f);
-        float height = Measure.units(50f);
-        float gap = Measure.units(10f);
-
-        float x = Measure.units(7.5f);
-        float y = Measure.units(5f);
+    private Array<MapSection> generateMapSections(){
 
         Array<MapSection> mapSections = new Array<MapSection>();
 
-        int totalSections = 4;
+        for(int i = 0; i < numberOfSections; i++){
 
-        for(int i = 0; i < totalSections; i++){
-
-            mapSections.add(new MapSection(x + (i * Measure.units(20f)),
-                    y,
-                    width,
-                    height,
-                    MathUtils.random(2, 5)));
+            mapSections.add(new MapSection(mapStartX + (i * mapSectionGap),
+                    mapStartY,
+                    mapSectionWidth,
+                    mapSectionHeight,
+                    minimumSpacing,
+                    (i == numberOfSections - 1) ? 1 : MathUtils.random(2, 5)));
 
 
         }
@@ -60,7 +103,7 @@ public class MapGenerator {
 
 
 
-    public Array<MapSection> calculateMap(Array<MapSection> sections){
+    private Array<MapSection> calculateMap(Array<MapSection> sections){
 
         Array<MapSection> walkThroughSectionArray = new Array<MapSection>(sections);
 

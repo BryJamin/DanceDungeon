@@ -17,13 +17,16 @@ public class GameMap {
     private Array<MapSection> mapNodeSections = new Array<MapSection>();
     private Array<MapNode> allNodes = new Array<MapNode>();
 
+    private float width;
+
     private OrderedMap<MapNode, MapEvent> nodeMap = new OrderedMap<MapNode, MapEvent>();
 
-    public GameMap(Array<MapSection> mapSections){
+    public GameMap(Array<MapSection> mapSections, float width){
         this.mapNodeSections = mapSections;
         for(MapSection mapSection : mapNodeSections){
             allNodes.addAll(mapSection.getMapNodes());
         }
+        this.width = width;
     }
 
     public MapNode getCurrentMapNode() {
@@ -46,5 +49,14 @@ public class GameMap {
 
     public Array<MapSection> getMapNodeSections() {
         return mapNodeSections;
+    }
+
+
+    public float getWidth() {
+
+        MapSection first = mapNodeSections.first();
+        MapSection last = mapNodeSections.get(mapNodeSections.size - 1);
+
+        return (last.getStartX() + last.getWidth()) - first.getStartX();
     }
 }

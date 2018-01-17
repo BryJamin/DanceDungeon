@@ -2,7 +2,6 @@ package com.bryjamin.dancedungeon.factories.map.event;
 
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.factories.map.MapNode;
-import com.bryjamin.dancedungeon.utils.Measure;
 
 import java.util.Random;
 
@@ -22,13 +21,14 @@ public class MapSection {
     private float width;
     private float height;
 
-    private float minimumSpacing = Measure.units(10f);
+    private float minimumSpacing;
 
-    public MapSection(float startX, float startY, float width, float height, int nodeNumber) {
+    public MapSection(float startX, float startY, float width, float height, float minimumSpacing, int nodeNumber) {
         this.startX = startX;
         this.startY = startY;
         this.width = width;
         this.height = height;
+        this.minimumSpacing = minimumSpacing;
         this.nodeNumber = nodeNumber;
         this.generateNodePositionsWithinSection();
     }
@@ -89,6 +89,23 @@ public class MapSection {
 
     public Array<MapNode> getMapNodes() {
         return mapNodes;
+    }
+
+
+    public float getStartX() {
+        return startX;
+    }
+
+    public float getStartY() {
+        return startY;
+    }
+
+    public float getWidth() {
+        return width;
+    }
+
+    public float getHeight() {
+        return height;
     }
 }
 

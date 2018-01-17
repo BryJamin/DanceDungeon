@@ -35,8 +35,8 @@ public class StrategyMapSystem extends EntitySystem {
 
     private ComponentMapper<ActionOnTapComponent> actionOnTapMapper;
 
-    float width = Measure.units(5f);
-    float height = Measure.units(5f);
+    float width = Measure.units(4f);
+    float height = Measure.units(4f);
     float gap = Measure.units(10f);
 
     private MainGame game;

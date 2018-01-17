@@ -4,6 +4,7 @@ import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.WorldConfiguration;
 import com.artemis.WorldConfigurationBuilder;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
@@ -49,6 +50,7 @@ import com.bryjamin.dancedungeon.screens.strategy.MapScreen;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
+import com.bryjamin.dancedungeon.utils.math.CameraMath;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
 import com.bryjamin.dancedungeon.utils.texture.TextDescription;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
@@ -67,11 +69,12 @@ public class MapWorld extends WorldContainer {
     //BattleScreen battleScreen;
     private ActionOnTapAdapter adapter;
 
+    private GameMap gameMap;
+
 
     public MapWorld(MainGame game, Viewport gameport) {
         super(game, gameport);
         this.adapter = new ActionOnTapAdapter();
-
 
         Unit warrior = new Unit(UnitMap.UNIT_WARRIOR);
         warrior.setStatComponent(new StatComponent.StatBuilder()
@@ -134,7 +137,7 @@ public class MapWorld extends WorldContainer {
 
     private void createWorld() {
 
-        final GameMap gameMap = new MapGenerator().generateGameMap();
+        gameMap = new MapGenerator().generateGameMap();
 
         WorldConfiguration config = new WorldConfigurationBuilder()
                 .with(WorldConfigurationBuilder.Priority.HIGHEST,
@@ -238,12 +241,24 @@ public class MapWorld extends WorldContainer {
             ;
             return false;
         }
-    }
+
+        @Override
+        public boolean touchDragged(int screenX, int screenY, int pointer) {
+                float x = Gdx.input.getDeltaX();
+                //float y = Gdx.input.getDeltaY();
+                gameport.getCamera().translate(-x * Measure.units(0.15f), 0, 0);
+
+                float tempValueToSeeFullMap = Measure.units(20f);
+
+                if(CameraMath.getBtmLftX(gameport) < 0){
+                    gameport.getCamera().position.x = 0 + gameport.getCamera().viewportWidth / 2;
+                } else if(CameraMath.getBtmRightX(gameport) > gameMap.getWidth() + tempValueToSeeFullMap){
+                    CameraMath.setBtmRightX(gameport, gameMap.getWidth() + tempValueToSeeFullMap);
+                }
 
 
-    public class StrategyMap {
-
-
+                return true;
+        }
     }
 
 
