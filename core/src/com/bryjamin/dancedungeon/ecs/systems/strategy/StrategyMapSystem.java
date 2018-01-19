@@ -35,8 +35,8 @@ public class StrategyMapSystem extends EntitySystem {
 
     private ComponentMapper<ActionOnTapComponent> actionOnTapMapper;
 
-    float width = Measure.units(4f);
-    float height = Measure.units(4f);
+    float width = Measure.units(6f);
+    float height = Measure.units(6f);
     float gap = Measure.units(10f);
 
     private MainGame game;
@@ -141,7 +141,7 @@ public class StrategyMapSystem extends EntitySystem {
                 CenterMath.centerPositionY(height, node.getPosY())));
         e.edit().add(new HitBoxComponent(width, height));
 
-        e.edit().add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE, new TextureDescription.Builder(TextureStrings.BLOCK)
+        e.edit().add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE, new TextureDescription.Builder(TextureStrings.ICON_COMBAT)
                 .width(width)
                 .height(height)
                 .color(new Color(0.7f,0.7f,0.7f, 1f))

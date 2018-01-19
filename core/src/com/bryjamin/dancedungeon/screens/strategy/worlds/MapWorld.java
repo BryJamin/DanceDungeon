@@ -4,10 +4,10 @@ import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.WorldConfiguration;
 import com.artemis.WorldConfigurationBuilder;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
@@ -23,6 +23,7 @@ import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
+import com.bryjamin.dancedungeon.ecs.systems.CameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MoveToTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
@@ -68,6 +69,7 @@ public class MapWorld extends WorldContainer {
 
     //BattleScreen battleScreen;
     private ActionOnTapAdapter adapter;
+    private GestureDetector mapGestureDetector;
 
     private GameMap gameMap;
 
@@ -75,7 +77,8 @@ public class MapWorld extends WorldContainer {
     public MapWorld(MainGame game, Viewport gameport) {
         super(game, gameport);
         this.adapter = new ActionOnTapAdapter();
-
+        this.mapGestureDetector = new GestureDetector(20f, 0.4f, 1.1f, 1.5f, new MapGestures());
+        //halfTapSquareSize=20, tapCountInterval=0.4f, longPressDuration=1.1f, maxFlingDelay=0.15f.
         Unit warrior = new Unit(UnitMap.UNIT_WARRIOR);
         warrior.setStatComponent(new StatComponent.StatBuilder()
                 .movementRange(5)
@@ -157,6 +160,8 @@ public class MapWorld extends WorldContainer {
 
                         new StrategyMapSystem(game, gameMap, playerParty),
 
+                        new CameraSystem(gameport.getCamera(), 0,0, gameMap.getWidth() + Measure.units(20f), 0),
+
                         new RenderingSystem(game, gameport),
                         new BoundsDrawingSystem(batch))
                 .build();
@@ -224,17 +229,26 @@ public class MapWorld extends WorldContainer {
     @Override
     public void handleInput(InputMultiplexer inputMultiplexer) {
         inputMultiplexer.addProcessor(adapter);
+        inputMultiplexer.addProcessor(mapGestureDetector);
     }
 
     public void victory() {
         world.getSystem(StrategyMapSystem.class).onVictory();
     }
 
-    private class ActionOnTapAdapter extends InputAdapter {
+
+    private class MapGestures extends GestureDetector.GestureAdapter  {
+
 
         @Override
-        public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-            Vector3 input = gameport.unproject(new Vector3(screenX, screenY, 0));
+        public boolean touchDown(float x, float y, int pointer, int button) {
+            world.getSystem(CameraSystem.class).stopFling();
+            return false;
+        }
+
+        @Override
+        public boolean tap(float x, float y, int count, int button) {
+            Vector3 input = gameport.unproject(new Vector3(x, y, 0));
             if (world.getSystem(ActionOnTapSystem.class).touch(input.x, input.y)) {
                 return true;
             }
@@ -242,6 +256,45 @@ public class MapWorld extends WorldContainer {
             return false;
         }
 
+
+
+        @Override
+        public boolean pan(float x, float y, float deltaX, float deltaY) {
+            //float x = Gdx.input.getDeltaX();
+            //float y = Gdx.input.getDeltaY();
+
+            gameport.getCamera().translate(-deltaX * Measure.units(0.15f), 0, 0);
+
+            float tempValueToSeeFullMap = Measure.units(20f);
+
+            if(CameraMath.getBtmLftX(gameport) < 0){
+                gameport.getCamera().position.x = 0 + gameport.getCamera().viewportWidth / 2;
+            } else if(CameraMath.getBtmRightX(gameport) > gameMap.getWidth() + tempValueToSeeFullMap){
+                CameraMath.setBtmRightX(gameport, gameMap.getWidth() + tempValueToSeeFullMap);
+            }
+
+
+            return true;
+        }
+
+
+        @Override
+        public boolean fling(float velocityX, float velocityY, int button) {
+
+            System.out.println("Fling vel X is: " + velocityX);
+
+         //   if(velocityX > 1250) {
+                world.getSystem(CameraSystem.class).flingCamera(-velocityX, velocityY);
+           // }
+            return false;
+            //return super.fling(velocityX, velocityY, button);
+        }
+    }
+
+
+    private class ActionOnTapAdapter extends InputAdapter {
+
+/*
         @Override
         public boolean touchDragged(int screenX, int screenY, int pointer) {
                 float x = Gdx.input.getDeltaX();
@@ -258,7 +311,11 @@ public class MapWorld extends WorldContainer {
 
 
                 return true;
-        }
+        }*/
+
+
+
+
     }
 
 

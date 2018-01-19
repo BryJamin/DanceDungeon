@@ -125,112 +125,112 @@ blocktiny
   index: 0
 decor/turret
   rotate: false
-  xy: 1387, 136
+  xy: 1321, 4
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
 decor/turret
   rotate: false
-  xy: 1321, 4
+  xy: 1387, 70
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 1
 decor/turret
   rotate: false
-  xy: 1387, 70
+  xy: 1453, 136
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 2
 decor/turret
   rotate: false
-  xy: 1453, 136
+  xy: 1387, 4
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 3
 decor/turret
   rotate: false
-  xy: 1387, 4
+  xy: 1453, 70
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 4
 decor/turret
   rotate: false
-  xy: 1453, 70
+  xy: 1519, 136
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 5
 decor/turret
   rotate: false
-  xy: 1519, 136
+  xy: 1453, 4
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 6
 decor/turret
   rotate: false
-  xy: 1453, 4
+  xy: 1519, 70
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 7
 decor/turret
   rotate: false
-  xy: 1519, 70
+  xy: 1585, 136
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 8
 decor/turret
   rotate: false
-  xy: 1585, 136
+  xy: 1519, 4
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 9
 decor/turret
   rotate: false
-  xy: 1519, 4
+  xy: 1585, 70
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 10
 decor/turret
   rotate: false
-  xy: 1585, 70
+  xy: 1651, 136
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 11
 decor/turret
   rotate: false
-  xy: 1651, 136
+  xy: 1585, 4
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 12
 decor/turret
   rotate: false
-  xy: 1585, 4
+  xy: 1651, 70
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 13
 decor/turret
   rotate: false
-  xy: 1651, 70
+  xy: 1717, 136
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 14
 decor/turret
   rotate: false
-  xy: 1717, 136
+  xy: 1651, 4
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -314,7 +314,7 @@ enemy/boss/biggablobba
   index: 6
 enemy/xi_portrait
   rotate: false
-  xy: 1717, 4
+  xy: 1783, 70
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -326,21 +326,21 @@ icons/arrow
   orig: 64, 64
   offset: 0, 0
   index: 0
-icons/item
+icons/icon_combat
   rotate: false
   xy: 925, 4
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
-icons/lock
+icons/item
   rotate: false
-  xy: 1057, 136
+  xy: 991, 70
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
-icons/music
+icons/lock
   rotate: false
   xy: 991, 4
   size: 64, 64
@@ -353,52 +353,59 @@ icons/music
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
-  index: 1
+  index: 0
 icons/music
   rotate: false
   xy: 1123, 136
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
-  index: 2
-icons/music_off
+  index: 1
+icons/music
   rotate: false
   xy: 1057, 4
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
-  index: 0
-icons/question_mark
+  index: 2
+icons/music_off
   rotate: false
   xy: 1123, 70
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
-icons/settings_goto
+icons/question_mark
   rotate: false
   xy: 1189, 136
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
-icons/sound
+icons/settings_goto
   rotate: false
-  xy: 1321, 136
+  xy: 1123, 4
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
-icons/sound_off
+icons/sound
   rotate: false
   xy: 1255, 4
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
+icons/sound_off
+  rotate: false
+  xy: 1321, 70
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 0
 line_vertical
   rotate: false
-  xy: 991, 70
+  xy: 1057, 136
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -468,14 +475,7 @@ player/end_turn
   index: 0
 player/targeting
   rotate: false
-  xy: 1321, 70
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 0
-player/xi_firing
-  rotate: false
-  xy: 1651, 4
+  xy: 1387, 136
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -486,10 +486,17 @@ player/xi_firing
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
-  index: 1
+  index: 0
 player/xi_firing
   rotate: false
   xy: 1783, 136
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 1
+player/xi_firing
+  rotate: false
+  xy: 1717, 4
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -580,35 +587,35 @@ skills/QuickStep
   index: 0
 skills/slash
   rotate: false
-  xy: 1123, 4
+  xy: 1189, 70
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
 skills/slash
   rotate: false
-  xy: 1189, 70
+  xy: 1255, 136
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 1
 skills/slash
   rotate: false
-  xy: 1255, 136
+  xy: 1189, 4
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 2
 skills/slash
   rotate: false
-  xy: 1189, 4
+  xy: 1255, 70
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 3
 skills/slash
   rotate: false
-  xy: 1255, 70
+  xy: 1321, 136
   size: 64, 64
   orig: 64, 64
   offset: 0, 0

@@ -32,4 +32,7 @@ public class TextureStrings {
     public static final String SKILLS_SLASH = "skills/slash";
     public static final String SKILLS_HEAL = "skills/Heal";
 
+
+    public static final String ICON_COMBAT = "icons/icon_combat";
+
 }
