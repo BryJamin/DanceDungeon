@@ -17,6 +17,10 @@ public class CameraMath {
         return camera.position.x - camera.viewportWidth / 2;
     }
 
+    public static float getBtmY(Camera camera){
+        return camera.position.y - camera.viewportHeight / 2;
+    }
+
     public static float getBtmRightX(Viewport viewport){
         return getBtmRightX(viewport.getCamera());
     }

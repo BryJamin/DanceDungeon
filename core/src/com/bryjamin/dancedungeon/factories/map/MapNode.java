@@ -14,10 +14,12 @@ public class MapNode {
 
     private Vector2 position = new Vector2();
 
-    public Array<MapNode> successors = new Array<MapNode>();
+    private Array<MapNode> successors = new Array<MapNode>();
     private Array<MapNode> parents = new Array<MapNode>();
 
-    public MapEvent mapEvent = new BattleEvent(EnemyFactory.BLOB);
+    private MapEvent mapEvent = new BattleEvent(EnemyFactory.BLOB);
+
+    private MapEvent.EventType eventType = MapEvent.EventType.BATTLE;
 
     public void addSuccessors(MapNode... mapNode){
         this.successors.addAll(mapNode);
@@ -36,11 +38,6 @@ public class MapNode {
         this.parents.add(mapNode);
     }
 
-
-    public float getPosX() {
-        return position.x;
-    }
-
     public Vector2 getPosition(){
         return position;
     }
@@ -49,27 +46,43 @@ public class MapNode {
         this.position.x = posX;
     }
 
-    public int getParentSize(){
-        return parents.size;
-    }
-
-    public Array<MapNode> getSuccessors() {
-        return successors;
-    }
-
-    public float getPosY() {
-        return position.y;
+    public float getPosX() {
+        return position.x;
     }
 
     public void setPosY(float posY) {
         this.position.y = posY;
     }
 
-    public com.bryjamin.dancedungeon.factories.map.event.MapEvent getMapEvent() {
+    public float getPosY() {
+        return position.y;
+    }
+
+    public int getParentSize(){
+        return parents.size;
+    }
+
+    public void setMapEvent(MapEvent mapEvent) {
+        this.mapEvent = mapEvent;
+    }
+
+    public MapEvent getMapEvent() {
         return mapEvent;
     }
 
-    public void setMapEvent(com.bryjamin.dancedungeon.factories.map.event.MapEvent mapEvent) {
-        this.mapEvent = mapEvent;
+    public Array<MapNode> getSuccessors() {
+        return successors;
+    }
+
+    public void setEventType(MapEvent.EventType eventType) {
+        this.eventType = eventType;
+    }
+
+    public MapEvent.EventType getEventType() {
+        return eventType;
+    }
+
+    public Array<MapNode> getParents() {
+        return parents;
     }
 }

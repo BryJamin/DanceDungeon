@@ -35,12 +35,14 @@ public class StrategyMapSystem extends EntitySystem {
 
     private ComponentMapper<ActionOnTapComponent> actionOnTapMapper;
 
-    float width = Measure.units(6f);
-    float height = Measure.units(6f);
+    float width = Measure.units(7f);
+    float height = Measure.units(7f);
     float gap = Measure.units(10f);
 
     private MainGame game;
     private GameMap gameMap;
+
+    private Color grey = new Color(0.8f, 0.8f, 0.8f, 1f);
 
     private Array<Unit> playerParty;
 
@@ -115,8 +117,6 @@ public class StrategyMapSystem extends EntitySystem {
     public void onVictory(){
 
         for(Entity e : activeNodes){
-            e.edit().remove(ActionOnTapComponent.class);
-
             if(gameMap.getCurrentMapNode().equals(e.getComponent(MapNodeComponent.class).getNode())) {
                 createCompletedNode(e);
             } else {
@@ -141,10 +141,30 @@ public class StrategyMapSystem extends EntitySystem {
                 CenterMath.centerPositionY(height, node.getPosY())));
         e.edit().add(new HitBoxComponent(width, height));
 
-        e.edit().add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE, new TextureDescription.Builder(TextureStrings.ICON_COMBAT)
+
+        String texture;
+
+        switch (node.getEventType()){
+            case BATTLE:
+                texture = TextureStrings.ICON_COMBAT;
+                break;
+            case BOSS:
+                texture = TextureStrings.ICON_COMBAT;
+                break;
+            case SHOP:
+                texture = TextureStrings.ICON_MONEY;
+                break;
+            case REST:
+                texture = TextureStrings.ICON_REST;
+                break;
+            default:
+                texture = TextureStrings.BLOCK;
+        }
+
+        e.edit().add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE, new TextureDescription.Builder(texture)
                 .width(width)
                 .height(height)
-                .color(new Color(0.7f,0.7f,0.7f, 1f))
+                .color(new Color(grey))
                 .build()));
 
         e.edit().add(new MapNodeComponent(node));
@@ -154,8 +174,8 @@ public class StrategyMapSystem extends EntitySystem {
     }
 
     private void createUnreachableNode(Entity e){
-        e.edit().add(new ActionOnTapComponent(selectNodeAction(e.getComponent(MapNodeComponent.class).getNode())));
-        e.getComponent(DrawableComponent.class).setColor(new Color(0.7f,0.7f,0.7f, 1f));
+        e.edit().remove(ActionOnTapComponent.class);
+        e.getComponent(DrawableComponent.class).setColor(new Color(grey));
     };
 
 
@@ -165,6 +185,7 @@ public class StrategyMapSystem extends EntitySystem {
     };
 
     private void createCompletedNode(Entity e){
+        e.edit().remove(ActionOnTapComponent.class);
         e.getComponent(DrawableComponent.class).setColor(new Color(Color.GREEN));
     }
 

@@ -49,12 +49,11 @@ public class MapScreen extends AbstractScreen {
         Gdx.gl.glClearColor(0, 0, 0, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        game.batch.setProjectionMatrix(gamecam.combined);
+        handleInput(delta);
+        mapWorld.process(delta);
 
         gamecam.update();
-        mapWorld.process(delta);
-        handleInput(delta);
-
+        game.batch.setProjectionMatrix(gamecam.combined);
     }
 
 

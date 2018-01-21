@@ -19,10 +19,12 @@ import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.assets.FileStrings;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
+import com.bryjamin.dancedungeon.ecs.components.FollowPositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.GreyScaleComponent;
+import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.texture.DrawableDescription;
 import com.bryjamin.dancedungeon.utils.texture.TextDescription;
@@ -44,6 +46,8 @@ public class RenderingSystem extends EntitySystem {
     private ComponentMapper<BlinkOnHitComponent> blinkOnHitm;
 
     private ComponentMapper<GreyScaleComponent> greyScaleMapper;
+
+    private MovementSystem movementSystem;
 
 
     private SpriteBatch batch;
@@ -99,8 +103,11 @@ public class RenderingSystem extends EntitySystem {
     @Override
     protected void begin() {
         if(!batch.isDrawing()) {
+            batch.setProjectionMatrix(gameport.getCamera().combined);
             batch.begin();
         }
+
+       // Archetype archetype = new ArchetypeBuilder().add(PositionComponent.class).build(world);
     }
 
     @Override
@@ -113,6 +120,12 @@ public class RenderingSystem extends EntitySystem {
 
         DrawableComponent drawableComponent = drawablem.get(e);
         PositionComponent positionComponent = positionm.get(e);
+
+
+        if(world.getMapper(FollowPositionComponent.class).has(e)) {
+            System.out.println("Position x : " + positionComponent.getX());
+            System.out.println("CamX in Rend :" + gameport.getCamera().position.x);
+        }
 
         boolean shaderOn = false;
 
@@ -177,6 +190,9 @@ public class RenderingSystem extends EntitySystem {
                 TextDescription textDescription = (TextDescription) drawableDescription;
 
                 BitmapFont bmf = assetManager.get(textDescription.getFont(), BitmapFont.class);
+
+
+
 
                 if(boundm.has(e)){
                     CenteringBoundaryComponent bc = boundm.get(e);

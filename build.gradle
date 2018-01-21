@@ -110,7 +110,10 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
 
         //Artemis
-        compile "net.onedaybeard.artemis:artemis-odb:2.1.0"
+        compile "net.onedaybeard.artemis:artemis-odb:2.2.0-SNAPSHOT"
+
+        //Artemis Orion
+        //compile "se.feomedia.orion:artemis-odb-orion:0.1.0-SNAPSHOT"
 
         //Testing
         testCompile "junit:junit:4.12"

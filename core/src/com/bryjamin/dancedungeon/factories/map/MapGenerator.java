@@ -4,12 +4,14 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.bryjamin.dancedungeon.factories.enemy.EnemyFactory;
-import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
+import com.bryjamin.dancedungeon.factories.map.event.MapEvent;
 import com.bryjamin.dancedungeon.factories.map.event.MapSection;
 import com.bryjamin.dancedungeon.utils.Measure;
+import com.bryjamin.dancedungeon.utils.random.WeightedObject;
+import com.bryjamin.dancedungeon.utils.random.WeightedRoll;
 
 import java.util.Comparator;
+import java.util.Random;
 
 /**
  * Created by BB on 16/01/2018.
@@ -20,9 +22,9 @@ import java.util.Comparator;
 
 public class MapGenerator {
 
-    private float mapSectionWidth = Measure.units(7.5f);
-    private float mapSectionHeight = Measure.units(45f);
-    private float mapSectionGap = Measure.units(20f);
+    private float mapSectionWidth = Measure.units(9f);
+    private float mapSectionHeight = Measure.units(42.5f);
+    private float mapSectionGap = Measure.units(22.5f);
 
     private float mapStartX = Measure.units(5f);
     private float mapStartY = Measure.units(5f);
@@ -32,49 +34,124 @@ public class MapGenerator {
 
     public GameMap generateGameMap(){
         Array<MapSection> mapSections = calculateMap(generateMapSections());
-
-
-
-        for(MapSection mapSection : mapSections){
-            for(MapNode mapNode : mapSection.getMapNodes()){
-
-                Array<BattleEvent> battleEventArray = new Array<BattleEvent>();
-
-                battleEventArray.add(new BattleEvent(EnemyFactory.BLOB,
-                                EnemyFactory.BLOB,
-                                EnemyFactory.MAGE_BLOB
-                                ));
-
-                battleEventArray.add(new BattleEvent(EnemyFactory.MAGE_BLOB,
-                        EnemyFactory.FAST_BLOB
-                ));
-
-                battleEventArray.add(new BattleEvent(EnemyFactory.FAST_BLOB,
-                        EnemyFactory.FAST_BLOB
-                ));
-
-
-                battleEventArray.add(new BattleEvent(EnemyFactory.MAGE_BLOB,
-                        EnemyFactory.MAGE_BLOB
-                ));
-
-                battleEventArray.shuffle();
-
-                mapNode.setMapEvent(battleEventArray.first());
-
-
-            }
-        }
-
-
-
-
-        return new GameMap(mapSections, getMapWidth());
+        setupMapEventTypes(mapSections);
+        return new GameMap(mapSections);
     }
 
 
-    private float getMapWidth(){
-        return (mapSectionWidth * numberOfSections) + (mapSectionGap * numberOfSections - 1);
+    private void setupMapEventTypes(Array<MapSection> mapSections){
+
+
+        WeightedRoll<MapEvent.EventType> eventRoller = new WeightedRoll<MapEvent.EventType>(new Random());
+
+        WeightedObject<MapEvent.EventType> battleEvent =
+                new WeightedObject<MapEvent.EventType>(MapEvent.EventType.BATTLE, 20);
+
+        WeightedObject<MapEvent.EventType> shopEvent =
+                new WeightedObject<MapEvent.EventType>(MapEvent.EventType.SHOP, 20);
+
+        WeightedObject<MapEvent.EventType> restEvent =
+                new WeightedObject<MapEvent.EventType>(MapEvent.EventType.REST, 20);
+
+        eventRoller.addWeightedObjects(battleEvent, shopEvent, restEvent);
+
+     //   int totalNonFixedNodes =
+
+        int battleCount = 0;
+        int restCount = 0;
+        int shopCount = 0;
+
+        Array<MapNode> flippableNodes = new Array<MapNode>();
+
+        for(int i = 0; i < mapSections.size; i++){
+            Array<MapNode> sectionNodes = mapSections.get(i).getMapNodes();
+            for(int j = 0 ; j < sectionNodes.size; j++){
+                if(i == 0) sectionNodes.get(j).setEventType(MapEvent.EventType.BATTLE);
+                else if(i == mapSections.size -1 ) sectionNodes.get(j).setEventType(MapEvent.EventType.BOSS);
+                else flippableNodes.add(sectionNodes.get(j));
+            }
+        }
+
+        flippableNodes.shuffle();
+
+        for(int i = 0; i < 5; i++){
+            MapNode potentialFlip = flippableNodes.removeIndex(0);
+            float chance = calculateScore(potentialFlip, MapEvent.EventType.REST);
+            //System.out.println(chance);
+            if(chance > MathUtils.random.nextInt(100) + 1) {
+                potentialFlip.setEventType(MapEvent.EventType.REST);
+            }
+        }
+
+        for(int i = 0; i < 5; i++){
+            MapNode potentialFlip = flippableNodes.removeIndex(0);
+            float chance = calculateScore(potentialFlip, MapEvent.EventType.SHOP);
+            //System.out.println(chance);
+            if(chance > MathUtils.random.nextInt(100) + 1) {
+                potentialFlip.setEventType(MapEvent.EventType.SHOP);
+            }
+        }
+
+        //flippableNodes.removeIndex(0).setEventType(MapEvent.EventType.SHOP);
+
+
+   //     System.out.println(flippableNodes.size);
+
+
+
+    }
+
+
+    public float calculateScore(MapNode node, MapEvent.EventType eventType){
+
+        int secondaryNodeSize = 0;
+
+        for(MapNode child : node.getSuccessors()){
+            secondaryNodeSize += child.getSuccessors().size;
+           // System.out.println("childe size " + child.getSuccessors().size);
+        }
+
+        for(MapNode parent : node.getParents()){
+            secondaryNodeSize += parent.getParents().size;
+          //  System.out.println("p size " + parent.getParents().size);
+        }
+
+        float number;
+
+        if(secondaryNodeSize == 0) return -100; //TODO decide how to handle this, since technically this should never happen
+        else {
+            number = 100.0f / secondaryNodeSize;
+        }
+
+        float score = 0;
+
+        for(MapNode child : node.getSuccessors()){
+            if(child.getEventType() == eventType) return -100;
+            if(child.getSuccessors().size > 0)
+                score += calculateLevel2Score(child.getSuccessors(), eventType, number);
+        }
+
+        for(MapNode parent : node.getParents()){
+            if(parent.getEventType() == eventType) return -100;
+            if(parent.getParents().size > 0)
+                score += calculateLevel2Score(parent.getParents(), eventType, number);
+        }
+
+        return score;
+
+
+    }
+
+    public float calculateLevel2Score(Array<MapNode> nodes, MapEvent.EventType eventType, float number){
+
+        float score = 0;
+
+        for(MapNode node : nodes){
+            if(node.getEventType() != eventType) score += number;
+        }
+
+        return score;
+
     }
 
 
@@ -90,7 +167,7 @@ public class MapGenerator {
                     mapSectionWidth,
                     mapSectionHeight,
                     minimumSpacing,
-                    (i == numberOfSections - 1) ? 1 : MathUtils.random(2, 5)));
+                    (i == numberOfSections - 1) ? 1 : MathUtils.random(3, 5)));
 
 
         }

@@ -71,7 +71,6 @@ public class DummyFactory {
 
 
     public ComponentBag targetDummyWalker() {
-
         ComponentBag bag = targetDummy(new StatComponent.StatBuilder().movementRange(3)
                 .build());
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, blob.color(Color.CYAN).build()));

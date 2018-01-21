@@ -1,7 +1,12 @@
 package com.bryjamin.dancedungeon.ecs.systems;
 
-import com.artemis.BaseSystem;
+import com.artemis.Aspect;
+import com.artemis.ComponentMapper;
+import com.artemis.Entity;
+import com.artemis.EntitySystem;
 import com.badlogic.gdx.graphics.Camera;
+import com.bryjamin.dancedungeon.ecs.components.FixedToCameraComponent;
+import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CameraMath;
 
@@ -9,14 +14,16 @@ import com.bryjamin.dancedungeon.utils.math.CameraMath;
  * Created by BB on 18/01/2018.
  */
 
-public class CameraSystem extends BaseSystem {
+public class CameraSystem extends EntitySystem {
 
+    private ComponentMapper<PositionComponent> positionm;
+    private ComponentMapper<FixedToCameraComponent> fixedm;
 
     private Camera camera;
 
     private float cameraVelocityX;
     private float cameraVelocityY;
-    private boolean processingFlag = false;
+    private boolean flingActionFlag = false;
 
     private float minX;
     private float minY;
@@ -30,8 +37,13 @@ public class CameraSystem extends BaseSystem {
     /**
      * In this context 'min' referes to the minimum point on the x and y axis a camera can show
      * 'max' references to the maximum point on the x and y axis a camera can show
+     *
+     * The CameraSystem is placed afer all renderable systems, so that way on the next loop,
+     * anything referencing the camera position is not incorrect
+     *
      */
     public CameraSystem(Camera camera, float minX, float minY, float maxX, float maxY){
+        super(Aspect.all(PositionComponent.class, FixedToCameraComponent.class));
         this.minX = minX;
         this.minY = minY;
         this.maxX = maxX;
@@ -41,31 +53,50 @@ public class CameraSystem extends BaseSystem {
 
 
     @Override
-    protected boolean checkProcessing() {
-        return processingFlag;
+    public void inserted(Entity e) {
+        //super.inserted(e);
+        updateEntityPosition(e);
     }
 
     @Override
     protected void processSystem() {
 
 
-        time += world.delta;
-        flingDecelerate(time);
+        if(flingActionFlag) {
+            time += world.delta;
+            flingDecelerate(time);
 
-        if(CameraMath.getBtmLftX(camera) < minX){
-            stopFling();
-            CameraMath.setBtmLeftX(camera, minX);
+            if (CameraMath.getBtmLftX(camera) < minX) {
+                stopFling();
+                CameraMath.setBtmLeftX(camera, minX);
+            }
+
+            if (CameraMath.getBtmRightX(camera) > maxX) {
+                stopFling();
+                CameraMath.setBtmRightX(camera, maxX);
+            }
+            camera.update();
         }
 
-        if(CameraMath.getBtmRightX(camera) > maxX){
-            stopFling();
-            CameraMath.setBtmRightX(camera, maxX);
-        }
-
-
+        updateEntityPositions();
 
         //pc.position.add(vc.velocity.x * world.delta, vc.velocity.y * world.delta, 0);
 
+    }
+
+
+    private void updateEntityPosition(Entity e){
+        PositionComponent pc = positionm.get(e);
+        FixedToCameraComponent ftcc = fixedm.get(e);
+
+        pc.setX(CameraMath.getBtmLftX(camera) + ftcc.offsetX);
+        pc.setY(CameraMath.getBtmY(camera) + ftcc.offsetY);
+    }
+
+    private void updateEntityPositions(){
+        for(Entity e : this.getEntities()){
+            updateEntityPosition(e);
+        }
     }
 
     public void flingDecelerate(float time) {
@@ -87,22 +118,22 @@ public class CameraSystem extends BaseSystem {
 
             camera.position.add(cameraVelocityX * world.delta, 0 * world.delta, 0);
 
+
             if (this.cameraVelocityX == 0 && this.cameraVelocityY == 0){
-                processingFlag = false;
+                flingActionFlag = false;
                 this.time = 0;
             }
               //  Gdx.graphics.setContinuousRendering(false);
         }
     }
 
-
     public void flingCamera(float velocityX, float velocityY){
-        processingFlag = true;
+        flingActionFlag = true;
         cameraVelocityX = velocityX * 1.5f;
     }
 
     public void stopFling(){
-        processingFlag = false;
+        flingActionFlag = false;
         cameraVelocityX = 0;
         time = 0;
     }

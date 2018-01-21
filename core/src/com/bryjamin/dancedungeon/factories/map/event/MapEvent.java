@@ -9,7 +9,7 @@ import com.artemis.World;
 public abstract class MapEvent {
 
     public enum EventType {
-        BATTLE, BOSS, SHOP
+        BATTLE, BOSS, SHOP, REST
     }
 
     public abstract EventType getEventType();
