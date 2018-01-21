@@ -60,7 +60,7 @@ public class Fireball implements SkillAnimation {
         float y = CenterMath.centerPositionY(size, positionComponent.getY() + Measure.units(2.5f));
 
 
-        Rectangle r = tileSystem.getRectangleUsingCoordinates(target);
+        Rectangle r = tileSystem.createRectangleUsingCoordinates(target);
 
         Entity fireBall = world.createEntity();
         fireBall.edit().add(new PositionComponent(x, y));

@@ -2,6 +2,7 @@
     precision mediump float;
 #endif
 
+
 varying vec4 v_color;
 varying vec2 v_texCoords;
 uniform sampler2D u_texture;
@@ -9,7 +10,9 @@ uniform mat4 u_projTrans;
 
 void main() {
         vec4 color = texture2D(u_texture, v_texCoords).rgba;
-        float gray = (color.r + color.g + color.b) / 5.0;
+
+        float gray = (color.r + color.g + color.b) / 7.0; //Make higher or lower to change brightness of greyscale
+
         vec3 grayscale = vec3(gray);
 
         gl_FragColor = vec4(grayscale, color.a);

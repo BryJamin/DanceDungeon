@@ -13,22 +13,32 @@ import com.badlogic.gdx.utils.Array;
 
 public class TargetComponent extends Component {
 
-    Aspect.Builder builder;
+    public Aspect.Builder enemyBuilder;
+    public Aspect.Builder allyBuilder;
 
     public TargetComponent(){
-        builder = Aspect.all();
-    }
 
-
-    public TargetComponent(Aspect.Builder builder){
-        this.builder = builder;
     }
 
 
     public Array<Entity> getTargets(World world){
 
         Array<Entity> entityArray = new Array<Entity>();
-        IntBag intBag = world.getAspectSubscriptionManager().get(builder).getEntities();
+        IntBag intBag = world.getAspectSubscriptionManager().get(enemyBuilder).getEntities();
+
+
+        for(int i = 0; i < intBag.size(); i++){
+            entityArray.add(world.getEntity(intBag.get(i)));
+        }
+
+        return entityArray;
+
+    }
+
+    public Array<Entity> getAllies(World world){
+
+        Array<Entity> entityArray = new Array<Entity>();
+        IntBag intBag = world.getAspectSubscriptionManager().get(allyBuilder).getEntities();
 
 
         for(int i = 0; i < intBag.size(); i++){

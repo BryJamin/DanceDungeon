@@ -194,7 +194,6 @@ public class AStarPathCalculator {
                         potentialOpenListNode.parent = nextNode;
                         openList.add(potentialOpenListNode);
                     } else if(openList.contains(potentialOpenListNode, false)){
-                        //  System.out.println(potentialOpenListNode.gValue);
 
                         if (potentialOpenListNode.gValue > nextNode.gValue + HORIZONTAL_COST) {
                             potentialOpenListNode.gValue = nextNode.gValue + HORIZONTAL_COST;

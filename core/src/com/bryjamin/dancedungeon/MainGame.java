@@ -77,7 +77,6 @@ public class MainGame extends Game {
         small.fontParameters.magFilter = Texture.TextureFilter.Linear;
         assetManager.load(Fonts.SMALL, BitmapFont.class, small);
 
-
         setScreen(new LoadingScreen(this));
     }
 }

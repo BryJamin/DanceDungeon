@@ -28,6 +28,8 @@ public class ActionCameraSystem extends EntitySystem {
 
     private boolean hasBegun = false;
 
+    private boolean processingFlag = true;
+
     /**
      * Creates an entity system that uses the specified aspect as a matcher
      * against entities.
@@ -40,34 +42,45 @@ public class ActionCameraSystem extends EntitySystem {
     @Override
     protected void processSystem() {
 
-        if(!this.getEntities().isEmpty()) return;
+        if(this.getEntities().isEmpty()) {
 
-        if (currentConditionalAction == null) {
-            actionQueue.first().getRight().performAction(world,
-                    actionQueue.first().getLeft());
+            if (currentConditionalAction == null) {
+                actionQueue.first().getRight().performAction(world,
+                        actionQueue.first().getLeft());
 
-            currentConditionalAction = actionQueue.first().getRight();
+                currentConditionalAction = actionQueue.first().getRight();
 
-            if (!hasBegun) {
-                hasBegun = true;
-                world.getSystem(SelectedTargetSystem.class).clearTargeting();
-            }
-
-
-        } else {
-
-            if (currentConditionalAction.condition(world, actionQueue.first().getLeft())) {
-                actionQueue.removeFirst();
-                currentConditionalAction = null;
-
-                if (actionQueue.size == 0) {
-                    //TODO should only occur when it is the player's turn
-                    hasBegun = false;
-
+                if (!hasBegun) {
+                    hasBegun = true;
+                    world.getSystem(SelectedTargetSystem.class).reset();
                 }
 
+
+            } else {
+
+                if (currentConditionalAction.condition(world, actionQueue.first().getLeft())) {
+                    actionQueue.removeFirst();
+                    currentConditionalAction = null;
+
+                    if (actionQueue.size == 0) {
+                        //TODO should only occur when it is the player's turn
+                        hasBegun = false;
+
+                    }
+
+                }
             }
+
         }
+
+
+       // processingFlag = actionQueue.size != 0 || !this.getEntities().isEmpty();
+
+        if(!processingFlag){
+            //Notify relevant systems
+        }
+
+
     }
 
 
@@ -76,7 +89,14 @@ public class ActionCameraSystem extends EntitySystem {
     }
 
     public boolean isProcessing() {
-        return checkProcessing();
+
+/*
+        if(!processingFlag){
+            return actionQueue.size != 0 || !this.getEntities().isEmpty();
+        }
+*/
+
+        return actionQueue.size != 0 || !this.getEntities().isEmpty();
     }
 
 
@@ -103,6 +123,18 @@ public class ActionCameraSystem extends EntitySystem {
 
     @Override
     protected boolean checkProcessing() {
-        return actionQueue.size != 0;
+
+        boolean flag = actionQueue.size != 0 || !this.getEntities().isEmpty();
+
+        if(processingFlag && !flag){
+
+            //This is here so after a set of actions is completed the entity that is previously selected is
+            //selected again
+        }
+
+        processingFlag = flag;
+
+
+        return processingFlag;
     }
 }

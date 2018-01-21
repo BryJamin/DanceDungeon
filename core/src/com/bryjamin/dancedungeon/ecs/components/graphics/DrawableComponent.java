@@ -1,6 +1,7 @@
 package com.bryjamin.dancedungeon.ecs.components.graphics;
 
 import com.artemis.Component;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.bryjamin.dancedungeon.utils.texture.DrawableDescription;
@@ -63,6 +64,15 @@ public class DrawableComponent extends Component {
         }
         return null;
     }
+
+
+    public void setColor(Color color){
+        for(DrawableDescription dd : drawables){
+            dd.getColor().set(color);
+        }
+    }
+
+
 
 }
 

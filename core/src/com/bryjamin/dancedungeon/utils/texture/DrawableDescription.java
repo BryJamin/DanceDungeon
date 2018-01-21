@@ -1,6 +1,7 @@
 package com.bryjamin.dancedungeon.utils.texture;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector2;
 
 /**
  * Created by BB on 10/10/2017.
@@ -16,7 +17,8 @@ public abstract class DrawableDescription {
     private float offsetY;
     private float scaleX;
     private float scaleY;
-    private float rotation;
+    private double rotation;
+    private Vector2 origin;
     private Color color;
     private Color resetColor;
 
@@ -32,6 +34,8 @@ public abstract class DrawableDescription {
         this.scaleY = ddb.scaleY;
         this.color = ddb.color;
         this.resetColor = ddb.resetColor;
+        this.origin = ddb.origin;
+        this.rotation = ddb.rotation;
     }
 
 
@@ -45,7 +49,8 @@ public abstract class DrawableDescription {
         private float offsetY = 0;
         private float scaleX = 1;
         private float scaleY = 1;
-        private float rotation = 0;
+        private double rotation = 0;
+        private Vector2 origin = null;
 
         private Color color = new Color(Color.WHITE);
         private Color resetColor = new Color(Color.WHITE);
@@ -94,8 +99,11 @@ public abstract class DrawableDescription {
         public T scaleY(float val)
         { scaleY = val; return getThis(); }
 
-        public T rotation(float val)
+        public T rotation(double val)
         { rotation = val; return getThis(); }
+
+        public T origin(Vector2 val)
+        { origin = val; return getThis(); }
 
         public T color(Color val) {
             color = val;
@@ -138,7 +146,7 @@ public abstract class DrawableDescription {
         return scaleY;
     }
 
-    public float getRotation() {
+    public double getRotation() {
         return rotation;
     }
 
@@ -148,5 +156,17 @@ public abstract class DrawableDescription {
 
     public Color getResetColor() {
         return resetColor;
+    }
+
+    public Vector2 getOrigin() {
+        return origin;
+    }
+
+    public void setScaleX(float scaleX) {
+        this.scaleX = scaleX;
+    }
+
+    public void setScaleY(float scaleY) {
+        this.scaleY = scaleY;
     }
 }

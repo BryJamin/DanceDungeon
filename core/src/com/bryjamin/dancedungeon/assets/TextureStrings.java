@@ -7,9 +7,7 @@ package com.bryjamin.dancedungeon.assets;
 @SuppressWarnings("HardCodedStringLiteral")
 public class TextureStrings {
 
-    public static final String BLOCK = "block";
-
-
+    public static final String BLOCK = "blocktiny";
 
     public static final String PLAYER = "player/block_walk";
 
@@ -32,5 +30,15 @@ public class TextureStrings {
 
 
     public static final String SKILLS_SLASH = "skills/slash";
+    public static final String SKILLS_HEAL = "skills/Heal";
+
+
+    public static final String ICON_COMBAT = "icons/icon_combat";
+    public static final String ICON_REST = "icons/icon_rest";
+    public static final String ICON_MONEY = "icons/icon_money";
+
+
+
+
 
 }

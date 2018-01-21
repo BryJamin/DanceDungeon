@@ -50,27 +50,27 @@ public class FadeComponent extends Component {
 
         this.isEndless = fb.isEndless;
 
-        //this.alpha = fadeIn ? fb.minAlpha : fb.maxAlpha;
-        //this.time = fadeIn ? 0 : maximumTime;
+        this.alpha = fadeIn ? fb.minAlpha : fb.maxAlpha;
+        this.time = fadeIn ? 0 : maximumTime;
     }
 
 
     public static class FadeBuilder {
 
-        public float minAlpha = 0;
-        public float maxAlpha = 1;
+        private float minAlpha = 0;
+        private float maxAlpha = 1;
 
-        public float time = 0;
-        public float maximumTime;
+        private float time = 0;
+        private float maximumTime;
 
-        public float alpha = 1;
+        private float alpha = 1;
 
-        public int count;
+        private int count;
 
-        public boolean fadeIn;
-        public boolean flicker;
+        private boolean fadeIn;
+        private boolean flicker;
 
-        public boolean isEndless = true;
+        private boolean isEndless = true;
 
         public FadeBuilder minAlpha(float val)
         { this.minAlpha = val; return this; }
@@ -92,6 +92,10 @@ public class FadeComponent extends Component {
 
         public FadeBuilder fadeIn(boolean val)
         { this.fadeIn = val; return this; }
+
+        public FadeBuilder endless(boolean val)
+        { this.isEndless = val; return this; }
+
 
         public FadeBuilder flicker(boolean val)
         { this.flicker = val; return this; }

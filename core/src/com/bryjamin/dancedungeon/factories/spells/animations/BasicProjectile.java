@@ -95,7 +95,7 @@ public class BasicProjectile {
        float y = CenterMath.centerPositionY(height, cbc.bound.getY() + cbc.bound.getHeight() / 2);
 
 
-       Rectangle r = world.getSystem(TileSystem.class).getRectangleUsingCoordinates(target);
+       Rectangle r = world.getSystem(TileSystem.class).createRectangleUsingCoordinates(target);
 
        Entity projectile = world.createEntity();
        projectile.edit().add(new PositionComponent(x, y));

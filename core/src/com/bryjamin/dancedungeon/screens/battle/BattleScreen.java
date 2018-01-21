@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
+import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.screens.AbstractScreen;
 import com.bryjamin.dancedungeon.screens.battle.worlds.BattleWorld;
 import com.bryjamin.dancedungeon.screens.battle.worlds.EndBattleWorld;
@@ -35,7 +36,7 @@ public class BattleScreen extends AbstractScreen {
 
     private ScreenState screenState = ScreenState.BATTLE;
 
-    public BattleScreen(MainGame game, Screen previousScreen, BattleDetails battleDetails) {
+    public BattleScreen(MainGame game, Screen previousScreen, GameMap gameMap, PartyDetails partyDetails) {
         super(game);
 
 
@@ -47,7 +48,7 @@ public class BattleScreen extends AbstractScreen {
         gameport.apply();
 
         this.previousScreen = previousScreen;
-        this.battleWorld = new BattleWorld(game, gameport, battleDetails);
+        this.battleWorld = new BattleWorld(game, gameport, gameMap, partyDetails);
 
     }
 

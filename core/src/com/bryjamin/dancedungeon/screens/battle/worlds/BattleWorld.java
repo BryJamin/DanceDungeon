@@ -9,10 +9,6 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
-import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
-import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MoveToTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
@@ -26,8 +22,10 @@ import com.bryjamin.dancedungeon.ecs.systems.battle.BulletSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.DeathSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.EndBattleSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ExplosionSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.GenerateTargetsSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.HealthSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.NoMoreActionsSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.PlayerControlledSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.SelectedTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
@@ -40,16 +38,13 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.PlayerGraphicalTargetingS
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UIRenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
+import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.factories.decor.FloorFactory;
-import com.bryjamin.dancedungeon.factories.player.Unit;
-import com.bryjamin.dancedungeon.factories.player.UnitMap;
 import com.bryjamin.dancedungeon.factories.spells.SpellFactory;
 import com.bryjamin.dancedungeon.screens.WorldContainer;
-import com.bryjamin.dancedungeon.screens.battle.BattleDetails;
+import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
-import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
-import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
 /**
  * Created by BB on 28/11/2017.
@@ -67,16 +62,18 @@ public class BattleWorld extends WorldContainer {
 
     private VictoryAdapter victoryAdapter = new VictoryAdapter();
 
-    private BattleDetails battleDetails;
+    private PartyDetails partyDetails;
+    private GameMap gameMap;
 
-    public BattleWorld(MainGame game, final Viewport gameport, BattleDetails battleDetails) {
+    public BattleWorld(MainGame game, final Viewport gameport, GameMap gameMap, PartyDetails partyDetails) {
         super(game, gameport);
-        this.battleDetails = battleDetails;
+        this.partyDetails = partyDetails;
+        this.gameMap = gameMap;
         createWorld();
     }
 
-    public BattleDetails getBattleDetails() {
-        return battleDetails;
+    public PartyDetails getPartyDetails() {
+        return partyDetails;
     }
 
     public void createWorld(){
@@ -98,7 +95,8 @@ public class BattleWorld extends WorldContainer {
                         new ParentChildSystem(),
                         new BlinkOnHitSystem(),
                         new ExpireSystem(),
-                        new EndBattleSystem(game)
+                        new PlayerControlledSystem(game),
+                        new EndBattleSystem(game, gameMap, partyDetails)
                 )
                 .with(WorldConfigurationBuilder.Priority.LOWEST,
                         new ActionOnTapSystem(gameport),
@@ -112,16 +110,16 @@ public class BattleWorld extends WorldContainer {
                         new HealthBarSystem(game, gameport),
                         new UIRenderingSystem(game, gameport),
                         new BoundsDrawingSystem(batch),
-
+                        new GenerateTargetsSystem(),
                         new SelectedTargetSystem(),
                         new DeathSystem()
                 )
                 .build();
 
         world = new World(config);
-
-        setUpPlayerLocations(world, battleDetails);
-        setUpEnemyLocations(world, battleDetails);
+/*
+        setUpPlayerLocations(world, partyDetails);
+        setUpEnemyLocations(world, partyDetails);*/
 
         BagToEntity.bagToEntity(world.createEntity(), new FloorFactory(game.assetManager).createFloor(originX, originY, width, height,
                 rows, columns));
@@ -139,105 +137,6 @@ public class BattleWorld extends WorldContainer {
 */
 
     }
-
-
-    private void setUpPlayerLocations(World world, BattleDetails battleDetails){
-
-        UnitMap unitMap = new UnitMap();
-
-        for(int i = 0; i < battleDetails.getPlayerParty().size; i++) {
-
-            if (battleDetails.getPlayerParty().get(i) != null) {
-
-                Unit unit = battleDetails.getPlayerParty().get(i);
-                ComponentBag player = unitMap.getUnit(unit);
-
-                Coordinates c = player.getComponent(CoordinateComponent.class).coordinates;
-                player.getComponent(CoordinateComponent.class).freePlacement = true;
-
-
-                switch (i) {
-                    case 0:
-                        c.set(2, 2);
-                        break;
-                    case 1:
-                        c.set(1, 3);
-                        break;
-                    case 2:
-                        c.set(1, 1);
-                        break;
-                    case 3:
-                        c.set(0, 2);
-                        break;
-                }
-
-                TileSystem tileSystem = world.getSystem(TileSystem.class);
-
-                player.getComponent(PositionComponent.class).position.set(
-                        tileSystem.getPositionUsingCoordinates(c.getX() - 4, c.getY(),
-                                player.getComponent(CenteringBoundaryComponent.class).bound)
-                );
-
-                player.getComponent(MoveToComponent.class).movementPositions.add(tileSystem.getPositionUsingCoordinates(c,
-                        player.getComponent(CenteringBoundaryComponent.class).bound));
-
-                BagToEntity.bagToEntity(world.createEntity(), player);
-
-            }
-
-        }
-
-    }
-
-
-
-    private void setUpEnemyLocations(World world, BattleDetails battleDetails){
-
-        TileSystem tileSystem = world.getSystem(TileSystem.class);
-
-        for(int i = 0; i < battleDetails.getEnemyParty().size; i++) {
-            ComponentBag enemy = battleDetails.getEnemyParty().get(i);
-
-            if (enemy != null) {
-                Coordinates c = enemy.getComponent(CoordinateComponent.class).coordinates;
-                enemy.getComponent(CoordinateComponent.class).freePlacement = true;
-
-
-                switch (i) {
-                    case 0:
-                        c.set(tileSystem.getMaxX() - 2, 2);
-                        break;
-                    case 1:
-                        c.set(tileSystem.getMaxX() - 1, 3);
-                        break;
-                    case 2:
-                        c.set(tileSystem.getMaxX() - 1, 1);
-                        break;
-                    case 3:
-                        c.set(tileSystem.getMaxX(), 2);
-                        break;
-                }
-
-
-
-                enemy.getComponent(PositionComponent.class).position.set(
-                        tileSystem.getPositionUsingCoordinates(c.getX() + 4, c.getY(),
-                                enemy.getComponent(CenteringBoundaryComponent.class).bound)
-                );
-
-                enemy.getComponent(MoveToComponent.class).movementPositions.add(tileSystem.getPositionUsingCoordinates(c,
-                        enemy.getComponent(CenteringBoundaryComponent.class).bound));
-
-                BagToEntity.bagToEntity(world.createEntity(), enemy);
-
-            }
-
-        }
-
-
-    }
-
-
 
 
     public void pauseWorld() {
@@ -274,7 +173,6 @@ public class BattleWorld extends WorldContainer {
                 if(world.getSystem(ActionOnTapSystem.class).touch(input.x, input.y)){
                     return  true;
                 };
-
                 if(world.getSystem(SelectedTargetSystem.class).selectCharacter(input.x, input.y)) return true;
 
             }

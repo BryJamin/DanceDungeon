@@ -3,6 +3,7 @@ package com.bryjamin.dancedungeon.factories.spells;
 import com.artemis.Entity;
 import com.artemis.World;
 import com.badlogic.gdx.utils.Array;
+import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.factories.spells.animations.SkillAnimation;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
@@ -26,7 +27,10 @@ public abstract class SkillDescription {
 
     public abstract void endTurnUpdate();
 
-    public abstract String getIcon();
+    public String getIcon(){
+        return TextureStrings.BLOCK;
+    };
+
 
 
 }

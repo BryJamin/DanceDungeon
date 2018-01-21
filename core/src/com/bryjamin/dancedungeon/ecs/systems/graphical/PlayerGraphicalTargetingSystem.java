@@ -55,7 +55,7 @@ public class PlayerGraphicalTargetingSystem extends BaseSystem {
 
         clearTrackedEntites();
         targetCoordinates = c;
-        Entity box = BagToEntity.bagToEntity(world.createEntity(), highlightBox(tileSystem.getRectangleUsingCoordinates(c)));
+        Entity box = BagToEntity.bagToEntity(world.createEntity(), highlightBox(tileSystem.createRectangleUsingCoordinates(c)));
         trackedEntities.add(box);
 
         return true;

@@ -23,6 +23,7 @@ import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.GreyScaleComponent;
+import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.texture.DrawableDescription;
 import com.bryjamin.dancedungeon.utils.texture.TextDescription;
@@ -44,6 +45,8 @@ public class RenderingSystem extends EntitySystem {
     private ComponentMapper<BlinkOnHitComponent> blinkOnHitm;
 
     private ComponentMapper<GreyScaleComponent> greyScaleMapper;
+
+    private MovementSystem movementSystem;
 
 
     private SpriteBatch batch;
@@ -99,8 +102,11 @@ public class RenderingSystem extends EntitySystem {
     @Override
     protected void begin() {
         if(!batch.isDrawing()) {
+            batch.setProjectionMatrix(gameport.getCamera().combined);
             batch.begin();
         }
+
+       // Archetype archetype = new ArchetypeBuilder().add(PositionComponent.class).build(world);
     }
 
     @Override
@@ -136,8 +142,13 @@ public class RenderingSystem extends EntitySystem {
 
         for(DrawableDescription drawableDescription : drawableComponent.drawables) {
 
-            float originX = drawableDescription.getWidth() * 0.5f;
-            float originY = drawableDescription.getHeight() * 0.5f;
+
+
+
+            float originX = drawableDescription.getOrigin() == null ?
+                    drawableDescription.getWidth() * 0.5f : drawableDescription.getOrigin().x;
+            float originY = drawableDescription.getOrigin() == null ?
+                    drawableDescription.getHeight() * 0.5f : drawableDescription.getOrigin().y;
 
             batch.setColor(drawableDescription.getColor());
 
@@ -145,16 +156,27 @@ public class RenderingSystem extends EntitySystem {
 
                 TextureDescription textureDescription = (TextureDescription) drawableDescription;
 
-                TextureRegion tr = atlas.findRegion(textureDescription.getRegion(), textureDescription.getIndex());
-                if (tr == null) tr = atlas.findRegion(TextureStrings.BLOCK);
 
+                TextureRegion tr;
+
+                try {
+                    tr = atlas.findRegion(textureDescription.getRegion(), textureDescription.getIndex());
+
+                    if(tr == null) throw new Exception("No Texture Data for: "  + textureDescription.getRegion() +
+                            "index: " + textureDescription.getIndex());
+                } catch (Exception ex){
+                    ex.printStackTrace();
+                    tr = atlas.findRegion(TextureStrings.BLOCK);
+                }
+
+                //TODO currently testing, using integers instead of floats for positions
                 batch.draw(tr,
-                        positionComponent.getX() + drawableDescription.getOffsetX(),
-                        positionComponent.getY() + drawableDescription.getOffsetY(),
+                        (int) (positionComponent.getX() + drawableDescription.getOffsetX()),
+                        (int) (positionComponent.getY() + drawableDescription.getOffsetY()),
                         originX, originY,
-                        drawableDescription.getWidth(), drawableDescription.getHeight(),
+                        (int) drawableDescription.getWidth(), (int) drawableDescription.getHeight(),
                         drawableDescription.getScaleX(), drawableDescription.getScaleY(),
-                        drawableDescription.getRotation());
+                        (float) drawableDescription.getRotation());
 
             } else if(drawableDescription instanceof TextDescription){
 
@@ -162,6 +184,9 @@ public class RenderingSystem extends EntitySystem {
                 TextDescription textDescription = (TextDescription) drawableDescription;
 
                 BitmapFont bmf = assetManager.get(textDescription.getFont(), BitmapFont.class);
+
+
+
 
                 if(boundm.has(e)){
                     CenteringBoundaryComponent bc = boundm.get(e);
@@ -183,6 +208,7 @@ public class RenderingSystem extends EntitySystem {
             }
 
             batch.setColor(white);
+
 
         }
 

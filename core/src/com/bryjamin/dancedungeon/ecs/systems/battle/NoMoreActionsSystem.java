@@ -5,8 +5,10 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.systems.EntityProcessingSystem;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationMapComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.GreyScaleComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.SelectedEntityComponent;
 
 /**
  * Created by BB on 23/12/2017.
@@ -14,7 +16,11 @@ import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComp
 
 public class NoMoreActionsSystem extends EntityProcessingSystem {
 
+    private ComponentMapper<AnimationMapComponent> amc;
     private ComponentMapper<GreyScaleComponent> greyScaleMapper;
+
+    private ComponentMapper<PlayerControlledComponent> playerM;
+
 
 
     /**
@@ -33,8 +39,12 @@ public class NoMoreActionsSystem extends EntityProcessingSystem {
 
         if(!turnComponent.hasActions() && !greyScaleMapper.has(e)){
             e.edit().add(new GreyScaleComponent());
+            e.edit().remove(SelectedEntityComponent.class);
+
+            //amc.set(e, false);
         } else if(greyScaleMapper.has(e) && turnComponent.hasActions()){
             e.edit().remove(GreyScaleComponent.class);
+            //amc.set(e, true);
         }
 
     }

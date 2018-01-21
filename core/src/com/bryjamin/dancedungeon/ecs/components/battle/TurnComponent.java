@@ -23,6 +23,7 @@ public class TurnComponent extends Component {
     public TurnComponent(){}
 
     public void reset(){
+        state = State.DECIDING;
         movementActionAvailable = true;
         attackActionAvailable = true;
     }

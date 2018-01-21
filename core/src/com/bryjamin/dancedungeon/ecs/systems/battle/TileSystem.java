@@ -3,8 +3,9 @@ package com.bryjamin.dancedungeon.ecs.systems.battle;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
-import com.artemis.systems.EntityProcessingSystem;
+import com.artemis.EntitySystem;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.OrderedMap;
@@ -27,7 +28,7 @@ import com.bryjamin.dancedungeon.utils.pathing.AStarPathCalculator;
  * Is also used to place and locate entities using their co-ordinates
  */
 
-public class TileSystem extends EntityProcessingSystem {
+public class TileSystem extends EntitySystem {
 
 
     private ComponentMapper<PlayerControlledComponent> pcm;
@@ -54,11 +55,11 @@ public class TileSystem extends EntityProcessingSystem {
     //Map for all spaces
     private OrderedMap<Coordinates, Array<Entity>> coordinateMap = new OrderedMap<Coordinates, Array<Entity>>();
 
-    private OrderedMap<Coordinates, Entity> playerControlledMap = new OrderedMap<Coordinates, Entity>();
-    private OrderedMap<Coordinates, Entity> enemyMap = new OrderedMap<Coordinates, Entity>();
+    private OrderedMap<Entity, Coordinates> playerControlledMap = new OrderedMap<Entity, Coordinates>();
+    private OrderedMap<Entity, Coordinates> enemyMap = new OrderedMap<Entity, Coordinates>();
 
     //Map used to show if a space is occupied
-    private OrderedMap<Coordinates, Entity> occupiedMap = new OrderedMap<Coordinates, Entity>();
+    private OrderedMap<Entity, Coordinates> occupiedMap = new OrderedMap<Entity, Coordinates>();
 
     private OrderedMap<Coordinates, Rectangle> rectangleMap = new OrderedMap<Coordinates, Rectangle>();
 
@@ -89,7 +90,7 @@ public class TileSystem extends EntityProcessingSystem {
 
     }
 
-    public OrderedMap<Coordinates, Entity> getOccupiedMap() {
+    public OrderedMap<Entity, Coordinates> getOccupiedMap() {
         return occupiedMap;
     }
 
@@ -97,6 +98,26 @@ public class TileSystem extends EntityProcessingSystem {
     @Override
     protected void begin() {
         super.begin();
+    }
+
+    @Override
+    protected void processSystem() {
+
+        occupiedMap.clear();
+        playerControlledMap.clear();
+        enemyMap.clear();
+
+
+        for(Coordinates c : coordinateMap.keys()){
+            coordinateMap.get(c).clear();
+        }
+
+
+        for(Entity e : this.getEntities()){
+            updateCoordinates(e);
+        }
+
+
     }
 
 
@@ -109,7 +130,7 @@ public class TileSystem extends EntityProcessingSystem {
 
         for (int i = 0; i < coordinatesArray.size; i++) {
 
-            if (!occupiedMap.containsKey(coordinatesArray.get(i))) {
+            if (!occupiedMap.containsValue(coordinatesArray.get(i), false)) {
                 e.getComponent(CoordinateComponent.class).coordinates.set(coordinatesArray.get(i));
                 addEntityToMaps(e, coordinateComponent.coordinates);
                 return true;
@@ -123,11 +144,14 @@ public class TileSystem extends EntityProcessingSystem {
 
     private void addEntityToMaps(Entity e, Coordinates coordinates) {
 
-        occupiedMap.put(coordinates, e);
-        coordinateMap.get(coordinates).add(e);
+        occupiedMap.put(e, coordinates);
 
-        if (pcm.has(e)) playerControlledMap.put(coordinates, e);
-        if (enemym.has(e)) enemyMap.put(coordinates, e);
+        if(coordinateMap.get(coordinates) != null) {
+            coordinateMap.get(coordinates).add(e);
+        }
+
+        if (pcm.has(e)) playerControlledMap.put(e, coordinates);
+        if (enemym.has(e)) enemyMap.put(e, coordinates);
 
     }
 
@@ -137,7 +161,7 @@ public class TileSystem extends EntityProcessingSystem {
 
         CoordinateComponent coordinateComponent = e.getComponent(CoordinateComponent.class);
 
-        if (occupiedMap.containsKey(e.getComponent(CoordinateComponent.class).coordinates) || !coordinateMap.containsKey(coordinateComponent.coordinates)) {
+        if (occupiedMap.containsValue(e.getComponent(CoordinateComponent.class).coordinates, false) || !coordinateMap.containsKey(coordinateComponent.coordinates)) {
             if (!relocateEntity(e))
                 e.deleteFromWorld(); //TODO decide what to do if a there is no space to place something
         } else {
@@ -154,25 +178,32 @@ public class TileSystem extends EntityProcessingSystem {
 
         CoordinateComponent coordinateComponent = e.getComponent(CoordinateComponent.class);
 
+/*
         occupiedMap.remove(coordinateComponent.coordinates);
         coordinateMap.get(coordinateComponent.coordinates).removeValue(e, true);
 
         if (pcm.has(e)) playerControlledMap.remove(coordinateComponent.coordinates);
-        if(enemym.has(e)) enemyMap.remove(coordinateComponent.coordinates);
+        if(enemym.has(e)) enemyMap.remove(coordinateComponent.coordinates);*/
 
         CenteringBoundaryComponent centeringBoundaryComponent = e.getComponent(CenteringBoundaryComponent.class);
-        coordinateComponent.coordinates = getCoordinatesUsingPosition(centeringBoundaryComponent.bound);
+
+        //coordinateComponent.coordinates = getCoordinatesUsingPosition(centeringBoundaryComponent.bound);
+
+        coordinateComponent.coordinates = getCoordinatesUsingPosition(
+                centeringBoundaryComponent.bound.getCenter(new Vector2()).x,
+                centeringBoundaryComponent.bound.getCenter(new Vector2()).y);
 
         addEntityToMaps(e, coordinateComponent.coordinates);
     }
 
     @Override
     public void removed(Entity e) {
-        playerControlledMap.remove(e.getComponent(CoordinateComponent.class).coordinates);
+/*        playerControlledMap.remove(e.getComponent(CoordinateComponent.class).coordinates);
+        enemyMap.remove(e.getComponent(CoordinateComponent.class).coordinates);
         occupiedMap.remove(e.getComponent(CoordinateComponent.class).coordinates);
-        coordinateMap.get(e.getComponent(CoordinateComponent.class).coordinates).removeValue(e, true);
+        coordinateMap.get(e.getComponent(CoordinateComponent.class).coordinates).removeValue(e, true);*/
     }
-
+/*
 
     @Override
     protected void process(Entity e) {
@@ -181,7 +212,7 @@ public class TileSystem extends EntityProcessingSystem {
         updateCoordinates(e);
 
 
-    }
+    }*/
 
 
     /**
@@ -261,6 +292,8 @@ public class TileSystem extends EntityProcessingSystem {
                 return rectangleMap.findKey(r, false);
             }
         }
+        //this is why it is zero.
+
         return new Coordinates();
 
     }
@@ -295,14 +328,16 @@ public class TileSystem extends EntityProcessingSystem {
         AStarPathCalculator aStarPathCalculator;
 
         if(pcm.has(e)) {
-            aStarPathCalculator = new AStarPathCalculator(coordinateMap.keys().toArray(), occupiedMap.keys().toArray(),
-                    playerControlledMap.keys().toArray());
-
-            //System.out.println("PFFTT");
+            aStarPathCalculator = new AStarPathCalculator(coordinateMap.keys().toArray(), occupiedMap.values().toArray(),
+                    playerControlledMap.values().toArray());
 
         } else { //TODO what to with walls and etc? If there even are walls.
-            aStarPathCalculator = new AStarPathCalculator(coordinateMap.keys().toArray(), occupiedMap.keys().toArray(),
-                    enemyMap.keys().toArray());
+
+
+            aStarPathCalculator = new AStarPathCalculator(
+                    coordinateMap.keys().toArray(),
+                    occupiedMap.values().toArray(),
+                    enemyMap.values().toArray());
         }
         return aStarPathCalculator.findShortestPathMultipleChoice(fillQueue,
                 e.getComponent(CoordinateComponent.class).coordinates,
@@ -316,25 +351,23 @@ public class TileSystem extends EntityProcessingSystem {
         AStarPathCalculator aStarPathCalculator;
 
         if(pcm.has(e)) {
-            aStarPathCalculator = new AStarPathCalculator(coordinateMap.keys().toArray(), occupiedMap.keys().toArray(),
-                    playerControlledMap.keys().toArray());
-
-            //System.out.println("PFFTT");
+            aStarPathCalculator = new AStarPathCalculator(coordinateMap.keys().toArray(), occupiedMap.values().toArray(),
+                    playerControlledMap.values().toArray());
 
         } else { //TODO what to with walls and etc? If there even are walls.
-            aStarPathCalculator = new AStarPathCalculator(coordinateMap.keys().toArray(), occupiedMap.keys().toArray(),
-                    enemyMap.keys().toArray());
+            aStarPathCalculator = new AStarPathCalculator(coordinateMap.keys().toArray(), occupiedMap.values().toArray(),
+                    enemyMap.values().toArray());
         }
 
         return aStarPathCalculator;
     }
 
 
-    public OrderedMap<Coordinates, Entity> getPlayerControlledMap() {
+    public OrderedMap<Entity, Coordinates> getPlayerControlledMap() {
         return playerControlledMap;
     }
 
-    public OrderedMap<Coordinates, Entity> getEnemyMap() {
+    public OrderedMap<Entity, Coordinates> getEnemyMap() {
         return enemyMap;
     }
 
