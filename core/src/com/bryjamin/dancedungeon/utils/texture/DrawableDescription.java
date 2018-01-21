@@ -161,4 +161,12 @@ public abstract class DrawableDescription {
     public Vector2 getOrigin() {
         return origin;
     }
+
+    public void setScaleX(float scaleX) {
+        this.scaleX = scaleX;
+    }
+
+    public void setScaleY(float scaleY) {
+        this.scaleY = scaleY;
+    }
 }

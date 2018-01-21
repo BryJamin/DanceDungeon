@@ -19,7 +19,6 @@ import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.assets.FileStrings;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
-import com.bryjamin.dancedungeon.ecs.components.FollowPositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
@@ -121,12 +120,6 @@ public class RenderingSystem extends EntitySystem {
         DrawableComponent drawableComponent = drawablem.get(e);
         PositionComponent positionComponent = positionm.get(e);
 
-
-        if(world.getMapper(FollowPositionComponent.class).has(e)) {
-            System.out.println("Position x : " + positionComponent.getX());
-            System.out.println("CamX in Rend :" + gameport.getCamera().position.x);
-        }
-
         boolean shaderOn = false;
 
 
@@ -176,11 +169,12 @@ public class RenderingSystem extends EntitySystem {
                     tr = atlas.findRegion(TextureStrings.BLOCK);
                 }
 
+                //TODO currently testing, using integers instead of floats for positions
                 batch.draw(tr,
-                        positionComponent.getX() + drawableDescription.getOffsetX(),
-                        positionComponent.getY() + drawableDescription.getOffsetY(),
+                        (int) (positionComponent.getX() + drawableDescription.getOffsetX()),
+                        (int) (positionComponent.getY() + drawableDescription.getOffsetY()),
                         originX, originY,
-                        drawableDescription.getWidth(), drawableDescription.getHeight(),
+                        (int) drawableDescription.getWidth(), (int) drawableDescription.getHeight(),
                         drawableDescription.getScaleX(), drawableDescription.getScaleY(),
                         (float) drawableDescription.getRotation());
 
