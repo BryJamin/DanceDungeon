@@ -51,7 +51,7 @@ public class StrategyMapSystem extends EntitySystem {
     private MainGame game;
     private GameMap gameMap;
 
-    private Color grey = new Color(0.5f, 0.5f, 0.5f, 1f);
+    private Color grey = new Color(0.4f, 0.4f, 0.4f, 1f);
 
     private Array<Unit> playerParty;
 
