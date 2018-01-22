@@ -45,6 +45,9 @@ public class StatComponent extends Component {
         public StatBuilder maxHealth(int val)
         { this.maxHealth = val; return this; }
 
+        public StatBuilder healthAndMax(int val)
+        { this.maxHealth = val; this.health = val; return this; }
+
         public StatBuilder attackRange(int val)
         { this.attackRange = val; return this; }
 

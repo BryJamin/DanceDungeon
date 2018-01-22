@@ -291,7 +291,7 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
         hpTextAgain.edit().add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE,
                 new TextDescription.Builder(Fonts.SMALL)
                         .color(new Color(Color.WHITE))
-                        .text((int) health.health + "/" + stats.maxHealth)
+                        .text((int) health.health + "/" + stats.healthAndMax)
                         .build()));
         hpTextAgain.edit().add(new UITargetingComponent());
 */

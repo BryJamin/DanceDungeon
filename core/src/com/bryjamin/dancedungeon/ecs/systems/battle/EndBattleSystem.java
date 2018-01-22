@@ -6,6 +6,8 @@ import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.artemis.utils.Bag;
 import com.bryjamin.dancedungeon.MainGame;
+import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
@@ -69,7 +71,7 @@ public class EndBattleSystem extends EntitySystem {
             if (partyDetails.getPlayerParty().get(i) != null) {
                 Unit unit = partyDetails.getPlayerParty().get(i);
                 ComponentBag player = unitMap.getUnit(unit);
-                BagToEntity.bagToEntity(world.createEntity(), player);
+                Entity e = BagToEntity.bagToEntity(world.createEntity(), player);
             }
 
         }
@@ -101,6 +103,16 @@ public class EndBattleSystem extends EntitySystem {
             case CLEAN_UP:
 
                 if(currentEvent.cleanUpComplete(world)){
+
+                    for(Entity e : playerBag){
+                        HealthComponent hc = e.getComponent(HealthComponent.class);
+                        StatComponent statComponent = e.getComponent(StatComponent.class);
+
+                        statComponent.health = (int) hc.health;
+                        statComponent.maxHealth = (int) hc.maxHealth;
+                    }
+
+
                     ((BattleScreen) game.getScreen()).victory();
                 }
 

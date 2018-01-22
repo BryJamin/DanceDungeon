@@ -61,19 +61,19 @@ public class MapWorld extends WorldContainer {
         warrior.setStatComponent(new StatComponent.StatBuilder()
                 .movementRange(5)
                 .power(5)
-                .maxHealth(15).build());
+                .healthAndMax(15).build());
 
 
         Unit warrior2 = new Unit(UnitMap.UNIT_WARRIOR);
         warrior2.setStatComponent(new StatComponent.StatBuilder()
                 .power(10)
                 .movementRange(6)
-                .maxHealth(15).build());
+                .healthAndMax(15).build());
 
         Unit mage = new Unit(UnitMap.UNIT_MAGE);
         mage.setStatComponent(new StatComponent.StatBuilder()
                 .movementRange(4)
-                .maxHealth(20)
+                .healthAndMax(20)
                 .attackRange(36)
                 .magic(10)
                 .power(5).build());
@@ -103,6 +103,8 @@ public class MapWorld extends WorldContainer {
                         //Initialization Systems
                         new EventGenerationSystem(),
                         new StrategyMapSystem(game, gameMap, playerParty),
+
+
 
                         //PositionalS Systems
                         new MovementSystem(),

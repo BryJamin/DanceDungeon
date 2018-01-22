@@ -4,8 +4,8 @@ import com.artemis.BaseSystem;
 import com.artemis.World;
 import com.artemis.WorldConfiguration;
 import com.artemis.WorldConfigurationBuilder;
-import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
@@ -38,8 +38,8 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.PlayerGraphicalTargetingS
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UIRenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
-import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.factories.decor.FloorFactory;
+import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.factories.spells.SpellFactory;
 import com.bryjamin.dancedungeon.screens.WorldContainer;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
@@ -60,7 +60,7 @@ public class BattleWorld extends WorldContainer {
     int rows = 5;
     int columns = 10;
 
-    private VictoryAdapter victoryAdapter = new VictoryAdapter();
+    private GestureDetector battleGestureDectector;
 
     private PartyDetails partyDetails;
     private GameMap gameMap;
@@ -69,6 +69,7 @@ public class BattleWorld extends WorldContainer {
         super(game, gameport);
         this.partyDetails = partyDetails;
         this.gameMap = gameMap;
+        this.battleGestureDectector = new GestureDetector(new MapGestures());
         createWorld();
     }
 
@@ -117,25 +118,11 @@ public class BattleWorld extends WorldContainer {
                 .build();
 
         world = new World(config);
-/*
-        setUpPlayerLocations(world, partyDetails);
-        setUpEnemyLocations(world, partyDetails);*/
-
         BagToEntity.bagToEntity(world.createEntity(), new FloorFactory(game.assetManager).createFloor(originX, originY, width, height,
                 rows, columns));
 
 
         BagToEntity.bagToEntity(world.createEntity(), new SpellFactory().endTurnButton(0, 0));
-
-/*
-        BagToEntity.bagToEntity(world.createEntity(), new SpellFactory().defaultButton(Measure.units(0), Measure.units(50f), new WorldAction() {
-            @Override
-            public void performAction(World world, Entity entity) {
-                game.setScreen(new BattleScreen(game));
-            }
-        }));
-*/
-
     }
 
 
@@ -157,31 +144,30 @@ public class BattleWorld extends WorldContainer {
 
     @Override
     public void handleInput(InputMultiplexer inputMultiplexer) {
-        inputMultiplexer.addProcessor(victoryAdapter);
+        inputMultiplexer.addProcessor(battleGestureDectector);
     }
 
 
 
-    private class VictoryAdapter extends InputAdapter {
+
+    private class MapGestures extends GestureDetector.GestureAdapter {
 
         @Override
-        public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-            Vector3 input = gameport.unproject(new Vector3(screenX, screenY , 0));
+        public boolean tap(float x, float y, int count, int button) {
+            Vector3 input = gameport.unproject(new Vector3(x, y, 0));
 
-            if(world.getSystem(TurnSystem.class).getTurn() == TurnSystem.TURN.ALLY) {
+            if (world.getSystem(TurnSystem.class).getTurn() == TurnSystem.TURN.ALLY) {
 
-                if(world.getSystem(ActionOnTapSystem.class).touch(input.x, input.y)){
-                    return  true;
-                };
-                if(world.getSystem(SelectedTargetSystem.class).selectCharacter(input.x, input.y)) return true;
-
+                if (world.getSystem(ActionOnTapSystem.class).touch(input.x, input.y)) {
+                    return true;
+                }
+                ;
+                if (world.getSystem(SelectedTargetSystem.class).selectCharacter(input.x, input.y))
+                    return true;
             }
             return false;
         }
     }
-
-
-
 
 }
 

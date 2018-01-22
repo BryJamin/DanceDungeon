@@ -23,6 +23,11 @@ public class HealthComponent extends Component {
         this.maxHealth = health;
     }
 
+    public HealthComponent(float health, float maxHealth) {
+        this.health = health;
+        this.maxHealth = maxHealth  ;
+    }
+
     public HealthComponent(){
         this(1);
     }
