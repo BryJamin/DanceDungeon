@@ -55,12 +55,6 @@ public class MapGenerator {
 
         eventRoller.addWeightedObjects(battleEvent, shopEvent, restEvent);
 
-     //   int totalNonFixedNodes =
-
-        int battleCount = 0;
-        int restCount = 0;
-        int shopCount = 0;
-
         Array<MapNode> flippableNodes = new Array<MapNode>();
 
         for(int i = 0; i < mapSections.size; i++){

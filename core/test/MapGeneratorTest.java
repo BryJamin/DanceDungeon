@@ -21,9 +21,20 @@ public class MapGeneratorTest extends GameTest {
 
         MapGenerator mapGenerator = new MapGenerator();
 
+        float failCount = 0;
+
         for(int i = 0; i < generations; i++){
-            mapGenerator.generateGameMap();
+            try {
+                mapGenerator.generateGameMap();
+            } catch(Exception e) {
+                failCount++;
+            }
         }
+
+        System.out.println("Number of Generations: " + generations);
+        System.out.println("Percentage Fail: " + (failCount / generations) * 100 + "%");
+
+        Assert.assertTrue(failCount == 0);
 
     }
 
