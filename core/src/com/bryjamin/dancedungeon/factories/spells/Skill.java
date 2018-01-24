@@ -6,12 +6,13 @@ import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.factories.spells.animations.SkillAnimation;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
+import com.bryjamin.dancedungeon.utils.texture.Highlight;
 
 /**
  * Created by BB on 18/11/2017.
  */
 
-public abstract class SkillDescription {
+public abstract class Skill {
 
     protected SkillAnimation skillAnimation;
 
@@ -30,6 +31,26 @@ public abstract class SkillDescription {
     public String getIcon(){
         return TextureStrings.BLOCK;
     };
+
+    public String getName(){
+        return "ERROR: NAME NOT SET";
+    }
+
+    public String getDescription(World world, Entity entity){
+        return "ERROR: DESCRIPTION NOT SET";
+    }
+
+    public Highlight getHighlight(){
+        return null;
+    }
+
+
+
+    //public
+
+
+
+
 
 
 

@@ -80,8 +80,8 @@ public class MapWorld extends WorldContainer {
 
         SkillsComponent skillsComponent = new SkillsComponent();
         skillsComponent.basicAttack = new MageAttack();
-        skillsComponent.skillDescriptions.add(new FireballSkill());
-        skillsComponent.skillDescriptions.add(new Heal());
+        skillsComponent.skills.add(new FireballSkill());
+        skillsComponent.skills.add(new Heal());
         mage.setSkillsComponent(skillsComponent);
 
         playerParty.add(mage);
@@ -119,7 +119,7 @@ public class MapWorld extends WorldContainer {
                         new DeathSystem()
                 )
                 .with(WorldConfigurationBuilder.Priority.LOWEST,
-                        new ActionOnTapSystem(gameport),
+                        new ActionOnTapSystem(),
                         new FadeSystem(),
                         new ScaleTransformationSystem(),
                         new RenderingSystem(game, gameport),

@@ -2,7 +2,7 @@ package com.bryjamin.dancedungeon.ecs.ai.calculations;
 
 import com.artemis.Entity;
 import com.artemis.World;
-import com.bryjamin.dancedungeon.factories.spells.SkillDescription;
+import com.bryjamin.dancedungeon.factories.spells.Skill;
 
 /**
  * Created by BB on 29/11/2017.
@@ -10,19 +10,19 @@ import com.bryjamin.dancedungeon.factories.spells.SkillDescription;
 
 public class CanUseSkillCalculator implements ActionScoreCalculation {
 
-    private SkillDescription skillDescription;
+    private Skill skill;
 
     private Float canUseScore;
     private Float cannotUseScore;
 
-    public CanUseSkillCalculator(SkillDescription skillDescription, Float canUseScore, Float cannotUseScore){
+    public CanUseSkillCalculator(Skill skill, Float canUseScore, Float cannotUseScore){
         this.canUseScore = canUseScore;
         this.cannotUseScore = cannotUseScore;
-        this.skillDescription = skillDescription;
+        this.skill = skill;
     }
 
     @Override
     public Float calculateScore(World world, Entity entity) {
-        return skillDescription.canCast(world, entity) ? canUseScore : cannotUseScore;
+        return skill.canCast(world, entity) ? canUseScore : cannotUseScore;
     }
 }

@@ -9,7 +9,7 @@ import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
-import com.bryjamin.dancedungeon.factories.spells.SkillDescription;
+import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.factories.spells.animations.BasicProjectile;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
@@ -20,7 +20,7 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
  * Created by BB on 24/12/2017.
  */
 
-public class MageAttack extends SkillDescription {
+public class MageAttack extends Skill {
 
 
     @Override

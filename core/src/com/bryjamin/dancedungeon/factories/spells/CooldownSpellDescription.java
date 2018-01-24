@@ -11,7 +11,7 @@ import com.bryjamin.dancedungeon.utils.math.Coordinates;
  * Created by BB on 22/11/2017.
  */
 
-public abstract class CooldownSpellDescription extends SkillDescription {
+public abstract class CooldownSpellDescription extends Skill {
 
     protected boolean ready = true;
 

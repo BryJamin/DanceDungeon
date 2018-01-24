@@ -18,7 +18,7 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationStateComponent
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
-import com.bryjamin.dancedungeon.factories.spells.SkillDescription;
+import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
@@ -34,7 +34,7 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
  *
  */
 
-public class MeleeAttack extends SkillDescription {
+public class MeleeAttack extends Skill {
 
 
     @Override

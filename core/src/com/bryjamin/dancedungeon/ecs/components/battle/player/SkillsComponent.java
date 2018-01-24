@@ -4,8 +4,8 @@ import com.artemis.Component;
 import com.artemis.Entity;
 import com.artemis.World;
 import com.badlogic.gdx.utils.Array;
+import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.factories.spells.basic.MeleeAttack;
-import com.bryjamin.dancedungeon.factories.spells.SkillDescription;
 
 /**
  * Created by BB on 18/11/2017.
@@ -13,30 +13,30 @@ import com.bryjamin.dancedungeon.factories.spells.SkillDescription;
 
 public class SkillsComponent extends Component {
 
-    public SkillDescription basicAttack = new MeleeAttack();
+    public Skill basicAttack = new MeleeAttack();
 
-    public Array<SkillDescription> skillDescriptions = new Array<SkillDescription>();
+    public Array<Skill> skills = new Array<Skill>();
 
     public SkillsComponent(){};
 
 
-    public SkillsComponent(SkillDescription basicAttack, SkillDescription... skillDescriptions){
+    public SkillsComponent(Skill basicAttack, Skill... skills){
         this.basicAttack = basicAttack;
-        this.skillDescriptions.addAll(skillDescriptions);
+        this.skills.addAll(skills);
     }
 
 
     public void endTurn(){
-        for(SkillDescription skillDescription : skillDescriptions){
-            skillDescription.endTurnUpdate();
+        for(Skill skill : skills){
+            skill.endTurnUpdate();
         }
     }
 
 
     public boolean canCast(World world, Entity entity){
-        if(skillDescriptions.size <= 0) return false;
+        if(skills.size <= 0) return false;
 
-        for(SkillDescription s : skillDescriptions){
+        for(Skill s : skills){
             if(s.canCast(world, entity)){
                 return true;
             }

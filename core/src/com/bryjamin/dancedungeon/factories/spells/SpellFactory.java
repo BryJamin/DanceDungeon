@@ -5,14 +5,17 @@ import com.artemis.World;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.ConditionalActionsComponent;
+import com.bryjamin.dancedungeon.ecs.components.actions.SkillButtonComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.GreyScaleComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.UITargetingComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BattleMessageSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.SelectedTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
@@ -83,12 +86,16 @@ public class SpellFactory {
     }
 
 
-    public ComponentBag skillButton(float x, float y, final SkillDescription skillDescription, final Entity player) {
+    public ComponentBag skillButton(float x, float y, final Skill skill, final Entity player) {
 
         ComponentBag bag = new ComponentBag();
         bag.add(new PositionComponent(x, y));
+        bag.add(new SkillButtonComponent(player, skill));
+        bag.add(new UITargetingComponent());
+        bag.add(new CenteringBoundaryComponent(SIZE, SIZE));
         bag.add(new HitBoxComponent(new HitBox(new Rectangle(x, y, SIZE, SIZE))));
-        bag.add(new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE, new TextureDescription.Builder(skillDescription.getIcon())
+
+        bag.add(new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE, new TextureDescription.Builder(skill.getIcon())
                 .size(SIZE)
                 .build()));
 
@@ -96,7 +103,7 @@ public class SpellFactory {
             @Override
             public void performAction(World world, Entity entity) {
 
-                Array<Entity> entityArray = skillDescription.createTargeting(world, player);
+                Array<Entity> entityArray = skill.createTargeting(world, player);
 
                 if(entityArray.size <= 0){
                     world.getSystem(BattleMessageSystem.class).createWarningMessage();
@@ -116,10 +123,10 @@ public class SpellFactory {
 
                 if (isCanCastCondition) {
                     isCanCastCondition = false;
-                    return skillDescription.canCast(world, player);
+                    return skill.canCast(world, player);
                 } else {
                     isCanCastCondition = true;
-                    return !skillDescription.canCast(world, player);
+                    return !skill.canCast(world, player);
                 }
 
             }
@@ -141,15 +148,5 @@ public class SpellFactory {
 
     }
 
-
-    public ComponentBag defaultButton(float x, float y, WorldAction action) {
-        ComponentBag bag = new ComponentBag();
-        bag.add(new PositionComponent(x, y));
-        bag.add(new HitBoxComponent(new HitBox(new Rectangle(x, y, SIZE, SIZE))));
-        bag.add(new ActionOnTapComponent(action));
-
-        return bag;
-
-    }
 
 }

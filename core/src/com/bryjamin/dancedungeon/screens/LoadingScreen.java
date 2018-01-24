@@ -28,7 +28,9 @@ public class LoadingScreen extends AbstractScreen {
             //This stops 'wobbly' looking Fonts on text/camera movement, may be necessary to create an 'assets'
             //setup class to not have to do this here.
             game.assetManager.get(Fonts.MEDIUM, BitmapFont.class).setUseIntegerPositions(false);
+            game.assetManager.get(Fonts.MEDIUM, BitmapFont.class).getData().markupEnabled = true;
             game.assetManager.get(Fonts.SMALL, BitmapFont.class).setUseIntegerPositions(false);
+            game.assetManager.get(Fonts.SMALL, BitmapFont.class).getData().markupEnabled = true;
 
             game.setScreen(new MenuScreen(game));
         }

@@ -46,7 +46,7 @@ public class TargetingFactory {
     //Range Targeting
 
 
-    public Array<Entity> createTargetTiles(World world, final Entity player, final SkillDescription spell, int range) {
+    public Array<Entity> createTargetTiles(World world, final Entity player, final Skill spell, int range) {
 
         Array<Entity> entityArray = new Array<Entity>();
 
@@ -76,7 +76,7 @@ public class TargetingFactory {
     }
 
 
-    public Array<Entity> createAllyTargetTiles(World world, final Entity player, final SkillDescription spell, int range) {
+    public Array<Entity> createAllyTargetTiles(World world, final Entity player, final Skill spell, int range) {
 
         Array<Entity> entityArray = new Array<Entity>();
 

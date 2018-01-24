@@ -12,7 +12,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.factories.spells.MovementDescription;
-import com.bryjamin.dancedungeon.factories.spells.SkillDescription;
+import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.utils.math.CoordinateMath;
 import com.bryjamin.dancedungeon.utils.math.CoordinateSorter;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
@@ -23,9 +23,9 @@ import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
 public class MeleeMoveToAction implements WorldAction {
 
-    private SkillDescription movementSkill = new MovementDescription();
+    private Skill movementSkill = new MovementDescription();
 
-    public MeleeMoveToAction(SkillDescription movementSkill){
+    public MeleeMoveToAction(Skill movementSkill){
         this.movementSkill = movementSkill;
     }
 

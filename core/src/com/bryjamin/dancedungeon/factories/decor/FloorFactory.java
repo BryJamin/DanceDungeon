@@ -1,13 +1,11 @@
 package com.bryjamin.dancedungeon.factories.decor;
 
-import com.badlogic.gdx.assets.AssetManager;
+import com.artemis.World;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
-import com.bryjamin.dancedungeon.factories.AbstractFactory;
-import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
@@ -16,22 +14,17 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
  * Created by BB on 18/10/2017.
  */
 
-public class FloorFactory extends AbstractFactory {
+public class FloorFactory  {
 
 
 
 
-    public FloorFactory(AssetManager assetManager) {
-        super(assetManager);
+    public FloorFactory() {
     }
 
 
 
-    public ComponentBag createFloor(float x, float y, float width, float height, int rows, int columns){
-
-        ComponentBag bag = new ComponentBag();
-        bag.add(new PositionComponent(x, y));
-
+    public void createFloor(World world, float x, float y, float width, float height, int rows, int columns){
 
         float tileWidthSize = width / columns;
         float tileHeightSize = height / rows;
@@ -42,7 +35,6 @@ public class FloorFactory extends AbstractFactory {
                 .width(tileWidthSize);
 
         DrawableComponent drawableComponent = new DrawableComponent(Layer.BACKGROUND_LAYER_FAR);
-        bag.add(drawableComponent);
 
         for(int i = 0; i < columns; i++) {
 
@@ -66,12 +58,10 @@ public class FloorFactory extends AbstractFactory {
             }
         }
 
-
-
-
-
-        return bag;
-
+        final int e = world.create();
+        world.edit(e)
+                .add(new PositionComponent(x, y))
+                .add(drawableComponent);
 
     }
 

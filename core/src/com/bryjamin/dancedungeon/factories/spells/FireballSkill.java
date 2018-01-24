@@ -55,4 +55,20 @@ public class FireballSkill extends CooldownSpellDescription {
                 .cast(world, entity, target);
 
     }
+
+    @Override
+    public String getName() {
+        return "Fireball";
+    }
+
+    @Override
+    public String getDescription(World world, Entity entity) {
+        return "Deals " + entity.getComponent(StatComponent.class).power + " damage." + " Does not use an Action";
+    }
+
+
+
+
+
+
 }

@@ -19,7 +19,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.factories.player.UnitFactory;
 import com.bryjamin.dancedungeon.factories.spells.MovementDescription;
-import com.bryjamin.dancedungeon.factories.spells.SkillDescription;
+import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.factories.spells.SlashDescription;
 import com.bryjamin.dancedungeon.factories.spells.basic.MeleeAttack;
 import com.bryjamin.dancedungeon.utils.HitBox;
@@ -53,8 +53,8 @@ public class DummyFactory {
 
     private ComponentBag targetDummy(StatComponent statComponent) {
 
-        SkillDescription movement = new MovementDescription();
-        SkillDescription slash = new SlashDescription();
+        Skill movement = new MovementDescription();
+        Skill slash = new SlashDescription();
 
         ComponentBag bag = unitFactory.baseEnemyUnitBag(statComponent); //new ComponentBag();
 
@@ -84,7 +84,7 @@ public class DummyFactory {
 
     //TODO fix AI
 
-    public UtilityAiCalculator dummyAi(SkillDescription movement, SkillDescription slash){
+    public UtilityAiCalculator dummyAi(Skill movement, Skill slash){
         return new UtilityAiCalculator(
                 new ActionScoreCalculator(new EndTurnAction()),
                 new ActionScoreCalculator(new MeleeMoveToAction(movement), new IsNextToCalculator(null, 100f), new CanUseSkillCalculator(movement, 100f, null)),
