@@ -11,6 +11,7 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.factories.spells.animations.BasicProjectile;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
+import com.bryjamin.dancedungeon.utils.texture.HighlightedText;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
@@ -64,6 +65,14 @@ public class FireballSkill extends CooldownSpellDescription {
     @Override
     public String getDescription(World world, Entity entity) {
         return "Deals " + entity.getComponent(StatComponent.class).power + " damage." + " Does not use an Action";
+    }
+
+    @Override
+    public HighlightedText getHighlight(World world, Entity entity) {
+        return new HighlightedText()
+                .add("Deals ")
+                .add(Integer.toString(entity.getComponent(StatComponent.class).power), new Color(Color.RED))
+                .add(" damage. Does not use an Action");
     }
 
 

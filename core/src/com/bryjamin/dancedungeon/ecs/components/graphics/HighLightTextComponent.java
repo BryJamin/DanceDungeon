@@ -17,6 +17,10 @@ public class HighLightTextComponent extends Component {
     public HighLightTextComponent(Highlight... highlights){
         this.highLights.addAll(highlights);
     }
+    public HighLightTextComponent(Array<Highlight> highlights){
+        this.highLights.addAll(highlights);
+    }
+
 
 
 

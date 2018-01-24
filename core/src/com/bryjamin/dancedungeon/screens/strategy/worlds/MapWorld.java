@@ -75,7 +75,7 @@ public class MapWorld extends WorldContainer {
                 .movementRange(4)
                 .healthAndMax(20)
                 .attackRange(36)
-                .magic(10)
+                .magic(7)
                 .power(5).build());
 
         SkillsComponent skillsComponent = new SkillsComponent();

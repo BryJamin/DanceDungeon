@@ -21,7 +21,7 @@ import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.factories.spells.CooldownSpellDescription;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
-import com.bryjamin.dancedungeon.utils.texture.Highlight;
+import com.bryjamin.dancedungeon.utils.texture.HighlightedText;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
@@ -114,9 +114,14 @@ public class Heal extends CooldownSpellDescription {
     }
 
     @Override
-    public Highlight getHighlight() {
-        return new Highlight(new Color(Color.GREEN), 22, 25);
+    public HighlightedText getHighlight(World world, Entity entity) {
+        return new HighlightedText()
+                .add("Heals", new Color(Color.GREEN))
+                .add(" Allies for ")
+                .add(Integer.toString(getHealValue(entity)), new Color(Color.GREEN))
+                .add(" damage");
     }
+
 
     /*
     @Override

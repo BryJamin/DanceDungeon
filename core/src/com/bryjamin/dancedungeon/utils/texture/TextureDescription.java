@@ -8,12 +8,14 @@ public class TextureDescription extends DrawableDescription {
 
 
     private String region;
+    private HighlightedText highlightedText;
     private int index;
 
     public TextureDescription(Builder tdb) {
         super(tdb);
         this.region = tdb.region;
         this.index = tdb.index;
+        this.highlightedText = tdb.highlightedText;
     }
 
     public static class Builder extends DrawableDescriptionBuilder<Builder> {
@@ -23,6 +25,7 @@ public class TextureDescription extends DrawableDescription {
 
         //Optional
         private int index = 0;
+        private HighlightedText highlightedText;
 
         public Builder(String region) {
             this.region = region;
@@ -41,6 +44,9 @@ public class TextureDescription extends DrawableDescription {
 
         public Builder index(int val)
         { index = val; return getThis(); }
+
+        public Builder highlightedText(HighlightedText val)
+        { highlightedText = val; return getThis(); }
 
         @Override
         public Builder getThis() {
@@ -67,5 +73,9 @@ public class TextureDescription extends DrawableDescription {
 
     public int getIndex() {
         return index;
+    }
+
+    public HighlightedText getHighlightedText() {
+        return highlightedText;
     }
 }

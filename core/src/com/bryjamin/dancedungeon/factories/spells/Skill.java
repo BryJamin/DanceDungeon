@@ -6,7 +6,7 @@ import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.factories.spells.animations.SkillAnimation;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
-import com.bryjamin.dancedungeon.utils.texture.Highlight;
+import com.bryjamin.dancedungeon.utils.texture.HighlightedText;
 
 /**
  * Created by BB on 18/11/2017.
@@ -40,7 +40,7 @@ public abstract class Skill {
         return "ERROR: DESCRIPTION NOT SET";
     }
 
-    public Highlight getHighlight(){
+    public HighlightedText getHighlight(World world, Entity entity){
         return null;
     }
 

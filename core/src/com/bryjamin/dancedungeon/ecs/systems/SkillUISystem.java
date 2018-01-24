@@ -16,6 +16,7 @@ import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.factories.spells.SpellFactory;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
+import com.bryjamin.dancedungeon.utils.texture.HighlightedText;
 
 /**
  * Created by BB on 23/01/2018.
@@ -66,20 +67,19 @@ public class SkillUISystem extends EntitySystem {
                 Measure.units(5f))
                 .edit().add(new UITargetingComponent());
 
-        Entity description = TextFactory.createCenteredText(world.createEntity(), Fonts.SMALL, skill.getDescription(world, e),
-                tileSystem.getOriginX(),
-                tileSystem.getOriginY() - Measure.units(7.5f),
-                tileSystem.getWidth(),
-                Measure.units(3.5f));
 
+        HighlightedText ht = skill.getHighlight(world, e);
 
+        if(ht != null) {
+            Entity description = TextFactory.createCenteredText(world.createEntity(), Fonts.SMALL, ht.getText(),
+                    tileSystem.getOriginX(),
+                    tileSystem.getOriginY() - Measure.units(7.5f),
+                    tileSystem.getWidth(),
+                    Measure.units(3.5f));
 
-        if(skill.getHighlight() != null){
-            System.out.println(skill.getHighlight().start);
-            description.edit().add(new HighLightTextComponent(skill.getHighlight()));
+            description.edit().add(new HighLightTextComponent(ht.getHighlightArray()));
+            description.edit().add(new UITargetingComponent());
         }
-
-        description.edit().add(new UITargetingComponent());
 
     }
 
