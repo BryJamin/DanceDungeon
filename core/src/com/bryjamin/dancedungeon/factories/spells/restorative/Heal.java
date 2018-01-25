@@ -32,6 +32,19 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 public class Heal extends CooldownSpellDescription {
 
 
+    public Heal() {
+        super(new Builder()
+                .name("Heal")
+                .attack(Attack.Ranged)
+                .icon("skills/Medicine")
+                .targeting(Targeting.Ally));
+    }
+
+    @Override
+    public String getIcon() {
+        return "skills/Medicine";
+    }
+
     @Override
     public Array<Entity> createTargeting(World world, Entity player) {
         Array<Entity> entityArray = new com.bryjamin.dancedungeon.factories.spells.TargetingFactory().createAllyTargetTiles(world, player, this, 3);
@@ -98,15 +111,6 @@ public class Heal extends CooldownSpellDescription {
         return ready;
     }
 
-    @Override
-    public String getIcon() {
-        return "skills/Medicine";
-    }
-
-    @Override
-    public String getName() {
-        return "Recover";
-    }
 
     @Override
     public String getDescription(World world, Entity entity) {
