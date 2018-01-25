@@ -2,7 +2,6 @@ package com.bryjamin.dancedungeon.factories.spells;
 
 import com.artemis.Entity;
 import com.artemis.World;
-import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
@@ -25,15 +24,10 @@ public class CooldownSpellDescription extends Skill {
 
     @Override
     public void cast(World world, Entity entity, Coordinates target) {
+        super.cast(world, entity, target);
         ready = false;
         skillAnimation.cast(world, entity, target);
     }
-
-    @Override
-    public String getIcon() {
-        return TextureStrings.BLOCK;
-    }
-
 
     public void endTurnUpdate(){
         ready = true;

@@ -28,12 +28,6 @@ public class FireballSkill extends CooldownSpellDescription {
     }
 
     @Override
-    public String getIcon() {
-        return "skills/Fire";
-    }
-
-
-    @Override
     public void cast(World world, Entity entity, Coordinates target) {
 
         ready = false;
@@ -64,7 +58,7 @@ public class FireballSkill extends CooldownSpellDescription {
 
     @Override
     public String getDescription(World world, Entity entity) {
-        return "Deals " + entity.getComponent(StatComponent.class).power + " damage." + " Does not use an Action";
+        return "Deals " + entity.getComponent(StatComponent.class).magic + " damage." + " Does not use an Action";
     }
 
     @Override

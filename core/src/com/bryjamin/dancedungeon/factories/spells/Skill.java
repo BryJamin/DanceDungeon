@@ -5,6 +5,7 @@ import com.artemis.World;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.factories.spells.animations.SkillAnimation;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 import com.bryjamin.dancedungeon.utils.texture.HighlightedText;
@@ -19,10 +20,17 @@ public class Skill {
 
     public enum Attack {Melee, Ranged, Transformative}
 
-    protected String name = "N/A";
-    protected String icon = TextureStrings.BIGGABLOBBA;
-    protected Targeting targeting = Targeting.Enemy;
-    protected Attack attack = Attack.Ranged;
+    public enum Animatic {Projectile, Slash}
+
+    public enum ActionType {MoveAndAction, Action, Movement, Free}
+
+
+    private String name = "N/A";
+    private String icon;
+    private Targeting targeting = Targeting.Enemy;
+    private Attack attack = Attack.Ranged;
+    private ActionType actionType = ActionType.MoveAndAction;
+
 
     public Skill(Builder b) {
         this.name = b.name;
@@ -45,7 +53,7 @@ public class Skill {
                 entityArray = new TargetingFactory().createTargetTiles(world, player, this, range);
                 break;
             case Ally:
-                entityArray = new TargetingFactory().createAllyTargetTiles(world, player, this, player.getComponent(StatComponent.class).attackRange);
+                entityArray = new TargetingFactory().createAllyTargetTiles(world, player, this, range);
                 break;
         }
 
@@ -54,20 +62,35 @@ public class Skill {
 
     ;
 
-    public boolean canCast(World world, Entity entity){
+    public boolean canCast(World world, Entity entity) {
         return false;
     }
 
-    public void cast(World world, Entity entity, Coordinates target){
+    public void cast(World world, Entity entity, Coordinates target) {
+        TurnComponent turnComponent = entity.getComponent(TurnComponent.class);
+        switch (actionType) {
+            case Movement:
+                turnComponent.movementActionAvailable = false;
+                break;
+            case Action:
+                turnComponent.movementActionAvailable = false;
+                break;
+            case MoveAndAction:
+                turnComponent.movementActionAvailable = false;
+                turnComponent.attackActionAvailable = false;
+                break;
+        }
+    }
 
-    };
+    ;
 
-    public void endTurnUpdate(){
+    public void endTurnUpdate() {
 
-    };
+    }
+
+    ;
 
     public String getIcon() {
-        System.out.println("Inside get Icon " + icon);
         return icon;
     }
 
@@ -85,10 +108,6 @@ public class Skill {
     }
 
 
-
-
-
-
     public static class Builder {
 
         private String name = "N/A";
@@ -96,20 +115,29 @@ public class Skill {
         private Targeting targeting = Targeting.Enemy;
         private Attack attack = Attack.Ranged;
 
-        public Builder name(String val)
-        { this.name = val; return this; }
+        public Builder name(String val) {
+            this.name = val;
+            return this;
+        }
 
-        public Builder icon(String val)
-        { this.icon = val; return this; }
+        public Builder icon(String val) {
+            this.icon = val;
+            return this;
+        }
 
-        public Builder targeting(Targeting val)
-        { this.targeting = val; return this; }
+        public Builder targeting(Targeting val) {
+            this.targeting = val;
+            return this;
+        }
 
-        public Builder attack(Attack val)
-        { this.attack = val; return this; }
+        public Builder attack(Attack val) {
+            this.attack = val;
+            return this;
+        }
 
-        public Skill build()
-        { return new Skill(this); }
+        public Skill build() {
+            return new Skill(this);
+        }
 
     }
 

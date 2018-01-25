@@ -5,14 +5,12 @@ import com.artemis.World;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.ConditionalActionsComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.WaitActionComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationMapComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationStateComponent;
@@ -40,17 +38,6 @@ public class Heal extends CooldownSpellDescription {
                 .targeting(Targeting.Ally));
     }
 
-    @Override
-    public String getIcon() {
-        return "skills/Medicine";
-    }
-
-    @Override
-    public Array<Entity> createTargeting(World world, Entity player) {
-        Array<Entity> entityArray = new com.bryjamin.dancedungeon.factories.spells.TargetingFactory().createAllyTargetTiles(world, player, this, 3);
-        return entityArray;
-    }
-
 
     private int getHealValue(Entity e){
         return e.getComponent(StatComponent.class).magic;
@@ -58,7 +45,7 @@ public class Heal extends CooldownSpellDescription {
 
     @Override
     public void cast(World world, Entity entity, Coordinates target) {
-
+        //super.cast(world, entity, target);
         ready = false;
 
         for (Entity e : world.getSystem(TileSystem.class).getCoordinateMap().get(target)) {
@@ -67,9 +54,6 @@ public class Heal extends CooldownSpellDescription {
             }
         }
         ;
-
-        entity.getComponent(TurnComponent.class).attackActionAvailable = false;
-        entity.getComponent(TurnComponent.class).movementActionAvailable = false;
 
         final int SLASH_DRAWABLE_ID = 25;
         final int SLASH_ANIMATION_ID = 0;
@@ -125,21 +109,5 @@ public class Heal extends CooldownSpellDescription {
                 .add(Integer.toString(getHealValue(entity)), new Color(Color.GREEN))
                 .add(" damage");
     }
-
-
-    /*
-    @Override
-    public void endTurnUpdate() {
-
-    }*/
-
-
-/*
-
-    @Override
-    public boolean canCast(World world, Entity entity) {
-        return entity.getComponent(TurnComponent.class).attackActionAvailable = false;
-    }
-*/
 
 }
