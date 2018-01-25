@@ -23,6 +23,14 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 public class MageAttack extends Skill {
 
 
+    public MageAttack() {
+        super(new Builder()
+                .name("Mage Basic")
+                .icon(TextureStrings.BIGGABLOBBA)
+                .targeting(Targeting.Enemy)
+                .attack(Attack.Ranged));
+    }
+
     @Override
     public Array<Entity> createTargeting(World world, Entity player) {
         return new Array<Entity>();

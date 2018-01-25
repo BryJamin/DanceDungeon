@@ -2,7 +2,6 @@ package com.bryjamin.dancedungeon.factories.spells;
 
 import com.artemis.Entity;
 import com.artemis.World;
-import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
@@ -11,13 +10,13 @@ import com.bryjamin.dancedungeon.utils.math.Coordinates;
  * Created by BB on 22/11/2017.
  */
 
-public abstract class CooldownSpellDescription extends Skill {
+public class CooldownSpellDescription extends Skill {
 
     protected boolean ready = true;
 
-
-    @Override
-    public abstract Array<Entity> createTargeting(World world, Entity player);
+    public CooldownSpellDescription(Builder b) {
+        super(b);
+    }
 
     @Override
     public boolean canCast(World world, Entity entity) {

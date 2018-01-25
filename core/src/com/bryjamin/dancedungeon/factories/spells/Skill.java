@@ -4,6 +4,7 @@ import com.artemis.Entity;
 import com.artemis.World;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
+import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.factories.spells.animations.SkillAnimation;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 import com.bryjamin.dancedungeon.utils.texture.HighlightedText;
@@ -12,46 +13,108 @@ import com.bryjamin.dancedungeon.utils.texture.HighlightedText;
  * Created by BB on 18/11/2017.
  */
 
-public abstract class Skill {
+public class Skill {
+
+    public enum Targeting {Ally, Enemy, Self}
+
+    public enum Attack {Melee, Ranged, Transformative}
+
+    protected String name = "N/A";
+    protected String icon = TextureStrings.BIGGABLOBBA;
+    protected Targeting targeting = Targeting.Enemy;
+    protected Attack attack = Attack.Ranged;
+
+    public Skill(Builder b) {
+        this.name = b.name;
+        this.icon = b.icon;
+        this.targeting = b.targeting;
+        this.attack = b.attack;
+    }
+
 
     protected SkillAnimation skillAnimation;
 
-    public abstract Array<Entity> createTargeting(World world, Entity player);
+    public Array<Entity> createTargeting(World world, Entity player) {
 
-    public abstract boolean canCast(World world, Entity entity);
+        Array<Entity> entityArray = new Array<Entity>();
 
-    public abstract void cast(World world, Entity entity, Coordinates target);
+        int range = attack == Attack.Melee ? 1 : player.getComponent(StatComponent.class).attackRange;
 
-    public SkillAnimation getSkillAnimation(){
-        return skillAnimation;
+        switch (targeting) {
+            case Enemy:
+                entityArray = new TargetingFactory().createTargetTiles(world, player, this, range);
+                break;
+            case Ally:
+                entityArray = new TargetingFactory().createAllyTargetTiles(world, player, this, player.getComponent(StatComponent.class).attackRange);
+                break;
+        }
+
+        return entityArray;
     }
 
-    public abstract void endTurnUpdate();
+    ;
 
-    public String getIcon(){
-        return TextureStrings.BLOCK;
+    public boolean canCast(World world, Entity entity){
+        return false;
+    }
+
+    public void cast(World world, Entity entity, Coordinates target){
+
     };
 
-    public String getName(){
-        return "ERROR: NAME NOT SET";
+    public void endTurnUpdate(){
+
+    };
+
+    public String getIcon() {
+        System.out.println("Inside get Icon " + icon);
+        return icon;
     }
 
-    public String getDescription(World world, Entity entity){
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription(World world, Entity entity) {
         return "ERROR: DESCRIPTION NOT SET";
     }
 
-    public HighlightedText getHighlight(World world, Entity entity){
+    public HighlightedText getHighlight(World world, Entity entity) {
         return null;
     }
 
 
 
+
+
+
+    public static class Builder {
+
+        private String name = "N/A";
+        private String icon = TextureStrings.BLOCK;
+        private Targeting targeting = Targeting.Enemy;
+        private Attack attack = Attack.Ranged;
+
+        public Builder name(String val)
+        { this.name = val; return this; }
+
+        public Builder icon(String val)
+        { this.icon = val; return this; }
+
+        public Builder targeting(Targeting val)
+        { this.targeting = val; return this; }
+
+        public Builder attack(Attack val)
+        { this.attack = val; return this; }
+
+        public Skill build()
+        { return new Skill(this); }
+
+    }
+
+
     //public
-
-
-
-
-
 
 
 }

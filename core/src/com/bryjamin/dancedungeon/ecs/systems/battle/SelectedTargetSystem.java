@@ -7,7 +7,6 @@ import com.artemis.World;
 import com.artemis.systems.EntityProcessingSystem;
 import com.artemis.utils.IntBag;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.assets.Fonts;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
@@ -23,11 +22,8 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.UITargetingComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.SelectedEntityComponent;
 import com.bryjamin.dancedungeon.ecs.systems.SkillUISystem;
-import com.bryjamin.dancedungeon.factories.spells.SpellFactory;
 import com.bryjamin.dancedungeon.factories.spells.TargetingFactory;
-import com.bryjamin.dancedungeon.factories.spells.restorative.Heal;
 import com.bryjamin.dancedungeon.utils.Measure;
-import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
@@ -44,13 +40,10 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 public class SelectedTargetSystem extends EntityProcessingSystem {
 
+    private SkillUISystem skillUISystem;
     private TileSystem tileSystem;
 
     private ComponentMapper<PlayerControlledComponent> playerControlledM;
-
-
-    private Array<Entity> buttons = new Array<Entity>();
-
 
     private static final float infoX = Measure.units(2.5f);
     private static final float infoY = Measure.units(50f);
@@ -67,7 +60,7 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
     protected void process(Entity e) {
 
         if (!e.getComponent(TurnComponent.class).hasActions()) {
-            this.clear();
+            this.clearTargetingTiles();
             e.edit().remove(SelectedEntityComponent.class);
         }
 
@@ -81,15 +74,8 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
     @Override
     public void inserted(Entity e) {
 
-        if (this.getEntities().size() > 1) {
-            this.clear();
-
-            for (Entity old : this.getEntities()) {
-                if (!old.equals(e)) {
-                    old.edit().remove(SelectedEntityComponent.class);
-                }
-            }
-
+        if (this.getEntities().size() >= 1) {
+            this.reset();
         }
 
         setUpCharacter(e);
@@ -98,7 +84,7 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
     @Override
     public void removed(Entity e) {
         if (this.getEntities().size() <= 0) {
-            this.clear();
+            this.clearTargetingTiles();
         }
     }
 
@@ -111,12 +97,7 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
     /**
      * Clears the button entities and selected entity from the system
      */
-    public void clear() {
-        for (Entity e : buttons) {
-            //e.edit().add(new DeadComponent());
-            e.deleteFromWorld();
-        }
-        buttons.clear();
+    public void clearTargetingTiles() {
 
         IntBag bag = world.getAspectSubscriptionManager().get(Aspect.all(UITargetingComponent.class)).getEntities();
 
@@ -128,7 +109,9 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
     }
 
     public void reset() {
-        this.clear();
+        this.clearTargetingTiles();
+
+        world.getSystem(SkillUISystem.class).clearButtons();
 
         for (Entity e : this.getEntities()) {
             e.edit().remove(SelectedEntityComponent.class);
@@ -146,15 +129,13 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
      */
     public boolean selectCharacter(float x, float y) {
 
-        if (world.getSystem(ActionCameraSystem.class).isProcessing()) return false;
-
         Coordinates c = world.getSystem(TileSystem.class).getCoordinatesUsingPosition(x, y);
 
         if (world.getSystem(TileSystem.class).getOccupiedMap().containsValue(c, false)) {
             world.getSystem(TileSystem.class).getOccupiedMap().findKey(c, false).edit().add(new SelectedEntityComponent());
             return true;
         } else {
-            this.reset();
+            //this.reset();
         }
 
         return false;
@@ -176,7 +157,7 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
                 //}
 
             } else {
-                this.clear();
+                this.clearTargetingTiles();
             }
 
 
@@ -200,23 +181,10 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
             if (!playableCharacter.getComponent(TurnComponent.class).hasActions()) return;
         }
 
-        this.clear(); // Clear buttons and recticle before remaking them.
-
         createTargetReticle(world, playableCharacter);
         createUnitInformationEntity(world, playableCharacter);
 
-
         if (playerControlledM.has(playableCharacter)) {
-
-            SkillsComponent skillsComponent = playableCharacter.getComponent(SkillsComponent.class);
-
-            for (int i = 0; i < skillsComponent.skills.size; i++) {
-                buttons.add(BagToEntity.bagToEntity(world.createEntity(), new SpellFactory().skillButton(Measure.units(25f) * (i + 1), 0,
-                        skillsComponent.skills.get(i), playableCharacter)));
-            }
-
-            Heal heal = new Heal();
-
             createMovementAndAttackTiles(playableCharacter);
             world.getSystem(SkillUISystem.class).createSkillUi(playableCharacter);
         }
@@ -236,9 +204,9 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
         if (turnComponent.attackActionAvailable && turnComponent.movementActionAvailable) {
             new TargetingFactory().createMovementTiles(world, e, e.getComponent(StatComponent.class).movementRange);
         } else if (turnComponent.attackActionAvailable) {
-            new TargetingFactory().createTargetTiles(world, e,
+            /*new TargetingFactory().createTargetTiles(world, e,
                     e.getComponent(SkillsComponent.class).basicAttack,
-                    e.getComponent(StatComponent.class).attackRange);
+                    e.getComponent(StatComponent.class).attackRange);*/
         }
 
 

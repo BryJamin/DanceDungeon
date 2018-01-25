@@ -19,7 +19,6 @@ import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.UITargetingComponent;
@@ -173,7 +172,9 @@ public class TargetingFactory {
 
         //Basic Attack
 
-        if (player.getComponent(TurnComponent.class).attackActionAvailable) {
+        //TODO commenting out Basic Attack as that may no longer be a thing
+
+        /* if (player.getComponent(TurnComponent.class).attackActionAvailable) {
 
             final OrderedMap<Coordinates, Queue<Coordinates>> targetCoordinateMovementQueueMap = new OrderedMap<Coordinates, Queue<Coordinates>>();
 
@@ -245,6 +246,7 @@ public class TargetingFactory {
 
         }
 
+*/
 
         return entityArray;
 

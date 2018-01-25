@@ -4,7 +4,6 @@ import com.artemis.Entity;
 import com.artemis.World;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.ConditionalActionsComponent;
@@ -37,10 +36,14 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 public class MeleeAttack extends Skill {
 
 
-    @Override
-    public Array<Entity> createTargeting(World world, Entity player) {
-        return new Array<Entity>();
+    public MeleeAttack() {
+        super(new Builder()
+                .name("Attack")
+                .icon(TextureStrings.SKILLS_SLASH)
+                .targeting(Targeting.Enemy)
+                .attack(Attack.Melee));
     }
+
 
     @Override
     public void cast(World world, Entity entity, Coordinates target) {
@@ -111,6 +114,6 @@ public class MeleeAttack extends Skill {
 
     @Override
     public boolean canCast(World world, Entity entity) {
-        return entity.getComponent(TurnComponent.class).attackActionAvailable = false;
+        return entity.getComponent(TurnComponent.class).attackActionAvailable;
     }
 }

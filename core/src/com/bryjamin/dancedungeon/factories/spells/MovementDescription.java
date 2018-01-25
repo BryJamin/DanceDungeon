@@ -14,11 +14,15 @@ import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
 public class MovementDescription extends CooldownSpellDescription {
 
+    //TODO come back to movement
     public MovementDescription(){
+        super(new Builder());
     }
 
     @Override
     public Array<Entity> createTargeting(World world, final Entity player) {
+
+        //TODO input the skill into movement tiles and just case it?
 
         Array<Entity> entityArray = new TargetingFactory().createMovementTiles(world, player, 3);
 

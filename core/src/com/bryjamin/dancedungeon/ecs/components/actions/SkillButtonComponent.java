@@ -14,6 +14,8 @@ public class SkillButtonComponent extends Component {
     private Entity entity;
     private Skill skill;
 
+    public boolean enabled;
+
     public SkillButtonComponent(){};
 
     public SkillButtonComponent(Entity entity, Skill skill){

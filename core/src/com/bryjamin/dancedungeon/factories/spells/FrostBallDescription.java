@@ -1,8 +1,5 @@
 package com.bryjamin.dancedungeon.factories.spells;
 
-import com.artemis.Entity;
-import com.artemis.World;
-import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.factories.spells.animations.FrostBall;
 
 /**
@@ -12,19 +9,11 @@ import com.bryjamin.dancedungeon.factories.spells.animations.FrostBall;
 public class FrostBallDescription extends CooldownSpellDescription {
 
     public FrostBallDescription(){
+        super(new Builder()
+                .name("FrostBall")
+                .icon("skills/Frost")
+                .attack(Attack.Ranged));
         skillAnimation = new FrostBall();
     }
-
-    @Override
-    public Array<Entity> createTargeting(World world, final Entity player) {
-        return new TargetingFactory().createTargetTiles(world, player, this, 3);
-    }
-
-
-    @Override
-    public String getIcon() {
-        return "skills/Frost";
-    }
-
 
 }

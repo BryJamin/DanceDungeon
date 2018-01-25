@@ -12,6 +12,12 @@ import com.bryjamin.dancedungeon.factories.spells.animations.Slash;
     public class SlashDescription extends CooldownSpellDescription {
 
     public SlashDescription(){
+        super(new Builder()
+        .attack(Attack.Melee)
+        .targeting(Targeting.Enemy)
+        .icon("skills/Slash")
+        .name("Slash"));
+
         skillAnimation = new Slash();
     }
 
@@ -19,11 +25,6 @@ import com.bryjamin.dancedungeon.factories.spells.animations.Slash;
     public Array<Entity> createTargeting(World world, final Entity player) {
         Array<Entity> entityArray = new com.bryjamin.dancedungeon.factories.spells.TargetingFactory().createTargetTiles(world, player, this, 1);
         return entityArray;
-    }
-
-    @Override
-    public String getIcon() {
-        return "skills/Slash";
     }
 
 }
