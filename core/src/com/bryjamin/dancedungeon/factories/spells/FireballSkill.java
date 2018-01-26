@@ -22,15 +22,17 @@ public class FireballSkill extends CooldownSpellDescription {
 
     public FireballSkill() {
         super(new Builder()
+                .name("Fireball")
                 .icon("skills/Fire")
                 .targeting(Targeting.Enemy)
+                .spellType(SpellType.MagicAttack)
+                .spellApplication(SpellDamageApplication.AfterSpellAnimation)
+                .actionType(ActionType.Free)
                 .attack(Attack.Ranged));
     }
 
     @Override
     public void cast(World world, Entity entity, Coordinates target) {
-
-        ready = false;
 
         float width = Measure.units(5f);
         float height = Measure.units(5f);
@@ -49,11 +51,6 @@ public class FireballSkill extends CooldownSpellDescription {
                 .build()
                 .cast(world, entity, target);
 
-    }
-
-    @Override
-    public String getName() {
-        return "Fireball";
     }
 
     @Override

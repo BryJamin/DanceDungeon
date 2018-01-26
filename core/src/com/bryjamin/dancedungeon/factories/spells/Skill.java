@@ -2,13 +2,26 @@ package com.bryjamin.dancedungeon.factories.spells;
 
 import com.artemis.Entity;
 import com.artemis.World;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
+import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.WaitActionComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationMapComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationStateComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.KillOnAnimationEndComponent;
+import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.factories.spells.animations.SkillAnimation;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 import com.bryjamin.dancedungeon.utils.texture.HighlightedText;
+import com.bryjamin.dancedungeon.utils.texture.Layer;
+import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 /**
  * Created by BB on 18/11/2017.
@@ -20,9 +33,13 @@ public class Skill {
 
     public enum Attack {Melee, Ranged, Transformative}
 
-    public enum Animatic {Projectile, Slash}
-
     public enum ActionType {MoveAndAction, Action, Movement, Free}
+
+    public enum SpellDamageApplication {Instant, AfterSpellAnimation}
+
+    public enum SpellAnimation {Projectile, Slash, Glitter}
+
+    public enum SpellType {Heal, HealOverTime, MagicAttack, PhysicalAttack, Burn}
 
 
     private String name = "N/A";
@@ -30,6 +47,9 @@ public class Skill {
     private Targeting targeting = Targeting.Enemy;
     private Attack attack = Attack.Ranged;
     private ActionType actionType = ActionType.MoveAndAction;
+    private SpellAnimation spellAnimation = SpellAnimation.Projectile;
+    private SpellType spellType = SpellType.MagicAttack;
+    private SpellDamageApplication spellDamageApplication = SpellDamageApplication.Instant;
 
 
     public Skill(Builder b) {
@@ -37,6 +57,10 @@ public class Skill {
         this.icon = b.icon;
         this.targeting = b.targeting;
         this.attack = b.attack;
+        this.actionType = b.actionType;
+        this.spellAnimation = b.spellAnimation;
+        this.spellType = b.spellType;
+        this.spellDamageApplication = b.spellDamageApplication;
     }
 
 
@@ -63,23 +87,105 @@ public class Skill {
     ;
 
     public boolean canCast(World world, Entity entity) {
-        return false;
+
+        TurnComponent turnComponent = entity.getComponent(TurnComponent.class);
+
+        switch (actionType) {
+            case Movement:
+                return turnComponent.movementActionAvailable;
+            case Action:
+                return turnComponent.attackActionAvailable;
+            case MoveAndAction:
+                return turnComponent.hasActions();
+        }
+
+        return true;
     }
 
     public void cast(World world, Entity entity, Coordinates target) {
         TurnComponent turnComponent = entity.getComponent(TurnComponent.class);
-        switch (actionType) {
-            case Movement:
-                turnComponent.movementActionAvailable = false;
+        setTurnComponentActionBoolean(actionType, turnComponent);
+
+
+        Rectangle rectangle = world.getSystem(TileSystem.class).createRectangleUsingCoordinates(target);
+
+        switch (spellAnimation) {
+            case Glitter:
+                final int GLITTER_DRAWABLE_ID = 25;
+                final int GLITTER_ANIMATION_ID = 0;
+                Entity heal = world.createEntity();
+                heal.edit().add(new PositionComponent(rectangle.x, rectangle.y))
+                        .add(new DrawableComponent(Layer.FOREGROUND_LAYER_FAR, new TextureDescription.Builder(TextureStrings.SKILLS_HEAL)
+                                .identifier(GLITTER_DRAWABLE_ID)
+                                .color(Color.GREEN)
+                                .width(rectangle.getWidth())
+                                .height(rectangle.getHeight())
+                                .build()))
+                        .add(new AnimationStateComponent().put(GLITTER_DRAWABLE_ID, GLITTER_ANIMATION_ID))
+                        .add(new AnimationMapComponent().put(GLITTER_ANIMATION_ID, TextureStrings.SKILLS_HEAL, 0.2f, Animation.PlayMode.NORMAL))
+                        .add(new KillOnAnimationEndComponent(GLITTER_ANIMATION_ID))
+                        .add(new WaitActionComponent());
                 break;
-            case Action:
-                turnComponent.movementActionAvailable = false;
+
+            case Slash:
+
+                final int SLASH_DRAWABLE_ID = 25;
+                final int SLASH_ANIMATION = 0;
+
+                Entity slash = world.createEntity();
+                slash.edit().add(new PositionComponent(rectangle.x, rectangle.y))
+                        .add(new DrawableComponent(Layer.FOREGROUND_LAYER_FAR, new TextureDescription.Builder(TextureStrings.SKILLS_SLASH)
+                                .identifier(SLASH_DRAWABLE_ID)
+                                .width(rectangle.getWidth())
+                                //.color(new Color(Colors.AMOEBA_FAST_PURPLE))
+                                .height(rectangle.getHeight())
+                                //.scaleX(-1)
+                                .build()))
+                        .add(new AnimationStateComponent().put(SLASH_DRAWABLE_ID, SLASH_ANIMATION))
+                        .add(new AnimationMapComponent().put(SLASH_ANIMATION, TextureStrings.SKILLS_SLASH, 0.3f, Animation.PlayMode.NORMAL))
+                        .add(new KillOnAnimationEndComponent(SLASH_ANIMATION))
+                        .add(new WaitActionComponent());
+
                 break;
-            case MoveAndAction:
-                turnComponent.movementActionAvailable = false;
-                turnComponent.attackActionAvailable = false;
-                break;
+
         }
+
+
+        switch (spellDamageApplication) {
+
+            case Instant:
+
+
+                for (Entity e : world.getSystem(TileSystem.class).getCoordinateMap().get(target)) {
+                    if (world.getMapper(HealthComponent.class).has(e)) {
+
+                        StatComponent sc = entity.getComponent(StatComponent.class);
+
+                        switch (spellType) {
+
+                            case MagicAttack:
+                            case PhysicalAttack:
+
+                                e.getComponent(HealthComponent.class).applyDamage(
+                                        spellType == SpellType.PhysicalAttack ? sc.power : sc.magic);
+
+                                break;
+
+                            case Heal:
+                                e.getComponent(HealthComponent.class).applyHealing(sc.magic);
+                                break;
+                        }
+                    }
+                }
+                ;
+
+
+                break;
+
+
+        }
+
+
     }
 
     ;
@@ -88,7 +194,6 @@ public class Skill {
 
     }
 
-    ;
 
     public String getIcon() {
         return icon;
@@ -108,12 +213,34 @@ public class Skill {
     }
 
 
+    private void setTurnComponentActionBoolean(ActionType actionType, TurnComponent turnComponent) {
+
+        switch (actionType) {
+            case Movement:
+                turnComponent.movementActionAvailable = false;
+                break;
+            case Action:
+                turnComponent.attackActionAvailable = false;
+                break;
+            case MoveAndAction:
+                turnComponent.movementActionAvailable = false;
+                turnComponent.attackActionAvailable = false;
+                break;
+        }
+
+    }
+
+
     public static class Builder {
 
         private String name = "N/A";
-        private String icon = TextureStrings.BLOCK;
+        private String icon;
         private Targeting targeting = Targeting.Enemy;
         private Attack attack = Attack.Ranged;
+        private ActionType actionType = ActionType.MoveAndAction;
+        private SpellAnimation spellAnimation = SpellAnimation.Projectile;
+        private SpellType spellType = SpellType.MagicAttack;
+        private SpellDamageApplication spellDamageApplication = SpellDamageApplication.Instant;
 
         public Builder name(String val) {
             this.name = val;
@@ -134,6 +261,27 @@ public class Skill {
             this.attack = val;
             return this;
         }
+
+        public Builder actionType(ActionType val) {
+            this.actionType = val;
+            return this;
+        }
+
+        public Builder spellAnimation(SpellAnimation val) {
+            this.spellAnimation = val;
+            return this;
+        }
+
+        public Builder spellType(SpellType val) {
+            this.spellType = val;
+            return this;
+        }
+
+        public Builder spellApplication(SpellDamageApplication val) {
+            this.spellDamageApplication = val;
+            return this;
+        }
+
 
         public Skill build() {
             return new Skill(this);
