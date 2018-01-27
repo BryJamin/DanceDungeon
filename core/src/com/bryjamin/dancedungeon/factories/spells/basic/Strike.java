@@ -1,16 +1,17 @@
-package com.bryjamin.dancedungeon.factories.spells;
+package com.bryjamin.dancedungeon.factories.spells.basic;
 
 import com.bryjamin.dancedungeon.assets.TextureStrings;
+import com.bryjamin.dancedungeon.factories.spells.Skill;
 
 /**
  * Created by BB on 20/11/2017.
  */
 
-public class SlashDescription extends CooldownSpellDescription {
+public class Strike extends Skill {
 
-    public SlashDescription() {
+    public Strike() {
         super(new Builder()
-                .name("Slash")
+                .name("Strike")
                 .icon(TextureStrings.SKILLS_SLASH)
                 .targeting(Targeting.Enemy)
                 .spellAnimation(SpellAnimation.Slash)

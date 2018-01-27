@@ -31,7 +31,7 @@ import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.factories.map.MapGenerator;
 import com.bryjamin.dancedungeon.factories.player.Unit;
 import com.bryjamin.dancedungeon.factories.player.UnitMap;
-import com.bryjamin.dancedungeon.factories.spells.FireballSkill;
+import com.bryjamin.dancedungeon.factories.spells.basic.Fireball;
 import com.bryjamin.dancedungeon.factories.spells.basic.MageAttack;
 import com.bryjamin.dancedungeon.factories.spells.basic.MeleeAttack;
 import com.bryjamin.dancedungeon.factories.spells.restorative.Heal;
@@ -93,7 +93,7 @@ public class MapWorld extends WorldContainer {
 
         SkillsComponent skillsComponent = new SkillsComponent();
         skillsComponent.basicAttack = new MageAttack();
-        skillsComponent.skills.add(new FireballSkill());
+        skillsComponent.skills.add(new Fireball());
         skillsComponent.skills.add(new Heal());
         mage.setSkillsComponent(skillsComponent);
 

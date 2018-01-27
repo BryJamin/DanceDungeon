@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
+import com.bryjamin.dancedungeon.assets.Colors;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
@@ -17,7 +18,8 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationStateComponent
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.KillOnAnimationEndComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
-import com.bryjamin.dancedungeon.factories.spells.animations.SkillAnimation;
+import com.bryjamin.dancedungeon.factories.spells.animations.BasicProjectile;
+import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 import com.bryjamin.dancedungeon.utils.texture.HighlightedText;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
@@ -41,15 +43,22 @@ public class Skill {
 
     public enum SpellType {Heal, HealOverTime, MagicAttack, PhysicalAttack, Burn}
 
+    public enum SpellCoolDown {PerTurn, OverTime, Limited}
+
 
     private String name = "N/A";
     private String icon;
+
+    private int coolDown = 0;
+    private int resetCoolDownNumber = 1;
+
     private Targeting targeting = Targeting.Enemy;
     private Attack attack = Attack.Ranged;
     private ActionType actionType = ActionType.MoveAndAction;
     private SpellAnimation spellAnimation = SpellAnimation.Projectile;
     private SpellType spellType = SpellType.MagicAttack;
     private SpellDamageApplication spellDamageApplication = SpellDamageApplication.Instant;
+    private SpellCoolDown spellCoolDown = SpellCoolDown.PerTurn;
 
 
     public Skill(Builder b) {
@@ -62,9 +71,6 @@ public class Skill {
         this.spellType = b.spellType;
         this.spellDamageApplication = b.spellDamageApplication;
     }
-
-
-    protected SkillAnimation skillAnimation;
 
     public Array<Entity> createTargeting(World world, Entity player) {
 
@@ -148,6 +154,26 @@ public class Skill {
 
                 break;
 
+            case Projectile:
+
+                float width = Measure.units(5f);
+                float height = Measure.units(5f);
+
+                new BasicProjectile.BasicProjectileBuilder()
+                        .drawableComponent(new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE,
+                                new TextureDescription.Builder(TextureStrings.BLOCK)
+                                        .color(new Color(Colors.BOMB_ORANGE))
+                                        .width(width)
+                                        .height(height)
+                                        .build()))
+                        .width(width)
+                        .height(height)
+                        .speed(Measure.units(85f))
+                        .damage(entity.getComponent(StatComponent.class).magic)
+                        .build()
+                        .cast(world, entity, target);
+
+                break;
         }
 
 
