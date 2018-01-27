@@ -23,6 +23,10 @@ public class ScaleTransformationComponent extends Component {
 
     public ScaleTransformationComponent(){}
 
+    public ScaleTransformationComponent(float scaleXY){
+        this.maxScaleX = scaleXY;
+        this.maxScaleY = scaleXY;
+    }
 
     public ScaleTransformationComponent(float maxScaleX, float maxScaleY){
         this.maxScaleX = maxScaleX;

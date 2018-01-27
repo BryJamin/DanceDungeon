@@ -31,8 +31,9 @@ import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.factories.map.MapGenerator;
 import com.bryjamin.dancedungeon.factories.player.Unit;
 import com.bryjamin.dancedungeon.factories.player.UnitMap;
-import com.bryjamin.dancedungeon.factories.spells.FireballSkill;
+import com.bryjamin.dancedungeon.factories.spells.basic.Fireball;
 import com.bryjamin.dancedungeon.factories.spells.basic.MageAttack;
+import com.bryjamin.dancedungeon.factories.spells.basic.MeleeAttack;
 import com.bryjamin.dancedungeon.factories.spells.restorative.Heal;
 import com.bryjamin.dancedungeon.screens.WorldContainer;
 import com.bryjamin.dancedungeon.utils.Measure;
@@ -61,27 +62,39 @@ public class MapWorld extends WorldContainer {
         warrior.setStatComponent(new StatComponent.StatBuilder()
                 .movementRange(5)
                 .power(5)
-                .maxHealth(15).build());
+                .healthAndMax(15).build());
+
+        SkillsComponent warriorskills2 = new SkillsComponent();
+        warriorskills2.basicAttack = new MageAttack();
+        warriorskills2.skills.add(new MeleeAttack());
+        warrior.setSkillsComponent(warriorskills2);
+
 
 
         Unit warrior2 = new Unit(UnitMap.UNIT_WARRIOR);
         warrior2.setStatComponent(new StatComponent.StatBuilder()
                 .power(10)
                 .movementRange(6)
-                .maxHealth(15).build());
+                .healthAndMax(15).build());
+
+        SkillsComponent warriorskills = new SkillsComponent();
+        warriorskills.basicAttack = new MageAttack();
+        warriorskills.skills.add(new MeleeAttack());
+        warrior2.setSkillsComponent(warriorskills);
+       // warrior.skills.add(new Heal());
 
         Unit mage = new Unit(UnitMap.UNIT_MAGE);
         mage.setStatComponent(new StatComponent.StatBuilder()
                 .movementRange(4)
-                .maxHealth(20)
+                .healthAndMax(20)
                 .attackRange(36)
-                .magic(10)
+                .magic(7)
                 .power(5).build());
 
         SkillsComponent skillsComponent = new SkillsComponent();
         skillsComponent.basicAttack = new MageAttack();
-        skillsComponent.skillDescriptions.add(new FireballSkill());
-        skillsComponent.skillDescriptions.add(new Heal());
+        skillsComponent.skills.add(new Fireball());
+        skillsComponent.skills.add(new Heal());
         mage.setSkillsComponent(skillsComponent);
 
         playerParty.add(mage);
@@ -104,6 +117,8 @@ public class MapWorld extends WorldContainer {
                         new EventGenerationSystem(),
                         new StrategyMapSystem(game, gameMap, playerParty),
 
+
+
                         //PositionalS Systems
                         new MovementSystem(),
                         new FollowPositionSystem(),
@@ -117,7 +132,7 @@ public class MapWorld extends WorldContainer {
                         new DeathSystem()
                 )
                 .with(WorldConfigurationBuilder.Priority.LOWEST,
-                        new ActionOnTapSystem(gameport),
+                        new ActionOnTapSystem(),
                         new FadeSystem(),
                         new ScaleTransformationSystem(),
                         new RenderingSystem(game, gameport),

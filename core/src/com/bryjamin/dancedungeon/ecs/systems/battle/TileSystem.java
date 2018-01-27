@@ -15,6 +15,8 @@ import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
+import com.bryjamin.dancedungeon.factories.decor.FloorFactory;
+import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.math.CoordinateSorter;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
@@ -34,17 +36,17 @@ public class TileSystem extends EntitySystem {
     private ComponentMapper<PlayerControlledComponent> pcm;
     private ComponentMapper<EnemyComponent> enemym;
 
-    private float originX;
-    private float originY;
 
-    private int rows;
-    private int columns;
+    private float originX = Measure.units(12.5f);
+    private float originY = Measure.units(17.5f);
+    private float width = Measure.units(75f);
+    private float height = Measure.units(40f);
+
+    private int rows = 5;
+    private int columns = 10;
 
     private int maxX;
     private int maxY;
-
-    private float width;
-    private float height;
 
     private float tileWidthSize;
     private float tileHeightSize;
@@ -68,11 +70,14 @@ public class TileSystem extends EntitySystem {
     }
 
     @SuppressWarnings("unchecked")
-    public TileSystem(float originX, float originY, float width, float height, int rows, int columns) {
+    public TileSystem() {
         super(Aspect.all(CoordinateComponent.class, CenteringBoundaryComponent.class, PositionComponent.class));
 
-        this.originX = originX;
-        this.originY = originY;
+
+    }
+
+    @Override
+    protected void initialize() {
 
         tileWidthSize = width / columns;
         tileHeightSize = height / rows;
@@ -87,7 +92,7 @@ public class TileSystem extends EntitySystem {
             }
         }
 
-
+        new FloorFactory().createFloor(world, originX, originY, width, height, rows, columns);
     }
 
     public OrderedMap<Entity, Coordinates> getOccupiedMap() {
@@ -377,5 +382,38 @@ public class TileSystem extends EntitySystem {
 
     public int getMaxY() {
         return maxY - 1;
+    }
+
+
+    public float getOriginX() {
+        return originX;
+    }
+
+    public void setOriginX(float originX) {
+        this.originX = originX;
+    }
+
+    public float getOriginY() {
+        return originY;
+    }
+
+    public void setOriginY(float originY) {
+        this.originY = originY;
+    }
+
+    public float getWidth() {
+        return width;
+    }
+
+    public void setWidth(float width) {
+        this.width = width;
+    }
+
+    public float getHeight() {
+        return height;
+    }
+
+    public void setHeight(float height) {
+        this.height = height;
     }
 }

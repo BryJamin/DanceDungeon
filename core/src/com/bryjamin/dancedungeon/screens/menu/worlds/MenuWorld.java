@@ -71,7 +71,7 @@ public class MenuWorld extends WorldContainer {
                         new DeathSystem()
                 )
                 .with(WorldConfigurationBuilder.Priority.LOWEST,
-                        new ActionOnTapSystem(gameport),
+                        new ActionOnTapSystem(),
                         new FadeSystem(),
                         new RenderingSystem(game, gameport),
                         new BoundsDrawingSystem(batch))

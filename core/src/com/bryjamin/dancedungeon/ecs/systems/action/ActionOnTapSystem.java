@@ -3,7 +3,6 @@ package com.bryjamin.dancedungeon.ecs.systems.action;
 import com.artemis.Aspect;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
@@ -14,11 +13,8 @@ import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 
 public class ActionOnTapSystem extends EntitySystem {
 
-    private Viewport gamePort;
-
-    public ActionOnTapSystem(Viewport gamePort) {
+    public ActionOnTapSystem() {
         super(Aspect.all(ActionOnTapComponent.class, HitBoxComponent.class));
-        this.gamePort = gamePort;
     }
 
     @Override
@@ -41,7 +37,6 @@ public class ActionOnTapSystem extends EntitySystem {
      * @return - True if an entity has been touched, False otherwise
      */
     public boolean touch(float x, float y){
-
 
         for(Entity e : this.getEntities()) {
             ActionOnTapComponent actionOnTapComponent = e.getComponent(ActionOnTapComponent.class);

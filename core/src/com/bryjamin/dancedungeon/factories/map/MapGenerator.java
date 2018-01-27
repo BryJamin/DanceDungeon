@@ -55,12 +55,6 @@ public class MapGenerator {
 
         eventRoller.addWeightedObjects(battleEvent, shopEvent, restEvent);
 
-     //   int totalNonFixedNodes =
-
-        int battleCount = 0;
-        int restCount = 0;
-        int shopCount = 0;
-
         Array<MapNode> flippableNodes = new Array<MapNode>();
 
         for(int i = 0; i < mapSections.size; i++){
@@ -73,36 +67,29 @@ public class MapGenerator {
         }
 
         flippableNodes.shuffle();
-
-        for(int i = 0; i < 5; i++){
-            MapNode potentialFlip = flippableNodes.removeIndex(0);
-            float chance = calculateScore(potentialFlip, MapEvent.EventType.REST);
-            //System.out.println(chance);
-            if(chance > MathUtils.random.nextInt(100) + 1) {
-                potentialFlip.setEventType(MapEvent.EventType.REST);
-            }
-        }
-
-        for(int i = 0; i < 5; i++){
-            MapNode potentialFlip = flippableNodes.removeIndex(0);
-            float chance = calculateScore(potentialFlip, MapEvent.EventType.SHOP);
-            //System.out.println(chance);
-            if(chance > MathUtils.random.nextInt(100) + 1) {
-                potentialFlip.setEventType(MapEvent.EventType.SHOP);
-            }
-        }
-
-        //flippableNodes.removeIndex(0).setEventType(MapEvent.EventType.SHOP);
-
-
-   //     System.out.println(flippableNodes.size);
-
-
+        flipNodesToEvent(flippableNodes, MapEvent.EventType.REST, 5);
+        flipNodesToEvent(flippableNodes, MapEvent.EventType.SHOP, 5);
 
     }
 
 
-    public float calculateScore(MapNode node, MapEvent.EventType eventType){
+    private void flipNodesToEvent(Array<MapNode> flippableNodes, MapEvent.EventType eventType, int count){
+
+        int i = 0;
+
+        while(flippableNodes.size > 0 && i < count){
+            MapNode potentialFlip = flippableNodes.removeIndex(0);
+            if(calculateChanceOfPlacement(potentialFlip, eventType) > MathUtils.random.nextInt(100) + 1) {
+                potentialFlip.setEventType(eventType);
+            }
+
+            i++;
+        };
+
+    }
+
+
+    public float calculateChanceOfPlacement(MapNode node, MapEvent.EventType eventType){
 
         int secondaryNodeSize = 0;
 

@@ -8,6 +8,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.BitmapFontCache;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -23,9 +24,11 @@ import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.GreyScaleComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.HighLightTextComponent;
 import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.texture.DrawableDescription;
+import com.bryjamin.dancedungeon.utils.texture.Highlight;
 import com.bryjamin.dancedungeon.utils.texture.TextDescription;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
@@ -43,6 +46,7 @@ public class RenderingSystem extends EntitySystem {
     private ComponentMapper<CenteringBoundaryComponent> boundm;
     private ComponentMapper<DrawableComponent> drawablem;
     private ComponentMapper<BlinkOnHitComponent> blinkOnHitm;
+    private ComponentMapper<HighLightTextComponent> highlightM;
 
     private ComponentMapper<GreyScaleComponent> greyScaleMapper;
 
@@ -66,7 +70,6 @@ public class RenderingSystem extends EntitySystem {
 
     /**
      * Used to draw Entities behind the UI
-     *
      */
     public RenderingSystem(MainGame game, Viewport gameport) {
         super(Aspect.all(PositionComponent.class).one(DrawableComponent.class));
@@ -78,15 +81,16 @@ public class RenderingSystem extends EntitySystem {
     }
 
 
-
     public void loadShader() {
-        whiteShaderProgram = new ShaderProgram( Gdx.files.internal(FileStrings.DEFAULT_VERTEX_SHADER),
+        whiteShaderProgram = new ShaderProgram(Gdx.files.internal(FileStrings.DEFAULT_VERTEX_SHADER),
                 Gdx.files.internal(FileStrings.ALL_WHITE_FRAGMENT_SHADER));
-        if (!whiteShaderProgram.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + whiteShaderProgram.getLog());
+        if (!whiteShaderProgram.isCompiled())
+            throw new GdxRuntimeException("Couldn't compile shader: " + whiteShaderProgram.getLog());
 
-        greyScaleShaderProgram = new ShaderProgram( Gdx.files.internal(FileStrings.DEFAULT_VERTEX_SHADER),
+        greyScaleShaderProgram = new ShaderProgram(Gdx.files.internal(FileStrings.DEFAULT_VERTEX_SHADER),
                 Gdx.files.internal(FileStrings.GREYSCALE_FRAGMENT_SHADER));
-        if (!greyScaleShaderProgram.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + whiteShaderProgram.getLog());
+        if (!greyScaleShaderProgram.isCompiled())
+            throw new GdxRuntimeException("Couldn't compile shader: " + whiteShaderProgram.getLog());
 
     }
 
@@ -94,19 +98,20 @@ public class RenderingSystem extends EntitySystem {
     @Override
     protected void processSystem() {
         for (int i = 0; orderedEntities.size() > i; i++) {
-            if(process(orderedEntities.get(i))){
-            };
+            if (process(orderedEntities.get(i))) {
+            }
+            ;
         }
     }
 
     @Override
     protected void begin() {
-        if(!batch.isDrawing()) {
+        if (!batch.isDrawing()) {
             batch.setProjectionMatrix(gameport.getCamera().combined);
             batch.begin();
         }
 
-       // Archetype archetype = new ArchetypeBuilder().add(PositionComponent.class).build(world);
+        // Archetype archetype = new ArchetypeBuilder().add(PositionComponent.class).build(world);
     }
 
     @Override
@@ -123,26 +128,24 @@ public class RenderingSystem extends EntitySystem {
         boolean shaderOn = false;
 
 
-        if(blinkOnHitm.has(e)){
+        if (blinkOnHitm.has(e)) {
             shaderOn = blinkOnHitm.get(e).isHit;
         }
 
-        if(shaderOn) {
+        if (shaderOn) {
             batch.end();
             batch.setShader(whiteShaderProgram);
             batch.begin();
         }
 
-        if(greyScaleMapper.has(e)){
+        if (greyScaleMapper.has(e)) {
             shaderOn = true;
             batch.end();
             batch.setShader(greyScaleShaderProgram);
             batch.begin();
         }
 
-        for(DrawableDescription drawableDescription : drawableComponent.drawables) {
-
-
+        for (DrawableDescription drawableDescription : drawableComponent.drawables) {
 
 
             float originX = drawableDescription.getOrigin() == null ?
@@ -152,7 +155,7 @@ public class RenderingSystem extends EntitySystem {
 
             batch.setColor(drawableDescription.getColor());
 
-            if(drawableDescription instanceof TextureDescription) {
+            if (drawableDescription instanceof TextureDescription) {
 
                 TextureDescription textureDescription = (TextureDescription) drawableDescription;
 
@@ -162,9 +165,10 @@ public class RenderingSystem extends EntitySystem {
                 try {
                     tr = atlas.findRegion(textureDescription.getRegion(), textureDescription.getIndex());
 
-                    if(tr == null) throw new Exception("No Texture Data for: "  + textureDescription.getRegion() +
-                            "index: " + textureDescription.getIndex());
-                } catch (Exception ex){
+                    if (tr == null)
+                        throw new Exception("No Texture Data for: " + textureDescription.getRegion() +
+                                " index: " + textureDescription.getIndex());
+                } catch (Exception ex) {
                     ex.printStackTrace();
                     tr = atlas.findRegion(TextureStrings.BLOCK);
                 }
@@ -178,7 +182,7 @@ public class RenderingSystem extends EntitySystem {
                         drawableDescription.getScaleX(), drawableDescription.getScaleY(),
                         (float) drawableDescription.getRotation());
 
-            } else if(drawableDescription instanceof TextDescription){
+            } else if (drawableDescription instanceof TextDescription) {
 
 
                 TextDescription textDescription = (TextDescription) drawableDescription;
@@ -186,22 +190,32 @@ public class RenderingSystem extends EntitySystem {
                 BitmapFont bmf = assetManager.get(textDescription.getFont(), BitmapFont.class);
 
 
-
-
-                if(boundm.has(e)){
+                if (boundm.has(e)) {
                     CenteringBoundaryComponent bc = boundm.get(e);
                     glyphLayout.setText(bmf, textDescription.getText(), drawableDescription.getColor(), bc.bound.width, textDescription.getAlign(), false);
 
-                    bmf.draw(batch, glyphLayout,
-                            positionComponent.getX(),
+                    BitmapFontCache bitmapFontCache = new BitmapFontCache(bmf);
+
+                    bitmapFontCache.addText(glyphLayout, positionComponent.getX(),
                             positionComponent.getY() + glyphLayout.height + CenterMath.offsetY(bc.bound.height, glyphLayout.height) + textDescription.getOffsetY());
+
+                    applyHighlightToText(e, bitmapFontCache, textDescription.getText());
+
+                    bitmapFontCache.draw(batch);
+
                 } else {
 
                     glyphLayout.setText(bmf, textDescription.getText(), drawableDescription.getColor(), textDescription.getWidth(), textDescription.getAlign(), false);
 
-                    bmf.draw(batch, glyphLayout,
-                            positionComponent.getX(),
+                    BitmapFontCache bitmapFontCache = new BitmapFontCache(bmf);
+
+                    bitmapFontCache.addText(glyphLayout, positionComponent.getX(),
                             positionComponent.getY() + glyphLayout.height + CenterMath.offsetY(textDescription.getHeight(), glyphLayout.height) + textDescription.getOffsetY());
+
+                    applyHighlightToText(e, bitmapFontCache, textDescription.getText());
+
+                    bitmapFontCache.draw(batch);
+
                 }
 
 
@@ -212,13 +226,29 @@ public class RenderingSystem extends EntitySystem {
 
         }
 
-        if(shaderOn) removeShader();
+        if (shaderOn) removeShader();
 
 
         return true;
     }
 
-    private void removeShader(){
+
+    private void applyHighlightToText(Entity e, BitmapFontCache cache, String text) {
+
+        if (highlightM.has(e)) {
+
+            HighLightTextComponent hltc = highlightM.get(e);
+            for (Highlight h : hltc.highLights) {
+                if (text.length() > h.start && text.length() > h.end) //TODO Bit Redundant, might be better to throw an error earlier
+                    cache.setColors(h.color, h.start, h.end);
+            }
+        }
+
+
+    }
+
+
+    private void removeShader() {
         batch.end();
         batch.setShader(null);
         batch.begin();
@@ -234,11 +264,11 @@ public class RenderingSystem extends EntitySystem {
                 Integer layer1 = 0;
                 Integer layer2 = 0;
 
-                if(drawablem.has(e1)) {
+                if (drawablem.has(e1)) {
                     layer1 = drawablem.get(e1).layer;
                 }
 
-                if(drawablem.has(e2)) {
+                if (drawablem.has(e2)) {
                     layer2 = drawablem.get(e2).layer;
                 }
 

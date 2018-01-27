@@ -9,9 +9,11 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.assets.FileStrings;
-import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationStateComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationMapComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationStateComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.KillOnAnimationEndComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 /**
@@ -26,6 +28,8 @@ public class AnimationSystem extends EntityProcessingSystem{
     ComponentMapper<AnimationStateComponent> am;
     ComponentMapper<AnimationMapComponent> aMapm;
     ComponentMapper<DrawableComponent> drawm;
+
+    ComponentMapper<KillOnAnimationEndComponent> killOnAnimationEndM; //TODO needs testing as this is pretty unclean, as does the whole drawable solution
 
 
     public AnimationSystem(MainGame game) {
@@ -97,6 +101,15 @@ public class AnimationSystem extends EntityProcessingSystem{
                 td.setRegion(ac.animations.get(sc.getCurrentState()).getAnimationRegion());
                 td.setIndex(ac.animations.get(sc.getCurrentState()).getAnimation().getKeyFrameIndex(sc.stateTime));
             }
+
+
+            //If the animation is finished and it has this component kill the Entity
+            if(killOnAnimationEndM.has(e)){
+                if(killOnAnimationEndM.get(e).animationId == sc.getCurrentState() && ac.animations.get(sc.getCurrentState()).getAnimation().isAnimationFinished(sc.stateTime))
+                    e.edit().add(new DeadComponent());
+            }
+
+
         }
     }
 }
