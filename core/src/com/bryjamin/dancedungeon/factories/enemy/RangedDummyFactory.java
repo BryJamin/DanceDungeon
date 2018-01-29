@@ -52,8 +52,7 @@ public class RangedDummyFactory {
 
         StatComponent statComponent = new StatComponent.StatBuilder()
                 .healthAndMax(10)
-                .magic(3)
-                .power(2)
+                .attack(3)
                 .attackRange(basicAttackRange)
                 .movementRange(4)
                 .build();

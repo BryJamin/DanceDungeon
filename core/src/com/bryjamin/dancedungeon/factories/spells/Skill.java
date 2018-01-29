@@ -194,7 +194,7 @@ public class Skill {
                         .width(width)
                         .height(height)
                         .speed(Measure.units(85f))
-                        .damage(entity.getComponent(StatComponent.class).magic)
+                        .damage(entity.getComponent(StatComponent.class).attack)
                         .build()
                         .cast(world, entity, target);
 
@@ -226,13 +226,12 @@ public class Skill {
                             case MagicAttack:
                             case PhysicalAttack:
 
-                                e.getComponent(HealthComponent.class).applyDamage(
-                                        spellType == SpellType.PhysicalAttack ? sc.power : sc.magic);
+                                e.getComponent(HealthComponent.class).applyDamage(sc.attack);
 
                                 break;
 
                             case Heal:
-                                e.getComponent(HealthComponent.class).applyHealing(sc.magic);
+                                e.getComponent(HealthComponent.class).applyHealing(sc.attack);
                                 break;
                         }
                     }

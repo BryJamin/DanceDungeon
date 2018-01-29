@@ -31,9 +31,9 @@ import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.factories.map.MapGenerator;
 import com.bryjamin.dancedungeon.factories.player.Unit;
 import com.bryjamin.dancedungeon.factories.player.UnitMap;
+import com.bryjamin.dancedungeon.factories.spells.basic.FireWeapon;
 import com.bryjamin.dancedungeon.factories.spells.basic.Fireball;
 import com.bryjamin.dancedungeon.factories.spells.basic.MageAttack;
-import com.bryjamin.dancedungeon.factories.spells.basic.MeleeAttack;
 import com.bryjamin.dancedungeon.factories.spells.basic.StunStrike;
 import com.bryjamin.dancedungeon.factories.spells.restorative.Heal;
 import com.bryjamin.dancedungeon.screens.WorldContainer;
@@ -62,25 +62,25 @@ public class MapWorld extends WorldContainer {
         Unit warrior = new Unit(UnitMap.UNIT_WARRIOR);
         warrior.setStatComponent(new StatComponent.StatBuilder()
                 .movementRange(5)
-                .power(5)
+                .attack(5)
                 .healthAndMax(15).build());
 
         SkillsComponent warriorskills2 = new SkillsComponent();
         warriorskills2.basicAttack = new MageAttack();
-        warriorskills2.skills.add(new MeleeAttack());
+        warriorskills2.skills.add(new FireWeapon());
         warrior.setSkillsComponent(warriorskills2);
 
 
 
         Unit warrior2 = new Unit(UnitMap.UNIT_WARRIOR);
         warrior2.setStatComponent(new StatComponent.StatBuilder()
-                .power(10)
+                .attack(5)
                 .movementRange(6)
                 .healthAndMax(15).build());
 
         SkillsComponent warriorskills = new SkillsComponent();
         warriorskills.basicAttack = new MageAttack();
-        warriorskills.skills.add(new MeleeAttack());
+        warriorskills.skills.add(new FireWeapon());
         warrior2.setSkillsComponent(warriorskills);
        // warrior.skills.add(new Heal());
 
@@ -89,11 +89,11 @@ public class MapWorld extends WorldContainer {
                 .movementRange(4)
                 .healthAndMax(20)
                 .attackRange(6)
-                .magic(7)
-                .power(5).build());
+                .attack(7).build());
 
         SkillsComponent skillsComponent = new SkillsComponent();
         skillsComponent.basicAttack = new MageAttack();
+        skillsComponent.skills.add(new FireWeapon());
         skillsComponent.skills.add(new Fireball());
         skillsComponent.skills.add(new Heal());
         skillsComponent.skills.add(new StunStrike());

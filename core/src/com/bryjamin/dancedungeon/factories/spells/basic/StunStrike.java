@@ -12,8 +12,10 @@ public class StunStrike extends Skill {
     public StunStrike() {
         super(new Builder()
                 .name("Stun Strike")
+                .description("Stuns a Target For 3 Rounds, Deals No Damage")
                 .icon(TextureStrings.SKILLS_SLASH)
-                .targeting(Targeting.FreeAim)
+                .targeting(Targeting.Enemy)
+                .spellCoolDown(3)
                 .spellAnimation(Skill.SpellAnimation.Slash)
                 .spellType(Skill.SpellType.PhysicalAttack)
                 .spellEffects(SpellEffect.Stun)
