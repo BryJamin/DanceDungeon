@@ -88,7 +88,7 @@ public class MapWorld extends WorldContainer {
         mage.setStatComponent(new StatComponent.StatBuilder()
                 .movementRange(4)
                 .healthAndMax(20)
-                .attackRange(36)
+                .attackRange(6)
                 .magic(7)
                 .power(5).build());
 

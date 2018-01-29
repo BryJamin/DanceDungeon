@@ -22,8 +22,8 @@ import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.UITargetingComponent;
+import com.bryjamin.dancedungeon.ecs.systems.SkillUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
-import com.bryjamin.dancedungeon.ecs.systems.battle.SelectedTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
@@ -94,7 +94,8 @@ public class TargetingFactory {
             @Override
             public void performAction(World world, final Entity e) {
                 skill.cast(world, player, coordinates);
-                world.getSystem(SelectedTargetSystem.class).reset();
+                world.getSystem(SkillUISystem.class).clearTargetingTiles();
+                world.getSystem(SkillUISystem.class).refreshSkillUi(player);
             }
         }));
 

@@ -32,43 +32,36 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 public class Skill {
 
     public enum Targeting {Ally, Enemy, Self, FreeAim}
-
     public enum Attack {Melee, Ranged, Transformative}
-
-    public enum ActionType {MoveAndAction, Action, Movement, Free}
-
+    public enum ActionType {UsesMoveAndAttackAction, UsesAttackAction, UsesMoveAction, Free}
     public enum SpellDamageApplication {Instant, AfterSpellAnimation}
-
     public enum SpellAnimation {Projectile, Slash, Glitter}
-
     public enum SpellType {Heal, HealOverTime, MagicAttack, PhysicalAttack, Burn}
-
-
     public enum SpellEffect {Stun, OnFire}
-
-
-
-    public enum SpellCoolDown {PerTurn, OverTime, Limited}
+    public enum SpellCoolDown {NoCoolDown, OverTime, Limited}
 
 
     private String name = "N/A";
+    private String description = "N/A1";
     private String icon;
 
-    private int coolDown = 0;
-    private int resetCoolDownNumber = 1;
+    private int uses = 2;
+    private int coolDown = 2;
+    private int coolDownTracker = 1;
 
     private Targeting targeting = Targeting.Enemy;
     private Attack attack = Attack.Ranged;
-    private ActionType actionType = ActionType.MoveAndAction;
+    private ActionType actionType = ActionType.UsesMoveAndAttackAction;
     private SpellAnimation spellAnimation = SpellAnimation.Projectile;
     private SpellType spellType = SpellType.MagicAttack;
     private SpellDamageApplication spellDamageApplication = SpellDamageApplication.Instant;
-    private SpellCoolDown spellCoolDown = SpellCoolDown.PerTurn;
+    private SpellCoolDown spellCoolDown = SpellCoolDown.NoCoolDown;
     private SpellEffect[] spellEffects;
 
 
     public Skill(Builder b) {
         this.name = b.name;
+        this.description = b.description;
         this.icon = b.icon;
         this.targeting = b.targeting;
         this.attack = b.attack;
@@ -77,6 +70,8 @@ public class Skill {
         this.spellType = b.spellType;
         this.spellDamageApplication = b.spellDamageApplication;
         this.spellEffects = b.spellEffects;
+        this.spellCoolDown = b.spellCoolDown;
+        this.coolDown = b.cooldown;
     }
 
     public Array<Entity> createTargeting(World world, Entity player) {
@@ -106,12 +101,22 @@ public class Skill {
 
         TurnComponent turnComponent = entity.getComponent(TurnComponent.class);
 
+        switch (spellCoolDown) {
+            case Limited:
+                if (uses <= 0) return false;
+                break;
+            case OverTime:
+                if (coolDownTracker > 0) return false;
+                break;
+        }
+
+
         switch (actionType) {
-            case Movement:
+            case UsesMoveAction:
                 return turnComponent.movementActionAvailable;
-            case Action:
+            case UsesAttackAction:
                 return turnComponent.attackActionAvailable;
-            case MoveAndAction:
+            case UsesMoveAndAttackAction:
                 return turnComponent.hasActions();
         }
 
@@ -121,6 +126,16 @@ public class Skill {
     public void cast(World world, Entity entity, Coordinates target) {
         TurnComponent turnComponent = entity.getComponent(TurnComponent.class);
         setTurnComponentActionBoolean(actionType, turnComponent);
+
+
+        switch (spellCoolDown) {
+            case Limited:
+                uses--;
+                break;
+            case OverTime:
+                coolDownTracker = coolDown;
+                break;
+        }
 
 
         Rectangle rectangle = world.getSystem(TileSystem.class).createRectangleUsingCoordinates(target);
@@ -194,9 +209,10 @@ public class Skill {
                 for (Entity e : world.getSystem(TileSystem.class).getCoordinateMap().get(target)) {
 
 
-                    for(SpellEffect spellEffect : spellEffects){
-                        switch (spellEffect){
-                            case Stun: e.getComponent(StatComponent.class).stun = 3;
+                    for (SpellEffect spellEffect : spellEffects) {
+                        switch (spellEffect) {
+                            case Stun:
+                                e.getComponent(StatComponent.class).stun = 3;
                         }
                     }
 
@@ -209,8 +225,6 @@ public class Skill {
 
                             case MagicAttack:
                             case PhysicalAttack:
-
-                                System.out.println("Inside spell attack");
 
                                 e.getComponent(HealthComponent.class).applyDamage(
                                         spellType == SpellType.PhysicalAttack ? sc.power : sc.magic);
@@ -237,7 +251,10 @@ public class Skill {
     ;
 
     public void endTurnUpdate() {
-
+        switch (spellCoolDown) {
+            case OverTime:
+                coolDownTracker--;
+        }
     }
 
 
@@ -251,7 +268,7 @@ public class Skill {
     }
 
     public String getDescription(World world, Entity entity) {
-        return "ERROR: DESCRIPTION NOT SET";
+        return description;
     }
 
     public HighlightedText getHighlight(World world, Entity entity) {
@@ -259,16 +276,40 @@ public class Skill {
     }
 
 
+    public SpellAnimation getSpellAnimation() {
+        return spellAnimation;
+    }
+
+    public SpellType getSpellType() {
+        return spellType;
+    }
+
+    public SpellDamageApplication getSpellDamageApplication() {
+        return spellDamageApplication;
+    }
+
+    public SpellCoolDown getSpellCoolDown() {
+        return spellCoolDown;
+    }
+
+    public int getCoolDownTracker() {
+        return coolDownTracker;
+    }
+
+    public SpellEffect[] getSpellEffects() {
+        return spellEffects;
+    }
+
     private void setTurnComponentActionBoolean(ActionType actionType, TurnComponent turnComponent) {
 
         switch (actionType) {
-            case Movement:
+            case UsesMoveAction:
                 turnComponent.movementActionAvailable = false;
                 break;
-            case Action:
+            case UsesAttackAction:
                 turnComponent.attackActionAvailable = false;
                 break;
-            case MoveAndAction:
+            case UsesMoveAndAttackAction:
                 turnComponent.movementActionAvailable = false;
                 turnComponent.attackActionAvailable = false;
                 break;
@@ -280,17 +321,25 @@ public class Skill {
     public static class Builder {
 
         private String name = "N/A";
+        private String description = "N/A";
         private String icon;
         private Targeting targeting = Targeting.Enemy;
         private Attack attack = Attack.Ranged;
-        private ActionType actionType = ActionType.MoveAndAction;
+        private ActionType actionType = ActionType.UsesMoveAndAttackAction;
         private SpellAnimation spellAnimation = SpellAnimation.Projectile;
         private SpellType spellType = SpellType.MagicAttack;
         private SpellDamageApplication spellDamageApplication = SpellDamageApplication.Instant;
         private SpellEffect[] spellEffects = new SpellEffect[]{};
+        private SpellCoolDown spellCoolDown = SpellCoolDown.NoCoolDown;
+        private int cooldown = 1;
 
         public Builder name(String val) {
             this.name = val;
+            return this;
+        }
+
+        public Builder description(String val) {
+            this.description = val;
             return this;
         }
 
@@ -326,6 +375,12 @@ public class Skill {
 
         public Builder spellApplication(SpellDamageApplication val) {
             this.spellDamageApplication = val;
+            return this;
+        }
+
+        public Builder spellCoolDown(int coolDown) {
+            this.spellCoolDown = SpellCoolDown.OverTime;
+            this.cooldown = coolDown;
             return this;
         }
 
