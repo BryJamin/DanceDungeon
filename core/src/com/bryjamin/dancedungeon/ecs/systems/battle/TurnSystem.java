@@ -7,6 +7,7 @@ import com.artemis.EntitySystem;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.ecs.components.actions.UtilityAiComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
@@ -29,6 +30,7 @@ public class TurnSystem extends EntitySystem {
     private ComponentMapper<PlayerControlledComponent> playerMapper;
 
     private ComponentMapper<SkillsComponent> skillMapper;
+    private ComponentMapper<StatComponent> statMapper;
 
 
     private ComponentMapper<UtilityAiComponent> utilityAiMapper;
@@ -66,7 +68,7 @@ public class TurnSystem extends EntitySystem {
 
     @SuppressWarnings("unchecked")
     public TurnSystem() {
-        super(Aspect.all(TurnComponent.class, SkillsComponent.class).one(UtilityAiComponent.class, PlayerControlledComponent.class));
+        super(Aspect.all(TurnComponent.class, SkillsComponent.class, StatComponent.class).one(UtilityAiComponent.class, PlayerControlledComponent.class));
     }
 
 
@@ -188,7 +190,12 @@ public class TurnSystem extends EntitySystem {
 
             case DECIDING:
 
-                if (!turnComponent.hasActions()) {
+                StatComponent statComponent = statMapper.get(currentEntity);
+
+                if(statComponent.stun > 0){
+                    statComponent.stun--;
+                    turnComponent.state = TurnComponent.State.END;
+                } else if (!turnComponent.hasActions()) {
                     turnComponent.state = TurnComponent.State.END;
                 } else {
 

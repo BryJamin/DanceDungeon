@@ -51,29 +51,12 @@ public class TargetingFactory {
 
         TargetComponent targetComponent = player.getComponent(TargetComponent.class);
 
-        TileSystem tileSystem = world.getSystem(TileSystem.class);
-
-
         for (Entity e : getTargetsInRange(world, player.getComponent(CoordinateComponent.class).coordinates, targetComponent.getTargets(world), range)) {
-
-            final Coordinates attackC = tileSystem.getOccupiedMap().get(e);
-
-            Entity redBox = BagToEntity.bagToEntity(world.createEntity(), highlightBox(tileSystem.createRectangleUsingCoordinates(attackC), new Color(Color.RED)));
-            entityArray.add(redBox);
-
-            redBox.edit().add(new ActionOnTapComponent(new WorldAction() {
-                @Override
-                public void performAction(World world, final Entity e) {
-                    spell.cast(world, player, attackC);
-                    world.getSystem(SelectedTargetSystem.class).reset();
-                }
-            }));
-
+            entityArray.add(createTargetingBox(world, player, e.getComponent(CoordinateComponent.class).coordinates, spell, true));
         }
 
         return entityArray;
     }
-
 
     public Array<Entity> createAllyTargetTiles(World world, final Entity player, final Skill spell, int range) {
 
@@ -81,27 +64,42 @@ public class TargetingFactory {
 
         TargetComponent targetComponent = player.getComponent(TargetComponent.class);
 
-        TileSystem tileSystem = world.getSystem(TileSystem.class);
-
-
         for (Entity e : getTargetsInRange(world, player.getComponent(CoordinateComponent.class).coordinates, targetComponent.getAllies(world), range)) {
-
-            final Coordinates attackC = tileSystem.getOccupiedMap().get(e);
-
-            Entity redBox = BagToEntity.bagToEntity(world.createEntity(), highlightBox(tileSystem.createRectangleUsingCoordinates(attackC), new Color(Color.SKY)));
-            entityArray.add(redBox);
-
-            redBox.edit().add(new ActionOnTapComponent(new WorldAction() {
-                @Override
-                public void performAction(World world, final Entity e) {
-                    spell.cast(world, player, attackC);
-                    world.getSystem(SelectedTargetSystem.class).reset();
-                }
-            }));
-
+            entityArray.add(createTargetingBox(world, player, e.getComponent(CoordinateComponent.class).coordinates, spell, false));
         }
 
         return entityArray;
+    }
+
+    public Array<Entity> createFreeAimTargetTiles(World world, final Entity player, final Skill spell, int range) {
+
+        Array<Entity> entityArray = new Array<Entity>();
+
+        TargetComponent targetComponent = player.getComponent(TargetComponent.class);
+
+        for (Coordinates c : CoordinateMath.getCoordinatesInSquareRange(player.getComponent(CoordinateComponent.class).coordinates, range)) {
+            entityArray.add(createTargetingBox(world, player, c, spell, true));
+        }
+
+        return entityArray;
+    }
+
+    public Entity createTargetingBox(World world, final Entity player, final Coordinates coordinates, final Skill skill, boolean isRed){
+
+        TileSystem tileSystem = world.getSystem(TileSystem.class);
+
+        Entity redBox = BagToEntity.bagToEntity(world.createEntity(), highlightBox(tileSystem.createRectangleUsingCoordinates(coordinates), isRed ? new Color(Color.RED) : new Color(Color.CYAN)));
+
+        redBox.edit().add(new ActionOnTapComponent(new WorldAction() {
+            @Override
+            public void performAction(World world, final Entity e) {
+                skill.cast(world, player, coordinates);
+                world.getSystem(SelectedTargetSystem.class).reset();
+            }
+        }));
+
+        return redBox;
+
     }
 
 

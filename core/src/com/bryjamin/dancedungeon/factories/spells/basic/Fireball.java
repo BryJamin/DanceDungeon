@@ -15,7 +15,7 @@ public class Fireball extends Skill {
                 .targeting(Targeting.Enemy)
                 .spellType(SpellType.MagicAttack)
                 .spellApplication(SpellDamageApplication.AfterSpellAnimation)
-                    .actionType(ActionType.Free)
+                .actionType(ActionType.Free)
                 .spellAnimation(SpellAnimation.Projectile)
                 .attack(Attack.Ranged));
     }

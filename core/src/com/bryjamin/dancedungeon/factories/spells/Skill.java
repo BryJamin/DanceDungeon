@@ -31,7 +31,7 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 public class Skill {
 
-    public enum Targeting {Ally, Enemy, Self}
+    public enum Targeting {Ally, Enemy, Self, FreeAim}
 
     public enum Attack {Melee, Ranged, Transformative}
 
@@ -42,6 +42,11 @@ public class Skill {
     public enum SpellAnimation {Projectile, Slash, Glitter}
 
     public enum SpellType {Heal, HealOverTime, MagicAttack, PhysicalAttack, Burn}
+
+
+    public enum SpellEffect {Stun, OnFire}
+
+
 
     public enum SpellCoolDown {PerTurn, OverTime, Limited}
 
@@ -59,6 +64,7 @@ public class Skill {
     private SpellType spellType = SpellType.MagicAttack;
     private SpellDamageApplication spellDamageApplication = SpellDamageApplication.Instant;
     private SpellCoolDown spellCoolDown = SpellCoolDown.PerTurn;
+    private SpellEffect[] spellEffects;
 
 
     public Skill(Builder b) {
@@ -70,6 +76,7 @@ public class Skill {
         this.spellAnimation = b.spellAnimation;
         this.spellType = b.spellType;
         this.spellDamageApplication = b.spellDamageApplication;
+        this.spellEffects = b.spellEffects;
     }
 
     public Array<Entity> createTargeting(World world, Entity player) {
@@ -85,6 +92,9 @@ public class Skill {
             case Ally:
                 entityArray = new TargetingFactory().createAllyTargetTiles(world, player, this, range);
                 break;
+            case FreeAim:
+                entityArray = new TargetingFactory().createFreeAimTargetTiles(world, player, this, range);
+
         }
 
         return entityArray;
@@ -181,8 +191,16 @@ public class Skill {
 
             case Instant:
 
-
                 for (Entity e : world.getSystem(TileSystem.class).getCoordinateMap().get(target)) {
+
+
+                    for(SpellEffect spellEffect : spellEffects){
+                        switch (spellEffect){
+                            case Stun: e.getComponent(StatComponent.class).stun = 3;
+                        }
+                    }
+
+
                     if (world.getMapper(HealthComponent.class).has(e)) {
 
                         StatComponent sc = entity.getComponent(StatComponent.class);
@@ -191,6 +209,8 @@ public class Skill {
 
                             case MagicAttack:
                             case PhysicalAttack:
+
+                                System.out.println("Inside spell attack");
 
                                 e.getComponent(HealthComponent.class).applyDamage(
                                         spellType == SpellType.PhysicalAttack ? sc.power : sc.magic);
@@ -267,6 +287,7 @@ public class Skill {
         private SpellAnimation spellAnimation = SpellAnimation.Projectile;
         private SpellType spellType = SpellType.MagicAttack;
         private SpellDamageApplication spellDamageApplication = SpellDamageApplication.Instant;
+        private SpellEffect[] spellEffects = new SpellEffect[]{};
 
         public Builder name(String val) {
             this.name = val;
@@ -308,6 +329,11 @@ public class Skill {
             return this;
         }
 
+
+        public Builder spellEffects(SpellEffect... val) {
+            this.spellEffects = val;
+            return this;
+        }
 
         public Skill build() {
             return new Skill(this);

@@ -17,6 +17,8 @@ public class StatComponent extends Component {
     public int power;
     public int magic;
 
+    public int stun;
+
     public StatComponent(){}
 
     public StatComponent (StatBuilder sb){
