@@ -56,7 +56,7 @@ public class SkillUISystem extends EntitySystem {
     public void createSkillUi(Entity e) {
         SkillsComponent skillsComponent = e.getComponent(SkillsComponent.class);
         for (int i = 0; i < skillsComponent.skills.size; i++) {
-            createSkillButton(world.createEntity(), e, Measure.units(25f) * (i + 1), 0, skillsComponent.skills.get(i));
+            createSkillButton(world.createEntity(), e, Measure.units(15f) * (i + 1), 0, skillsComponent.skills.get(i));
         }
     }
 

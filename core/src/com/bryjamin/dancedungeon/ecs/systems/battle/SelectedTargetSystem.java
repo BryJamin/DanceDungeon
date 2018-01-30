@@ -105,8 +105,12 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
         Coordinates c = world.getSystem(TileSystem.class).getCoordinatesUsingPosition(x, y);
 
         if (world.getSystem(TileSystem.class).getOccupiedMap().containsValue(c, false)) {
-            world.getSystem(TileSystem.class).getOccupiedMap().findKey(c, false).edit().add(new SelectedEntityComponent());
-            System.out.println("if");
+
+            Entity selected = world.getSystem(TileSystem.class).getOccupiedMap().findKey(c, false);
+
+            if(selected.getComponent(TurnComponent.class).hasActions()){//TODO you can't select a character if it has no actions left
+                world.getSystem(TileSystem.class).getOccupiedMap().findKey(c, false).edit().add(new SelectedEntityComponent());
+            }
             return true;
         } else {
 

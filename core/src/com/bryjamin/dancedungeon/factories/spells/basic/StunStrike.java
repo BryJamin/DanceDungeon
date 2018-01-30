@@ -17,8 +17,8 @@ public class StunStrike extends Skill {
                 .targeting(Targeting.Enemy)
                 .spellCoolDown(3)
                 .spellAnimation(Skill.SpellAnimation.Slash)
-                .spellType(Skill.SpellType.PhysicalAttack)
-                .spellEffects(SpellEffect.Stun)
+                .spellType(SpellType.Burn)
+                .spellEffects(SpellEffect.Stun.value(3))
                 .attack(Attack.Ranged));
 
     }

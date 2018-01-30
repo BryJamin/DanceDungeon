@@ -23,6 +23,7 @@ public class CanUseSkillCalculator implements ActionScoreCalculation {
 
     @Override
     public Float calculateScore(World world, Entity entity) {
+        System.out.println(skill.canCast(world, entity));
         return skill.canCast(world, entity) ? canUseScore : cannotUseScore;
     }
 }

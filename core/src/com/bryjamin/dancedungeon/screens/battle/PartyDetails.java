@@ -1,6 +1,5 @@
 package com.bryjamin.dancedungeon.screens.battle;
 
-import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.factories.player.Unit;
 
 /**
@@ -9,13 +8,18 @@ import com.bryjamin.dancedungeon.factories.player.Unit;
 
 public class PartyDetails {
 
-    //Max party size is 4
-    private Array<Unit> playerParty = new Array<Unit>();
-    public Array<Unit> getPlayerParty() {
-        return playerParty;
-    }
-    public void setPlayerParty(Array<Unit> playerParty) {
-        this.playerParty = playerParty;
-    }
+    public int money;
+    public int grenades;
+    public int medicalSupplies;
 
+    private Unit[] party = new Unit[4];
+
+    public void addPartyMember(Unit unit, int position){
+        if(position - 1 > party.length) throw new RuntimeException("Not place for the party member");
+        party[position] = unit;
+    };
+
+    public Unit[] getParty() {
+        return party;
+    }
 }

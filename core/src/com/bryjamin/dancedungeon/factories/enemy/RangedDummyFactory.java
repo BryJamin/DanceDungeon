@@ -16,9 +16,8 @@ import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.factories.player.UnitFactory;
-import com.bryjamin.dancedungeon.factories.spells.basic.Fireball;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
-import com.bryjamin.dancedungeon.factories.spells.basic.MageAttack;
+import com.bryjamin.dancedungeon.factories.spells.basic.Fireball;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
@@ -58,7 +57,7 @@ public class RangedDummyFactory {
                 .build();
 
         ComponentBag bag = unitFactory.baseEnemyUnitBag(statComponent);
-        bag.add(new SkillsComponent(new MageAttack()));
+        bag.add(new SkillsComponent(fireball));
         bag.add(new CenteringBoundaryComponent(width, height));
         bag.add(new HitBoxComponent(new HitBox(width, height)));
 
@@ -68,7 +67,8 @@ public class RangedDummyFactory {
                         new ActionScoreCalculator(new MovementAction(),
                                 new IsInRangeCalculator(-100, 100, basicAttackRange),
                                 new CanMoveCalculator(100f, null)),
-                        new ActionScoreCalculator(new BasicAttackAction(), new IsInRangeCalculator(150, -10, basicAttackRange), new CanUseSkillCalculator(fireball, 0f, null)
+                        new ActionScoreCalculator(new BasicAttackAction(), new IsInRangeCalculator(150, -10, basicAttackRange),
+                                new CanUseSkillCalculator(fireball, 0f, null)
                         )
                 )));
 
@@ -78,7 +78,6 @@ public class RangedDummyFactory {
 
 
     }
-
 
 
 }

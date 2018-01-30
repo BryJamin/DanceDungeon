@@ -66,17 +66,16 @@ public class EndBattleSystem extends EntitySystem {
 
         UnitMap unitMap = new UnitMap();
 
-        for (int i = 0; i < partyDetails.getPlayerParty().size; i++) {
+        for (int i = 0; i < partyDetails.getParty().length; i++) {
 
-            if (partyDetails.getPlayerParty().get(i) != null) {
-                Unit unit = partyDetails.getPlayerParty().get(i);
+            if (partyDetails.getParty()[i] != null) {
+                Unit unit = partyDetails.getParty()[i];
                 ComponentBag player = unitMap.getUnit(unit);
                 Entity e = BagToEntity.bagToEntity(world.createEntity(), player);
             }
 
         }
 
-       // setupEvent(currentEvent);
     }
 
 

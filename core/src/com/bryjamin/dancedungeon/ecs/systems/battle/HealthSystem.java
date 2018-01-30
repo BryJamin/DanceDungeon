@@ -6,12 +6,14 @@ import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.MathUtils;
 import com.bryjamin.dancedungeon.assets.Fonts;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.ExpireComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
@@ -27,6 +29,7 @@ import com.bryjamin.dancedungeon.utils.texture.TextDescription;
 
 public class HealthSystem extends EntityProcessingSystem {
 
+    ComponentMapper<StatComponent> statm;
     ComponentMapper<HealthComponent> healthm;
     ComponentMapper<VelocityComponent> vm;
     ComponentMapper<PlayerControlledComponent> pm;
@@ -34,7 +37,7 @@ public class HealthSystem extends EntityProcessingSystem {
 
     @SuppressWarnings("unchecked")
     public HealthSystem() {
-        super(Aspect.all(HealthComponent.class));
+        super(Aspect.all(HealthComponent.class, StatComponent.class));
     }
 
 
@@ -46,21 +49,28 @@ public class HealthSystem extends EntityProcessingSystem {
 
         if(hc.getAccumulatedDamage() > 0 && blinkOnHitMapper.has(e)) {
             blinkOnHitMapper.get(e).isHit = true;
-            //TODO I grab parts of entity that aren't called in the Aspect class, so there is a null pointer chance
-            createFloatingDamageText(world, (int) hc.getAccumulatedDamage(), new Color(Color.RED), e);
+
+            if(MathUtils.random(1f) > statm.get(e).getDodgeChance()) {
+                //TODO I grab parts of entity that aren't called in the Aspect class, so there is a null pointer chance
+                createFloatingDamageText(world, Integer.toString((int) hc.getAccumulatedDamage()), new Color(Color.RED), e);
+                hc.health = hc.health - hc.getAccumulatedDamage();
+            } else {
+                createFloatingDamageText(world, "Dodge", new Color(Color.RED), e);
+            }
+
+            hc.clearDamage();
+
         }
 
         if(hc.getAccumulatedHealing() > 0 && blinkOnHitMapper.has(e)) {
            // blinkOnHitMapper.get(e).isHit = true;
             //TODO I grab parts of entity that aren't called in the Aspect class, so there is a null pointer chance
-            createFloatingDamageText(world, (int) hc.getAccumulatedHealing(), new Color(Color.GREEN), e);
+            createFloatingDamageText(world, Integer.toString((int) hc.getAccumulatedHealing()), new Color(Color.GREEN), e);
+            hc.health = hc.health + hc.getAccumulatedHealing() > hc.maxHealth ? hc.maxHealth : hc.health + hc.getAccumulatedHealing();
+            hc.clearHealing();
         }
 
-
-        hc.health = hc.health + hc.getAccumulatedHealing() > hc.maxHealth ? hc.maxHealth : hc.health + hc.getAccumulatedHealing();
-        hc.clearHealing();
-        hc.health = hc.health - hc.getAccumulatedDamage();
-        hc.clearDamage();
+        statm.get(e).health = (int) hc.health;
         if(hc.health <= 0) e.edit().add(new DeadComponent());
 
 
@@ -68,7 +78,7 @@ public class HealthSystem extends EntityProcessingSystem {
 
 
 
-    public void createFloatingDamageText(World world, int number, Color color, Entity entity){
+    public void createFloatingDamageText(World world, String text, Color color, Entity entity){
 
         Entity floatingTextEntity = world.createEntity();
 
@@ -83,7 +93,7 @@ public class HealthSystem extends EntityProcessingSystem {
         floatingTextEntity.edit().add(new ExpireComponent(2.0f));
         floatingTextEntity.edit().add(new DrawableComponent(Layer.BACKGROUND_LAYER_FAR,
                 new TextDescription.Builder(Fonts.MEDIUM)
-                        .text(Integer.toString(number))
+                        .text(text)
                         .color(color)
                         .build()));
 

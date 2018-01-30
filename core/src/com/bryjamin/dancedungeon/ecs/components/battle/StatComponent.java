@@ -18,6 +18,14 @@ public class StatComponent extends Component {
 
     public int stun;
 
+    //This value represents dodge percent as in 5%, might switch to a different number in future
+    private float dodge = 0.05f;
+    public float buffedDodge = 0;
+
+    public float getDodgeChance(){
+        return dodge + buffedDodge;
+    }
+
     public StatComponent(){}
 
     public StatComponent (StatBuilder sb){

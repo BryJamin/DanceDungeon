@@ -31,12 +31,12 @@ import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.factories.map.MapGenerator;
 import com.bryjamin.dancedungeon.factories.player.Unit;
 import com.bryjamin.dancedungeon.factories.player.UnitMap;
+import com.bryjamin.dancedungeon.factories.spells.basic.DodgeUp;
 import com.bryjamin.dancedungeon.factories.spells.basic.FireWeapon;
-import com.bryjamin.dancedungeon.factories.spells.basic.Fireball;
-import com.bryjamin.dancedungeon.factories.spells.basic.MageAttack;
 import com.bryjamin.dancedungeon.factories.spells.basic.StunStrike;
 import com.bryjamin.dancedungeon.factories.spells.restorative.Heal;
 import com.bryjamin.dancedungeon.screens.WorldContainer;
+import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CameraMath;
 
@@ -54,6 +54,8 @@ public class MapWorld extends WorldContainer {
 
     private GameMap gameMap;
 
+    private PartyDetails partyDetails;
+
 
     public MapWorld(MainGame game, Viewport gameport) {
         super(game, gameport);
@@ -62,46 +64,44 @@ public class MapWorld extends WorldContainer {
         Unit warrior = new Unit(UnitMap.UNIT_WARRIOR);
         warrior.setStatComponent(new StatComponent.StatBuilder()
                 .movementRange(5)
+                .attackRange(3)
                 .attack(5)
                 .healthAndMax(15).build());
 
-        SkillsComponent warriorskills2 = new SkillsComponent();
-        warriorskills2.basicAttack = new MageAttack();
-        warriorskills2.skills.add(new FireWeapon());
-        warrior.setSkillsComponent(warriorskills2);
-
+        warrior.setSkillsComponent(new SkillsComponent(
+                new FireWeapon()));
 
 
         Unit warrior2 = new Unit(UnitMap.UNIT_WARRIOR);
         warrior2.setStatComponent(new StatComponent.StatBuilder()
                 .attack(5)
+                .attackRange(3)
                 .movementRange(6)
                 .healthAndMax(15).build());
 
-        SkillsComponent warriorskills = new SkillsComponent();
-        warriorskills.basicAttack = new MageAttack();
-        warriorskills.skills.add(new FireWeapon());
-        warrior2.setSkillsComponent(warriorskills);
-       // warrior.skills.add(new Heal());
+        warrior2.setSkillsComponent(new SkillsComponent(
+                new FireWeapon()));
 
         Unit mage = new Unit(UnitMap.UNIT_MAGE);
-        mage.setStatComponent(new StatComponent.StatBuilder()
-                .movementRange(4)
-                .healthAndMax(20)
-                .attackRange(6)
-                .attack(7).build());
+        mage.setStatComponent(
+                new StatComponent.StatBuilder()
+                        .movementRange(4)
+                        .healthAndMax(20)
+                        .attackRange(6)
+                        .attack(7).build());
 
-        SkillsComponent skillsComponent = new SkillsComponent();
-        skillsComponent.basicAttack = new MageAttack();
-        skillsComponent.skills.add(new FireWeapon());
-        skillsComponent.skills.add(new Fireball());
-        skillsComponent.skills.add(new Heal());
-        skillsComponent.skills.add(new StunStrike());
-        mage.setSkillsComponent(skillsComponent);
+        mage.setSkillsComponent(
+                new SkillsComponent(
+                        new FireWeapon(),
+                        new DodgeUp(),
+                        new Heal(),
+                        new StunStrike()
+                ));
 
-        playerParty.add(mage);
-        playerParty.add(warrior);
-        playerParty.add(warrior2);
+        partyDetails = new PartyDetails();
+        partyDetails.addPartyMember(mage, 0);
+        partyDetails.addPartyMember(warrior, 1);
+        partyDetails.addPartyMember(warrior, 2);
 
         createWorld();
 
@@ -110,6 +110,7 @@ public class MapWorld extends WorldContainer {
 
     private void createWorld() {
 
+
         gameMap = new MapGenerator().generateGameMap();
 
         WorldConfiguration config = new WorldConfigurationBuilder()
@@ -117,9 +118,7 @@ public class MapWorld extends WorldContainer {
 
                         //Initialization Systems
                         new EventGenerationSystem(),
-                        new StrategyMapSystem(game, gameMap, playerParty),
-
-
+                        new StrategyMapSystem(game, gameMap, partyDetails),
 
                         //PositionalS Systems
                         new MovementSystem(),
@@ -139,7 +138,7 @@ public class MapWorld extends WorldContainer {
                         new ScaleTransformationSystem(),
                         new RenderingSystem(game, gameport),
                         new BoundsDrawingSystem(batch),
-                        new CameraSystem(gameport.getCamera(), 0,0, gameMap.getWidth() + Measure.units(20f), 0))
+                        new CameraSystem(gameport.getCamera(), 0, 0, gameMap.getWidth() + Measure.units(20f), 0))
                 .build();
 
         world = new World(config);
@@ -156,7 +155,7 @@ public class MapWorld extends WorldContainer {
     }
 
 
-    private class MapGestures extends GestureDetector.GestureAdapter  {
+    private class MapGestures extends GestureDetector.GestureAdapter {
 
 
         @Override
@@ -176,7 +175,6 @@ public class MapWorld extends WorldContainer {
         }
 
 
-
         @Override
         public boolean pan(float x, float y, float deltaX, float deltaY) {
             //float x = Gdx.input.getDeltaX();
@@ -186,9 +184,9 @@ public class MapWorld extends WorldContainer {
 
             float tempValueToSeeFullMap = Measure.units(20f);
 
-            if(CameraMath.getBtmLftX(gameport) < 0){
+            if (CameraMath.getBtmLftX(gameport) < 0) {
                 gameport.getCamera().position.x = 0 + gameport.getCamera().viewportWidth / 2;
-            } else if(CameraMath.getBtmRightX(gameport) > gameMap.getWidth() + tempValueToSeeFullMap){
+            } else if (CameraMath.getBtmRightX(gameport) > gameMap.getWidth() + tempValueToSeeFullMap) {
                 CameraMath.setBtmRightX(gameport, gameMap.getWidth() + tempValueToSeeFullMap);
             }
 
@@ -200,9 +198,9 @@ public class MapWorld extends WorldContainer {
         @Override
         public boolean fling(float velocityX, float velocityY, int button) {
 
-         //   if(velocityX > 1250) {
-                world.getSystem(CameraSystem.class).flingCamera(-velocityX, velocityY);
-           // }
+            //   if(velocityX > 1250) {
+            world.getSystem(CameraSystem.class).flingCamera(-velocityX, velocityY);
+            // }
             return false;
             //return super.fling(velocityX, velocityY, button);
         }

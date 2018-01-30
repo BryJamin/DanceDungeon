@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.assets.Colors;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.BuffComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
@@ -37,7 +38,23 @@ public class Skill {
     public enum SpellDamageApplication {Instant, AfterSpellAnimation}
     public enum SpellAnimation {Projectile, Slash, Glitter}
     public enum SpellType {Heal, HealOverTime, MagicAttack, PhysicalAttack, Burn}
-    public enum SpellEffect {Stun, OnFire}
+    public enum SpellEffect {
+        Stun, OnFire, Dodge, Armor;
+
+        public int number;
+        public int duration;
+
+        public SpellEffect value(int number){
+            this.number = number;
+            return this;
+        }
+
+        public SpellEffect duration(int duration){
+            this.duration = duration;
+            return this;
+        }
+
+    }
     public enum SpellCoolDown {NoCoolDown, OverTime, Limited}
 
 
@@ -47,7 +64,7 @@ public class Skill {
 
     private int uses = 2;
     private int coolDown = 2;
-    private int coolDownTracker = 1;
+    private int coolDownTracker = 0;
 
     private Targeting targeting = Targeting.Enemy;
     private Attack attack = Attack.Ranged;
@@ -212,7 +229,10 @@ public class Skill {
                     for (SpellEffect spellEffect : spellEffects) {
                         switch (spellEffect) {
                             case Stun:
-                                e.getComponent(StatComponent.class).stun = 3;
+                                e.getComponent(StatComponent.class).stun = spellEffect.number;
+                                break;
+                            case Dodge:
+                                e.getComponent(BuffComponent.class).spellEffectArray.add(spellEffect);
                         }
                     }
 

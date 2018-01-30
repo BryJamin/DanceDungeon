@@ -6,6 +6,7 @@ import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.ecs.components.actions.UtilityAiComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.BuffComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
@@ -25,7 +26,7 @@ import static com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem.TURN.ENEMY
 public class TurnSystem extends EntitySystem {
 
     private ComponentMapper<TurnComponent> turnMapper;
-
+    private ComponentMapper<BuffComponent> buffMapper;
     private ComponentMapper<EnemyComponent> enemyMapper;
     private ComponentMapper<PlayerControlledComponent> playerMapper;
 
@@ -113,7 +114,8 @@ public class TurnSystem extends EntitySystem {
            // world.getSystem(SelectedTargetSystem.class).reselectEntityAfterActionComplete();
         }
 
-        for (Entity e : currentTurnEntities) { //Resets the turn for each entity
+        for (Entity e : currentTurnEntities) {
+            buffMapper.get(e).endTurn(); //Resets the turn for each entity
             skillMapper.get(e).endTurn();
             turnMapper.get(e).reset();
         }
