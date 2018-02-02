@@ -159,17 +159,15 @@ public class Skill {
 
         switch (spellAnimation) {
             case Glitter:
-                final int GLITTER_DRAWABLE_ID = 25;
                 final int GLITTER_ANIMATION_ID = 0;
                 Entity heal = world.createEntity();
                 heal.edit().add(new PositionComponent(rectangle.x, rectangle.y))
                         .add(new DrawableComponent(Layer.FOREGROUND_LAYER_FAR, new TextureDescription.Builder(TextureStrings.SKILLS_HEAL)
-                                .identifier(GLITTER_DRAWABLE_ID)
                                 .color(Color.GREEN)
                                 .width(rectangle.getWidth())
                                 .height(rectangle.getHeight())
                                 .build()))
-                        .add(new AnimationStateComponent().put(GLITTER_DRAWABLE_ID, GLITTER_ANIMATION_ID))
+                        .add(new AnimationStateComponent(GLITTER_ANIMATION_ID))
                         .add(new AnimationMapComponent().put(GLITTER_ANIMATION_ID, TextureStrings.SKILLS_HEAL, 0.2f, Animation.PlayMode.NORMAL))
                         .add(new KillOnAnimationEndComponent(GLITTER_ANIMATION_ID))
                         .add(new WaitActionComponent());
@@ -189,7 +187,7 @@ public class Skill {
                                 .height(rectangle.getHeight())
                                 //.scaleX(-1)
                                 .build()))
-                        .add(new AnimationStateComponent().put(SLASH_DRAWABLE_ID, SLASH_ANIMATION))
+                        .add(new AnimationStateComponent(SLASH_ANIMATION))
                         .add(new AnimationMapComponent().put(SLASH_ANIMATION, TextureStrings.SKILLS_SLASH, 0.3f, Animation.PlayMode.NORMAL))
                         .add(new KillOnAnimationEndComponent(SLASH_ANIMATION))
                         .add(new WaitActionComponent());

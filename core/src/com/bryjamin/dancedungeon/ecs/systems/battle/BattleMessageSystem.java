@@ -42,31 +42,32 @@ public class BattleMessageSystem extends BaseSystem {
 
         float width = gameport.getWorldWidth();
 
-        Entity e = world.createEntity();
-        e.edit().add(new PositionComponent(CenterMath.centerPositionX(width, gameport.getWorldWidth() / 2),
-                CenterMath.centerPositionY(height, gameport.getWorldHeight() / 2) + Measure.units(25f)));
-        e.edit().add(new CenteringBoundaryComponent(new Rectangle(0, 0, width, height)));
-        //e.edit().add(new VelocityComponent(0, Measure.units(20f)));
+        Entity e = world.createEntity().edit()
+                .add(new PositionComponent(CenterMath.centerPositionX(width, gameport.getWorldWidth() / 2),
+                        CenterMath.centerPositionY(height, gameport.getWorldHeight() / 2) + Measure.units(25f)))
+                .add(new CenteringBoundaryComponent(new Rectangle(0, 0, width, height)))
+                .add(new UITargetingComponent())
+                .add(new DrawableComponent(
+                        Layer.FOREGROUND_LAYER_NEAR,
+                        new TextureDescription.Builder(TextureStrings.BLOCK)
+                                .width(width)
+                                .color(new Color(1, 1, 1, 0.7f))
+                                .height(height)
+                                .build()
+                )).getEntity();
 
-
-        e.edit().add(new DrawableComponent(
-                Layer.FOREGROUND_LAYER_NEAR,
-                new TextureDescription.Builder(TextureStrings.BLOCK)
-                        .width(width)
-                        .color(new Color(1,1,1,0.7f))
-                        .height(height)
-                        .build(),
-
-                new TextDescription.Builder(Fonts.MEDIUM)
-                        .text(TextResource.TARGETING_NO_TARGETS_IN_RANGE)
-                        .color(new Color(Color.BLACK))
-                        .build()
-
-        ));
-
-        //e.edit().add(new FadeComponent(false, 1.5f, false));
-        e.edit().add(new UITargetingComponent());
-        //e.edit().add(new ExpireComponent(3f));
+        Entity e2 = world.createEntity().edit()
+                .add(new PositionComponent(CenterMath.centerPositionX(width, gameport.getWorldWidth() / 2),
+                        CenterMath.centerPositionY(height, gameport.getWorldHeight() / 2) + Measure.units(25f)))
+                .add(new CenteringBoundaryComponent(new Rectangle(0, 0, width, height)))
+                .add(new UITargetingComponent())
+                .add(new DrawableComponent(
+                        Layer.FOREGROUND_LAYER_NEAR,
+                        new TextDescription.Builder(Fonts.MEDIUM)
+                                .text(TextResource.TARGETING_NO_TARGETS_IN_RANGE)
+                                .color(new Color(Color.BLACK))
+                                .build()
+                )).getEntity();
 
 
         return e;

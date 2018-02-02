@@ -1,7 +1,6 @@
 package com.bryjamin.dancedungeon.ecs.components.graphics;
 
 import com.artemis.Component;
-import com.badlogic.gdx.utils.IntMap;
 import com.badlogic.gdx.utils.Queue;
 
 /**
@@ -9,15 +8,13 @@ import com.badlogic.gdx.utils.Queue;
  */
 public class AnimationStateComponent extends Component {
 
-    public IntMap<AnimationState> drawableIdAnimationStateMap = new IntMap<AnimationState>();
+    public AnimationState animationState = new AnimationState();
 
     public AnimationStateComponent (){}
 
-    public AnimationStateComponent put(int drawableIdentifier, int defaultAnimationState){
-        drawableIdAnimationStateMap.put(drawableIdentifier, new AnimationState(defaultAnimationState));
-        return this;
+    public AnimationStateComponent (int defaultAnimationState){
+        this.animationState = new AnimationState(defaultAnimationState);
     }
-
 
     public class AnimationState {
 

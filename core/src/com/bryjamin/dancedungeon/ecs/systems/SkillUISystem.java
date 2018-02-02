@@ -177,10 +177,10 @@ public class SkillUISystem extends EntitySystem {
                     public void performAction(World world, Entity entity) {
 
                         if (!isCanCastCondition) {
-                            entity.getComponent(DrawableComponent.class).drawables.first().getColor().a = 1f;
+                            entity.getComponent(DrawableComponent.class).drawables.getColor().a = 1f;
                             entity.getComponent(SkillButtonComponent.class).enabled = true;
                         } else {
-                            entity.getComponent(DrawableComponent.class).drawables.first().getColor().a = 0.1f;
+                            entity.getComponent(DrawableComponent.class).drawables.getColor().a = 0.1f;
                             entity.getComponent(SkillButtonComponent.class).enabled = false;
                         }
                     }

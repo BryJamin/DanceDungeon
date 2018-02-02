@@ -142,87 +142,85 @@ public class RenderingSystem extends EntitySystem {
             batch.begin();
         }
 
-        for (DrawableDescription drawableDescription : drawableComponent.drawables) {
+        DrawableDescription drawableDescription = drawableComponent.drawables;
 
 
-            float originX = drawableDescription.getOrigin() == null ?
-                    drawableDescription.getWidth() * 0.5f : drawableDescription.getOrigin().x;
-            float originY = drawableDescription.getOrigin() == null ?
-                    drawableDescription.getHeight() * 0.5f : drawableDescription.getOrigin().y;
+        float originX = drawableDescription.getOrigin() == null ?
+                drawableDescription.getWidth() * 0.5f : drawableDescription.getOrigin().x;
+        float originY = drawableDescription.getOrigin() == null ?
+                drawableDescription.getHeight() * 0.5f : drawableDescription.getOrigin().y;
 
-            batch.setColor(drawableDescription.getColor());
+        batch.setColor(drawableDescription.getColor());
 
-            if (drawableDescription instanceof TextureDescription) {
+        if (drawableDescription instanceof TextureDescription) {
 
-                TextureDescription textureDescription = (TextureDescription) drawableDescription;
-
-
-                TextureRegion tr;
-
-                try {
-                    tr = atlas.findRegion(textureDescription.getRegion(), textureDescription.getIndex());
-
-                    if (tr == null)
-                        throw new Exception("No Texture Data for: " + textureDescription.getRegion() +
-                                " index: " + textureDescription.getIndex());
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    tr = atlas.findRegion(TextureStrings.BLOCK);
-                }
-
-                //TODO currently testing, using integers instead of floats for positions
-                batch.draw(tr,
-                        (int) (positionComponent.getX() + drawableDescription.getOffsetX()),
-                        (int) (positionComponent.getY() + drawableDescription.getOffsetY()),
-                        originX, originY,
-                        (int) drawableDescription.getWidth(), (int) drawableDescription.getHeight(),
-                        drawableDescription.getScaleX(), drawableDescription.getScaleY(),
-                        (float) drawableDescription.getRotation());
-
-            } else if (drawableDescription instanceof TextDescription) {
+            TextureDescription textureDescription = (TextureDescription) drawableDescription;
 
 
-                TextDescription textDescription = (TextDescription) drawableDescription;
+            TextureRegion tr;
 
-                BitmapFont bmf = assetManager.get(textDescription.getFont(), BitmapFont.class);
+            try {
+                tr = atlas.findRegion(textureDescription.getRegion(), textureDescription.getIndex());
 
-
-                if (boundm.has(e)) {
-                    CenteringBoundaryComponent bc = boundm.get(e);
-                    glyphLayout.setText(bmf, textDescription.getText(), drawableDescription.getColor(), bc.bound.width, textDescription.getAlign(), false);
-
-                    BitmapFontCache bitmapFontCache = new BitmapFontCache(bmf);
-
-                    bitmapFontCache.addText(glyphLayout, positionComponent.getX(),
-                            positionComponent.getY() + glyphLayout.height + CenterMath.offsetY(bc.bound.height, glyphLayout.height) + textDescription.getOffsetY());
-
-                    applyHighlightToText(e, bitmapFontCache, textDescription.getText());
-
-                    bitmapFontCache.draw(batch);
-
-                } else {
-
-                    glyphLayout.setText(bmf, textDescription.getText(), drawableDescription.getColor(), textDescription.getWidth(), textDescription.getAlign(), false);
-
-                    BitmapFontCache bitmapFontCache = new BitmapFontCache(bmf);
-
-                    bitmapFontCache.addText(glyphLayout, positionComponent.getX(),
-                            positionComponent.getY() + glyphLayout.height + CenterMath.offsetY(textDescription.getHeight(), glyphLayout.height) + textDescription.getOffsetY());
-
-                    applyHighlightToText(e, bitmapFontCache, textDescription.getText());
-
-                    bitmapFontCache.draw(batch);
-
-                }
-
-
+                if (tr == null)
+                    throw new Exception("No Texture Data for: " + textureDescription.getRegion() +
+                            " index: " + textureDescription.getIndex());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                tr = atlas.findRegion(TextureStrings.BLOCK);
             }
 
-            batch.setColor(white);
+            //TODO currently testing, using integers instead of floats for positions
+            batch.draw(tr,
+                    (int) (positionComponent.getX() + drawableDescription.getOffsetX()),
+                    (int) (positionComponent.getY() + drawableDescription.getOffsetY()),
+                    originX, originY,
+                    (int) drawableDescription.getWidth(), (int) drawableDescription.getHeight(),
+                    drawableDescription.getScaleX(), drawableDescription.getScaleY(),
+                    (float) drawableDescription.getRotation());
+
+        } else if (drawableDescription instanceof TextDescription) {
+
+
+            TextDescription textDescription = (TextDescription) drawableDescription;
+
+            BitmapFont bmf = assetManager.get(textDescription.getFont(), BitmapFont.class);
+
+
+            if (boundm.has(e)) {
+                CenteringBoundaryComponent bc = boundm.get(e);
+                glyphLayout.setText(bmf, textDescription.getText(), drawableDescription.getColor(), bc.bound.width, textDescription.getAlign(), false);
+
+                BitmapFontCache bitmapFontCache = new BitmapFontCache(bmf);
+
+                bitmapFontCache.addText(glyphLayout, positionComponent.getX(),
+                        positionComponent.getY() + glyphLayout.height + CenterMath.offsetY(bc.bound.height, glyphLayout.height) + textDescription.getOffsetY());
+
+                applyHighlightToText(e, bitmapFontCache, textDescription.getText());
+
+                bitmapFontCache.draw(batch);
+
+            } else {
+
+                glyphLayout.setText(bmf, textDescription.getText(), drawableDescription.getColor(), textDescription.getWidth(), textDescription.getAlign(), false);
+
+                BitmapFontCache bitmapFontCache = new BitmapFontCache(bmf);
+
+                bitmapFontCache.addText(glyphLayout, positionComponent.getX(),
+                        positionComponent.getY() + glyphLayout.height + CenterMath.offsetY(textDescription.getHeight(), glyphLayout.height) + textDescription.getOffsetY());
+
+                applyHighlightToText(e, bitmapFontCache, textDescription.getText());
+
+                bitmapFontCache.draw(batch);
+
+            }
 
 
         }
 
+        batch.setColor(white);
+
+        
         if (shaderOn) removeShader();
 
 

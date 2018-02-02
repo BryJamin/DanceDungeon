@@ -249,11 +249,7 @@ public class StrategyMapSystem extends EntitySystem {
                 .add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE,
                         new TextureDescription.Builder(TextureStrings.BLOCK)
                                 .width(width)
-                                .height(height).build(),
-                        new TextDescription.Builder(Fonts.MEDIUM)
-                                .text("GENERATE")
-                                .color(new Color(Color.BLACK))
-                                .build()))
+                                .height(height).build()))
                 .add(new ActionOnTapComponent(new WorldAction() {
                     @Override
                     public void performAction(World world, Entity entity) {
@@ -262,23 +258,13 @@ public class StrategyMapSystem extends EntitySystem {
                     }
                 })).getEntity();
 
-    }
 
-
-    private void createButton() {
-
-        float width = Measure.units(15f);
-        float height = Measure.units(7.5f);
-
-        Entity generate = world.createEntity().edit()
+        Entity text = world.createEntity().edit()
                 .add(new PositionComponent(Measure.units(75f), Measure.units(50f)))
                 .add(new HitBoxComponent(new HitBox(width, height)))
                 .add(new FixedToCameraComponent(0, Measure.units(50f)))
                 .add(new CenteringBoundaryComponent(new Rectangle(0, 0, width, height)))
                 .add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE,
-                        new TextureDescription.Builder(TextureStrings.BLOCK)
-                                .width(width)
-                                .height(height).build(),
                         new TextDescription.Builder(Fonts.MEDIUM)
                                 .text("GENERATE")
                                 .color(new Color(Color.BLACK))
@@ -290,6 +276,7 @@ public class StrategyMapSystem extends EntitySystem {
                         game.setScreen(new MapScreen(game));
                     }
                 })).getEntity();
+
 
     }
 

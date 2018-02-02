@@ -11,12 +11,10 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
-import com.bryjamin.dancedungeon.assets.Fonts;
 import com.bryjamin.dancedungeon.assets.TextResource;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
-import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
@@ -30,6 +28,7 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.BoundsDrawingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.FadeSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
+import com.bryjamin.dancedungeon.factories.ButtonFactory;
 import com.bryjamin.dancedungeon.screens.WorldContainer;
 import com.bryjamin.dancedungeon.screens.battle.BattleScreen;
 import com.bryjamin.dancedungeon.screens.strategy.MapScreen;
@@ -37,7 +36,6 @@ import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
-import com.bryjamin.dancedungeon.utils.texture.TextDescription;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 
@@ -92,31 +90,22 @@ public class EndBattleWorld extends WorldContainer {
         float width = Measure.units(15f);
         float height = Measure.units(7.5f);
 
-        Entity exitButton = world.createEntity();
-        exitButton.edit().add(new PositionComponent(CenterMath.offsetX(gameport.getWorldWidth(), width), Measure.units(20f)));
-        exitButton.edit().add(new HitBoxComponent(new HitBox(width, height)));
-        exitButton.edit().add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE,
-                new TextureDescription.Builder(TextureStrings.BLOCK)
-                        .width(width)
-                        .height(height).build(),
-                new TextDescription.Builder(Fonts.MEDIUM)
-                        .width(width)
-                        .height(height)
-                        .text(TextResource.BATTLE_OVER_CONTINUE)
-                        .color(new Color(Color.BLACK))
-                        .build()));
-        exitButton.edit().add(new ActionOnTapComponent(new WorldAction() {
-            @Override
-            public void performAction(World world, Entity entity) {
+        new ButtonFactory.ButtonBuilder()
+                .text(state == State.VICTORY ? TextResource.BATTLE_OVER_VICTORY : TextResource.BATTLE_OVER_DEFEAT)
+                .pos(CenterMath.offsetX(gameport.getWorldWidth(), width), Measure.units(20f))
+                .width(width)
+                .height(height)
+                .buttonAction(new WorldAction() {
+                    @Override
+                    public void performAction(World world, Entity entity) {
+                        Screen prev = ((BattleScreen) game.getScreen()).getPreviousScreen();
+                        game.getScreen().dispose();
+                        game.setScreen(prev);
 
-                Screen prev = ((BattleScreen) game.getScreen()).getPreviousScreen();
-                game.getScreen().dispose();
-                game.setScreen(prev);
-
-                ((MapScreen) prev).battleVictory();
-            }
-        }));
-
+                        ((MapScreen) prev).battleVictory();
+                    }
+                })
+                .build(world);
 
 
         Entity blackScreen = world.createEntity();
@@ -129,21 +118,16 @@ public class EndBattleWorld extends WorldContainer {
                         .width(gameport.getWorldWidth())
                         .height(gameport.getWorldHeight()).build()));
 
-        Entity victoryText = world.createEntity();
-        victoryText.edit().add(new PositionComponent(CenterMath.centerPositionX(gameport.getCamera().viewportWidth, gameport.getCamera().position.x),
-                CenterMath.centerPositionY(Measure.units(10f), gameport.getCamera().position.y) + Measure.units(10f)));
-        victoryText.edit().add(new DrawableComponent(Layer.BACKGROUND_LAYER_MIDDLE,
-                new TextureDescription.Builder(TextureStrings.BLOCK)
-                        .color(new Color(Color.WHITE))
-                        .width(gameport.getWorldWidth())
-                        .height(Measure.units(10f)).build(),
 
-                new TextDescription.Builder(Fonts.MEDIUM)
-                        .text(state == State.VICTORY ? TextResource.BATTLE_OVER_VICTORY : TextResource.BATTLE_OVER_DEFEAT)
-                        .color(new Color(Color.BLACK))
-                        .width(gameport.getWorldWidth())
-                        .height(Measure.units(10f)).build()
-                ));
+
+
+        new ButtonFactory.ButtonBuilder()
+                .text(state == State.VICTORY ? TextResource.BATTLE_OVER_VICTORY : TextResource.BATTLE_OVER_DEFEAT)
+                .pos(CenterMath.centerPositionX(gameport.getCamera().viewportWidth, gameport.getCamera().position.x),
+                        CenterMath.centerPositionY(Measure.units(10f), gameport.getCamera().position.y) + Measure.units(10f))
+                .width(gameport.getWorldWidth())
+                .height(Measure.units(10f))
+                .build(world);
 
     }
 

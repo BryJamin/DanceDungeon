@@ -34,8 +34,6 @@ public class FloorFactory  {
                 .height(tileHeightSize)
                 .width(tileWidthSize);
 
-        DrawableComponent drawableComponent = new DrawableComponent(Layer.BACKGROUND_LAYER_FAR);
-
         for(int i = 0; i < columns; i++) {
 
             for(int j = 0; j < rows; j++){
@@ -46,22 +44,20 @@ public class FloorFactory  {
 
                 int index1 = j % 2 != 0 ? 0 : 6;
                 int index2 = j % 2 != 0 ? 6 : 0;
-
-                drawableComponent.drawables.add(descriptionBuilder
-                        //.index(i % 2 != 0 ? index1 : index2)
-                        .index(MathUtils.random(11))
-                        .offsetX(i * tileWidthSize)
-                        .offsetY(j * tileHeightSize)
-                        .color(new Color(Color.WHITE))
-                        .build());
+                final int e = world.create();
+                world.edit(e)
+                        .add(new PositionComponent(x, y))
+                        .add(new DrawableComponent(Layer.BACKGROUND_LAYER_FAR, descriptionBuilder
+                                //.index(i % 2 != 0 ? index1 : index2)
+                                .index(MathUtils.random(11))
+                                .offsetX(i * tileWidthSize)
+                                .offsetY(j * tileHeightSize)
+                                .color(new Color(Color.WHITE))
+                                .build()));
 
             }
         }
 
-        final int e = world.create();
-        world.edit(e)
-                .add(new PositionComponent(x, y))
-                .add(drawableComponent);
 
     }
 

@@ -58,7 +58,7 @@ public class PlayerFactory {
 
         int STANDING_ANIMATION = 23;
 
-        bag.add(new AnimationStateComponent().put(BODY_DRAWABLE, STANDING_ANIMATION));
+        bag.add(new AnimationStateComponent(STANDING_ANIMATION));
         bag.add(new AnimationMapComponent()
                 .put(STANDING_ANIMATION, TextureStrings.PLAYER, 0.4f, Animation.PlayMode.LOOP));
 
