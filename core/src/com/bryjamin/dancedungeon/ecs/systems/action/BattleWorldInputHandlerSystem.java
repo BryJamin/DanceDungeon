@@ -47,7 +47,6 @@ public class BattleWorldInputHandlerSystem extends BaseSystem {
 
 
 
-
     private class BattleWorldGestures extends GestureDetector.GestureAdapter {
 
         @Override

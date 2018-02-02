@@ -1,6 +1,5 @@
 package com.bryjamin.dancedungeon.screens.battle.worlds;
 
-import com.artemis.BaseSystem;
 import com.artemis.World;
 import com.artemis.WorldConfiguration;
 import com.artemis.WorldConfigurationBuilder;
@@ -116,23 +115,6 @@ public class BattleWorld extends WorldContainer {
 
         BagToEntity.bagToEntity(world.createEntity(), new SpellFactory().endTurnButton(0, 0));
     }
-
-
-    public void pauseWorld() {
-        for (BaseSystem s : world.getSystems()) {
-            if (!(s instanceof RenderingSystem || s instanceof HealthBarSystem)) {
-                s.setEnabled(false);
-            }
-        }
-    }
-
-    public void unPauseWorld() {
-        for (BaseSystem s : world.getSystems()) {
-            s.setEnabled(true);
-        }
-    }
-
-
 
     @Override
     public void handleInput(InputMultiplexer inputMultiplexer) {

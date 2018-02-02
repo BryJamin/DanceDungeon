@@ -42,7 +42,7 @@ public class EndBattleSystem extends EntitySystem {
     private MapEvent currentEvent;
 
     private enum State {
-        CLEAN_UP, START_UP, DURING
+        CLEAN_UP, START_UP, DURING, END
     }
 
     private State state = State.START_UP;
@@ -113,6 +113,8 @@ public class EndBattleSystem extends EntitySystem {
 
 
                     ((BattleScreen) game.getScreen()).victory();
+
+                    state = State.END;
                 }
 
                 break;
