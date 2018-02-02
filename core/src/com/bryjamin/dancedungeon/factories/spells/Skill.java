@@ -303,6 +303,10 @@ public class Skill {
         return spellType;
     }
 
+    public Attack getAttack() {
+        return attack;
+    }
+
     public SpellDamageApplication getSpellDamageApplication() {
         return spellDamageApplication;
     }
@@ -346,7 +350,7 @@ public class Skill {
         private Attack attack = Attack.Ranged;
         private ActionType actionType = ActionType.UsesMoveAndAttackAction;
         private SpellAnimation spellAnimation = SpellAnimation.Projectile;
-        private SpellType spellType = SpellType.MagicAttack;
+        private SpellType spellType = SpellType.Burn;
         private SpellDamageApplication spellDamageApplication = SpellDamageApplication.Instant;
         private SpellEffect[] spellEffects = new SpellEffect[]{};
         private SpellCoolDown spellCoolDown = SpellCoolDown.NoCoolDown;

@@ -46,7 +46,6 @@ import com.bryjamin.dancedungeon.utils.math.CameraMath;
 
 public class MapWorld extends WorldContainer {
 
-
     private Array<Unit> playerParty = new Array<Unit>();
 
     //BattleScreen battleScreen;
@@ -63,7 +62,7 @@ public class MapWorld extends WorldContainer {
         //halfTapSquareSize=20, tapCountInterval=0.4f, longPressDuration=1.1f, maxFlingDelay=0.15f.
         Unit warrior = new Unit(UnitMap.UNIT_WARRIOR);
         warrior.setStatComponent(new StatComponent.StatBuilder()
-                .movementRange(5)
+                .movementRange(4)
                 .attackRange(3)
                 .attack(5)
                 .healthAndMax(15).build());
@@ -76,7 +75,7 @@ public class MapWorld extends WorldContainer {
         warrior2.setStatComponent(new StatComponent.StatBuilder()
                 .attack(5)
                 .attackRange(3)
-                .movementRange(6)
+                .movementRange(4)
                 .healthAndMax(15).build());
 
         warrior2.setSkillsComponent(new SkillsComponent(
@@ -120,7 +119,7 @@ public class MapWorld extends WorldContainer {
                         new EventGenerationSystem(),
                         new StrategyMapSystem(game, gameMap, partyDetails),
 
-                        //PositionalS Systems
+                        //Positional Systems
                         new MovementSystem(),
                         new FollowPositionSystem(),
                         new UpdatePositionSystem(),

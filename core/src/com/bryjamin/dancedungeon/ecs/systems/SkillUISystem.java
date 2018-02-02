@@ -125,6 +125,16 @@ public class SkillUISystem extends EntitySystem {
 
         if (entityArray.size <= 0) {
             world.getSystem(BattleMessageSystem.class).createWarningMessage();
+
+            switch (skill.getAttack()){
+
+                case Ranged:
+
+
+
+            }
+
+
         }
 
     }

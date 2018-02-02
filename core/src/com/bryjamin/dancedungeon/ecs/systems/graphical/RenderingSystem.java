@@ -106,11 +106,8 @@ public class RenderingSystem extends EntitySystem {
 
     @Override
     protected void begin() {
-        if (!batch.isDrawing()) {
-            batch.setProjectionMatrix(gameport.getCamera().combined);
-            batch.begin();
-        }
-
+        batch.setProjectionMatrix(gameport.getCamera().combined);
+        batch.begin();
         // Archetype archetype = new ArchetypeBuilder().add(PositionComponent.class).build(world);
     }
 

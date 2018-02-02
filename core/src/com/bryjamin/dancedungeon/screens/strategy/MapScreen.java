@@ -51,9 +51,9 @@ public class MapScreen extends AbstractScreen {
 
         handleInput(delta);
         mapWorld.process(delta);
-
         gamecam.update();
-        game.batch.setProjectionMatrix(gamecam.combined);
+
+
     }
 
 
