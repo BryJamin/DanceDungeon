@@ -12,7 +12,7 @@ import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.factories.map.event.MapEvent;
-import com.bryjamin.dancedungeon.factories.player.Unit;
+import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.player.UnitMap;
 import com.bryjamin.dancedungeon.screens.battle.BattleScreen;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
@@ -69,8 +69,8 @@ public class EndBattleSystem extends EntitySystem {
         for (int i = 0; i < partyDetails.getParty().length; i++) {
 
             if (partyDetails.getParty()[i] != null) {
-                Unit unit = partyDetails.getParty()[i];
-                ComponentBag player = unitMap.getUnit(unit);
+                UnitData unitData = partyDetails.getParty()[i];
+                ComponentBag player = unitMap.getUnit(unitData);
                 Entity e = BagToEntity.bagToEntity(world.createEntity(), player);
             }
 
@@ -82,8 +82,13 @@ public class EndBattleSystem extends EntitySystem {
     @Override
     protected void processSystem() {
 
+        //TODO I convert to state end after there has been a defeat,
+        //TODO it might be better to have some kind of method that, then turns off this system
+        //TODO once the battle is over
         if (playerBag.isEmpty()) {
             ((BattleScreen) game.getScreen()).defeat();
+            state = State.END;
+            processingFlag = false;
         }
 
         switch (state){
@@ -113,6 +118,8 @@ public class EndBattleSystem extends EntitySystem {
 
 
                     ((BattleScreen) game.getScreen()).victory();
+
+                    processingFlag = false;
 
                     state = State.END;
                 }

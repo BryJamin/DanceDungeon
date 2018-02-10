@@ -1,6 +1,6 @@
 package com.bryjamin.dancedungeon.screens.battle;
 
-import com.bryjamin.dancedungeon.factories.player.Unit;
+import com.bryjamin.dancedungeon.factories.player.UnitData;
 
 /**
  * Created by BB on 17/12/2017.
@@ -12,14 +12,14 @@ public class PartyDetails {
     public int grenades;
     public int medicalSupplies;
 
-    private Unit[] party = new Unit[4];
+    private UnitData[] party = new UnitData[4];
 
-    public void addPartyMember(Unit unit, int position){
+    public void addPartyMember(UnitData unitData, int position){
         if(position - 1 > party.length) throw new RuntimeException("Not place for the party member");
-        party[position] = unit;
+        party[position] = unitData;
     };
 
-    public Unit[] getParty() {
+    public UnitData[] getParty() {
         return party;
     }
 }

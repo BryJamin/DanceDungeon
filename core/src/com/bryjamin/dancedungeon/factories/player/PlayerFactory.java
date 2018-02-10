@@ -36,11 +36,11 @@ public class PlayerFactory {
 
     }
 
-    public ComponentBag player(Unit unit){
+    public ComponentBag player(UnitData unitData){
 
-        ComponentBag bag = unitFactory.basePlayerUnitBag(unit.getStatComponent());
+        ComponentBag bag = unitFactory.basePlayerUnitBag(unitData.getStatComponent());
 
-        bag.add(unit.getSkillsComponent());
+        bag.add(unitData.getSkillsComponent());
         bag.add(new CenteringBoundaryComponent(new Rectangle(0, 0, width, height)));
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, createPlayerTexture(TextureStrings.WARRIOR).build()));
 
@@ -48,11 +48,11 @@ public class PlayerFactory {
 
     }
 
-    public ComponentBag mage(Unit unit){
+    public ComponentBag mage(UnitData unitData){
 
-        ComponentBag bag = unitFactory.basePlayerUnitBag(unit.getStatComponent());
+        ComponentBag bag = unitFactory.basePlayerUnitBag(unitData.getStatComponent());
 
-        bag.add(unit.getSkillsComponent());
+        bag.add(unitData.getSkillsComponent());
         bag.add(new CenteringBoundaryComponent(new Rectangle(0, 0, width, height)));
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, createPlayerTexture(TextureStrings.PLAYER).build()));
 

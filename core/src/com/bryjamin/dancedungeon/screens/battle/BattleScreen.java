@@ -13,6 +13,7 @@ import com.bryjamin.dancedungeon.screens.AbstractScreen;
 import com.bryjamin.dancedungeon.screens.VictoryScreen;
 import com.bryjamin.dancedungeon.screens.battle.worlds.BattleWorld;
 import com.bryjamin.dancedungeon.screens.battle.worlds.EndBattleWorld;
+import com.bryjamin.dancedungeon.screens.menu.DefeatScreen;
 
 
 /**
@@ -84,12 +85,12 @@ public class BattleScreen extends AbstractScreen {
 
 
     public void victory(){
-        game.setScreen(new VictoryScreen(game, this, VictoryScreen.State.VICTORY));
+        game.setScreen(new VictoryScreen(game, this));
     }
 
 
     public void defeat(){
-        game.setScreen(new VictoryScreen(game, this, VictoryScreen.State.DEFEAT));
+        game.setScreen(new DefeatScreen(game, this));
     }
 
 

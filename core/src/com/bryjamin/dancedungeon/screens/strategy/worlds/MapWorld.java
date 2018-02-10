@@ -29,7 +29,7 @@ import com.bryjamin.dancedungeon.ecs.systems.strategy.EventGenerationSystem;
 import com.bryjamin.dancedungeon.ecs.systems.strategy.StrategyMapSystem;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.factories.map.MapGenerator;
-import com.bryjamin.dancedungeon.factories.player.Unit;
+import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.player.UnitMap;
 import com.bryjamin.dancedungeon.factories.spells.basic.DodgeUp;
 import com.bryjamin.dancedungeon.factories.spells.basic.FireWeapon;
@@ -37,6 +37,7 @@ import com.bryjamin.dancedungeon.factories.spells.basic.StunStrike;
 import com.bryjamin.dancedungeon.factories.spells.restorative.Heal;
 import com.bryjamin.dancedungeon.screens.WorldContainer;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
+import com.bryjamin.dancedungeon.utils.BaseStatStatics;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CameraMath;
 
@@ -46,7 +47,7 @@ import com.bryjamin.dancedungeon.utils.math.CameraMath;
 
 public class MapWorld extends WorldContainer {
 
-    private Array<Unit> playerParty = new Array<Unit>();
+    private Array<UnitData> playerParty = new Array<UnitData>();
 
     //BattleScreen battleScreen;
     private GestureDetector mapGestureDetector;
@@ -60,9 +61,9 @@ public class MapWorld extends WorldContainer {
         super(game, gameport);
         this.mapGestureDetector = new GestureDetector(20f, 0.4f, 1.1f, 1.5f, new MapGestures());
         //halfTapSquareSize=20, tapCountInterval=0.4f, longPressDuration=1.1f, maxFlingDelay=0.15f.
-        Unit warrior = new Unit(UnitMap.UNIT_WARRIOR);
+        UnitData warrior = new UnitData(UnitMap.UNIT_WARRIOR);
         warrior.setStatComponent(new StatComponent.StatBuilder()
-                .movementRange(4)
+                .movementRange(BaseStatStatics.BASE_MOVEMENT)
                 .attackRange(3)
                 .attack(5)
                 .healthAndMax(15).build());
@@ -71,20 +72,20 @@ public class MapWorld extends WorldContainer {
                 new FireWeapon()));
 
 
-        Unit warrior2 = new Unit(UnitMap.UNIT_WARRIOR);
+        UnitData warrior2 = new UnitData(UnitMap.UNIT_WARRIOR);
         warrior2.setStatComponent(new StatComponent.StatBuilder()
                 .attack(5)
                 .attackRange(3)
-                .movementRange(4)
+                .movementRange(BaseStatStatics.BASE_MOVEMENT)
                 .healthAndMax(15).build());
 
         warrior2.setSkillsComponent(new SkillsComponent(
                 new FireWeapon()));
 
-        Unit mage = new Unit(UnitMap.UNIT_MAGE);
+        UnitData mage = new UnitData(UnitMap.UNIT_MAGE);
         mage.setStatComponent(
                 new StatComponent.StatBuilder()
-                        .movementRange(4)
+                        .movementRange(BaseStatStatics.BASE_MOVEMENT )
                         .healthAndMax(20)
                         .attackRange(6)
                         .attack(7).build());

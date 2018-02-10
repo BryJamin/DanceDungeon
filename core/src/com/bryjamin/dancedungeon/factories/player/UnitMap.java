@@ -13,7 +13,7 @@ public class UnitMap {
     public static final String UNIT_WARRIOR = "Warrior";
 
     public interface Command {
-        public ComponentBag getUnit(Unit unit);
+        public ComponentBag getUnit(UnitData unitData);
     }
 
     public OrderedMap<String, Command> playerUnits = new OrderedMap<String, Command>();
@@ -26,23 +26,23 @@ public class UnitMap {
 
         playerUnits.put(UNIT_MAGE, new Command() {
             @Override
-            public ComponentBag getUnit(Unit unit) {
-                return new PlayerFactory().mage(unit);
+            public ComponentBag getUnit(UnitData unitData) {
+                return new PlayerFactory().mage(unitData);
             }
         });
 
         playerUnits.put(UNIT_WARRIOR, new Command() {
             @Override
-            public ComponentBag getUnit(Unit unit) {
-                return new PlayerFactory().player(unit);
+            public ComponentBag getUnit(UnitData unitData) {
+                return new PlayerFactory().player(unitData);
             }
         });
 
 
     }
 
-    public ComponentBag getUnit(Unit unit){
-        return playerUnits.get(unit.getId()).getUnit(unit);
+    public ComponentBag getUnit(UnitData unitData){
+        return playerUnits.get(unitData.getId()).getUnit(unitData);
     }
 
 
