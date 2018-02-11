@@ -15,11 +15,10 @@ import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 public class UnitData {
 
     public String id = UnitMap.UNIT_WARRIOR;
-    public String icon = TextureStrings.BIGGABLOBBA;
+
+    public String icon = TextureStrings.CLASS_CYRONAUT;
 
     public String name = "Jeff";
-
-    public int partyPosition = -1;
 
     public StatComponent statComponent = new StatComponent();
     public SkillsComponent skillsComponent = new SkillsComponent();

@@ -8,22 +8,12 @@ package com.bryjamin.dancedungeon.assets;
 public class TextureStrings {
 
     public static final String BLOCK = "blocktiny";
-
     public static final String PLAYER = "player/block_walk";
-
     public static final String WARRIOR = "player/xi_firing";
-
-
     public static final String BLOB = "enemy/blob";
-
-
     public static final String BIGGABLOBBA = "enemy/boss/biggablobba";
-
     public static final String TARGETING = "player/targeting";
-
     public static final String END_TURN_BUTTON = "player/end_turn";
-
-
     public static final String FLOOR_TEXTURE_BRICK = "backgrounds/brick_floor";
 
 
@@ -39,6 +29,12 @@ public class TextureStrings {
 
 
 
+
+
+    public static final String CLASS_MAGE = "icons/units/mage";
+    public static final String CLASS_WARRIOR = "icons/units/warrior";
+    public static final String CLASS_CYRONAUT = "icons/units/cyronaut";
+    public static final String CLASS_BOW_SPEICALIST = "icons/units/bow_specialist";
 
 
 }

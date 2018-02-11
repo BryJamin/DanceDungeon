@@ -1,12 +1,19 @@
 package com.bryjamin.dancedungeon.ecs.systems.input;
 
 import com.artemis.Aspect;
-import com.artemis.Entity;
 import com.artemis.EntitySystem;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.input.GestureDetector;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.map.MapNodeComponent;
+import com.bryjamin.dancedungeon.ecs.systems.FixedToCameraPanAndFlingSystem;
+import com.bryjamin.dancedungeon.ecs.systems.action.ActionOnTapSystem;
+import com.bryjamin.dancedungeon.utils.Measure;
+import com.bryjamin.dancedungeon.utils.math.CameraMath;
 
 /**
  * Created by BB on 07/01/2018.
@@ -14,45 +21,75 @@ import com.bryjamin.dancedungeon.ecs.components.map.MapNodeComponent;
 
 public class MapInputSystem extends EntitySystem {
 
-    private Viewport gamePort;
+    private Viewport gameport;
     private MainGame game;
+    private float minX;
+    private float maxX;
 
-    public MapInputSystem(MainGame game, Viewport gamePort) {
+    private GestureDetector gd;
+
+
+    public MapInputSystem(MainGame game, Viewport gameport, float minX, float maxX) {
         super(Aspect.all(MapNodeComponent.class, HitBoxComponent.class));
-        this.gamePort = gamePort;
+        this.gameport = gameport;
         this.game = game;
-    }
-
-    @Override
-    protected boolean checkProcessing() {
-        return false;
+        this.minX = minX;
+        this.maxX = maxX;
+        this.gd = new GestureDetector(new MapGestures());
     }
 
     @Override
     protected void processSystem() {
-
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(gd);
+        Gdx.input.setInputProcessor(multiplexer);
     }
 
 
-    /**
-     * Runs a check to see if the inserted co-ordinates are contained in any of this system's entities'
-     * collision boundaries. If they are an action is performed
-     *
-     * @param x - x position of the area of the screen that was touched
-     * @param y - y position of the area of the screen that was touched
-     * @return - True if an entity has been touched, False otherwise
-     */
-    public boolean touch(float x, float y) {
 
-        for (Entity e : this.getEntities()) {
+    private class MapGestures extends GestureDetector.GestureAdapter {
 
-            if (e.getComponent(HitBoxComponent.class).contains(x, y)) {
 
-                e.getComponent(MapNodeComponent.class);
+        @Override
+        public boolean touchDown(float x, float y, int pointer, int button) {
+            world.getSystem(FixedToCameraPanAndFlingSystem.class).stopFling();
+            return false;
+        }
+
+        @Override
+        public boolean tap(float x, float y, int count, int button) {
+            Vector3 input = gameport.unproject(new Vector3(x, y, 0));
+            System.out.println("?");
+            if (world.getSystem(ActionOnTapSystem.class).touch(input.x, input.y)) {
                 return true;
             }
+            ;
+            return false;
         }
-        return false;
+
+
+        @Override
+        public boolean pan(float x, float y, float deltaX, float deltaY) {
+
+            gameport.getCamera().translate(-deltaX * Measure.units(0.15f), 0, 0);
+
+            if (CameraMath.getBtmLftX(gameport) < minX) {
+                CameraMath.setBtmLeftX(gameport, minX);
+            } else if (CameraMath.getBtmRightX(gameport) > maxX) {
+                CameraMath.setBtmRightX(gameport, maxX);
+            }
+            gameport.getCamera().update();
+
+
+            return true;
+        }
+
+
+        @Override
+        public boolean fling(float velocityX, float velocityY, int button) {
+            world.getSystem(FixedToCameraPanAndFlingSystem.class).flingCamera(-velocityX, velocityY);
+            return false;
+        }
     }
 
 

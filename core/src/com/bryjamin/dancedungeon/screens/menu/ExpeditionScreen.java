@@ -7,6 +7,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.MainGame;
+import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
@@ -48,6 +49,7 @@ public class ExpeditionScreen extends AbstractScreen {
 
     private UnitData createWarrior(){
         UnitData warrior = new UnitData(UnitMap.UNIT_WARRIOR);
+        warrior.icon = TextureStrings.CLASS_WARRIOR;
         warrior.setStatComponent(new StatComponent.StatBuilder()
                 .movementRange(BaseStatStatics.BASE_MOVEMENT)
                 .attackRange(3)
@@ -62,6 +64,7 @@ public class ExpeditionScreen extends AbstractScreen {
 
     private UnitData createMage(){
         UnitData mage = new UnitData(UnitMap.UNIT_MAGE);
+        mage.icon = TextureStrings.CLASS_MAGE;
         mage.setStatComponent(
                 new StatComponent.StatBuilder()
                         .movementRange(BaseStatStatics.BASE_MOVEMENT )

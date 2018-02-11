@@ -41,7 +41,6 @@ public class BasicInputSystem extends EntitySystem{
             if (world.getSystem(ActionOnTapSystem.class).touch(input.x, input.y)) {
                 return true;
             }
-            ;
             return false;
         }
     }

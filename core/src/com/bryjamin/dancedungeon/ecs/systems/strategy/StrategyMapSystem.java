@@ -254,7 +254,7 @@ public class StrategyMapSystem extends EntitySystem {
                     @Override
                     public void performAction(World world, Entity entity) {
                         game.getScreen().dispose();
-                        game.setScreen(new MapScreen(game));
+                        game.setScreen(new MapScreen(game, partyDetails));
                     }
                 })).getEntity();
 
@@ -273,7 +273,7 @@ public class StrategyMapSystem extends EntitySystem {
                     @Override
                     public void performAction(World world, Entity entity) {
                         game.getScreen().dispose();
-                        game.setScreen(new MapScreen(game));
+                        game.setScreen(new MapScreen(game, partyDetails));
                     }
                 })).getEntity();
 

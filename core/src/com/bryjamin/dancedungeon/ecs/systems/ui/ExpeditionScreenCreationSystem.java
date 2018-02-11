@@ -16,7 +16,10 @@ import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.GreyScaleComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
+import com.bryjamin.dancedungeon.factories.ButtonFactory;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
+import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
+import com.bryjamin.dancedungeon.screens.strategy.MapScreen;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CenteringFrame;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
@@ -53,7 +56,6 @@ public class ExpeditionScreenCreationSystem extends BaseSystem {
         centeringFrame.setRows(5);
         centeringFrame.setyGap(Measure.units(2.5f));
         centeringFrame.setxGap(Measure.units(2.5f));
-
 
 
         //Right hand column
@@ -105,6 +107,39 @@ public class ExpeditionScreenCreationSystem extends BaseSystem {
             }
 
         }
+
+        float btnW = Measure.units(15f);
+        centeringFrame = new CenteringFrame(Measure.units(0), Measure.units(25f), gameport.getWorldWidth(), Measure.units(10f));
+        centeringFrame.setWidthPer(btnW);
+        centeringFrame.setHeightPer(Measure.units(5f));
+        Vector2 position = centeringFrame.calculatePosition(0);
+
+        new ButtonFactory.ButtonBuilder()
+                .pos(position.x, position.y)
+                .width(btnW)
+                .height(Measure.units(5f))
+                .text("Expedition")
+                .buttonAction(new WorldAction() {
+                    @Override
+                    public void performAction(World world, Entity entity) {
+                        game.getScreen().dispose();
+
+                        PartyDetails partyDetails = new PartyDetails();
+
+                        for(int i = 0; i < PARTY_SIZE; i++){
+                            try {
+                                partyDetails.addPartyMember(partyMembers.get(i), i);
+                            } catch (IndexOutOfBoundsException e){
+                                partyDetails.addPartyMember(null, i);
+                            }
+                        }
+
+                        game.setScreen(new MapScreen(game, partyDetails));
+                    }
+                })
+                .build(world);
+
+
     }
 
 
