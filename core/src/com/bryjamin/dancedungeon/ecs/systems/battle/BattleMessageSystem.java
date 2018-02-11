@@ -43,8 +43,8 @@ public class BattleMessageSystem extends BaseSystem {
         float width = gameport.getWorldWidth();
 
         Entity e = world.createEntity().edit()
-                .add(new PositionComponent(CenterMath.centerPositionX(width, gameport.getWorldWidth() / 2),
-                        CenterMath.centerPositionY(height, gameport.getWorldHeight() / 2) + Measure.units(25f)))
+                .add(new PositionComponent(CenterMath.centerOnPositionX(width, gameport.getWorldWidth() / 2),
+                        CenterMath.centerOnPositionY(height, gameport.getWorldHeight() / 2) + Measure.units(25f)))
                 .add(new CenteringBoundaryComponent(new Rectangle(0, 0, width, height)))
                 .add(new UITargetingComponent())
                 .add(new DrawableComponent(
@@ -57,8 +57,8 @@ public class BattleMessageSystem extends BaseSystem {
                 )).getEntity();
 
         Entity e2 = world.createEntity().edit()
-                .add(new PositionComponent(CenterMath.centerPositionX(width, gameport.getWorldWidth() / 2),
-                        CenterMath.centerPositionY(height, gameport.getWorldHeight() / 2) + Measure.units(25f)))
+                .add(new PositionComponent(CenterMath.centerOnPositionX(width, gameport.getWorldWidth() / 2),
+                        CenterMath.centerOnPositionY(height, gameport.getWorldHeight() / 2) + Measure.units(25f)))
                 .add(new CenteringBoundaryComponent(new Rectangle(0, 0, width, height)))
                 .add(new UITargetingComponent())
                 .add(new DrawableComponent(

@@ -45,6 +45,7 @@ public class ActionOnTapSystem extends EntitySystem {
             if (e.getComponent(HitBoxComponent.class).contains(x, y)) {
                 actionOnTapComponent.setTouchX(x);
                 actionOnTapComponent.setTouchY(y);
+                System.out.println("inside");
                 for(WorldAction wa : e.getComponent(ActionOnTapComponent.class).actions) wa.performAction(world, e);
                 return true;
             }

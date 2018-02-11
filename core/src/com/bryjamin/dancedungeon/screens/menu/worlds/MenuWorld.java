@@ -24,7 +24,7 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
 import com.bryjamin.dancedungeon.factories.ButtonFactory;
 import com.bryjamin.dancedungeon.screens.WorldContainer;
-import com.bryjamin.dancedungeon.screens.strategy.MapScreen;
+import com.bryjamin.dancedungeon.screens.menu.ExpeditionScreen;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
 
@@ -80,7 +80,7 @@ public class MenuWorld extends WorldContainer {
                     @Override
                     public void performAction(World world, Entity entity) {
                         game.getScreen().dispose();
-                        game.setScreen(new MapScreen(game));
+                        game.setScreen(new ExpeditionScreen(game));
                     }
                 })
                 .build(world);
@@ -88,8 +88,8 @@ public class MenuWorld extends WorldContainer {
 
         new ButtonFactory.ButtonBuilder()
                 .text(TextResource.GAME_TITLE)
-                .pos(CenterMath.centerPositionX(gameport.getCamera().viewportWidth, gameport.getCamera().position.x),
-                        CenterMath.centerPositionY(Measure.units(10f), gameport.getCamera().position.y) + Measure.units(10f))
+                .pos(CenterMath.centerOnPositionX(gameport.getCamera().viewportWidth, gameport.getCamera().position.x),
+                        CenterMath.centerOnPositionY(Measure.units(10f), gameport.getCamera().position.y) + Measure.units(10f))
                 .width(gameport.getWorldWidth())
                 .height(Measure.units(10f))
                 .build(world);

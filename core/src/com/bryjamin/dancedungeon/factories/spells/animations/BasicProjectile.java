@@ -91,8 +91,8 @@ public class BasicProjectile {
        PositionComponent positionComponent = entity.getComponent(PositionComponent.class);
        CenteringBoundaryComponent cbc = entity.getComponent(CenteringBoundaryComponent.class);
 
-       float x = CenterMath.centerPositionX(width, cbc.bound.getX() + cbc.bound.getWidth() / 2);
-       float y = CenterMath.centerPositionY(height, cbc.bound.getY() + cbc.bound.getHeight() / 2);
+       float x = CenterMath.centerOnPositionX(width, cbc.bound.getX() + cbc.bound.getWidth() / 2);
+       float y = CenterMath.centerOnPositionY(height, cbc.bound.getY() + cbc.bound.getHeight() / 2);
 
 
        Rectangle r = world.getSystem(TileSystem.class).createRectangleUsingCoordinates(target);
@@ -102,8 +102,8 @@ public class BasicProjectile {
        projectile.edit().add(new WaitActionComponent());
 
        projectile.edit().add(new MoveToComponent(speed, new Vector3(
-               CenterMath.centerPositionX(width, r.getCenter(new Vector2()).x),
-               CenterMath.centerPositionY(height, r.getCenter(new Vector2()).y),
+               CenterMath.centerOnPositionX(width, r.getCenter(new Vector2()).x),
+               CenterMath.centerOnPositionY(height, r.getCenter(new Vector2()).y),
                0)));
 
        projectile.edit().add(drawableComponent);

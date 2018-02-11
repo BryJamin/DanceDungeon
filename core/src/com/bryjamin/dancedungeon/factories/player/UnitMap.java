@@ -12,6 +12,7 @@ public class UnitMap {
     public static final String UNIT_MAGE = "Mage";
     public static final String UNIT_WARRIOR = "Warrior";
 
+
     public interface Command {
         public ComponentBag getUnit(UnitData unitData);
     }

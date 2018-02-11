@@ -1,5 +1,6 @@
 package com.bryjamin.dancedungeon.factories.player;
 
+import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 
@@ -14,6 +15,12 @@ import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 public class UnitData {
 
     public String id = UnitMap.UNIT_WARRIOR;
+    public String icon = TextureStrings.BIGGABLOBBA;
+
+    public String name = "Jeff";
+
+    public int partyPosition = -1;
+
     public StatComponent statComponent = new StatComponent();
     public SkillsComponent skillsComponent = new SkillsComponent();
 

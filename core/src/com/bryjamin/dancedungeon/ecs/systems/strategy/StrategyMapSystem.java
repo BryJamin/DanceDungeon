@@ -164,8 +164,8 @@ public class StrategyMapSystem extends EntitySystem {
 
         Entity e = world.createEntity();
 
-        e.edit().add(new PositionComponent(CenterMath.centerPositionX(width, node.getPosX()),
-                CenterMath.centerPositionY(height, node.getPosY())))
+        e.edit().add(new PositionComponent(CenterMath.centerOnPositionX(width, node.getPosX()),
+                CenterMath.centerOnPositionY(height, node.getPosY())))
                 .add(new HitBoxComponent(width, height))
                 .add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE, new TextureDescription.Builder(texture)
                         .width(width)
@@ -290,7 +290,7 @@ public class StrategyMapSystem extends EntitySystem {
 
         Entity generate = world.createEntity().edit()
                 .add(new PositionComponent())
-                .add(new FixedToCameraComponent(CenterMath.centerPositionX(width, width / 2), Measure.units(50f)))
+                .add(new FixedToCameraComponent(CenterMath.centerOnPositionX(width, width / 2), Measure.units(50f)))
                 .add(new CenteringBoundaryComponent(new Rectangle(0, 0, width, height)))
                 .add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE,
                         new TextDescription.Builder(Fonts.MEDIUM)

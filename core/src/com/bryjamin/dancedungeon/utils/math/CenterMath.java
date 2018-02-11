@@ -17,11 +17,11 @@ public class CenterMath {
     }
 
 
-    public static float centerPositionX(float width, float posX){
+    public static float centerOnPositionX(float width, float posX){
         return posX - width / 2;
     }
 
-    public static float centerPositionY(float height, float posY){
+    public static float centerOnPositionY(float height, float posY){
         return posY - height / 2;
     }
 

@@ -68,8 +68,8 @@ public class VictoryScreenCreationSystem extends BaseSystem {
 
 
         Entity blackScreen = world.createEntity();
-        blackScreen.edit().add(new PositionComponent(CenterMath.centerPositionX(gameport.getCamera().viewportWidth, gameport.getCamera().position.x),
-                CenterMath.centerPositionY(gameport.getCamera().viewportHeight, gameport.getCamera().position.y)));
+        blackScreen.edit().add(new PositionComponent(CenterMath.centerOnPositionX(gameport.getCamera().viewportWidth, gameport.getCamera().position.x),
+                CenterMath.centerOnPositionY(gameport.getCamera().viewportHeight, gameport.getCamera().position.y)));
         blackScreen.edit().add(new HitBoxComponent(new HitBox(gameport.getCamera().viewportWidth, gameport.getCamera().viewportHeight)));
         blackScreen.edit().add(new DrawableComponent(Layer.BACKGROUND_LAYER_FAR,
                 new TextureDescription.Builder(TextureStrings.BLOCK)
@@ -80,8 +80,8 @@ public class VictoryScreenCreationSystem extends BaseSystem {
 
         new ButtonFactory.ButtonBuilder()
                 .text("Continue")
-                .pos(CenterMath.centerPositionX(gameport.getCamera().viewportWidth, gameport.getCamera().position.x),
-                        CenterMath.centerPositionY(Measure.units(10f), gameport.getCamera().position.y) + Measure.units(10f))
+                .pos(CenterMath.centerOnPositionX(gameport.getCamera().viewportWidth, gameport.getCamera().position.x),
+                        CenterMath.centerOnPositionY(Measure.units(10f), gameport.getCamera().position.y) + Measure.units(10f))
                 .width(gameport.getWorldWidth())
                 .height(Measure.units(10f))
                 .build(world);
