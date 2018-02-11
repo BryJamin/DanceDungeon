@@ -24,7 +24,7 @@ public class CenteringFrame {
     }
 
     public CenteringFrame(Rectangle rectangle){
-        this.container = container;
+        this.container = rectangle;
     }
 
 

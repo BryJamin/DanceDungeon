@@ -16,6 +16,8 @@ public class TextureStrings {
     public static final String END_TURN_BUTTON = "player/end_turn";
     public static final String FLOOR_TEXTURE_BRICK = "backgrounds/brick_floor";
 
+    public static final String WORLD_MAP = "map";
+
 
 
 
