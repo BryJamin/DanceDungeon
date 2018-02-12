@@ -18,6 +18,7 @@ import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.GreyScaleComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.PartyUiComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
 import com.bryjamin.dancedungeon.factories.ButtonFactory;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
@@ -47,7 +48,10 @@ public class ExpeditionScreenCreationSystem extends BaseSystem {
         this.gameport = gameport;
         this.game = game;
         this.availableMembers = availableMembers;
-        this.partyMembers.addAll(partyMembers);
+
+        for(int i = 0; i < PARTY_SIZE; i++){
+            this.partyMembers.add(null);
+        }
     }
 
     private void createWorldMap() {
@@ -70,48 +74,21 @@ public class ExpeditionScreenCreationSystem extends BaseSystem {
 
         createWorldMap();
         createAvailablePartyFrame();
+        createCurrentPartyFrame();
 
 
-        CenteringFrame centeringFrame = new CenteringFrame(Measure.units(0), Measure.units(0f), gameport.getWorldWidth(), Measure.units(20f));
-        centeringFrame.setWidthPer(Measure.units(10f));
-        centeringFrame.setColumns(4);
-        centeringFrame.setRows(1);
-        centeringFrame.setxGap(Measure.units(2.5f));
-
-        for (int i = 0; i < partyMembers.size; i++) {
-
-            Vector2 position = centeringFrame.calculatePosition(i);
-
-            if (partyMembers.get(i) != null) {
-                Entity e = createPartyIcon(position.x, position.y, partyMembers.get(i));
-                e.edit().add(new ActionOnTapComponent(new WorldAction() {
-                    @Override
-                    public void performAction(World world, Entity entity) {
-
-                        int i = partyMembers.indexOf(entity.getComponent(UnitComponent.class).getUnitData(), false);
-
-                        if (i != -1) {
-                            partyMembers.set(i, null);
-                            updateUi();
-                        }
-
-                    }
-                }));
-            }
-
-        }
-
-        float btnW = Measure.units(15f);
-        centeringFrame = new CenteringFrame(Measure.units(0), Measure.units(25f), gameport.getWorldWidth(), Measure.units(10f));
+        float btnW = Measure.units(25f);
+        float btnHeight = Measure.units(7.5f);
+        CenteringFrame centeringFrame = new CenteringFrame(Measure.units(0), Measure.units(0), Measure.units(30f), Measure.units(12.5f));
         centeringFrame.setWidthPer(btnW);
-        centeringFrame.setHeightPer(Measure.units(5f));
+        centeringFrame.setHeightPer(btnHeight);
         Vector2 position = centeringFrame.calculatePosition(0);
 
         new ButtonFactory.ButtonBuilder()
                 .pos(position.x, position.y)
                 .width(btnW)
-                .height(Measure.units(5f))
-                .text("Expedition")
+                .height(btnHeight)
+                .text("Start Expedition")
                 .buttonAction(new WorldAction() {
                     @Override
                     public void performAction(World world, Entity entity) {
@@ -136,6 +113,67 @@ public class ExpeditionScreenCreationSystem extends BaseSystem {
     }
 
 
+    private void createCurrentPartyFrame(){
+
+        Rectangle frame = new Rectangle(Measure.units(0), Measure.units(0f), gameport.getWorldWidth(), Measure.units(12.5f));
+
+        CenteringFrame centeringFrame = new CenteringFrame(frame);
+        centeringFrame.setWidthPer(Measure.units(7.5f));
+        centeringFrame.setHeightPer(Measure.units(7.5f));
+        centeringFrame.setColumns(4);
+        centeringFrame.setRows(1);
+        centeringFrame.setxGap(Measure.units(2.5f));
+
+        Entity backdrop = world.createEntity();
+        backdrop.edit().add(new PositionComponent(frame.x, frame.y))
+                .add(new PartyUiComponent())
+                .add(new DrawableComponent(Layer.BACKGROUND_LAYER_NEAR,
+                        new TextureDescription.Builder(TextureStrings.BLOCK)
+                                .width(frame.width)
+                                .height(frame.height)
+                                .color(new Color(0,0,0,0.8f))
+                                .build()));
+
+        for (int i = 0; i < PARTY_SIZE; i++) {
+
+            Vector2 position = centeringFrame.calculatePosition(i);
+
+            if (partyMembers.get(i) != null) {
+                Entity e = createPartyIcon(position.x, position.y, partyMembers.get(i));
+                e.edit().add(new ActionOnTapComponent(new WorldAction() {
+                    @Override
+                    public void performAction(World world, Entity entity) {
+
+                        int i = partyMembers.indexOf(entity.getComponent(UnitComponent.class).getUnitData(), false);
+
+                        if (i != -1) {
+                            partyMembers.set(i, null);
+                            updateUi();
+                        }
+
+                    }
+                }));
+            } else {
+                float width = Measure.units(7.5f);
+
+                Entity e = world.createEntity().edit()
+                        .add(new PositionComponent(position.x, position.y))
+                        .add(new PartyUiComponent())
+                        .add(new HitBoxComponent(width, width))
+                        .add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE,
+                                new TextureDescription.Builder(TextureStrings.BLOCK)
+                                        .width(width)
+                                        .height(width)
+                                        .color(new Color(1,1,1, 0.7f))
+                                        .build())).getEntity();
+            }
+
+        }
+
+    }
+
+
+
     private void createAvailablePartyFrame(){
 
         Rectangle frame = new Rectangle(Measure.units(70f), Measure.units(0), Measure.units(25f), gameport.getWorldHeight());
@@ -150,7 +188,7 @@ public class ExpeditionScreenCreationSystem extends BaseSystem {
 
         Entity backdrop = world.createEntity();
         backdrop.edit().add(new PositionComponent(frame.x, frame.y))
-                .add(new UnitComponent())
+                .add(new PartyUiComponent())
                 .add(new DrawableComponent(Layer.BACKGROUND_LAYER_NEAR,
                         new TextureDescription.Builder(TextureStrings.BLOCK)
                                 .width(frame.width)
@@ -211,6 +249,7 @@ public class ExpeditionScreenCreationSystem extends BaseSystem {
         Entity e = world.createEntity().edit()
                 .add(new PositionComponent(x, y))
                 .add(new UnitComponent(unitData))
+                .add(new PartyUiComponent())
                 .add(new HitBoxComponent(width, width))
                 .add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE,
                         new TextureDescription.Builder(unitData.icon)
@@ -224,7 +263,7 @@ public class ExpeditionScreenCreationSystem extends BaseSystem {
 
     private void updateUi() {
 
-        IntBag unitEntities = world.getAspectSubscriptionManager().get(Aspect.all(UnitComponent.class)).getEntities();
+        IntBag unitEntities = world.getAspectSubscriptionManager().get(Aspect.all(PartyUiComponent.class)).getEntities();
 
         for (int i = 0; i < unitEntities.size(); i++)
             world.delete(unitEntities.get(i));
