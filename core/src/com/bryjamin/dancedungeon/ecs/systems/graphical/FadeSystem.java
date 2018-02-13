@@ -7,7 +7,6 @@ import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.math.Interpolation;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
-import com.bryjamin.dancedungeon.utils.texture.DrawableDescription;
 
 /**
  * Created by BB on 28/10/2017.
@@ -36,7 +35,7 @@ public class FadeSystem extends EntityProcessingSystem {
 
         fc.time = fc.fadeIn ? fc.time + world.delta : fc.time - world.delta;
 
-        fc.alpha = Interpolation.fade.apply(((fc.time / fc.maximumTime ) * (fc.maxAlpha - fc.minAlpha)) + fc.minAlpha);
+        fc.alpha = Interpolation.fade.apply(((fc.time / fc.maximumTime) * (fc.maxAlpha - fc.minAlpha)) + fc.minAlpha);
         if (fc.alpha <= fc.minAlpha) {
             if (fc.isEndless || fc.count > 0) {
                 fc.fadeIn = true;
@@ -68,10 +67,7 @@ public class FadeSystem extends EntityProcessingSystem {
     private void applyFade(Entity e, float alpha) {
 
         if (drawableMapper.has(e)) {
-            DrawableComponent dc = drawableMapper.get(e);
-            for (DrawableDescription drawableDescription : dc.drawables) {
-                drawableDescription.getColor().a = alpha;
-            }
+            drawableMapper.get(e).drawables.getColor().a = alpha;
         }
     }
 

@@ -11,7 +11,6 @@ import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
-import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
 import com.bryjamin.dancedungeon.utils.texture.TextDescription;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
@@ -36,64 +35,78 @@ public class ButtonFactory {
         private Color textColor = new Color(Color.BLACK);
         private Color backGroundColor = new Color(Color.WHITE);
 
-        private WorldAction action = new WorldAction() {
-            @Override
-            public void performAction(World world, Entity entity) {
+        private WorldAction action = null;
 
-            }
-        };
-
-        public ButtonBuilder posX(float val)
-        { x = val; return this;}
-
-        public ButtonBuilder posY(float val)
-        { y = val; return this;}
-
-        public ButtonBuilder width(float val)
-        { width = val; return this; }
-
-        public ButtonBuilder height(float val)
-        { height = val; return this; }
-
-        public ButtonBuilder layer(int val)
-        { layer = val; return this; }
-
-        public ButtonBuilder text(String val)
-        { text = val; return this; }
-
-
-        public ButtonBuilder buttonAction(WorldAction worldAction){
-            this.action = worldAction; return this;
+        public ButtonBuilder pos(float x, float y) {
+            this.x = x;
+            this.y = y;;
+            return this;
         }
 
-        public ComponentBag build()
-        {
-            ComponentBag bag = new ComponentBag();
+        public ButtonBuilder posY(float val) {
+            y = val;
+            return this;
+        }
 
-            bag.add(new PositionComponent(x, y));
-            bag.add(new ActionOnTapComponent(action));
-            bag.add(new HitBoxComponent(width, height));
-            bag.add(new CenteringBoundaryComponent(width, height));
-            bag.add(new DrawableComponent(layer,
+        public ButtonBuilder width(float val) {
+            width = val;
+            return this;
+        }
 
-                    new TextureDescription.Builder(TextureStrings.BLOCK)
-                            .color(backGroundColor)
-                            .width(width)
-                            .height(height)
-                    .build(),
+        public ButtonBuilder height(float val) {
+            height = val;
+            return this;
+        }
 
-                    new TextDescription.Builder(Fonts.MEDIUM)
-                            .text(text)
-                            .color(textColor)
-                            .build()
+        public ButtonBuilder layer(int val) {
+            layer = val;
+            return this;
+        }
 
-            ));
+        public ButtonBuilder text(String val) {
+            text = val;
+            return this;
+        }
 
-            return bag;
+
+        public ButtonBuilder buttonAction(WorldAction worldAction) {
+            this.action = worldAction;
+            return this;
+        }
+
+        public void build(World world) {
+
+            Entity background = world.createEntity().edit()
+                    .add(new PositionComponent(x, y))
+                    .add(new HitBoxComponent(width, height))
+                    .add(new CenteringBoundaryComponent(width, height))
+                    .add(new DrawableComponent(layer,
+
+                            new TextureDescription.Builder(TextureStrings.BLOCK)
+                                    .color(backGroundColor)
+                                    .width(width)
+                                    .height(height)
+                                    .build()
+                    )).getEntity();
+
+            if(action != null)
+                background.edit().add(new ActionOnTapComponent(action));
+
+            world.createEntity().edit()
+                    .add(new PositionComponent(x, y))
+                    .add(new HitBoxComponent(width, height))
+                    .add(new CenteringBoundaryComponent(width, height))
+                    .add(new DrawableComponent(layer,
+                            new TextDescription.Builder(Fonts.MEDIUM)
+                                    .text(text)
+                                    .color(textColor)
+                                    .build()
+                    ));
+
+
         }
 
     }
-
 
 
 }

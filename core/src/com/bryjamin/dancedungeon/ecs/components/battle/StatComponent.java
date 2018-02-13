@@ -14,8 +14,17 @@ public class StatComponent extends Component {
     public int movementRange;
     public int attackRange;
 
-    public int power;
-    public int magic;
+    public int attack;
+
+    public int stun;
+
+    //This value represents dodge percent as in 5%, might switch to a different number in future
+    private float dodge = 0.05f;
+    public float buffedDodge = 0;
+
+    public float getDodgeChance(){
+        return dodge + buffedDodge;
+    }
 
     public StatComponent(){}
 
@@ -24,8 +33,7 @@ public class StatComponent extends Component {
         maxHealth = sb.maxHealth;
         movementRange = sb.movementRange;
         attackRange = sb.attackRange;
-        power = sb.power;
-        magic = sb.magic;
+        attack = sb.magic;
     }
 
     public static class StatBuilder {
@@ -36,7 +44,6 @@ public class StatComponent extends Component {
         private int attackRange = 1;
         private int movementRange = 3;
 
-        private int power = 5;
         private int magic = 5;
 
         public StatBuilder health(int val)
@@ -54,10 +61,7 @@ public class StatComponent extends Component {
         public StatBuilder movementRange(int val)
         { this.movementRange = val; return this; }
 
-        public StatBuilder power(int val)
-        { this.power = val; return this; }
-
-        public StatBuilder magic(int val)
+        public StatBuilder attack(int val)
         { this.magic = val; return this; }
 
         public StatComponent build()

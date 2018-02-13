@@ -9,6 +9,7 @@ import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.WaitActionComponent;
+import com.bryjamin.dancedungeon.ecs.systems.SkillUISystem;
 import com.bryjamin.dancedungeon.utils.Pair;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
@@ -52,7 +53,7 @@ public class ActionCameraSystem extends EntitySystem {
 
                 if (!hasBegun) {
                     hasBegun = true;
-                    world.getSystem(SelectedTargetSystem.class).reset();
+                    world.getSystem(SkillUISystem.class).reset();
                 }
 
 

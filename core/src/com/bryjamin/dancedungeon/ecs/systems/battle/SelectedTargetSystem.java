@@ -5,7 +5,6 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.systems.EntityProcessingSystem;
-import com.artemis.utils.IntBag;
 import com.badlogic.gdx.graphics.Color;
 import com.bryjamin.dancedungeon.assets.Fonts;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
@@ -15,7 +14,6 @@ import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.ScaleTransformationComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.UITargetingComponent;
@@ -58,16 +56,10 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
 
     @Override
     protected void process(Entity e) {
-
         if (!e.getComponent(TurnComponent.class).hasActions()) {
-            this.clearTargetingTiles();
+            world.getSystem(SkillUISystem.class).reset();
             e.edit().remove(SelectedEntityComponent.class);
         }
-
-
-        //if()
-
-
     }
 
 
@@ -75,7 +67,11 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
     public void inserted(Entity e) {
 
         if (this.getEntities().size() >= 1) {
-            this.reset();
+            for (Entity entity : this.getEntities()) {
+                entity.edit().remove(SelectedEntityComponent.class);
+            }
+            world.getSystem(SkillUISystem.class).reset();
+            world.getSystem(SkillUISystem.class).createSkillUi(e);
         }
 
         setUpCharacter(e);
@@ -84,7 +80,7 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
     @Override
     public void removed(Entity e) {
         if (this.getEntities().size() <= 0) {
-            this.clearTargetingTiles();
+            //world.getSystem(SkillUISystem.class).reset();
         }
     }
 
@@ -94,29 +90,6 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
         return this.getEntities().size() > 0;
     }
 
-    /**
-     * Clears the button entities and selected entity from the system
-     */
-    public void clearTargetingTiles() {
-
-        IntBag bag = world.getAspectSubscriptionManager().get(Aspect.all(UITargetingComponent.class)).getEntities();
-
-        for (int i = 0; i < bag.size(); i++) {
-            //world.getEntity(bag.get(i)).edit().add(new DeadComponent());
-            world.getEntity(bag.get(i)).deleteFromWorld();
-        }
-
-    }
-
-    public void reset() {
-        this.clearTargetingTiles();
-
-        world.getSystem(SkillUISystem.class).clearButtons();
-
-        for (Entity e : this.getEntities()) {
-            e.edit().remove(SelectedEntityComponent.class);
-        }
-    }
 
 
     /**
@@ -132,9 +105,16 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
         Coordinates c = world.getSystem(TileSystem.class).getCoordinatesUsingPosition(x, y);
 
         if (world.getSystem(TileSystem.class).getOccupiedMap().containsValue(c, false)) {
-            world.getSystem(TileSystem.class).getOccupiedMap().findKey(c, false).edit().add(new SelectedEntityComponent());
+
+            Entity selected = world.getSystem(TileSystem.class).getOccupiedMap().findKey(c, false);
+
+            if(selected.getComponent(TurnComponent.class).hasActions()){//TODO you can't select a character if it has no actions left
+                world.getSystem(TileSystem.class).getOccupiedMap().findKey(c, false).edit().add(new SelectedEntityComponent());
+            }
             return true;
         } else {
+
+            System.out.println("eLSE");
             //this.reset();
         }
 
@@ -142,7 +122,7 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
     }
 
 
-    public void reselectEntityAfterActionComplete() {
+  /*  public void reselectEntityAfterActionComplete() {
 
         if (this.getEntities().size() > 0) {
 
@@ -163,7 +143,7 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
 
         }
 
-    }
+    }*/
 
 
     /**
@@ -192,7 +172,7 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
 
 
     /**
-     * Upon being selected creates Movement and Attacking tiles for the player, based on
+     * Upon being selected creates UsesMoveAction and Attacking tiles for the player, based on
      * the avaliablity of an entites attack and movement actions
      *
      * @param e

@@ -7,16 +7,14 @@ import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.math.MathUtils;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.ScaleTransformationComponent;
-import com.bryjamin.dancedungeon.utils.texture.DrawableDescription;
 
 /**
  * Created by BB on 21/01/2018.
- *
+ * <p>
  * Used for the 'Scale Effect'
- *
  */
 
-public class ScaleTransformationSystem extends EntityProcessingSystem{
+public class ScaleTransformationSystem extends EntityProcessingSystem {
 
     ComponentMapper<DrawableComponent> drawableMapper;
     ComponentMapper<ScaleTransformationComponent> scaleM;
@@ -37,7 +35,7 @@ public class ScaleTransformationSystem extends EntityProcessingSystem{
     }
 
 
-    private float calcSinePos(float duration, float time, float min, float max){
+    private float calcSinePos(float duration, float time, float min, float max) {
 
         //Find out size of 1 degree in terms of duration
         float anglePct = duration / 360;
@@ -57,11 +55,8 @@ public class ScaleTransformationSystem extends EntityProcessingSystem{
     private void applyScale(Entity e, float scaleX, float scaleY) {
 
         if (drawableMapper.has(e)) {
-            DrawableComponent dc = drawableMapper.get(e);
-            for (DrawableDescription drawableDescription : dc.drawables) {
-                drawableDescription.setScaleX(scaleX);
-                drawableDescription.setScaleY(scaleY);
-            }
+            drawableMapper.get(e).drawables.setScaleX(scaleX);
+            drawableMapper.get(e).drawables.setScaleY(scaleY);
         }
     }
 

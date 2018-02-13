@@ -7,4 +7,11 @@ import com.artemis.Component;
  */
 
 public class UITargetingComponent extends Component {
+
+
+
+
+
+
+
 }

@@ -12,11 +12,13 @@ public class Fireball extends Skill {
         super(new Builder()
                 .name("Fireball")
                 .icon("skills/Fire")
+                .description("Fires a ball of flame at the enemy. This is a FREE Action")
                 .targeting(Targeting.Enemy)
                 .spellType(SpellType.MagicAttack)
                 .spellApplication(SpellDamageApplication.AfterSpellAnimation)
-                    .actionType(ActionType.Free)
+                .actionType(ActionType.Free)
                 .spellAnimation(SpellAnimation.Projectile)
+                .spellCoolDown(3)
                 .attack(Attack.Ranged));
     }
 

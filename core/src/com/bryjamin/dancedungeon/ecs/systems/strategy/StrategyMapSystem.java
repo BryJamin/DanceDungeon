@@ -24,7 +24,6 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.ScaleTransformationComp
 import com.bryjamin.dancedungeon.ecs.components.map.MapNodeComponent;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.factories.map.MapNode;
-import com.bryjamin.dancedungeon.factories.player.Unit;
 import com.bryjamin.dancedungeon.screens.battle.BattleScreen;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
 import com.bryjamin.dancedungeon.screens.strategy.MapScreen;
@@ -53,16 +52,16 @@ public class StrategyMapSystem extends EntitySystem {
 
     private Color grey = new Color(0.4f, 0.4f, 0.4f, 1f);
 
-    private Array<Unit> playerParty;
+    private PartyDetails partyDetails;
 
     private OrderedMap<MapNode, Entity> nodeEntityOrderedMap = new OrderedMap<MapNode, Entity>();
     private Array<Entity> activeNodes = new Array<Entity>();
 
-    public StrategyMapSystem(MainGame game, GameMap gameMap, Array<Unit> playerParty) {
+    public StrategyMapSystem(MainGame game, GameMap gameMap, PartyDetails partyDetails) {
         super(Aspect.all(MapNodeComponent.class));
         this.game = game;
         this.gameMap = gameMap;
-        this.playerParty = playerParty;
+        this.partyDetails = partyDetails;
     }
 
     @Override
@@ -115,8 +114,6 @@ public class StrategyMapSystem extends EntitySystem {
             public void performAction(World world, Entity entity) {
                 gameMap.setCurrentMapNode(mapNode);
                 mapNode.setMapEvent(eventGenerationSystem.getMapEvent(mapNode.getEventType()));
-                PartyDetails partyDetails = new PartyDetails();
-                partyDetails.setPlayerParty(playerParty);
                 game.setScreen(new BattleScreen(game, game.getScreen(), gameMap, partyDetails));
             }
         };
@@ -167,8 +164,8 @@ public class StrategyMapSystem extends EntitySystem {
 
         Entity e = world.createEntity();
 
-        e.edit().add(new PositionComponent(CenterMath.centerPositionX(width, node.getPosX()),
-                CenterMath.centerPositionY(height, node.getPosY())))
+        e.edit().add(new PositionComponent(CenterMath.centerOnPositionX(width, node.getPosX()),
+                CenterMath.centerOnPositionY(height, node.getPosY())))
                 .add(new HitBoxComponent(width, height))
                 .add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE, new TextureDescription.Builder(texture)
                         .width(width)
@@ -252,7 +249,22 @@ public class StrategyMapSystem extends EntitySystem {
                 .add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE,
                         new TextureDescription.Builder(TextureStrings.BLOCK)
                                 .width(width)
-                                .height(height).build(),
+                                .height(height).build()))
+                .add(new ActionOnTapComponent(new WorldAction() {
+                    @Override
+                    public void performAction(World world, Entity entity) {
+                        game.getScreen().dispose();
+                        game.setScreen(new MapScreen(game, partyDetails));
+                    }
+                })).getEntity();
+
+
+        Entity text = world.createEntity().edit()
+                .add(new PositionComponent(Measure.units(75f), Measure.units(50f)))
+                .add(new HitBoxComponent(new HitBox(width, height)))
+                .add(new FixedToCameraComponent(0, Measure.units(50f)))
+                .add(new CenteringBoundaryComponent(new Rectangle(0, 0, width, height)))
+                .add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE,
                         new TextDescription.Builder(Fonts.MEDIUM)
                                 .text("GENERATE")
                                 .color(new Color(Color.BLACK))
@@ -261,11 +273,14 @@ public class StrategyMapSystem extends EntitySystem {
                     @Override
                     public void performAction(World world, Entity entity) {
                         game.getScreen().dispose();
-                        game.setScreen(new MapScreen(game));
+                        game.setScreen(new MapScreen(game, partyDetails));
                     }
                 })).getEntity();
 
+
     }
+
+
 
 
     private void createSelectDestinationText() {
@@ -275,7 +290,7 @@ public class StrategyMapSystem extends EntitySystem {
 
         Entity generate = world.createEntity().edit()
                 .add(new PositionComponent())
-                .add(new FixedToCameraComponent(CenterMath.centerPositionX(width, width / 2), Measure.units(50f)))
+                .add(new FixedToCameraComponent(CenterMath.centerOnPositionX(width, width / 2), Measure.units(50f)))
                 .add(new CenteringBoundaryComponent(new Rectangle(0, 0, width, height)))
                 .add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE,
                         new TextDescription.Builder(Fonts.MEDIUM)

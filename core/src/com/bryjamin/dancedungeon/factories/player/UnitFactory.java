@@ -2,6 +2,7 @@ package com.bryjamin.dancedungeon.factories.player;
 
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.BuffComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
@@ -31,6 +32,7 @@ public class UnitFactory {
         bag.add(new MoveToComponent(Measure.units(60f))); //TODO speed should be based on the class
         bag.add(new VelocityComponent());
         bag.add(new TargetComponent());
+        bag.add(new BuffComponent());
 
         //Graphical
         bag.add(new BlinkOnHitComponent());

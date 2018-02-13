@@ -20,7 +20,7 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
  * Created by BB on 27/12/2017.
  */
 
-public class AnimationSystem extends EntityProcessingSystem{
+public class AnimationSystem extends EntityProcessingSystem {
 
 
     private TextureAtlas atlas;
@@ -43,7 +43,7 @@ public class AnimationSystem extends EntityProcessingSystem{
 
         AnimationMapComponent animationMapComponent = e.getComponent(AnimationMapComponent.class);
 
-        for(int i : animationMapComponent.animations.keys().toArray().toArray()){
+        for (int i : animationMapComponent.animations.keys().toArray().toArray()) {
 
             AnimationMapComponent.AnimationSettings as = animationMapComponent.animations.get(i);
 
@@ -68,48 +68,48 @@ public class AnimationSystem extends EntityProcessingSystem{
         AnimationStateComponent asc = am.get(e);
         DrawableComponent dc = drawm.get(e);
 
-        for(AnimationStateComponent.AnimationState sc : asc.drawableIdAnimationStateMap.values().toArray()) {
+        AnimationStateComponent.AnimationState sc = asc.animationState;
 
-            sc.stateTime += world.delta;
 
-            int state;
+        sc.stateTime += world.delta;
 
-            if (sc.getStateQueue().size != 0) {
+        int state;
 
-                state = sc.getStateQueue().first();
-                boolean canRemove = true;
+        if (sc.getStateQueue().size != 0) {
 
-                if (ac.animations.containsKey(state)) {
-                    canRemove = (ac.animations.get(state).getAnimation().isAnimationFinished(sc.stateTime)) && state == sc.getCurrentState();
-                }
+            state = sc.getStateQueue().first();
+            boolean canRemove = true;
 
-                if (canRemove) {
-                    state = sc.getDefaultState();
-                    sc.getStateQueue().removeFirst();
-                }
+            if (ac.animations.containsKey(state)) {
+                canRemove = (ac.animations.get(state).getAnimation().isAnimationFinished(sc.stateTime)) && state == sc.getCurrentState();
+            }
 
-            } else {
+            if (canRemove) {
                 state = sc.getDefaultState();
+                sc.getStateQueue().removeFirst();
             }
 
-            if (state != sc.getCurrentState()) {
-                sc.setCurrentState(state);
-            }
-
-            if (ac.animations.containsKey(sc.getCurrentState())) {
-                TextureDescription td = (TextureDescription) dc.trackedDrawables.get(asc.drawableIdAnimationStateMap.findKey(sc, false, 0));
-                td.setRegion(ac.animations.get(sc.getCurrentState()).getAnimationRegion());
-                td.setIndex(ac.animations.get(sc.getCurrentState()).getAnimation().getKeyFrameIndex(sc.stateTime));
-            }
-
-
-            //If the animation is finished and it has this component kill the Entity
-            if(killOnAnimationEndM.has(e)){
-                if(killOnAnimationEndM.get(e).animationId == sc.getCurrentState() && ac.animations.get(sc.getCurrentState()).getAnimation().isAnimationFinished(sc.stateTime))
-                    e.edit().add(new DeadComponent());
-            }
-
-
+        } else {
+            state = sc.getDefaultState();
         }
+
+        if (state != sc.getCurrentState()) {
+            sc.setCurrentState(state);
+        }
+
+        if (ac.animations.containsKey(sc.getCurrentState())) {
+            TextureDescription td = (TextureDescription) dc.drawables;
+            td.setRegion(ac.animations.get(sc.getCurrentState()).getAnimationRegion());
+            td.setIndex(ac.animations.get(sc.getCurrentState()).getAnimation().getKeyFrameIndex(sc.stateTime));
+        }
+
+
+        //If the animation is finished and it has this component kill the Entity
+        if (killOnAnimationEndM.has(e)) {
+            if (killOnAnimationEndM.get(e).animationId == sc.getCurrentState() && ac.animations.get(sc.getCurrentState()).getAnimation().isAnimationFinished(sc.stateTime))
+                e.edit().add(new DeadComponent());
+        }
+
+
     }
 }

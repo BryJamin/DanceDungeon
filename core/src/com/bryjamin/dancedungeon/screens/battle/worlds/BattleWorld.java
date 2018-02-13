@@ -1,6 +1,5 @@
 package com.bryjamin.dancedungeon.screens.battle.worlds;
 
-import com.artemis.BaseSystem;
 import com.artemis.World;
 import com.artemis.WorldConfiguration;
 import com.artemis.WorldConfigurationBuilder;
@@ -18,6 +17,7 @@ import com.bryjamin.dancedungeon.ecs.systems.action.ConditionalActionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BattleMessageSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BlinkOnHitSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.BuffSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BulletSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.DeathSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.EndBattleSystem;
@@ -71,6 +71,8 @@ public class BattleWorld extends WorldContainer {
                         new FollowPositionSystem(),
                         new UpdatePositionSystem(),
 
+                        new BuffSystem(),
+
                         //Initialize Tiles
                         new TileSystem(),
                         new MoveToTargetSystem()
@@ -113,23 +115,6 @@ public class BattleWorld extends WorldContainer {
 
         BagToEntity.bagToEntity(world.createEntity(), new SpellFactory().endTurnButton(0, 0));
     }
-
-
-    public void pauseWorld() {
-        for (BaseSystem s : world.getSystems()) {
-            if (!(s instanceof RenderingSystem || s instanceof HealthBarSystem)) {
-                s.setEnabled(false);
-            }
-        }
-    }
-
-    public void unPauseWorld() {
-        for (BaseSystem s : world.getSystems()) {
-            s.setEnabled(true);
-        }
-    }
-
-
 
     @Override
     public void handleInput(InputMultiplexer inputMultiplexer) {

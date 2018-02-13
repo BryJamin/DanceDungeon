@@ -10,8 +10,10 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.screens.AbstractScreen;
+import com.bryjamin.dancedungeon.screens.VictoryScreen;
 import com.bryjamin.dancedungeon.screens.battle.worlds.BattleWorld;
 import com.bryjamin.dancedungeon.screens.battle.worlds.EndBattleWorld;
+import com.bryjamin.dancedungeon.screens.menu.DefeatScreen;
 
 
 /**
@@ -39,8 +41,6 @@ public class BattleScreen extends AbstractScreen {
     public BattleScreen(MainGame game, Screen previousScreen, GameMap gameMap, PartyDetails partyDetails) {
         super(game);
 
-
-
         gamecam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         gameport = new FitViewport(MainGame.GAME_WIDTH, MainGame.GAME_HEIGHT, gamecam);
         gamecam.setToOrtho(false, MainGame.GAME_WIDTH, MainGame.GAME_HEIGHT);
@@ -61,21 +61,10 @@ public class BattleScreen extends AbstractScreen {
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
         game.batch.setProjectionMatrix(gamecam.combined);
         gamecam.update();
         handleInput(delta);
-
         battleWorld.process(delta);
-
-        switch(screenState){
-            case BATTLE:
-                break;
-            case END_BATTLE:
-                endBattleWorld.process(delta);
-                break;
-        }
-
     }
 
     public void handleInput(float dt) {
@@ -96,14 +85,12 @@ public class BattleScreen extends AbstractScreen {
 
 
     public void victory(){
-        screenState = ScreenState.END_BATTLE;
-        this.endBattleWorld = new EndBattleWorld(game, gameport, EndBattleWorld.State.VICTORY);
+        game.setScreen(new VictoryScreen(game, this));
     }
 
 
     public void defeat(){
-        screenState = ScreenState.END_BATTLE;
-        this.endBattleWorld = new EndBattleWorld(game, gameport, EndBattleWorld.State.DEFEAT);
+        game.setScreen(new DefeatScreen(game, this));
     }
 
 

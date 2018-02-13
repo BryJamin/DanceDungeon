@@ -5,7 +5,7 @@ import com.artemis.Component;
 /**
  * Created by BB on 23/12/2017.
  *
- * Used to pause the next action within the Action Camera System
+ * Used to pause the next action within the UsesAttackAction Camera System
  *
  * If an entity exists with this, the system will not continue processing
  *

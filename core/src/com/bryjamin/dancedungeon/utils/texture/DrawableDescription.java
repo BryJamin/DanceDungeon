@@ -105,6 +105,12 @@ public abstract class DrawableDescription {
         public T origin(Vector2 val)
         { origin = val; return getThis(); }
 
+        public T alpha(float val) {
+            color.a = val;
+            resetColor.a = val;
+            return getThis();
+        }
+
         public T color(Color val) {
             color = val;
             resetColor = val;

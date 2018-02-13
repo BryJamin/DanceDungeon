@@ -41,6 +41,11 @@ public class BoundsDrawingSystem extends EntitySystem {
         return true;
     }
 
+
+
+
+
+
     @Override
     protected void processSystem() {
 
@@ -70,6 +75,7 @@ public class BoundsDrawingSystem extends EntitySystem {
         BoundsDrawer.drawBounds(batch, bounds);
         BoundsDrawer.drawBounds(batch, Color.CYAN, hitboxes);
         BoundsDrawer.drawBounds(batch, Color.PINK, proxhitboxes);
+        batch.end();
 
 
         bounds.clear();

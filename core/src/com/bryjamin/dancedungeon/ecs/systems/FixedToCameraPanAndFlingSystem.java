@@ -14,7 +14,7 @@ import com.bryjamin.dancedungeon.utils.math.CameraMath;
  * Created by BB on 18/01/2018.
  */
 
-public class CameraSystem extends EntitySystem {
+public class FixedToCameraPanAndFlingSystem extends EntitySystem {
 
     private ComponentMapper<PositionComponent> positionm;
     private ComponentMapper<FixedToCameraComponent> fixedm;
@@ -38,11 +38,11 @@ public class CameraSystem extends EntitySystem {
      * In this context 'min' referes to the minimum point on the x and y axis a camera can show
      * 'max' references to the maximum point on the x and y axis a camera can show
      *
-     * The CameraSystem is placed afer all renderable systems, so that way on the next loop,
+     * The FixedToCameraPanAndFlingSystem is placed afer all renderable systems, so that way on the next loop,
      * anything referencing the camera position is not incorrect
      *
      */
-    public CameraSystem(Camera camera, float minX, float minY, float maxX, float maxY){
+    public FixedToCameraPanAndFlingSystem(Camera camera, float minX, float minY, float maxX, float maxY){
         super(Aspect.all(PositionComponent.class, FixedToCameraComponent.class));
         this.minX = minX;
         this.minY = minY;
@@ -77,6 +77,7 @@ public class CameraSystem extends EntitySystem {
             }
             camera.update();
         }
+        camera.update();
 
         updateEntityPositions();
 

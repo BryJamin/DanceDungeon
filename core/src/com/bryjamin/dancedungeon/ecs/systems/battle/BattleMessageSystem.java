@@ -9,10 +9,9 @@ import com.bryjamin.dancedungeon.assets.Fonts;
 import com.bryjamin.dancedungeon.assets.TextResource;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
-import com.bryjamin.dancedungeon.ecs.components.ExpireComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
-import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.UITargetingComponent;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
@@ -27,7 +26,7 @@ public class BattleMessageSystem extends BaseSystem {
 
     private Viewport gameport;
 
-    private float height = Measure.units(10f);
+    private float height = Measure.units(7.5f);
 
     public BattleMessageSystem(Viewport gameport) {
         this.gameport = gameport;
@@ -43,28 +42,32 @@ public class BattleMessageSystem extends BaseSystem {
 
         float width = gameport.getWorldWidth();
 
-        Entity e = world.createEntity();
-        e.edit().add(new PositionComponent(CenterMath.centerPositionX(width, gameport.getWorldWidth() / 2),
-                CenterMath.centerPositionY(height, gameport.getWorldHeight() / 2) + Measure.units(15f)));
-        e.edit().add(new CenteringBoundaryComponent(new Rectangle(0, 0, width, height)));
+        Entity e = world.createEntity().edit()
+                .add(new PositionComponent(CenterMath.centerOnPositionX(width, gameport.getWorldWidth() / 2),
+                        CenterMath.centerOnPositionY(height, gameport.getWorldHeight() / 2) + Measure.units(25f)))
+                .add(new CenteringBoundaryComponent(new Rectangle(0, 0, width, height)))
+                .add(new UITargetingComponent())
+                .add(new DrawableComponent(
+                        Layer.FOREGROUND_LAYER_NEAR,
+                        new TextureDescription.Builder(TextureStrings.BLOCK)
+                                .width(width)
+                                .color(new Color(1, 1, 1, 0.7f))
+                                .height(height)
+                                .build()
+                )).getEntity();
 
-
-        e.edit().add(new DrawableComponent(
-                Layer.FOREGROUND_LAYER_NEAR,
-                new TextureDescription.Builder(TextureStrings.BLOCK)
-                        .width(width)
-                        .height(height)
-                        .build(),
-
-                new TextDescription.Builder(Fonts.MEDIUM)
-                        .text(TextResource.TARGETING_NO_TARGETS_IN_RANGE)
-                        .color(new Color(Color.BLACK))
-                        .build()
-
-        ));
-
-        e.edit().add(new FadeComponent(false, 1.5f, false));
-        e.edit().add(new ExpireComponent(3f));
+        Entity e2 = world.createEntity().edit()
+                .add(new PositionComponent(CenterMath.centerOnPositionX(width, gameport.getWorldWidth() / 2),
+                        CenterMath.centerOnPositionY(height, gameport.getWorldHeight() / 2) + Measure.units(25f)))
+                .add(new CenteringBoundaryComponent(new Rectangle(0, 0, width, height)))
+                .add(new UITargetingComponent())
+                .add(new DrawableComponent(
+                        Layer.FOREGROUND_LAYER_NEAR,
+                        new TextDescription.Builder(Fonts.MEDIUM)
+                                .text(TextResource.TARGETING_NO_TARGETS_IN_RANGE)
+                                .color(new Color(Color.BLACK))
+                                .build()
+                )).getEntity();
 
 
         return e;

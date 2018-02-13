@@ -4,6 +4,7 @@ import com.artemis.Aspect;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.artemis.World;
+import com.artemis.utils.IntBag;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.assets.Fonts;
@@ -18,7 +19,6 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.HighLightTextComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.UITargetingComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BattleMessageSystem;
-import com.bryjamin.dancedungeon.ecs.systems.battle.SelectedTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.factories.TextFactory;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
@@ -26,6 +26,7 @@ import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.texture.HighlightedText;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
+import com.bryjamin.dancedungeon.utils.texture.TextDescription;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 /**
@@ -53,18 +54,19 @@ public class SkillUISystem extends EntitySystem {
 
 
     public void createSkillUi(Entity e) {
-
         SkillsComponent skillsComponent = e.getComponent(SkillsComponent.class);
-
         for (int i = 0; i < skillsComponent.skills.size; i++) {
-           // if (i == 0) createCreateSkillText(e, skillsComponent.skills.get(i));
-            createSkillButton(world.createEntity(), e, Measure.units(25f) * (i + 1), 0, skillsComponent.skills.get(i));
+            createSkillButton(world.createEntity(), e, Measure.units(15f) * (i + 1), 0, skillsComponent.skills.get(i));
         }
+    }
 
+    public void refreshSkillUi(Entity e) {
+        this.clearButtons();
+        createSkillUi(e);
     }
 
 
-    private void createCreateSkillText(Entity e, Skill skill) {
+    private void createCreateSkillText(Entity player, Skill skill) {
 
         TextFactory.createCenteredText(world.createEntity(), Fonts.MEDIUM, skill.getName(),
                 tileSystem.getOriginX(),
@@ -74,7 +76,7 @@ public class SkillUISystem extends EntitySystem {
                 .edit().add(new UITargetingComponent());
 
 
-        HighlightedText ht = skill.getHighlight(world, e);
+        HighlightedText ht = skill.getHighlight(world, player);
 
         if (ht != null) {
             Entity description = TextFactory.createCenteredText(world.createEntity(), Fonts.SMALL, ht.getText(),
@@ -84,6 +86,13 @@ public class SkillUISystem extends EntitySystem {
                     Measure.units(3.5f));
 
             description.edit().add(new HighLightTextComponent(ht.getHighlightArray()));
+            description.edit().add(new UITargetingComponent());
+        } else {
+            Entity description = TextFactory.createCenteredText(world.createEntity(), Fonts.MEDIUM, skill.getDescription(world, player),
+                    tileSystem.getOriginX(),
+                    tileSystem.getOriginY() - Measure.units(7.5f),
+                    tileSystem.getWidth(),
+                    Measure.units(3.5f));
             description.edit().add(new UITargetingComponent());
         }
 
@@ -111,11 +120,21 @@ public class SkillUISystem extends EntitySystem {
 
 
     private void createSkillTarget(Entity unit, Skill skill) {
-        world.getSystem(SelectedTargetSystem.class).clearTargetingTiles();
+        this.clearTargetingTiles(); //TODO maybe just move to a new layer?
         Array<Entity> entityArray = skill.createTargeting(world, unit);
 
         if (entityArray.size <= 0) {
             world.getSystem(BattleMessageSystem.class).createWarningMessage();
+
+            switch (skill.getAttack()){
+
+                case Ranged:
+
+
+
+            }
+
+
         }
 
     }
@@ -129,10 +148,6 @@ public class SkillUISystem extends EntitySystem {
 
 
     private void createSkillButton(Entity button, final Entity player, float x, float y, final Skill skill) {
-
-
-        System.out.println(skill.getName());
-        System.out.println(skill.getIcon());
 
         button.edit().add(new PositionComponent(x, y))
                 .add(new SkillButtonComponent(player, skill))
@@ -162,15 +177,49 @@ public class SkillUISystem extends EntitySystem {
                     public void performAction(World world, Entity entity) {
 
                         if (!isCanCastCondition) {
-                            entity.getComponent(DrawableComponent.class).drawables.first().getColor().a = 1f;
+                            entity.getComponent(DrawableComponent.class).drawables.getColor().a = 1f;
                             entity.getComponent(SkillButtonComponent.class).enabled = true;
                         } else {
-                            entity.getComponent(DrawableComponent.class).drawables.first().getColor().a = 0.1f;
+                            entity.getComponent(DrawableComponent.class).drawables.getColor().a = 0.1f;
                             entity.getComponent(SkillButtonComponent.class).enabled = false;
                         }
                     }
                 }));
 
+
+        if (skill.getSpellCoolDown() == Skill.SpellCoolDown.OverTime && skill.getCoolDownTracker() > 0) {
+
+            Entity coolDownText = world.createEntity();
+            coolDownText.edit()
+                    .add(new PositionComponent(x, y))
+                    .add(new SkillButtonComponent())
+                    .add(new UITargetingComponent())
+                    .add(new DrawableComponent(Layer.ENEMY_LAYER_FAR,
+                            new TextDescription.Builder(Fonts.MEDIUM)
+                                    .text(Integer.toString(skill.getCoolDownTracker()))
+                                    .width(SIZE)
+                                    .height(SIZE)
+                                    .build()));
+
+        }
+
+
+    }
+
+
+    /**
+     * Clears the button entities and selected entity from the system
+     */
+    public void clearTargetingTiles() {
+        IntBag bag = world.getAspectSubscriptionManager().get(Aspect.all(UITargetingComponent.class)).getEntities();
+        for (int i = 0; i < bag.size(); i++) {
+            world.getEntity(bag.get(i)).deleteFromWorld();
+        }
+    }
+
+    public void reset() {
+        this.clearTargetingTiles();
+        world.getSystem(SkillUISystem.class).clearButtons();
     }
 
 

@@ -9,7 +9,6 @@ import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.PlayerControlledSystem;
 import com.bryjamin.dancedungeon.factories.ButtonFactory;
 import com.bryjamin.dancedungeon.utils.Measure;
-import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
 
 /**
  * Created by BB on 08/01/2018.
@@ -27,11 +26,9 @@ public class RestEvent extends MapEvent {
     @Override
     public void setUpEvent(World world) {
 
-
-        BagToEntity.bagToEntity(world.createEntity(), new ButtonFactory.ButtonBuilder()
+        new ButtonFactory.ButtonBuilder()
                 .text("Rest")
-                .posX(Measure.units(20f))
-                .posY(Measure.units(30f))
+                .pos(Measure.units(20f), Measure.units(30f))
                 .width(Measure.units(10f))
                 .height(Measure.units(10f))
                 .buttonAction(new WorldAction() {
@@ -47,10 +44,7 @@ public class RestEvent extends MapEvent {
 
                     }
                 })
-                .build());
-
-
-
+                .build(world);
 
     }
 

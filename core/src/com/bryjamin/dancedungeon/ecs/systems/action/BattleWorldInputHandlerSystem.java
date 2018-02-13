@@ -47,7 +47,6 @@ public class BattleWorldInputHandlerSystem extends BaseSystem {
 
 
 
-
     private class BattleWorldGestures extends GestureDetector.GestureAdapter {
 
         @Override
@@ -67,7 +66,7 @@ public class BattleWorldInputHandlerSystem extends BaseSystem {
                 if (world.getSystem(SelectedTargetSystem.class).selectCharacter(input.x, input.y))
                     return true;
 
-                world.getSystem(SelectedTargetSystem.class).reset();
+                world.getSystem(SkillUISystem.class).reset();
 
             }
             return false;
