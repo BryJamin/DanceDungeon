@@ -55,9 +55,6 @@ public class CenteringFrame {
         float startX = CenterMath.centerOnPositionX((widthPer * columns) + (xGap * columns), containerCenter.x);
         float startY = CenterMath.centerOnPositionY(height, containerCenter.y) + height - heightPer;
 
-        System.out.println(containerCenter.y);
-        System.out.println(startY);
-
         int mod = position % columns;
         int div = position / columns;
 

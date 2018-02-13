@@ -13,11 +13,11 @@ import com.bryjamin.dancedungeon.ecs.components.battle.BuffComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.WaitActionComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationMapComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationStateComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.KillOnAnimationEndComponent;
+import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.factories.spells.animations.BasicProjectile;
 import com.bryjamin.dancedungeon.utils.Measure;
@@ -169,8 +169,9 @@ public class Skill {
                                 .build()))
                         .add(new AnimationStateComponent(GLITTER_ANIMATION_ID))
                         .add(new AnimationMapComponent().put(GLITTER_ANIMATION_ID, TextureStrings.SKILLS_HEAL, 0.2f, Animation.PlayMode.NORMAL))
-                        .add(new KillOnAnimationEndComponent(GLITTER_ANIMATION_ID))
-                        .add(new WaitActionComponent());
+                        .add(new KillOnAnimationEndComponent(GLITTER_ANIMATION_ID));
+                world.getSystem(ActionCameraSystem.class).createDeathWaitAction(heal);
+
                 break;
 
             case Slash:
@@ -189,8 +190,9 @@ public class Skill {
                                 .build()))
                         .add(new AnimationStateComponent(SLASH_ANIMATION))
                         .add(new AnimationMapComponent().put(SLASH_ANIMATION, TextureStrings.SKILLS_SLASH, 0.3f, Animation.PlayMode.NORMAL))
-                        .add(new KillOnAnimationEndComponent(SLASH_ANIMATION))
-                        .add(new WaitActionComponent());
+                        .add(new KillOnAnimationEndComponent(SLASH_ANIMATION));
+
+                world.getSystem(ActionCameraSystem.class).createDeathWaitAction(slash);
 
                 break;
 

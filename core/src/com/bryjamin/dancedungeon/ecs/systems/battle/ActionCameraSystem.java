@@ -18,6 +18,12 @@ import com.bryjamin.dancedungeon.utils.math.Coordinates;
  * <p>
  * Is currently nothing to do with an action camera, but watches for actions to be completed
  * before allowing the next turn to be activated
+ *
+ * The way this currently works, is your queue up a set of actions using and assign it to an entity.
+ *
+ * You also use the WaitActionComponent to see if the entity still exists, if not their actions are removed
+ * from the queue
+ *
  */
 
 public class ActionCameraSystem extends EntitySystem {
@@ -43,9 +49,8 @@ public class ActionCameraSystem extends EntitySystem {
     @Override
     protected void processSystem() {
 
-        if(this.getEntities().isEmpty()) {
-
             if (currentConditionalAction == null) {
+                System.out.println(actionQueue.size);
                 actionQueue.first().getRight().performAction(world,
                         actionQueue.first().getLeft());
 
@@ -72,15 +77,9 @@ public class ActionCameraSystem extends EntitySystem {
                 }
             }
 
-        }
-
-
-       // processingFlag = actionQueue.size != 0 || !this.getEntities().isEmpty();
-
         if(!processingFlag){
             //Notify relevant systems
         }
-
 
     }
 
@@ -90,13 +89,8 @@ public class ActionCameraSystem extends EntitySystem {
     }
 
     public boolean isProcessing() {
-
-/*
-        if(!processingFlag){
-            return actionQueue.size != 0 || !this.getEntities().isEmpty();
-        }
-*/
-
+        System.out.println(actionQueue.size);
+        System.out.println(this.getEntities().size());
         return actionQueue.size != 0 || !this.getEntities().isEmpty();
     }
 
@@ -122,20 +116,36 @@ public class ActionCameraSystem extends EntitySystem {
     }
 
 
+    public void createDeathWaitAction(Entity entity) {
+
+        entity.edit().add(new WaitActionComponent());
+
+        pushLastAction(entity, new WorldConditionalAction() {
+            @Override
+            public boolean condition(World world, Entity entity) {
+                return false;
+            }
+
+            @Override
+            public void performAction(World world, Entity entity) {
+            }
+        });
+
+    }
+
+
+    @Override
+    public void removed(Entity e) {
+        for(Pair<Entity, WorldConditionalAction> pair : actionQueue){
+            if(e.equals(pair.getLeft())){
+                actionQueue.removeValue(pair, true);
+            }
+        }
+    }
+
     @Override
     protected boolean checkProcessing() {
-
-        boolean flag = actionQueue.size != 0 || !this.getEntities().isEmpty();
-
-        if(processingFlag && !flag){
-
-            //This is here so after a set of actions is completed the entity that is previously selected is
-            //selected again
-        }
-
-        processingFlag = flag;
-
-
+        processingFlag = actionQueue.size != 0 || !this.getEntities().isEmpty();
         return processingFlag;
     }
 }

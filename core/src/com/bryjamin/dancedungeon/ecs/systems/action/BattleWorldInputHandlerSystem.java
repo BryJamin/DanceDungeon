@@ -1,6 +1,7 @@
 package com.bryjamin.dancedungeon.ecs.systems.action;
 
 import com.artemis.BaseSystem;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector3;
@@ -23,6 +24,7 @@ public class BattleWorldInputHandlerSystem extends BaseSystem {
     private TurnSystem turnSystem;
     private ActionOnTapSystem actionOnTapSystem;
     private SelectedTargetSystem selectedTargetSystem;
+    private InputMultiplexer multiplexer;
 
 
     GestureDetector gestureDetector;
@@ -31,6 +33,7 @@ public class BattleWorldInputHandlerSystem extends BaseSystem {
     public BattleWorldInputHandlerSystem(Viewport gameport){
         gestureDetector = new GestureDetector(new BattleWorldGestures());
         this.gameport = gameport;
+        multiplexer = new InputMultiplexer();
     }
 
 
@@ -38,13 +41,9 @@ public class BattleWorldInputHandlerSystem extends BaseSystem {
 
     @Override
     protected void processSystem() {
-
+        multiplexer.addProcessor(gestureDetector);
+        Gdx.input.setInputProcessor(multiplexer);
     }
-
-    public void handleInput(InputMultiplexer inputMultiplexer) {
-        inputMultiplexer.addProcessor(gestureDetector);
-    }
-
 
 
     private class BattleWorldGestures extends GestureDetector.GestureAdapter {

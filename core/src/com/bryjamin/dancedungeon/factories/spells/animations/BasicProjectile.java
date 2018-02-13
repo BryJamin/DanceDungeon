@@ -14,9 +14,9 @@ import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.WaitActionComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
+import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
@@ -99,7 +99,7 @@ public class BasicProjectile {
 
        Entity projectile = world.createEntity();
        projectile.edit().add(new PositionComponent(x, y));
-       projectile.edit().add(new WaitActionComponent());
+       world.getSystem(ActionCameraSystem.class).createDeathWaitAction(projectile);
 
        projectile.edit().add(new MoveToComponent(speed, new Vector3(
                CenterMath.centerOnPositionX(width, r.getCenter(new Vector2()).x),

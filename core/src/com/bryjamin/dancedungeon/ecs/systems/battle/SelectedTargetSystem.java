@@ -71,7 +71,6 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
                 entity.edit().remove(SelectedEntityComponent.class);
             }
             world.getSystem(SkillUISystem.class).reset();
-            world.getSystem(SkillUISystem.class).createSkillUi(e);
         }
 
         setUpCharacter(e);
@@ -112,10 +111,6 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
                 world.getSystem(TileSystem.class).getOccupiedMap().findKey(c, false).edit().add(new SelectedEntityComponent());
             }
             return true;
-        } else {
-
-            System.out.println("eLSE");
-            //this.reset();
         }
 
         return false;
@@ -234,20 +229,6 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
                         .text("HP " + (int) health.health + "/" + stats.maxHealth)
                         .build()));
         hpText.edit().add(new UITargetingComponent());
-
-/*
-
-        Entity hpTextAgain = world.createEntity();
-        hpTextAgain.edit().add(new PositionComponent(infoX, infoY - infoSize * 1.5f));
-        hpTextAgain.edit().add(new CenteringBoundaryComponent(infoSize, infoSize));
-        hpTextAgain.edit().add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE,
-                new TextDescription.Builder(Fonts.SMALL)
-                        .color(new Color(Color.WHITE))
-                        .text((int) health.health + "/" + stats.healthAndMax)
-                        .build()));
-        hpTextAgain.edit().add(new UITargetingComponent());
-*/
-
 
     }
 
