@@ -27,6 +27,7 @@ import com.bryjamin.dancedungeon.ecs.systems.battle.GenerateTargetsSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.HealthSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.NoMoreActionsSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.PlayerControlledSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.ReselectTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.SelectedTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
@@ -115,6 +116,7 @@ public class BattleScreen extends AbstractScreen {
                         new BoundsDrawingSystem(batch),
                         new GenerateTargetsSystem(),
                         new SelectedTargetSystem(),
+                        new ReselectTargetSystem(),
                         new DeathSystem()
                 )
                 .build();

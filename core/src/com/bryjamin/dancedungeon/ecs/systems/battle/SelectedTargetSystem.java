@@ -117,30 +117,6 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
     }
 
 
-  /*  public void reselectEntityAfterActionComplete() {
-
-        if (this.getEntities().size() > 0) {
-
-            Entity selectedEntity = this.getEntities().get(0);
-
-            TurnComponent turnComponent = selectedEntity.getComponent(TurnComponent.class);
-            if (turnComponent.movementActionAvailable || turnComponent.attackActionAvailable ||
-                    selectedEntity.getComponent(SkillsComponent.class).canCast(world, selectedEntity)) {
-
-                //if (entityArray.size > 0) {
-                setUpCharacter(selectedEntity);
-                //}
-
-            } else {
-                this.clearTargetingTiles();
-            }
-
-
-        }
-
-    }*/
-
-
     /**
      * Uses the given entity and sets up it's skills
      *

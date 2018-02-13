@@ -55,6 +55,21 @@ public class ActionCameraSystem extends EntitySystem {
         super(Aspect.all(WaitActionComponent.class));
     }
 
+
+    private boolean isActionEntityDead(){
+
+        boolean isEntityDead = true;
+
+        for(Entity e : this.getEntities()){
+            if(queuedActionMap.get(actionQueue.first()).equals(e)){
+                isEntityDead = false;
+                break;
+            }
+        }
+
+        return isEntityDead;
+    }
+
     @Override
     protected void processSystem() {
 
@@ -69,16 +84,7 @@ public class ActionCameraSystem extends EntitySystem {
             case PERFORM_ACTION:
                 if (actionQueue.size == 0) return;
 
-                boolean skip = true;
-
-                for(Entity e : this.getEntities()){
-                    if(queuedActionMap.get(actionQueue.first()).equals(e)){
-                        skip = false;
-                        break;
-                    }
-                }
-
-                if(skip) return;
+                if(isActionEntityDead()) return;
 
                 actionQueue.first().performAction(world,
                         queuedActionMap.get(actionQueue.first()));
@@ -89,16 +95,7 @@ public class ActionCameraSystem extends EntitySystem {
 
             case WAIT_ACTION:
 
-                boolean skip2 = true;
-
-                for(Entity e : this.getEntities()){
-                    if(queuedActionMap.get(actionQueue.first()).equals(e)){
-                        skip2 = false;
-                        break;
-                    }
-                }
-
-                if(skip2) {
+                if(isActionEntityDead()) {
                     if(actionQueue.size == 0) return;
                     actionQueue.removeFirst();
                     state = State.PERFORM_ACTION;
@@ -108,19 +105,12 @@ public class ActionCameraSystem extends EntitySystem {
 
                 if (actionQueue.first().condition(world, queuedActionMap.get(actionQueue.first()))) {
 
-
-
-
                     Entity current = queuedActionMap.get(actionQueue.first());
-
 
                     actionQueue.removeFirst();
                     state = State.PERFORM_ACTION;
 
-
-
                     boolean noMoreActions = true;
-
 
                     for(WorldConditionalAction wca : actionQueue){
                         if(queuedActionMap.get(wca).equals(current)){
@@ -188,10 +178,6 @@ public class ActionCameraSystem extends EntitySystem {
 
     }
 
-
-    @Override
-    public void removed(Entity e) {
-    }
 
     @Override
     protected boolean checkProcessing() {
