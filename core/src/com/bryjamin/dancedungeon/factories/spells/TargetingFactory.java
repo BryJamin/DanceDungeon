@@ -160,7 +160,8 @@ public class TargetingFactory {
             box.edit().add(new ActionOnTapComponent(new WorldAction() {
                 @Override
                 public void performAction(World world, Entity entity) {
-                    world.getSystem(ActionCameraSystem.class).createMovementAction(player, coordinatesWithPathMap.get(c));
+                    world.getSystem(SkillUISystem.class).reset();
+                    world.getSystem(ActionCameraSystem.class).pushLastAction(player, createMovementAction(player, coordinatesWithPathMap.get(c)));
                 }
             }));
         }

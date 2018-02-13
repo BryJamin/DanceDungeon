@@ -1,16 +1,16 @@
 package com.bryjamin.dancedungeon.ecs.systems.battle;
 
 import com.artemis.Aspect;
+import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.artemis.World;
+import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.Queue;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.WaitActionComponent;
-import com.bryjamin.dancedungeon.ecs.systems.SkillUISystem;
-import com.bryjamin.dancedungeon.utils.Pair;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
 /**
@@ -18,18 +18,22 @@ import com.bryjamin.dancedungeon.utils.math.Coordinates;
  * <p>
  * Is currently nothing to do with an action camera, but watches for actions to be completed
  * before allowing the next turn to be activated
- *
+ * <p>
  * The way this currently works, is your queue up a set of actions using and assign it to an entity.
- *
+ * <p>
  * You also use the WaitActionComponent to see if the entity still exists, if not their actions are removed
  * from the queue
- *
  */
 
 public class ActionCameraSystem extends EntitySystem {
 
 
-    private Queue<Pair<Entity, WorldConditionalAction>> actionQueue = new Queue<Pair<Entity, WorldConditionalAction>>();
+    private OrderedMap<WorldConditionalAction, Entity> queuedActionMap = new OrderedMap<WorldConditionalAction, Entity>();
+
+    private Queue<WorldConditionalAction> actionQueue = new Queue<WorldConditionalAction>();
+
+    private ComponentMapper<WaitActionComponent> waitActionMapper;
+
 
     private WorldConditionalAction currentConditionalAction;
 
@@ -37,10 +41,15 @@ public class ActionCameraSystem extends EntitySystem {
 
     private boolean processingFlag = true;
 
+    private enum State {
+        PERFORM_ACTION, WAIT_ACTION, END_ACTION
+    }
+
+    private State state = State.PERFORM_ACTION;
+
     /**
      * Creates an entity system that uses the specified aspect as a matcher
      * against entities.
-     *
      */
     public ActionCameraSystem() {
         super(Aspect.all(WaitActionComponent.class));
@@ -49,49 +58,97 @@ public class ActionCameraSystem extends EntitySystem {
     @Override
     protected void processSystem() {
 
-            if (currentConditionalAction == null) {
-                System.out.println(actionQueue.size);
-                actionQueue.first().getRight().performAction(world,
-                        actionQueue.first().getLeft());
+        if(this.getEntities().size() == 0){
+            actionQueue.clear();
+            state = State.PERFORM_ACTION;
+        }
 
-                currentConditionalAction = actionQueue.first().getRight();
 
-                if (!hasBegun) {
-                    hasBegun = true;
-                    world.getSystem(SkillUISystem.class).reset();
+        switch (state) {
+
+            case PERFORM_ACTION:
+                if (actionQueue.size == 0) return;
+
+                boolean skip = true;
+
+                for(Entity e : this.getEntities()){
+                    if(queuedActionMap.get(actionQueue.first()).equals(e)){
+                        skip = false;
+                        break;
+                    }
+                }
+
+                if(skip) return;
+
+                actionQueue.first().performAction(world,
+                        queuedActionMap.get(actionQueue.first()));
+
+                queuedActionMap.get(actionQueue.first()).edit().add(new WaitActionComponent());
+                state = State.WAIT_ACTION;
+                break;
+
+            case WAIT_ACTION:
+
+                boolean skip2 = true;
+
+                for(Entity e : this.getEntities()){
+                    if(queuedActionMap.get(actionQueue.first()).equals(e)){
+                        skip2 = false;
+                        break;
+                    }
+                }
+
+                if(skip2) {
+                    if(actionQueue.size == 0) return;
+                    actionQueue.removeFirst();
+                    state = State.PERFORM_ACTION;
+                    return;
                 }
 
 
-            } else {
+                if (actionQueue.first().condition(world, queuedActionMap.get(actionQueue.first()))) {
 
-                if (currentConditionalAction.condition(world, actionQueue.first().getLeft())) {
+
+
+
+                    Entity current = queuedActionMap.get(actionQueue.first());
+
+
                     actionQueue.removeFirst();
-                    currentConditionalAction = null;
+                    state = State.PERFORM_ACTION;
 
-                    if (actionQueue.size == 0) {
-                        //TODO should only occur when it is the player's turn
-                        hasBegun = false;
 
+
+                    boolean noMoreActions = true;
+
+
+                    for(WorldConditionalAction wca : actionQueue){
+                        if(queuedActionMap.get(wca).equals(current)){
+                            noMoreActions = false;
+                            break;
+                        }
                     }
 
-                }
-            }
+                    if(noMoreActions){
+                        current.edit().remove(WaitActionComponent.class);
+                    }
 
-        if(!processingFlag){
-            //Notify relevant systems
+
+                }
+
         }
 
     }
 
 
     public void pushLastAction(Entity e, WorldConditionalAction wca) {
-        actionQueue.addLast(new Pair<Entity, WorldConditionalAction>(e, wca));
+        actionQueue.addLast(wca);
+        queuedActionMap.put(wca, e);
+        e.edit().add(new WaitActionComponent());
     }
 
     public boolean isProcessing() {
-        System.out.println(actionQueue.size);
-        System.out.println(this.getEntities().size());
-        return actionQueue.size != 0 || !this.getEntities().isEmpty();
+        return checkProcessing();
     }
 
 
@@ -118,8 +175,6 @@ public class ActionCameraSystem extends EntitySystem {
 
     public void createDeathWaitAction(Entity entity) {
 
-        entity.edit().add(new WaitActionComponent());
-
         pushLastAction(entity, new WorldConditionalAction() {
             @Override
             public boolean condition(World world, Entity entity) {
@@ -136,16 +191,11 @@ public class ActionCameraSystem extends EntitySystem {
 
     @Override
     public void removed(Entity e) {
-        for(Pair<Entity, WorldConditionalAction> pair : actionQueue){
-            if(e.equals(pair.getLeft())){
-                actionQueue.removeValue(pair, true);
-            }
-        }
     }
 
     @Override
     protected boolean checkProcessing() {
-        processingFlag = actionQueue.size != 0 || !this.getEntities().isEmpty();
+        processingFlag = actionQueue.size != 0;
         return processingFlag;
     }
 }
