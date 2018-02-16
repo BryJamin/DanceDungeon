@@ -10,6 +10,7 @@ import com.bryjamin.dancedungeon.ecs.systems.SkillUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.SelectedTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
+import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
 
 /**
  * Created by BB on 23/01/2018.
@@ -24,6 +25,7 @@ public class BattleWorldInputHandlerSystem extends BaseSystem {
     private TurnSystem turnSystem;
     private ActionOnTapSystem actionOnTapSystem;
     private SelectedTargetSystem selectedTargetSystem;
+    private StageUIRenderingSystem stageUIRenderingSystem;
     private InputMultiplexer multiplexer;
 
 
@@ -41,6 +43,7 @@ public class BattleWorldInputHandlerSystem extends BaseSystem {
 
     @Override
     protected void processSystem() {
+        multiplexer.addProcessor(stageUIRenderingSystem.stage);
         multiplexer.addProcessor(gestureDetector);
         Gdx.input.setInputProcessor(multiplexer);
     }

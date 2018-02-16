@@ -1,11 +1,17 @@
 package com.bryjamin.dancedungeon.screens.menu;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.bryjamin.dancedungeon.MainGame;
+import com.bryjamin.dancedungeon.assets.Skins;
 import com.bryjamin.dancedungeon.screens.AbstractScreen;
-import com.bryjamin.dancedungeon.screens.menu.worlds.MenuWorld;
+import com.bryjamin.dancedungeon.utils.Measure;
 
 /**
  * Created by BB on 08/10/2017.
@@ -13,37 +19,77 @@ import com.bryjamin.dancedungeon.screens.menu.worlds.MenuWorld;
 
 public class MenuScreen extends AbstractScreen {
 
-    private MenuWorld menuWorld;
+    private Stage stage;
+    private Table table;
 
-    public MenuScreen(MainGame game) {
+    public MenuScreen(final MainGame game) {
         super(game);
-        menuWorld = new MenuWorld(game, gameport);
+        this.game = game;
+
+        Skin uiSkin = Skins.DEFAULT_SKIN(assetManager);
+
+        stage = new Stage(gameport, game.batch);
+        Gdx.input.setInputProcessor(stage);
+
+        table = new Table();
+        table.setFillParent(true);
+
+
+        TextButton textBtn1 = new TextButton("New Game", uiSkin);
+        textBtn1.addListener(new ClickListener() {
+
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.getScreen().dispose();
+/*
+
+                MapGenerator mapGenerator = new MapGenerator();
+                mapGenerator.generateGameMap();
+
+                PartyDetails partyDetails = new PartyDetails();
+                partyDetails.addPartyMember(new CharacterGenerator().createMage(), 1);
+
+                game.setScreen(new MapScreen(game, partyDetails));
+*/
+
+
+                game.setScreen(new ExpeditionScreen(game));
+            }
+        });
+
+        TextButton textBtn2 = new TextButton("Quit Game", uiSkin);
+        textBtn2.addListener(new ClickListener() {
+
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.exit();
+                System.exit(0);
+            }
+        });
+
+        table.setDebug(true); // This is optional, but enables debug lines for tables.
+        table.add(textBtn1).width(Measure.units(20f)).padBottom(Measure.units(2.5f));
+        table.row();
+        table.add(textBtn2).width(Measure.units(20f));
+
+        stage.addActor(table);
+
+        // Add widgets to the table here.
+
     }
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        game.batch.setProjectionMatrix(gamecam.combined);
-
-        gamecam.update();
-        menuWorld.process(delta);
-        handleInput(delta);
+        stage.act(Gdx.graphics.getDeltaTime());
+        stage.draw();
 
     }
 
-    public void handleInput(float dt) {
-
-
-        InputMultiplexer multiplexer = new InputMultiplexer();
-        menuWorld.handleInput(multiplexer);
-        Gdx.input.setInputProcessor(multiplexer);
-
+    public void resize (int width, int height) {
+        gameport.update(width, height);
+        stage.getViewport().update(width, height);
     }
-
-
-
 
 
 }

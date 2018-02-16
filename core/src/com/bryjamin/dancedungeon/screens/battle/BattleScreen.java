@@ -6,6 +6,7 @@ import com.artemis.WorldConfigurationBuilder;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MoveToTargetSystem;
@@ -40,6 +41,7 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.PlayerGraphicalTargetingS
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.ScaleTransformationSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
+import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.factories.spells.SpellFactory;
 import com.bryjamin.dancedungeon.screens.AbstractScreen;
@@ -100,7 +102,7 @@ public class BattleScreen extends AbstractScreen {
                 )
                 .with(WorldConfigurationBuilder.Priority.LOWEST,
                         new ActionOnTapSystem(),
-                        new SkillUISystem(),
+                        new SkillUISystem(game),
                         new ActionCameraSystem(),
 
                         //Rendering     Effects
@@ -113,6 +115,7 @@ public class BattleScreen extends AbstractScreen {
                         new AnimationSystem(game),
                         new RenderingSystem(game, gameport),
                         new HealthBarSystem(game, gameport),
+                        new StageUIRenderingSystem(new Stage(gameport, game.batch)),
                         new BoundsDrawingSystem(batch),
                         new GenerateTargetsSystem(),
                         new SelectedTargetSystem(),

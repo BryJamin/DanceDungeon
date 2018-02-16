@@ -68,6 +68,10 @@ public class RenderingSystem extends EntitySystem {
     private GlyphLayout glyphLayout = new GlyphLayout();
 
 
+    public TextureAtlas getAtlas() {
+        return atlas;
+    }
+
     /**
      * Used to draw Entities behind the UI
      */

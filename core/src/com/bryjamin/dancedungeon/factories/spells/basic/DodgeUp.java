@@ -14,7 +14,7 @@ public class DodgeUp extends Skill {
                 .icon("skills/Fire")
                 .description("Increase the Dodge chance of an ally by 20% for one turn")
                 .targeting(Targeting.Ally)
-                .actionType(ActionType.UsesAttackAction)
+                .actionType(ActionType.UsesMoveAndAttackAction)
                 .spellAnimation(SpellAnimation.Glitter)
                 .spellEffects(SpellEffect.Dodge.value(1).duration(2))
                 .spellCoolDown(3)

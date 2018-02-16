@@ -96,8 +96,7 @@ public class TargetingFactory {
             @Override
             public void performAction(World world, final Entity e) {
                 skill.cast(world, player, coordinates);
-                world.getSystem(SkillUISystem.class).clearTargetingTiles();
-                world.getSystem(SkillUISystem.class).refreshSkillUi(player);
+                world.getSystem(SkillUISystem.class).reset();
             }
         }));
 
@@ -170,88 +169,7 @@ public class TargetingFactory {
             }));
         }
 
-
         coordinatesWithPathMap.put(coordinateComponent.coordinates, new Queue<Coordinates>());
-
-
-        //Basic Attack
-
-        //TODO commenting out Basic Attack as that may no longer be a thing
-
-        /* if (player.getComponent(TurnComponent.class).attackActionAvailable) {
-
-            final OrderedMap<Coordinates, Queue<Coordinates>> targetCoordinateMovementQueueMap = new OrderedMap<Coordinates, Queue<Coordinates>>();
-
-            //Generate Map of movement and target squares
-
-            //This goes through and get the targets in range of all possible movement sqaures that have been found.
-            //It then checks if any targets are in range of an attack from the movement squares.
-            //If two paths can be used to attack the same sqaure, the shortest path is chosen.
-
-            for (final Coordinates c : coordinatesWithPathMap.keys()) {
-
-                TargetComponent targetComponent = player.getComponent(TargetComponent.class);
-
-                for (Entity e : getTargetsInRange(world, c, targetComponent.getTargets(world), player.getComponent(StatComponent.class).attackRange)) {
-
-                    final Coordinates targetCoordinate = e.getComponent(CoordinateComponent.class).coordinates;
-
-                    //Puts in the coordinate queue a character will follow when performing a basic attack.
-                    //If one queue is shorter than the other it replaces it.
-                    if (targetCoordinateMovementQueueMap.get(targetCoordinate) != null) {
-                        if (coordinatesWithPathMap.get(c).size < targetCoordinateMovementQueueMap.get(targetCoordinate).size) {
-                            targetCoordinateMovementQueueMap.put(targetCoordinate, coordinatesWithPathMap.get(c));
-                        }
-
-                    } else {
-                        targetCoordinateMovementQueueMap.put(targetCoordinate, coordinatesWithPathMap.get(c));
-                    }
-
-                }
-            }
-
-
-            //Takes the valid paths found from the previous sort and create a highlighted square that
-            //when tapped ahs the action to, follow the path and then fire the attack
-
-            for (final Coordinates coordinateOfTarget : targetCoordinateMovementQueueMap.keys()) {
-
-                Entity redBox = BagToEntity.bagToEntity(world.createEntity(), highlightBox(tileSystem.createRectangleUsingCoordinates(coordinateOfTarget), new Color(Color.RED)));
-
-
-                entityArray.add(redBox);
-
-                redBox.edit().add(new ActionOnTapComponent(new WorldAction() {
-                    @Override
-                    public void performAction(World world, final Entity e) {
-
-                        if (targetCoordinateMovementQueueMap.get(coordinateOfTarget).size != 0) {
-                            world.getSystem(ActionCameraSystem.class).pushLastAction(player, createMovementAction(player, targetCoordinateMovementQueueMap.get(coordinateOfTarget)));
-                        }
-
-                        world.getSystem(ActionCameraSystem.class).pushLastAction(player, new WorldConditionalAction() {
-                            @Override
-                            public boolean condition(World world, Entity entity) {
-                                return entity.getComponent(MoveToComponent.class).isEmpty();
-                            }
-
-                            @Override
-                            public void performAction(World world, Entity entity) {
-                                entity.getComponent(SkillsComponent.class).basicAttack.cast(world, player, coordinateOfTarget);
-                            }
-                        });
-
-
-                    }
-                }));
-
-            }
-
-
-        }
-
-*/
-
         return entityArray;
 
     }
