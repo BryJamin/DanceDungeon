@@ -38,7 +38,6 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 public class SelectedTargetSystem extends EntityProcessingSystem {
 
-    private SkillUISystem skillUISystem;
     private TileSystem tileSystem;
 
     private ComponentMapper<PlayerControlledComponent> playerControlledM;

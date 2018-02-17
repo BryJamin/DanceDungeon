@@ -15,9 +15,9 @@ public class StageUIRenderingSystem extends BaseSystem {
 
     public StageUIRenderingSystem(Stage stage){
         this.stage = stage;
-        container = new Table();
-        container.setDebug(true);
-        container.setFillParent(true);
+        //container = new Table();
+      // container.setDebug(true);
+        //container.setFillParent(true);
     }
 
 
@@ -26,6 +26,5 @@ public class StageUIRenderingSystem extends BaseSystem {
         stage.act(world.delta);
         stage.draw();
     }
-
 
 }

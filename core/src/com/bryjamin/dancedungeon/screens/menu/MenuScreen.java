@@ -41,16 +41,16 @@ public class MenuScreen extends AbstractScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.getScreen().dispose();
-/*
 
-                MapGenerator mapGenerator = new MapGenerator();
-                mapGenerator.generateGameMap();
 
-                PartyDetails partyDetails = new PartyDetails();
-                partyDetails.addPartyMember(new CharacterGenerator().createMage(), 1);
+                //MapGenerator mapGenerator = new MapGenerator();
+                //mapGenerator.generateGameMap();
+//
+                //PartyDetails partyDetails = new PartyDetails();
+                //partyDetails.addPartyMember(new CharacterGenerator().createMage(), 1);
+//
+                //game.setScreen(new MapScreen(game, partyDetails));
 
-                game.setScreen(new MapScreen(game, partyDetails));
-*/
 
 
                 game.setScreen(new ExpeditionScreen(game));

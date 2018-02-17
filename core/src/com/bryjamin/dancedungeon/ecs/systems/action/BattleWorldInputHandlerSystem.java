@@ -39,12 +39,14 @@ public class BattleWorldInputHandlerSystem extends BaseSystem {
     }
 
 
-
+    @Override
+    protected void initialize() {
+        multiplexer.addProcessor(stageUIRenderingSystem.stage);
+        multiplexer.addProcessor(gestureDetector);
+    }
 
     @Override
     protected void processSystem() {
-        multiplexer.addProcessor(stageUIRenderingSystem.stage);
-        multiplexer.addProcessor(gestureDetector);
         Gdx.input.setInputProcessor(multiplexer);
     }
 

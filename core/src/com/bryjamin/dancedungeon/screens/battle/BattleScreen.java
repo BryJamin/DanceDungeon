@@ -73,6 +73,8 @@ public class BattleScreen extends AbstractScreen {
 
     private void createWorld(){
 
+        Stage UIStage = new Stage(gameport, game.batch);
+
         WorldConfiguration config = new WorldConfigurationBuilder()
                 .with(WorldConfigurationBuilder.Priority.HIGHEST,
 
@@ -102,7 +104,7 @@ public class BattleScreen extends AbstractScreen {
                 )
                 .with(WorldConfigurationBuilder.Priority.LOWEST,
                         new ActionOnTapSystem(),
-                        new SkillUISystem(game),
+                        new SkillUISystem(UIStage, game),
                         new ActionCameraSystem(),
 
                         //Rendering     Effects
@@ -115,7 +117,7 @@ public class BattleScreen extends AbstractScreen {
                         new AnimationSystem(game),
                         new RenderingSystem(game, gameport),
                         new HealthBarSystem(game, gameport),
-                        new StageUIRenderingSystem(new Stage(gameport, game.batch)),
+                        new StageUIRenderingSystem(UIStage),
                         new BoundsDrawingSystem(batch),
                         new GenerateTargetsSystem(),
                         new SelectedTargetSystem(),
