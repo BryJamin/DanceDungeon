@@ -21,7 +21,6 @@ import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.assets.FileStrings;
 import com.bryjamin.dancedungeon.assets.Skins;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
-import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.SkillButtonComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.UITargetingComponent;
@@ -136,26 +135,6 @@ public class SkillUISystem extends EntitySystem {
         description.setText(skill.getDescription(world, player));
         description.setAlignment(Align.center);
         infoTable.add(description).width(infoTable.getWidth());
-    }
-
-
-    public boolean touch(float x, float y) {
-
-        for (Entity e : this.getEntities()) {
-
-            SkillButtonComponent sbc = e.getComponent(SkillButtonComponent.class);
-
-            if (e.getComponent(HitBoxComponent.class).contains(x, y) && sbc.enabled) {
-                createCreateSkillText(sbc.getEntity(),
-                        sbc.getSkill());
-
-                createSkillTarget(sbc.getEntity(),
-                        sbc.getSkill());
-
-                return true;
-            }
-        }
-        return false;
     }
 
 
