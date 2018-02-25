@@ -1,34 +1,32 @@
 package com.bryjamin.dancedungeon.ecs.systems.input;
 
-import com.artemis.Aspect;
-import com.artemis.EntitySystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
 import com.bryjamin.dancedungeon.ecs.systems.action.ActionOnTapSystem;
+import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
 
 /**
- * Created by BB on 02/02/2018.
+ * Created by BB on 25/02/2018.
  */
 
-public class BasicInputSystem extends EntitySystem{
+public class ExpeditionScreenInputSystem extends BasicInputSystem{
 
-    protected Viewport gameport;
-    protected GestureDetector gestureListener;
+    private StageUIRenderingSystem stageUIRenderingSystem;
 
-
-    public BasicInputSystem(Viewport gameport){
-        super(Aspect.all(ActionOnTapComponent.class));
-        this.gameport = gameport;
-        gestureListener = new GestureDetector(new Adapter());
+    public ExpeditionScreenInputSystem(Viewport gameport) {
+        super(gameport);
     }
+
+
+
 
     @Override
     protected void processSystem() {
         InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(stageUIRenderingSystem.stage);
         multiplexer.addProcessor(gestureListener);
         Gdx.input.setInputProcessor(multiplexer);
     }
@@ -45,6 +43,5 @@ public class BasicInputSystem extends EntitySystem{
             return false;
         }
     }
-
 
 }

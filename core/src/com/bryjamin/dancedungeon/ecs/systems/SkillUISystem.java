@@ -153,16 +153,8 @@ public class SkillUISystem extends EntitySystem {
 
         float size = Measure.units(7.5f);
 
-        sw.start("drawable");
         Drawable drawable = new TextureRegionDrawable(atlas.findRegion(skill.getIcon()));
-        TextureRegionDrawable trd = new TextureRegionDrawable();
-        sw.stop();
-
-        sw.start("btn");
         Button btn = new Button(drawable);
-        sw.stop();
-
-        sw.start("clicklistener");
         skillsTable.add(btn).width(size).height(size).pad(Measure.units(1.5f));
         btn.addListener(new ClickListener(){
 

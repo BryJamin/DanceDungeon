@@ -61,7 +61,7 @@ public class BattleWorldInputHandlerSystem extends BaseSystem {
             if (world.getSystem(ActionCameraSystem.class).isProcessing()) return false;
 
             if (world.getSystem(TurnSystem.class).getTurn() == TurnSystem.TURN.ALLY) {
-                
+
                 if (world.getSystem(ActionOnTapSystem.class).touch(input.x, input.y))
                     return true;
 
