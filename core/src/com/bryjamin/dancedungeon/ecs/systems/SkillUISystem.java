@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -28,7 +29,6 @@ import com.bryjamin.dancedungeon.ecs.systems.battle.BattleMessageSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.utils.Measure;
-import com.bryjamin.dancedungeon.utils.StopWatch;
 
 /**
  * Created by BB on 23/01/2018.
@@ -49,7 +49,6 @@ public class SkillUISystem extends EntitySystem {
     private Label title;
     private Label description;
     private ImageButton[] buttons;
-    StopWatch sw = new StopWatch();
 
     private Stage stage;
 
@@ -71,16 +70,19 @@ public class SkillUISystem extends EntitySystem {
     protected void initialize() {
 
         container = new Table(uiSkin);
-      //  container.setDebug(true);
+        container.setDebug(true);
         container.setWidth(stage.getWidth());
         container.setHeight(Measure.units(17.5f));
         container.align(Align.bottom);
         container.setTransform(false);
 
         infoTable = new Table(uiSkin);
+        Window window = new Window("Skills", uiSkin);
         skillsTable = new Table(uiSkin);
+        skillsTable.setDebug(true);
 
-        container.add(skillsTable).width(Measure.units(50f));
+        window.add(skillsTable);
+        container.add(window).width(Measure.units(50f));
         container.add(infoTable).width(Measure.units(30f)).height(Measure.units(17.5f));
 
         title = new Label("", uiSkin);
@@ -167,7 +169,6 @@ public class SkillUISystem extends EntitySystem {
                         skill);
             }
         });
-        sw.stop();
 
     }
 

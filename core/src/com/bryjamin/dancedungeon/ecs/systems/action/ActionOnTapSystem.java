@@ -6,15 +6,12 @@ import com.artemis.EntitySystem;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
-import com.bryjamin.dancedungeon.utils.StopWatch;
 
 /**
  * Created by BB on 20/10/2017.
  */
 
 public class ActionOnTapSystem extends EntitySystem {
-
-    private StopWatch stopWatch = new StopWatch();
 
     public ActionOnTapSystem() {
         super(Aspect.all(ActionOnTapComponent.class, HitBoxComponent.class));
@@ -41,7 +38,6 @@ public class ActionOnTapSystem extends EntitySystem {
      */
     public boolean touch(float x, float y){
 
-        stopWatch.start("touch");
         for(Entity e : this.getEntities()) {
             ActionOnTapComponent actionOnTapComponent = e.getComponent(ActionOnTapComponent.class);
 
@@ -53,7 +49,6 @@ public class ActionOnTapSystem extends EntitySystem {
                 return true;
             }
         }
-        stopWatch.stop();
         return false;
     }
 

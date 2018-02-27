@@ -8,12 +8,16 @@ import com.artemis.utils.IntBag;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
@@ -52,6 +56,8 @@ public class ExpeditionScreenCreationSystem extends BaseSystem {
     private RenderingSystem renderingSystem;
     private Skin uiSkin;
     private Table container;
+    private Table characterPane;
+
 
     private Viewport gameport;
     private MainGame game;
@@ -92,7 +98,14 @@ public class ExpeditionScreenCreationSystem extends BaseSystem {
         createAvailablePartyFrame();
         createCurrentPartyFrame();
 
-
+        //This is because initalize is recalled and kind of screws up a bit.
+        //Better option is to have an intialize and 'redraw' method. When refreshinging tables
+        if(characterPane == null) {
+            characterPane = new Table(uiSkin);
+        } else {
+           // characterPane.remove();
+           // characterPane.clear();
+        }
         float btnW = Measure.units(25f);
         float btnHeight = Measure.units(7.5f);
         CenteringFrame centeringFrame = new CenteringFrame(Measure.units(0), Measure.units(0), Measure.units(30f), Measure.units(12.5f));
@@ -189,11 +202,6 @@ public class ExpeditionScreenCreationSystem extends BaseSystem {
     }
 
 
-    private static final String reallyLongString = "This\nIs\nA\nReally\nLong\nString\nThat\nHas\nLots\nOf\nLines\nAnd\nRepeats.\n"
-            + "This\nIs\nA\nReally\nLong\nString\nThat\nHas\nLots\nOf\nLines\nAnd\nRepeats.\n"
-            + "This\nIs\nA\nReally\nLong\nString\nThat\nHas\nLots\nOf\nLines\nAnd\nRepeats.\n";
-
-
     private void createAvailablePartyFrame(){
 
         Stage stage = stageUIRenderingSystem.stage;
@@ -204,42 +212,15 @@ public class ExpeditionScreenCreationSystem extends BaseSystem {
         container.setWidth(stage.getWidth());
         container.setHeight(stage.getHeight());
         container.align(Align.right);
-      // container.align(Align.right);
 
-//
         Table partyMemberContainer = new Table();
         partyMemberContainer.setDebug(true);
 
         ScrollPane scrollPane = new ScrollPane(partyMemberContainer, uiSkin);
-
-
-//
         container.add(scrollPane).width(Measure.units(30f)).height(stage.getHeight());
 
 
         stage.addActor(container);
-
-        Rectangle frame = new Rectangle(Measure.units(70f), Measure.units(0), Measure.units(25f), gameport.getWorldHeight());
-
-        CenteringFrame centeringFrame = new CenteringFrame(frame);
-        centeringFrame.setWidthPer(Measure.units(7.5f));
-        centeringFrame.setHeightPer(Measure.units(7.5f));
-        centeringFrame.setColumns(2);
-        centeringFrame.setRows(5);
-        centeringFrame.setyGap(Measure.units(2.5f));
-        centeringFrame.setxGap(Measure.units(1.5f));
-
-        Entity backdrop = world.createEntity();
-        backdrop.edit().add(new PositionComponent(frame.x, frame.y))
-                .add(new PartyUiComponent())
-                .add(new DrawableComponent(Layer.BACKGROUND_LAYER_NEAR,
-                        new TextureDescription.Builder(TextureStrings.BLOCK)
-                                .width(frame.width)
-                                .height(frame.height)
-                                .color(new Color(0,0,0,0.8f))
-                                .build()));
-
-
 
         //Right hand column
         for (int i = 0; i < availableMembers.size; i++) {
@@ -265,20 +246,19 @@ public class ExpeditionScreenCreationSystem extends BaseSystem {
             }
 
             partyMemberContainer.add(btn).width(Measure.units(7.5f)).height(Measure.units(7.5f));
+            partyMemberContainer.add(new Label(unitData.name, uiSkin));
+
+            drawable = new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.BLOCK));
+            Button characterInfo = new Button(uiSkin);
+            characterInfo.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    createCharacterInformationWindow(unitData);
+                }
+            });
+            partyMemberContainer.add(characterInfo).prefSize(Measure.units(5f), Measure.units(5f));
+
             partyMemberContainer.row();
-            //Vector2 position = centeringFrame.calculatePositionReverseY(i);
-//
-            //Entity e = createPartyIcon(position.x, position.y, availableMembers.get(i));
-//
-            //if (partyMembers.contains(availableMembers.get(i), true))
-            //    e.edit().add(new GreyScaleComponent());
-            //else
-            //    e.edit().add(new ActionOnTapComponent(new WorldAction() {
-            //        @Override
-            //        public void performAction(World world, Entity entity) {
-            //            addToParty(entity.getComponent(UnitComponent.class).getUnitData());
-            //        }
-            //    }));
         }
 
 
@@ -303,6 +283,57 @@ public class ExpeditionScreenCreationSystem extends BaseSystem {
                 return;
             }
         }
+
+    }
+
+    private void createCharacterInformationWindow(UnitData unitData){
+
+        Stage stage = stageUIRenderingSystem.stage;
+
+        characterPane.remove();
+        characterPane.clear();
+        characterPane.setBackground(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.BLOCK)).tint(new Color(0,0,0,0.8f)));
+        characterPane.setSkin(uiSkin);
+        characterPane.setX(Measure.units(0f));
+        characterPane.setY(Measure.units(10f));
+        characterPane.setWidth(stage.getWidth() - Measure.units(30f));
+        characterPane.setHeight(stage.getHeight() - Measure.units(10f));
+        characterPane.align(Align.center);
+
+        stage.addActor(characterPane);
+
+        Table characterInfo = new Table(uiSkin);
+        characterPane.add(characterInfo).width(Measure.units(10f));
+
+        Image image = new Image(renderingSystem.getAtlas().findRegion(unitData.icon));
+        image.setFillParent(true);
+
+        characterInfo.add(new Image(renderingSystem.getAtlas().findRegion(unitData.icon))).width(Measure.units(10f)).height(Measure.units(10f))
+                .padRight(Measure.units(5f));
+
+
+        Table middleInformation = new Table(uiSkin);
+        middleInformation.setFillParent(true);
+        middleInformation.align(Align.left);
+
+        middleInformation.add(new Label(unitData.name, uiSkin)).height(Measure.units(5f));
+        middleInformation.row();
+        int hp = unitData.getStatComponent().maxHealth;
+        middleInformation.add(new Label("Health: " + hp +  "/" +  hp, uiSkin)).height(Measure.units(5f));
+
+        characterInfo.add(middleInformation);
+
+
+        Button closeInfo = new Button(uiSkin);
+        characterInfo.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                characterPane.remove();
+                characterPane.clear();
+            }
+        });
+
+        characterInfo.add(closeInfo).width(Measure.units(5f)).height(Measure.units(5f)).padLeft(Measure.units(2.5f));
 
     }
 

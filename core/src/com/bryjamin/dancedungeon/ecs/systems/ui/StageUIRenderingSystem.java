@@ -27,4 +27,12 @@ public class StageUIRenderingSystem extends BaseSystem {
         stage.draw();
     }
 
+
+
+
+
+
+
+
+
 }
