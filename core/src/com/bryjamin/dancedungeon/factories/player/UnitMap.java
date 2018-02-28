@@ -11,6 +11,7 @@ public class UnitMap {
 
     public static final String UNIT_MAGE = "Mage";
     public static final String UNIT_WARRIOR = "Warrior";
+    public static final String UNIT_ARCHER = "Archer";
 
 
     public interface Command {
@@ -33,6 +34,14 @@ public class UnitMap {
         });
 
         playerUnits.put(UNIT_WARRIOR, new Command() {
+            @Override
+            public ComponentBag getUnit(UnitData unitData) {
+                return new PlayerFactory().player(unitData);
+            }
+        });
+
+
+        playerUnits.put(UNIT_ARCHER, new Command() {
             @Override
             public ComponentBag getUnit(UnitData unitData) {
                 return new PlayerFactory().player(unitData);

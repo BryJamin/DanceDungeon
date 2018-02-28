@@ -6,9 +6,10 @@ import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.player.UnitMap;
-import com.bryjamin.dancedungeon.factories.spells.basic.DodgeUp;
 import com.bryjamin.dancedungeon.factories.spells.basic.FireWeapon;
-import com.bryjamin.dancedungeon.factories.spells.basic.StunStrike;
+import com.bryjamin.dancedungeon.factories.spells.basic.Foresight;
+import com.bryjamin.dancedungeon.factories.spells.basic.HeavyStrike;
+import com.bryjamin.dancedungeon.factories.spells.basic.StraightShot;
 import com.bryjamin.dancedungeon.factories.spells.restorative.Heal;
 import com.bryjamin.dancedungeon.utils.BaseStatStatics;
 
@@ -33,7 +34,9 @@ public class CharacterGenerator {
                 .healthAndMax(15).build());
 
         warrior.setSkillsComponent(new SkillsComponent(
-                new FireWeapon()));
+                new HeavyStrike(),
+                new Foresight()
+                ));
 
         return warrior;
     }
@@ -51,9 +54,29 @@ public class CharacterGenerator {
         mage.setSkillsComponent(
                 new SkillsComponent(
                         new FireWeapon(),
-                        new DodgeUp(),
-                        new Heal(),
-                        new StunStrike()
+                        new Heal()
+                ));
+
+        mage.name = genName();
+
+        return mage;
+    }
+
+
+    public UnitData createArcher(){
+        UnitData mage = new UnitData(UnitMap.UNIT_ARCHER);
+        mage.icon = TextureStrings.CLASS_BOW_SPEICALIST;
+        mage.setStatComponent(
+                new StatComponent.StatBuilder()
+                        .movementRange(BaseStatStatics.BASE_MOVEMENT)
+                        .healthAndMax(20)
+                        .attackRange(6)
+                        .attack(7).build());
+
+        mage.setSkillsComponent(
+                new SkillsComponent(
+                        new FireWeapon(),
+                        new StraightShot()
                 ));
 
         mage.name = genName();

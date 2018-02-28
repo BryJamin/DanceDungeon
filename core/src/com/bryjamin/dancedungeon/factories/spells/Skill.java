@@ -32,7 +32,7 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 public class Skill {
 
-    public enum Targeting {Ally, Enemy, Self, FreeAim}
+    public enum Targeting {Ally, Enemy, Self, FreeAim, StraightShot}
     public enum Attack {Melee, Ranged, Transformative}
     public enum ActionType {UsesMoveAndAttackAction, UsesAttackAction, UsesMoveAction, Free}
     public enum SpellDamageApplication {Instant, AfterSpellAnimation}
@@ -41,10 +41,10 @@ public class Skill {
     public enum SpellEffect {
         Stun, OnFire, Dodge, Armor;
 
-        public int number;
+        public float number;
         public int duration;
 
-        public SpellEffect value(int number){
+        public SpellEffect value(float number){
             this.number = number;
             return this;
         }
@@ -106,6 +106,13 @@ public class Skill {
                 break;
             case FreeAim:
                 entityArray = new TargetingFactory().createFreeAimTargetTiles(world, player, this, range);
+                break;
+            case StraightShot:
+                entityArray = new TargetingFactory().createStraightShotTargetTiles(world, player, this);
+                break;
+            case Self:
+                entityArray = new TargetingFactory().createSelfTargetTiles(world, player, this, range);
+                break;
 
         }
 
@@ -229,8 +236,8 @@ public class Skill {
                     for (SpellEffect spellEffect : spellEffects) {
                         switch (spellEffect) {
                             case Stun:
-                                e.getComponent(StatComponent.class).stun = spellEffect.number;
-                                break;
+                                e.getComponent(StatComponent.class).stun = (int) spellEffect.number;
+                                //break;
                             case Dodge:
                                 e.getComponent(BuffComponent.class).spellEffectArray.add(spellEffect);
                         }
@@ -266,6 +273,12 @@ public class Skill {
 
 
     }
+
+
+
+
+
+    
 
     ;
 

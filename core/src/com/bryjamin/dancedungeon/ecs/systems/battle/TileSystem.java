@@ -72,8 +72,6 @@ public class TileSystem extends EntitySystem {
     @SuppressWarnings("unchecked")
     public TileSystem() {
         super(Aspect.all(CoordinateComponent.class, CenteringBoundaryComponent.class, PositionComponent.class));
-
-
     }
 
     @Override
