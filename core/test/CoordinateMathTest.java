@@ -1,3 +1,4 @@
+import com.badlogic.gdx.utils.Queue;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.utils.math.CoordinateMath;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
@@ -24,7 +25,28 @@ public class CoordinateMathTest extends GameTest {
     @Test
     public void intersectTest() throws Exception {
 
+        Queue<Integer> test = new Queue<Integer>();
+        test.addFirst(1);
+        test.addFirst(1);
+        test.addFirst(5);
+        test.addFirst(1);
+        test.addFirst(5);
+        test.addFirst(1);
+        test.addFirst(5);
+
+        for(Integer i : test){
+            test.removeValue(1, true);
+        }
+
+        for(Integer i : test){
+            System.out.println(i);
+        }
+
+
 /*
+
+
+
 
         Vector2 vector2 = new Vector2();
         System.out.println(Intersector.intersectSegments(0, -2, 0,-1, 0,0, 1, 0, vector2));

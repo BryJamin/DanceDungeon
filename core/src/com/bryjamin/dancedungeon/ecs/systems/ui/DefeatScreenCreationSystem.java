@@ -50,7 +50,7 @@ public class DefeatScreenCreationSystem extends BaseSystem {
         float height = Measure.units(7.5f);
 
         new ButtonFactory.ButtonBuilder()
-                .text(TextResource.BATTLE_OVER_DEFEAT)
+                .text(TextResource.BATTLE_OVER_CONTINUE)
                 .pos(CenterMath.offsetX(gameport.getWorldWidth(), width), Measure.units(20f))
                 .width(width)
                 .height(height)
@@ -76,7 +76,7 @@ public class DefeatScreenCreationSystem extends BaseSystem {
 
 
         new ButtonFactory.ButtonBuilder()
-                .text(TextResource.BATTLE_OVER_CONTINUE)
+                .text(TextResource.BATTLE_OVER_DEFEAT)
                 .pos(CenterMath.centerOnPositionX(gameport.getCamera().viewportWidth, gameport.getCamera().position.x),
                         CenterMath.centerOnPositionY(Measure.units(10f), gameport.getCamera().position.y) + Measure.units(10f))
                 .width(gameport.getWorldWidth())

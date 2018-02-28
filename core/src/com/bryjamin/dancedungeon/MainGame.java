@@ -50,8 +50,6 @@ public class MainGame extends Game {
 
        // SoundFileStrings.loadSoundsToManager(assetManager);
 
-
-
         FileHandleResolver resolver = new InternalFileHandleResolver();
         assetManager.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
         assetManager.setLoader(BitmapFont.class, ".ttf", new FreetypeFontLoader(resolver));

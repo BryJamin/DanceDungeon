@@ -1,19 +1,54 @@
 package com.bryjamin.dancedungeon.screens.battle;
 
+import com.artemis.World;
+import com.artemis.WorldConfiguration;
+import com.artemis.WorldConfigurationBuilder;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.bryjamin.dancedungeon.MainGame;
+import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
+import com.bryjamin.dancedungeon.ecs.systems.MoveToTargetSystem;
+import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
+import com.bryjamin.dancedungeon.ecs.systems.ParentChildSystem;
+import com.bryjamin.dancedungeon.ecs.systems.SkillUISystem;
+import com.bryjamin.dancedungeon.ecs.systems.action.ActionOnTapSystem;
+import com.bryjamin.dancedungeon.ecs.systems.action.BattleWorldInputHandlerSystem;
+import com.bryjamin.dancedungeon.ecs.systems.action.ConditionalActionSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.BattleMessageSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.BlinkOnHitSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.BuffSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.BulletSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.DeathSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.EndBattleSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.ExplosionSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.GenerateTargetsSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.HealthSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.NoMoreActionsSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.PlayerControlledSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.ReselectTargetSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.SelectedTargetSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
+import com.bryjamin.dancedungeon.ecs.systems.graphical.AnimationSystem;
+import com.bryjamin.dancedungeon.ecs.systems.graphical.BoundsDrawingSystem;
+import com.bryjamin.dancedungeon.ecs.systems.graphical.FadeSystem;
+import com.bryjamin.dancedungeon.ecs.systems.graphical.FollowPositionSystem;
+import com.bryjamin.dancedungeon.ecs.systems.graphical.HealthBarSystem;
+import com.bryjamin.dancedungeon.ecs.systems.graphical.PlayerGraphicalTargetingSystem;
+import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
+import com.bryjamin.dancedungeon.ecs.systems.graphical.ScaleTransformationSystem;
+import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
+import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
+import com.bryjamin.dancedungeon.factories.spells.SpellFactory;
 import com.bryjamin.dancedungeon.screens.AbstractScreen;
 import com.bryjamin.dancedungeon.screens.VictoryScreen;
-import com.bryjamin.dancedungeon.screens.battle.worlds.BattleWorld;
-import com.bryjamin.dancedungeon.screens.battle.worlds.EndBattleWorld;
 import com.bryjamin.dancedungeon.screens.menu.DefeatScreen;
+import com.bryjamin.dancedungeon.utils.GameDelta;
+import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
 
 
 /**
@@ -22,34 +57,78 @@ import com.bryjamin.dancedungeon.screens.menu.DefeatScreen;
 
 public class BattleScreen extends AbstractScreen {
 
-    private OrthographicCamera gamecam;
-    private Viewport gameport;
-
-    private BattleWorld battleWorld;
-    private EndBattleWorld endBattleWorld;
+    private PartyDetails partyDetails;
+    private GameMap gameMap;
 
     private Screen previousScreen;
-
-
-    private enum ScreenState {
-        BATTLE, PAUSED, END_BATTLE
-    }
-
-
-    private ScreenState screenState = ScreenState.BATTLE;
+    private World world;
 
     public BattleScreen(MainGame game, Screen previousScreen, GameMap gameMap, PartyDetails partyDetails) {
         super(game);
-
-        gamecam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        gameport = new FitViewport(MainGame.GAME_WIDTH, MainGame.GAME_HEIGHT, gamecam);
-        gamecam.setToOrtho(false, MainGame.GAME_WIDTH, MainGame.GAME_HEIGHT);
-        gamecam.update();
-        gameport.apply();
-
         this.previousScreen = previousScreen;
-        this.battleWorld = new BattleWorld(game, gameport, gameMap, partyDetails);
+        this.partyDetails = partyDetails;
+        this.gameMap = gameMap;
+        createWorld();
+    }
 
+    private void createWorld(){
+
+        Stage UIStage = new Stage(gameport, game.batch);
+
+        WorldConfiguration config = new WorldConfigurationBuilder()
+                .with(WorldConfigurationBuilder.Priority.HIGHEST,
+
+                        new BattleWorldInputHandlerSystem(gameport),
+
+                        new MovementSystem(),
+                        new FollowPositionSystem(),
+                        new UpdatePositionSystem(),
+
+                        new BuffSystem(),
+
+                        //Initialize Tiles
+                        new TileSystem(),
+                        new MoveToTargetSystem()
+                )
+                .with(WorldConfigurationBuilder.Priority.HIGH,
+                        new ConditionalActionSystem(),
+                        new ExplosionSystem(),
+                        new BulletSystem(),
+                        new TurnSystem(),
+                        new HealthSystem(),
+                        new ParentChildSystem(),
+                        new BlinkOnHitSystem(),
+                        new ExpireSystem(),
+                        new PlayerControlledSystem(game),
+                        new EndBattleSystem(game, gameMap, partyDetails)
+                )
+                .with(WorldConfigurationBuilder.Priority.LOWEST,
+                        new ActionOnTapSystem(),
+                        new SkillUISystem(UIStage, game),
+                        new ActionCameraSystem(),
+
+                        //Rendering     Effects
+                        new FadeSystem(),
+                        new ScaleTransformationSystem(),
+
+                        new NoMoreActionsSystem(),
+                        new PlayerGraphicalTargetingSystem(),
+                        new BattleMessageSystem(gameport),
+                        new AnimationSystem(game),
+                        new RenderingSystem(game, gameport),
+                        new HealthBarSystem(game, gameport),
+                        new StageUIRenderingSystem(UIStage),
+                        new BoundsDrawingSystem(batch),
+                        new GenerateTargetsSystem(),
+                        new SelectedTargetSystem(),
+                        new ReselectTargetSystem(),
+                        new DeathSystem()
+                )
+                .build();
+
+        world = new World(config);
+
+        BagToEntity.bagToEntity(world.createEntity(), new SpellFactory().endTurnButton(0, 0));
     }
 
     @Override
@@ -61,28 +140,8 @@ public class BattleScreen extends AbstractScreen {
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        game.batch.setProjectionMatrix(gamecam.combined);
-        gamecam.update();
-        handleInput(delta);
-        battleWorld.process(delta);
+        GameDelta.delta(world, delta);
     }
-
-    public void handleInput(float dt) {
-
-        InputMultiplexer multiplexer = new InputMultiplexer();
-
-        switch (screenState) {
-            case BATTLE: battleWorld.handleInput(multiplexer);
-                break;
-            case END_BATTLE: endBattleWorld.handleInput(multiplexer);
-                break;
-        }
-
-        Gdx.input.setInputProcessor(multiplexer);
-
-    }
-
-
 
     public void victory(){
         game.setScreen(new VictoryScreen(game, this));

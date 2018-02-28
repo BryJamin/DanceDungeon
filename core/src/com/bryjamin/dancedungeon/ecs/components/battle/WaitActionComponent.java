@@ -1,6 +1,8 @@
 package com.bryjamin.dancedungeon.ecs.components.battle;
 
 import com.artemis.Component;
+import com.badlogic.gdx.utils.Array;
+import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
 
 /**
  * Created by BB on 23/12/2017.
@@ -12,4 +14,14 @@ import com.artemis.Component;
  */
 
 public class WaitActionComponent extends Component{
+
+    public WaitActionComponent(){}
+
+
+    public Array<WorldConditionalAction> queuedActions = new Array<WorldConditionalAction>();
+
+    public WaitActionComponent(WorldConditionalAction... queuedActions){
+        this.queuedActions.addAll(queuedActions);
+    }
+
 }

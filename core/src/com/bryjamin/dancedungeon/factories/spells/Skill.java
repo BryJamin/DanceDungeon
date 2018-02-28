@@ -13,11 +13,11 @@ import com.bryjamin.dancedungeon.ecs.components.battle.BuffComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.WaitActionComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationMapComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationStateComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.KillOnAnimationEndComponent;
+import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.factories.spells.animations.BasicProjectile;
 import com.bryjamin.dancedungeon.utils.Measure;
@@ -32,7 +32,7 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 public class Skill {
 
-    public enum Targeting {Ally, Enemy, Self, FreeAim}
+    public enum Targeting {Ally, Enemy, Self, FreeAim, StraightShot}
     public enum Attack {Melee, Ranged, Transformative}
     public enum ActionType {UsesMoveAndAttackAction, UsesAttackAction, UsesMoveAction, Free}
     public enum SpellDamageApplication {Instant, AfterSpellAnimation}
@@ -41,10 +41,10 @@ public class Skill {
     public enum SpellEffect {
         Stun, OnFire, Dodge, Armor;
 
-        public int number;
+        public float number;
         public int duration;
 
-        public SpellEffect value(int number){
+        public SpellEffect value(float number){
             this.number = number;
             return this;
         }
@@ -106,6 +106,13 @@ public class Skill {
                 break;
             case FreeAim:
                 entityArray = new TargetingFactory().createFreeAimTargetTiles(world, player, this, range);
+                break;
+            case StraightShot:
+                entityArray = new TargetingFactory().createStraightShotTargetTiles(world, player, this);
+                break;
+            case Self:
+                entityArray = new TargetingFactory().createSelfTargetTiles(world, player, this, range);
+                break;
 
         }
 
@@ -169,8 +176,9 @@ public class Skill {
                                 .build()))
                         .add(new AnimationStateComponent(GLITTER_ANIMATION_ID))
                         .add(new AnimationMapComponent().put(GLITTER_ANIMATION_ID, TextureStrings.SKILLS_HEAL, 0.2f, Animation.PlayMode.NORMAL))
-                        .add(new KillOnAnimationEndComponent(GLITTER_ANIMATION_ID))
-                        .add(new WaitActionComponent());
+                        .add(new KillOnAnimationEndComponent(GLITTER_ANIMATION_ID));
+                world.getSystem(ActionCameraSystem.class).createDeathWaitAction(heal);
+
                 break;
 
             case Slash:
@@ -189,8 +197,9 @@ public class Skill {
                                 .build()))
                         .add(new AnimationStateComponent(SLASH_ANIMATION))
                         .add(new AnimationMapComponent().put(SLASH_ANIMATION, TextureStrings.SKILLS_SLASH, 0.3f, Animation.PlayMode.NORMAL))
-                        .add(new KillOnAnimationEndComponent(SLASH_ANIMATION))
-                        .add(new WaitActionComponent());
+                        .add(new KillOnAnimationEndComponent(SLASH_ANIMATION));
+
+                world.getSystem(ActionCameraSystem.class).createDeathWaitAction(slash);
 
                 break;
 
@@ -227,8 +236,8 @@ public class Skill {
                     for (SpellEffect spellEffect : spellEffects) {
                         switch (spellEffect) {
                             case Stun:
-                                e.getComponent(StatComponent.class).stun = spellEffect.number;
-                                break;
+                                e.getComponent(StatComponent.class).stun = (int) spellEffect.number;
+                                //break;
                             case Dodge:
                                 e.getComponent(BuffComponent.class).spellEffectArray.add(spellEffect);
                         }
@@ -264,6 +273,12 @@ public class Skill {
 
 
     }
+
+
+
+
+
+    
 
     ;
 

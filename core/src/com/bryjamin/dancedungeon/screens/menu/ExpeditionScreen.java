@@ -5,11 +5,9 @@ import com.artemis.WorldConfiguration;
 import com.artemis.WorldConfigurationBuilder;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.MainGame;
-import com.bryjamin.dancedungeon.assets.TextureStrings;
-import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MoveToTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
@@ -21,16 +19,12 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.BoundsDrawingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.FadeSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
-import com.bryjamin.dancedungeon.ecs.systems.input.BasicInputSystem;
+import com.bryjamin.dancedungeon.ecs.systems.input.ExpeditionScreenInputSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.ExpeditionScreenCreationSystem;
+import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
+import com.bryjamin.dancedungeon.factories.CharacterGenerator;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
-import com.bryjamin.dancedungeon.factories.player.UnitMap;
-import com.bryjamin.dancedungeon.factories.spells.basic.DodgeUp;
-import com.bryjamin.dancedungeon.factories.spells.basic.FireWeapon;
-import com.bryjamin.dancedungeon.factories.spells.basic.StunStrike;
-import com.bryjamin.dancedungeon.factories.spells.restorative.Heal;
 import com.bryjamin.dancedungeon.screens.AbstractScreen;
-import com.bryjamin.dancedungeon.utils.BaseStatStatics;
 import com.bryjamin.dancedungeon.utils.GameDelta;
 
 /**
@@ -40,6 +34,7 @@ import com.bryjamin.dancedungeon.utils.GameDelta;
 public class ExpeditionScreen extends AbstractScreen {
 
     private World world;
+    private CharacterGenerator cg = new CharacterGenerator();
 
     public ExpeditionScreen(MainGame game) {
         super(game);
@@ -47,54 +42,19 @@ public class ExpeditionScreen extends AbstractScreen {
     }
 
 
-    private UnitData createWarrior(){
-        UnitData warrior = new UnitData(UnitMap.UNIT_WARRIOR);
-        warrior.icon = TextureStrings.CLASS_WARRIOR;
-        warrior.setStatComponent(new StatComponent.StatBuilder()
-                .movementRange(BaseStatStatics.BASE_MOVEMENT)
-                .attackRange(3)
-                .attack(5)
-                .healthAndMax(15).build());
-
-        warrior.setSkillsComponent(new SkillsComponent(
-                new FireWeapon()));
-
-        return warrior;
-    }
-
-    private UnitData createMage(){
-        UnitData mage = new UnitData(UnitMap.UNIT_MAGE);
-        mage.icon = TextureStrings.CLASS_MAGE;
-        mage.setStatComponent(
-                new StatComponent.StatBuilder()
-                        .movementRange(BaseStatStatics.BASE_MOVEMENT )
-                        .healthAndMax(20)
-                        .attackRange(6)
-                        .attack(7).build());
-
-        mage.setSkillsComponent(
-                new SkillsComponent(
-                        new FireWeapon(),
-                        new DodgeUp(),
-                        new Heal(),
-                        new StunStrike()
-                ));
-
-        return mage;
-    }
-
     private void createWorld() {
 
 
         Array<UnitData> availiable = new Array<UnitData>();
-        availiable.addAll(createMage(), createWarrior(), createMage(), createMage(), createWarrior(), createWarrior(), createWarrior());
+        availiable.addAll(cg.createMage(), cg.createWarrior(), cg.createArcher(), cg.createMage(), cg.createWarrior(), cg.createWarrior(), cg.createWarrior(),
+                cg.createMage(), cg.createWarrior(), cg.createMage(), cg.createMage(), cg.createWarrior(), cg.createWarrior(), cg.createWarrior());
 
 
         WorldConfiguration config = new WorldConfigurationBuilder()
                 .with(WorldConfigurationBuilder.Priority.HIGHEST,
 
                         new ExpeditionScreenCreationSystem(game, gameport, availiable, new Array<UnitData>()),
-                        new BasicInputSystem(gameport),
+                        new ExpeditionScreenInputSystem(gameport),
 
                         new MovementSystem(),
                         new UpdatePositionSystem(),
@@ -110,6 +70,7 @@ public class ExpeditionScreen extends AbstractScreen {
                         new ActionOnTapSystem(),
                         new FadeSystem(),
                         new RenderingSystem(game, gameport),
+                        new StageUIRenderingSystem( new Stage(gameport, game.batch)),
                         new BoundsDrawingSystem(batch))
                 .build();
 

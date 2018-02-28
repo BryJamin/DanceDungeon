@@ -3,23 +3,31 @@ package com.bryjamin.dancedungeon.factories.spells.basic;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
 
 /**
- * Created by BB on 30/01/2018.
+ * Created by BB on 28/02/2018.
  */
 
-public class DodgeUp extends Skill {
+public class Foresight extends Skill {
 
-    public DodgeUp() {
+
+    public Foresight() {
         super(new Builder()
-                .name("Dodge Up")
+                .name("Foresight")
                 .icon("skills/Fire")
-                .description("Increase the Dodge chance of an ally by 20% for one turn")
-                .targeting(Targeting.Ally)
+                .description("Increase the Dodge chance of an self by 20% for three turns")
+                .targeting(Targeting.Self)
                 .actionType(ActionType.UsesMoveAndAttackAction)
                 .spellAnimation(SpellAnimation.Glitter)
-                .spellEffects(SpellEffect.Dodge.value(1).duration(2))
-                .spellCoolDown(3)
+                .spellEffects(SpellEffect.Dodge.value(0.2f).duration(3))
                 .attack(Attack.Ranged));
     }
+
+
+
+
+
+
+
+
 
 
 

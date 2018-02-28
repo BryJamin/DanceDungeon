@@ -4,6 +4,7 @@ import com.artemis.Entity;
 import com.artemis.World;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.Queue;
@@ -22,12 +23,17 @@ import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.UITargetingComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.ReselectEntityComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.SelectedEntityComponent;
 import com.bryjamin.dancedungeon.ecs.systems.SkillUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.utils.HitBox;
+import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
+import com.bryjamin.dancedungeon.utils.enums.Direction;
+import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.math.CoordinateMath;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 import com.bryjamin.dancedungeon.utils.pathing.AStarPathCalculator;
@@ -45,6 +51,10 @@ public class TargetingFactory {
     //Range Targeting
 
 
+    /**
+     * Creates Enemy Targeting Tiles, Then when clicked cast the allocated spell.
+     * The range depicts how far this method scans for enemies.
+     */
     public Array<Entity> createTargetTiles(World world, final Entity player, final Skill spell, int range) {
 
         Array<Entity> entityArray = new Array<Entity>();
@@ -58,6 +68,10 @@ public class TargetingFactory {
         return entityArray;
     }
 
+    /**
+     * Creates Ally Targeting Tiles, Then when clicked cast the allocated spell.
+     * The range depicts how far this method scans for allies.
+     */
     public Array<Entity> createAllyTargetTiles(World world, final Entity player, final Skill spell, int range) {
 
         Array<Entity> entityArray = new Array<Entity>();
@@ -71,11 +85,24 @@ public class TargetingFactory {
         return entityArray;
     }
 
+
+    /**
+     * Creates Ally Targeting Tiles, Then when clicked cast the allocated spell.
+     * The range depicts how far this method scans for allies.
+     */
+    public Array<Entity> createSelfTargetTiles(World world, final Entity player, final Skill spell, int range) {
+        Array<Entity> entityArray = new Array<Entity>();
+        entityArray.add(createTargetingBox(world, player, player.getComponent(CoordinateComponent.class).coordinates, spell, false));
+        return entityArray;
+    }
+
+    /**
+     * Free targeting tiles only use the range as a guide, and are not restricted to allies or enemies.
+     * Any tile can be attacked with this skill selected.
+     */
     public Array<Entity> createFreeAimTargetTiles(World world, final Entity player, final Skill spell, int range) {
 
         Array<Entity> entityArray = new Array<Entity>();
-
-        TargetComponent targetComponent = player.getComponent(TargetComponent.class);
 
         for (Coordinates c : CoordinateMath.getCoordinatesInSquareRange(player.getComponent(CoordinateComponent.class).coordinates, range)) {
             entityArray.add(createTargetingBox(world, player, c, spell, true));
@@ -94,8 +121,7 @@ public class TargetingFactory {
             @Override
             public void performAction(World world, final Entity e) {
                 skill.cast(world, player, coordinates);
-                world.getSystem(SkillUISystem.class).clearTargetingTiles();
-                world.getSystem(SkillUISystem.class).refreshSkillUi(player);
+                world.getSystem(SkillUISystem.class).reset();
             }
         }));
 
@@ -103,6 +129,83 @@ public class TargetingFactory {
 
     }
 
+    public Array<Entity> createStraightShotTargetTiles(World world, Entity player, Skill skill) {
+
+        Array<Entity> entityArray = new Array<Entity>();
+
+        Coordinates current = player.getComponent(CoordinateComponent.class).coordinates;
+
+        OrderedMap<Coordinates, Array<Entity>> om = world.getSystem(TileSystem.class).getCoordinateMap();
+
+        //Most Left
+        Direction[] d = {Direction.DOWN, Direction.UP, Direction.LEFT, Direction.RIGHT};
+
+
+        for(int i = 0; i < d.length; i++) {
+
+            Coordinates shotCoords = new Coordinates(current);
+            increaseCoordinatesByOneUsingDirection(d[i], shotCoords, current);
+
+            Coordinates future = new Coordinates();
+
+
+            while (true) {
+
+                if(om.get(shotCoords) == null){
+                    break;
+                } else if (om.get(shotCoords).size > 0) {
+                    entityArray.add(createTargetingBox(world, player, shotCoords, skill, true));
+                    break;
+                } else {
+
+                    increaseCoordinatesByOneUsingDirection(d[i], future, shotCoords);
+
+                    if (!om.containsKey(future)) {
+
+                        boolean b = (d[i] == Direction.DOWN || d[i] == Direction.UP) ? Math.abs(future.getY() - current.getY()) > 1 : Math.abs(future.getX() - current.getX()) > 1;
+
+                        if (b) {
+                            entityArray.add(createTargetingBox(world, player, shotCoords, skill, true));
+                        }
+                        break;
+                    } else {
+                        entityArray.add(whiteSquareMarker(world, shotCoords));
+                        shotCoords.set(future);
+                    }
+
+                }
+
+            }
+
+        }
+
+
+        return entityArray;
+
+
+
+    }
+
+
+    public void increaseCoordinatesByOneUsingDirection(Direction d, Coordinates c1, Coordinates c2){
+
+        switch (d) {
+            case DOWN:
+                c1.set(c2.getX(), c2.getY() - 1);
+                break;
+            case UP:
+                c1.set(c2.getX(), c2.getY() + 1);
+                break;
+            case LEFT:
+                c1.set(c2.getX() - 1, c2.getY());
+                break;
+            case RIGHT:
+                c1.set(c2.getX() + 1, c2.getY());
+                break;
+        }
+
+
+    }
 
 
 
@@ -160,93 +263,15 @@ public class TargetingFactory {
             box.edit().add(new ActionOnTapComponent(new WorldAction() {
                 @Override
                 public void performAction(World world, Entity entity) {
+                    world.getSystem(SkillUISystem.class).reset();
+                    player.edit().add(new ReselectEntityComponent());
+                    player.edit().remove(SelectedEntityComponent.class);
                     world.getSystem(ActionCameraSystem.class).pushLastAction(player, createMovementAction(player, coordinatesWithPathMap.get(c)));
                 }
             }));
         }
 
-
         coordinatesWithPathMap.put(coordinateComponent.coordinates, new Queue<Coordinates>());
-
-
-        //Basic Attack
-
-        //TODO commenting out Basic Attack as that may no longer be a thing
-
-        /* if (player.getComponent(TurnComponent.class).attackActionAvailable) {
-
-            final OrderedMap<Coordinates, Queue<Coordinates>> targetCoordinateMovementQueueMap = new OrderedMap<Coordinates, Queue<Coordinates>>();
-
-            //Generate Map of movement and target squares
-
-            //This goes through and get the targets in range of all possible movement sqaures that have been found.
-            //It then checks if any targets are in range of an attack from the movement squares.
-            //If two paths can be used to attack the same sqaure, the shortest path is chosen.
-
-            for (final Coordinates c : coordinatesWithPathMap.keys()) {
-
-                TargetComponent targetComponent = player.getComponent(TargetComponent.class);
-
-                for (Entity e : getTargetsInRange(world, c, targetComponent.getTargets(world), player.getComponent(StatComponent.class).attackRange)) {
-
-                    final Coordinates targetCoordinate = e.getComponent(CoordinateComponent.class).coordinates;
-
-                    //Puts in the coordinate queue a character will follow when performing a basic attack.
-                    //If one queue is shorter than the other it replaces it.
-                    if (targetCoordinateMovementQueueMap.get(targetCoordinate) != null) {
-                        if (coordinatesWithPathMap.get(c).size < targetCoordinateMovementQueueMap.get(targetCoordinate).size) {
-                            targetCoordinateMovementQueueMap.put(targetCoordinate, coordinatesWithPathMap.get(c));
-                        }
-
-                    } else {
-                        targetCoordinateMovementQueueMap.put(targetCoordinate, coordinatesWithPathMap.get(c));
-                    }
-
-                }
-            }
-
-
-            //Takes the valid paths found from the previous sort and create a highlighted square that
-            //when tapped ahs the action to, follow the path and then fire the attack
-
-            for (final Coordinates coordinateOfTarget : targetCoordinateMovementQueueMap.keys()) {
-
-                Entity redBox = BagToEntity.bagToEntity(world.createEntity(), highlightBox(tileSystem.createRectangleUsingCoordinates(coordinateOfTarget), new Color(Color.RED)));
-
-
-                entityArray.add(redBox);
-
-                redBox.edit().add(new ActionOnTapComponent(new WorldAction() {
-                    @Override
-                    public void performAction(World world, final Entity e) {
-
-                        if (targetCoordinateMovementQueueMap.get(coordinateOfTarget).size != 0) {
-                            world.getSystem(ActionCameraSystem.class).pushLastAction(player, createMovementAction(player, targetCoordinateMovementQueueMap.get(coordinateOfTarget)));
-                        }
-
-                        world.getSystem(ActionCameraSystem.class).pushLastAction(player, new WorldConditionalAction() {
-                            @Override
-                            public boolean condition(World world, Entity entity) {
-                                return entity.getComponent(MoveToComponent.class).isEmpty();
-                            }
-
-                            @Override
-                            public void performAction(World world, Entity entity) {
-                                entity.getComponent(SkillsComponent.class).basicAttack.cast(world, player, coordinateOfTarget);
-                            }
-                        });
-
-
-                    }
-                }));
-
-            }
-
-
-        }
-
-*/
-
         return entityArray;
 
     }
@@ -276,7 +301,10 @@ public class TargetingFactory {
                 //TODO
                 if (new TargetingFactory().getTargetsInRange(world, coordinatesQueue.last(), entity.getComponent(TargetComponent.class).getTargets(world),
                         entity.getComponent(StatComponent.class).attackRange).size <= 0) {
-                    entity.getComponent(TurnComponent.class).attackActionAvailable = false;
+
+
+
+                    //entity.getComponent(TurnComponent.class).attackActionAvailable = false;
                 }
 
 
@@ -333,12 +361,49 @@ public class TargetingFactory {
                 .alpha(0.17f)
                 .minAlpha(0.15f)
                 .maxAlpha(0.55f)
-                .maximumTime(2.0f)));
+                .maximumTime(1.5f)));
         bag.add(new HitBoxComponent(new HitBox(r)));
         bag.add(new CenteringBoundaryComponent());
         bag.add(new UITargetingComponent());
 
         return bag;
+    }
+
+    public ComponentBag whiteMarkerBox(Rectangle r) {
+        ComponentBag bag = new ComponentBag();
+
+        float size = Measure.units(2.5f);
+
+        Vector2 center = r.getCenter(new Vector2());
+
+        bag.add(new PositionComponent(CenterMath.centerOnPositionX(size, center.x),
+                CenterMath.centerOnPositionY(size, center.y)));
+        bag.add(new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE,
+                new TextureDescription.Builder(TextureStrings.BLOCK)
+                        .color(new Color(Color.WHITE))
+                        .width(size)
+                        .height(size)
+                        .build()));
+    /*    bag.add(new FadeComponent(new FadeComponent.FadeBuilder()
+                .fadeIn(true)
+                .alpha(0.17f)
+                .minAlpha(0.15f)
+                .maxAlpha(0.55f)
+                .maximumTime(2.0f)));*/
+        bag.add(new CenteringBoundaryComponent());
+        bag.add(new UITargetingComponent());
+
+        return bag;
+    }
+
+
+    public Entity whiteSquareMarker(World world, Coordinates coordinates){
+
+        TileSystem tileSystem = world.getSystem(TileSystem.class);
+
+        Entity redBox = BagToEntity.bagToEntity(world.createEntity(), whiteMarkerBox(tileSystem.createRectangleUsingCoordinates(coordinates)));
+
+        return redBox;
     }
 
 
