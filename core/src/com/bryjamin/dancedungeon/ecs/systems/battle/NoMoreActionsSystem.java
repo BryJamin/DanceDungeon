@@ -40,17 +40,10 @@ public class NoMoreActionsSystem extends EntityProcessingSystem {
         if(!turnComponent.hasActions() && !greyScaleMapper.has(e)){
             e.edit().add(new GreyScaleComponent());
             e.edit().remove(SelectedEntityComponent.class);
-
-            //amc.set(e, false);
         } else if(greyScaleMapper.has(e) && turnComponent.hasActions()){
             e.edit().remove(GreyScaleComponent.class);
-            //amc.set(e, true);
         }
 
     }
 
-/*    @Override
-    protected void processSystem() {
-
-    }*/
 }

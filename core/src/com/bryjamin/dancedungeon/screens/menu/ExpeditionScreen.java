@@ -46,7 +46,7 @@ public class ExpeditionScreen extends AbstractScreen {
 
 
         Array<UnitData> availiable = new Array<UnitData>();
-        availiable.addAll(cg.createMage(), cg.createWarrior(), cg.createArcher(), cg.createMage(), cg.createWarrior(), cg.createWarrior(), cg.createWarrior(),
+        availiable.addAll(cg.createMage(), cg.createWarrior(), cg.createArcher(), cg.createMage(), cg.createWarrior(), cg.createArcher(),
                 cg.createMage(), cg.createWarrior(), cg.createMage(), cg.createMage(), cg.createWarrior(), cg.createWarrior(), cg.createWarrior());
 
 

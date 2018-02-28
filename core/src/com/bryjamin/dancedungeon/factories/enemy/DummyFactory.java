@@ -20,8 +20,8 @@ import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.factories.player.UnitFactory;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
-import com.bryjamin.dancedungeon.factories.spells.basic.Strike;
 import com.bryjamin.dancedungeon.factories.spells.basic.MeleeAttack;
+import com.bryjamin.dancedungeon.factories.spells.basic.Strike;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
@@ -63,7 +63,7 @@ public class DummyFactory {
         bag.add(new SkillsComponent(new MeleeAttack()));
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, blob.color(Color.WHITE).build()));
         bag.add(new UtilityAiComponent(dummyAi(slash)));
-
+        
         return bag;
 
     }

@@ -1,5 +1,6 @@
 package com.bryjamin.dancedungeon.factories.enemy;
 
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.ai.ActionScoreCalculator;
 import com.bryjamin.dancedungeon.ecs.ai.UtilityAiCalculator;
@@ -14,6 +15,8 @@ import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.UtilityAiComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationMapComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationStateComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.factories.player.UnitFactory;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
@@ -73,6 +76,12 @@ public class RangedDummyFactory {
                 )));
 
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, player.build()));
+
+        int STANDING_ANIMATION = 23;
+
+        bag.add(new AnimationStateComponent(STANDING_ANIMATION));
+        bag.add(new AnimationMapComponent()
+                .put(STANDING_ANIMATION, TextureStrings.BIGGABLOBBA, 0.3f, Animation.PlayMode.LOOP));
 
         return bag;
 
