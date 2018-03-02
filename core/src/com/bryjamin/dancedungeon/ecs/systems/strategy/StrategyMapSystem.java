@@ -6,15 +6,11 @@ import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.artemis.World;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.bryjamin.dancedungeon.MainGame;
-import com.bryjamin.dancedungeon.assets.Fonts;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
-import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
-import com.bryjamin.dancedungeon.ecs.components.FixedToCameraComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
@@ -26,12 +22,9 @@ import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.factories.map.MapNode;
 import com.bryjamin.dancedungeon.screens.battle.BattleScreen;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
-import com.bryjamin.dancedungeon.screens.strategy.MapScreen;
-import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
-import com.bryjamin.dancedungeon.utils.texture.TextDescription;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 /**
@@ -95,9 +88,6 @@ public class StrategyMapSystem extends EntitySystem {
             }
 
         }
-
-        createGenerateMapButton();
-        createSelectDestinationText();
 
     }
 
@@ -235,69 +225,5 @@ public class StrategyMapSystem extends EntitySystem {
 
     }
 
-
-    private void createGenerateMapButton() {
-
-        float width = Measure.units(15f);
-        float height = Measure.units(7.5f);
-
-        Entity generate = world.createEntity().edit()
-                .add(new PositionComponent(Measure.units(75f), Measure.units(50f)))
-                .add(new HitBoxComponent(new HitBox(width, height)))
-                .add(new FixedToCameraComponent(0, Measure.units(50f)))
-                .add(new CenteringBoundaryComponent(new Rectangle(0, 0, width, height)))
-                .add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE,
-                        new TextureDescription.Builder(TextureStrings.BLOCK)
-                                .width(width)
-                                .height(height).build()))
-                .add(new ActionOnTapComponent(new WorldAction() {
-                    @Override
-                    public void performAction(World world, Entity entity) {
-                        game.getScreen().dispose();
-                        game.setScreen(new MapScreen(game, partyDetails));
-                    }
-                })).getEntity();
-
-
-        Entity text = world.createEntity().edit()
-                .add(new PositionComponent(Measure.units(75f), Measure.units(50f)))
-                .add(new HitBoxComponent(new HitBox(width, height)))
-                .add(new FixedToCameraComponent(0, Measure.units(50f)))
-                .add(new CenteringBoundaryComponent(new Rectangle(0, 0, width, height)))
-                .add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE,
-                        new TextDescription.Builder(Fonts.MEDIUM)
-                                .text("GENERATE")
-                                .color(new Color(Color.BLACK))
-                                .build()))
-                .add(new ActionOnTapComponent(new WorldAction() {
-                    @Override
-                    public void performAction(World world, Entity entity) {
-                        game.getScreen().dispose();
-                        game.setScreen(new MapScreen(game, partyDetails));
-                    }
-                })).getEntity();
-
-
-    }
-
-
-
-
-    private void createSelectDestinationText() {
-
-        float width = MainGame.GAME_WIDTH;
-        float height = Measure.units(7.5f);
-
-        Entity generate = world.createEntity().edit()
-                .add(new PositionComponent())
-                .add(new FixedToCameraComponent(CenterMath.centerOnPositionX(width, width / 2), Measure.units(50f)))
-                .add(new CenteringBoundaryComponent(new Rectangle(0, 0, width, height)))
-                .add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE,
-                        new TextDescription.Builder(Fonts.MEDIUM)
-                                .text("Select Your Next Destination")
-                                .color(new Color(Color.WHITE))
-                                .build())).getEntity();
-
-    }
 
 }

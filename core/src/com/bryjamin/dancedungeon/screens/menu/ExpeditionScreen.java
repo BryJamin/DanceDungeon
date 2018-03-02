@@ -19,7 +19,7 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.BoundsDrawingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.FadeSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
-import com.bryjamin.dancedungeon.ecs.systems.input.ExpeditionScreenInputSystem;
+import com.bryjamin.dancedungeon.ecs.systems.input.BasicInputSystemWithStage;
 import com.bryjamin.dancedungeon.ecs.systems.ui.ExpeditionScreenCreationSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
 import com.bryjamin.dancedungeon.factories.CharacterGenerator;
@@ -54,7 +54,7 @@ public class ExpeditionScreen extends AbstractScreen {
                 .with(WorldConfigurationBuilder.Priority.HIGHEST,
 
                         new ExpeditionScreenCreationSystem(game, gameport, availiable, new Array<UnitData>()),
-                        new ExpeditionScreenInputSystem(gameport),
+                        new BasicInputSystemWithStage(gameport),
 
                         new MovementSystem(),
                         new UpdatePositionSystem(),

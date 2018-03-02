@@ -63,7 +63,7 @@ public class DummyFactory {
         bag.add(new SkillsComponent(new MeleeAttack()));
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, blob.color(Color.WHITE).build()));
         bag.add(new UtilityAiComponent(dummyAi(slash)));
-        
+
         return bag;
 
     }

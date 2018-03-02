@@ -143,8 +143,8 @@ public class BattleScreen extends AbstractScreen {
         GameDelta.delta(world, delta);
     }
 
-    public void victory(){
-        game.setScreen(new VictoryScreen(game, this));
+    public void victory(PartyDetails partyDetails){
+        game.setScreen(new VictoryScreen(game, this, partyDetails));
     }
 
 
