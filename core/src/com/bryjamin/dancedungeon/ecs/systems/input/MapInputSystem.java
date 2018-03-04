@@ -12,6 +12,7 @@ import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.map.MapNodeComponent;
 import com.bryjamin.dancedungeon.ecs.systems.FixedToCameraPanAndFlingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.ActionOnTapSystem;
+import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CameraMath;
 
@@ -21,12 +22,23 @@ import com.bryjamin.dancedungeon.utils.math.CameraMath;
 
 public class MapInputSystem extends EntitySystem {
 
+
+    private StageUIRenderingSystem stageUIRenderingSystem;
+
     private Viewport gameport;
     private MainGame game;
     private float minX;
     private float maxX;
 
     private GestureDetector gd;
+
+    private boolean disable = false;
+
+    private enum State {
+        MENU_OPEN, MENU_CLOSED
+    }
+
+    public State state = State.MENU_CLOSED;
 
 
     public MapInputSystem(MainGame game, Viewport gameport, float minX, float maxX) {
@@ -40,9 +52,32 @@ public class MapInputSystem extends EntitySystem {
 
     @Override
     protected void processSystem() {
+
         InputMultiplexer multiplexer = new InputMultiplexer();
-        multiplexer.addProcessor(gd);
+
+        switch (state) {
+
+            case MENU_OPEN:
+                multiplexer.addProcessor(stageUIRenderingSystem.stage);
+                break;
+
+            case MENU_CLOSED:
+                multiplexer.addProcessor(stageUIRenderingSystem.stage);
+                multiplexer.addProcessor(gd);
+                break;
+
+
+        }
         Gdx.input.setInputProcessor(multiplexer);
+    }
+
+
+    public void openMenu(){
+        state = State.MENU_OPEN;
+    }
+
+    public void closedMenu(){
+        state = State.MENU_CLOSED;
     }
 
 
@@ -59,7 +94,6 @@ public class MapInputSystem extends EntitySystem {
         @Override
         public boolean tap(float x, float y, int count, int button) {
             Vector3 input = gameport.unproject(new Vector3(x, y, 0));
-            System.out.println("?");
             if (world.getSystem(ActionOnTapSystem.class).touch(input.x, input.y)) {
                 return true;
             }

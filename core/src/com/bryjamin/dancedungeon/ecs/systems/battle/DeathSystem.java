@@ -43,8 +43,6 @@ public class DeathSystem extends EntityProcessingSystem {
      */
     public void kill(Entity e){
 
-        System.out.println("Dead");
-
         if(onDeathActionsMapper.has(e)){
             for(WorldAction worldAction : onDeathActionsMapper.get(e).actions){
                 worldAction.performAction(world, e);

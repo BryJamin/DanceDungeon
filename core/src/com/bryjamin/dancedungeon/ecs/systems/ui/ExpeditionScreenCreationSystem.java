@@ -214,7 +214,7 @@ public class ExpeditionScreenCreationSystem extends BaseSystem {
 
             final UnitData unitData = availableMembers.get(i);
 
-            Button btn = new Button(drawable);
+            Button btn = new Button(drawable, drawable.tint(new Color(0.1f, 0.1f, 0.1f, 1)));
 
             if (partyMembers.contains(availableMembers.get(i), true)){
                 btn = new Button(drawable.tint(new Color(0.1f, 0.1f, 0.1f, 0.7f)));

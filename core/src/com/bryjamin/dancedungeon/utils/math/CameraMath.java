@@ -44,7 +44,6 @@ public class CameraMath {
 
     public static void setBtmLeftX(Camera camera, float x){
         camera.position.x = (x + camera.viewportWidth / 2);
-        System.out.println(camera.position.x);
     }
 
 }

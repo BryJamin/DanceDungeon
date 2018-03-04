@@ -24,7 +24,7 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.input.MapInputSystem;
 import com.bryjamin.dancedungeon.ecs.systems.strategy.EventGenerationSystem;
 import com.bryjamin.dancedungeon.ecs.systems.strategy.StrategyMapSystem;
-import com.bryjamin.dancedungeon.ecs.systems.ui.MapStageInitialisationSystem;
+import com.bryjamin.dancedungeon.ecs.systems.ui.MapStageUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.factories.map.MapGenerator;
@@ -64,7 +64,7 @@ public class MapScreen extends AbstractScreen {
 
                         new MapInputSystem(game, gameport, 0, gameMap.getWidth() + Measure.units(20f)),
                         new FixedToCameraPanAndFlingSystem(gameport.getCamera(), 0, 0, gameMap.getWidth() + Measure.units(20f), 0),
-                        new MapStageInitialisationSystem(game, partyDetails, gameport), //Updates and is fixed to camera, so need to be below fling system
+                        new MapStageUISystem(game, partyDetails, gameport), //Updates and is fixed to camera, so need to be below fling system
 
 
                         //Positional Systems
@@ -104,7 +104,7 @@ public class MapScreen extends AbstractScreen {
 
     public void battleVictory(){
         world.getSystem(StrategyMapSystem.class).onVictory();
-        world.getSystem(MapStageInitialisationSystem.class).updateInformation();
+        world.getSystem(MapStageUISystem.class).updateInformation();
     }
 
 }
