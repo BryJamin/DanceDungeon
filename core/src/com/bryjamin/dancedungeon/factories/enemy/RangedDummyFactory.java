@@ -18,6 +18,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationMapComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationStateComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
+import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.player.UnitFactory;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.factories.spells.basic.Fireball;
@@ -59,7 +60,10 @@ public class RangedDummyFactory {
                 .movementRange(4)
                 .build();
 
-        ComponentBag bag = unitFactory.baseEnemyUnitBag(statComponent);
+        UnitData unitData = new UnitData("Eugh");
+        unitData.setStatComponent(statComponent);
+
+        ComponentBag bag = unitFactory.baseEnemyUnitBag(unitData);
         bag.add(new SkillsComponent(fireball));
         bag.add(new CenteringBoundaryComponent(width, height));
         bag.add(new HitBoxComponent(new HitBox(width, height)));

@@ -18,6 +18,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
+import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.player.UnitFactory;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.factories.spells.basic.MeleeAttack;
@@ -51,11 +52,11 @@ public class DummyFactory {
     }
 
 
-    private ComponentBag targetDummy(StatComponent statComponent) {
+    private ComponentBag targetDummy(UnitData unitData) {
 
         Skill slash = new Strike();
 
-        ComponentBag bag = unitFactory.baseEnemyUnitBag(statComponent); //new ComponentBag();
+        ComponentBag bag = unitFactory.baseEnemyUnitBag(unitData); //new ComponentBag();
 
         bag.add(new MoveToComponent(Measure.units(80f)));
         bag.add(new CenteringBoundaryComponent(width, height));
@@ -70,8 +71,12 @@ public class DummyFactory {
 
 
     public ComponentBag targetDummyWalker() {
-        ComponentBag bag = targetDummy(new StatComponent.StatBuilder().movementRange(3)
+
+        UnitData unitData = new UnitData("Eugh");
+        unitData.setStatComponent(new StatComponent.StatBuilder().movementRange(3)
                 .build());
+
+        ComponentBag bag = targetDummy(unitData);
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, blob.color(Color.CYAN).build()));
         bag.add(new StatComponent.StatBuilder().movementRange(3)
                 .build());
@@ -95,8 +100,11 @@ public class DummyFactory {
 
     public ComponentBag targetDummySprinter() {
 
-        ComponentBag bag = targetDummy(new StatComponent.StatBuilder().movementRange(6)
+        UnitData unitData = new UnitData("Eugh");
+        unitData.setStatComponent(new StatComponent.StatBuilder().movementRange(6)
                 .build());
+
+        ComponentBag bag = targetDummy(unitData);
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, blob.color(Color.WHITE).build()));
         bag.add(new StatComponent.StatBuilder().movementRange(6)
                 .build());

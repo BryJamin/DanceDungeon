@@ -38,7 +38,7 @@ public class PlayerFactory {
 
     public ComponentBag player(UnitData unitData){
 
-        ComponentBag bag = unitFactory.basePlayerUnitBag(unitData.getStatComponent());
+        ComponentBag bag = unitFactory.basePlayerUnitBag(unitData);
 
         bag.add(unitData.getSkillsComponent());
         bag.add(new CenteringBoundaryComponent(new Rectangle(0, 0, width, height)));
@@ -57,7 +57,7 @@ public class PlayerFactory {
 
     public ComponentBag archer(UnitData unitData){
 
-        ComponentBag bag = unitFactory.basePlayerUnitBag(unitData.getStatComponent());
+        ComponentBag bag = unitFactory.basePlayerUnitBag(unitData);
 
         bag.add(unitData.getSkillsComponent());
         bag.add(new CenteringBoundaryComponent(new Rectangle(0, 0, width, height)));
@@ -76,7 +76,7 @@ public class PlayerFactory {
 
     public ComponentBag mage(UnitData unitData){
 
-        ComponentBag bag = unitFactory.basePlayerUnitBag(unitData.getStatComponent());
+        ComponentBag bag = unitFactory.basePlayerUnitBag(unitData);
 
         bag.add(unitData.getSkillsComponent());
         bag.add(new CenteringBoundaryComponent(new Rectangle(0, 0, width, height)));

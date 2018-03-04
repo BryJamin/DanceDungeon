@@ -10,7 +10,7 @@ import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
-import com.bryjamin.dancedungeon.ecs.systems.SkillUISystem;
+import com.bryjamin.dancedungeon.ecs.systems.BattleStageUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.EndBattleSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.PlayerControlledSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
@@ -59,7 +59,7 @@ public class BattleEvent extends com.bryjamin.dancedungeon.factories.map.event.M
     public void setUpEvent(World world) {
 
         world.getSystem(TurnSystem.class).setUp(TurnSystem.TURN.ALLY);
-        world.getSystem(SkillUISystem.class).reset();
+        world.getSystem(BattleStageUISystem.class).reset();
 
         setUpPlayerLocations(world);
         setUpEnemyLocations(world, convertEnemiesIntoComponentBags());
