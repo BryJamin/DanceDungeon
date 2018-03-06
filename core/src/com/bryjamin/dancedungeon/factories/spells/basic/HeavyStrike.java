@@ -15,7 +15,7 @@ public class HeavyStrike extends Skill{
                 .name("Heavy Strike")
                 .description("Deals 1 damage. Stuns a Target For 1 Round")
                 .icon(TextureStrings.CLASS_WARRIOR)
-                .targeting(Targeting.Enemy)
+                .targeting(Targeting.Melee)
                 .spellAnimation(Skill.SpellAnimation.Slash)
                 .spellType(SpellType.MagicAttack)
                 .spellEffects(SpellEffect.Stun.value(3))

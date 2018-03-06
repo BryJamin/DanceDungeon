@@ -15,6 +15,7 @@ import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.SolidComponent;
 import com.bryjamin.dancedungeon.factories.decor.FloorFactory;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
@@ -34,6 +35,7 @@ public class TileSystem extends EntitySystem {
 
 
     private ComponentMapper<PlayerControlledComponent> pcm;
+    private ComponentMapper<SolidComponent> sm;
     private ComponentMapper<EnemyComponent> enemym;
 
 
@@ -147,7 +149,9 @@ public class TileSystem extends EntitySystem {
 
     private void addEntityToMaps(Entity e, Coordinates coordinates) {
 
-        occupiedMap.put(e, coordinates);
+        if(sm.has(e)) {
+            occupiedMap.put(e, coordinates);
+        }
 
         if(coordinateMap.get(coordinates) != null) {
             coordinateMap.get(coordinates).add(e);

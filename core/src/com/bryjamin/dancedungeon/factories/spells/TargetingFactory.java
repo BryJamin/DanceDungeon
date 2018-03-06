@@ -104,8 +104,30 @@ public class TargetingFactory {
 
         Array<Entity> entityArray = new Array<Entity>();
 
+        TileSystem tileSystem = world.getSystem(TileSystem.class);
+
         for (Coordinates c : CoordinateMath.getCoordinatesInSquareRange(player.getComponent(CoordinateComponent.class).coordinates, range)) {
-            entityArray.add(createTargetingBox(world, player, c, spell, true));
+
+            if(tileSystem.getCoordinateMap().containsKey(c)) {
+                entityArray.add(createTargetingBox(world, player, c, spell, true));
+            }
+        }
+
+        return entityArray;
+    }
+
+
+    public Array<Entity> createAdjacentTiles(World world, final Entity player, final Skill spell, int range) {
+
+        Array<Entity> entityArray = new Array<Entity>();
+
+        TileSystem tileSystem = world.getSystem(TileSystem.class);
+
+        for (Coordinates c : CoordinateMath.getCoordinatesInLine(player.getComponent(CoordinateComponent.class).coordinates, range)) {
+
+            if(tileSystem.getCoordinateMap().containsKey(c)) {
+                entityArray.add(createTargetingBox(world, player, c, spell, true));
+            }
         }
 
         return entityArray;

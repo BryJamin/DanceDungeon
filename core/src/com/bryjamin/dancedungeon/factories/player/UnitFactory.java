@@ -11,6 +11,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.SolidComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
@@ -27,6 +28,7 @@ public class UnitFactory {
         ComponentBag bag = new ComponentBag();
         bag.add(new PositionComponent());
         bag.add(new UnitComponent(unitData));
+        bag.add(new SolidComponent());
 
         bag.add(new HealthComponent(unitData.statComponent.health, unitData.statComponent.maxHealth));
         bag.add(new CoordinateComponent());

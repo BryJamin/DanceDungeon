@@ -102,11 +102,13 @@ public class DummyFactory {
 
         UnitData unitData = new UnitData("Eugh");
         unitData.setStatComponent(new StatComponent.StatBuilder().movementRange(6)
+                .healthAndMax(100)
                 .build());
 
         ComponentBag bag = targetDummy(unitData);
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, blob.color(Color.WHITE).build()));
         bag.add(new StatComponent.StatBuilder().movementRange(6)
+                .healthAndMax(100)
                 .build());
         return bag;
 
