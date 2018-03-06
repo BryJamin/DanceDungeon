@@ -46,8 +46,6 @@ public class TurnSystem extends EntitySystem {
     private Array<Entity> enemyTurnEntities = new Array<Entity>();
     private Array<Entity> allyTurnEntities = new Array<Entity>();
 
-    private TurnComponent currentTurnComponent;
-
     private boolean processingFlag = true;
 
 
@@ -58,7 +56,7 @@ public class TurnSystem extends EntitySystem {
     private STATE battleState = STATE.NEXT_TURN;
 
 
-    public enum TURN {
+    public enum TURN { //ENEMY - Enemy Turn, //ALLY - Ally Turn, //INTENT - Stored enemy actions
         ENEMY, ALLY, INTENT
     }
 
@@ -145,10 +143,6 @@ public class TurnSystem extends EntitySystem {
     //TODO organise, as it is quite messy
     @Override
     protected void processSystem() {
-
-
-        System.out.println(turn);
-        System.out.println(battleState);
 
         if(turn == INTENT){
 

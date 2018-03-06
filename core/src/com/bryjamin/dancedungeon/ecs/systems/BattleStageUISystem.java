@@ -111,9 +111,9 @@ public class BattleStageUISystem extends EntitySystem {
             }
         });
 
-        endTurn.setPosition(0, Measure.units(55f));
-        endTurn.setWidth(Measure.units(10f));
-        endTurn.setHeight(Measure.units(5f));
+        endTurn.setPosition(0, Measure.units(50f));
+        endTurn.setWidth(Measure.units(12.5f));
+        endTurn.setHeight(Measure.units(10f));
 
 
         stage.addActor(endTurn);

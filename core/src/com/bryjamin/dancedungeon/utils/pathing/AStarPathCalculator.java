@@ -155,9 +155,16 @@ public class AStarPathCalculator {
 
                 if(maxRange >= 0){
 
-                    if(strictMaxRange) {
+                    //Because you scan all coordinates within a certain range,
+                    //It is possible to find a route to a coordinate that is greater than the maximum range
+                    //For targeting purposes these are removed
+
+                    //For enemy purposes it simply reduces the length of the path, since the AI, needs
+                    //The shortest path, it just can't reach all the way yet.
+
+                    if(strictMaxRange) { //This is for players and targeting
                         if (fillQueue.size > maxRange) return false;
-                    } else {//This is for players and targeting
+                    } else {
                         while (fillQueue.size > maxRange) { //This is for players
                             fillQueue.removeLast();
                         }

@@ -357,7 +357,7 @@ public class TileSystem extends EntitySystem {
 
         AStarPathCalculator aStarPathCalculator;
 
-        if(pcm.has(e)) {
+        if(pcm.has(e)) {//TODO What happens if you have allied units?
             aStarPathCalculator = new AStarPathCalculator(coordinateMap.keys().toArray(), occupiedMap.values().toArray(),
                     playerControlledMap.values().toArray());
 

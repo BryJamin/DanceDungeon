@@ -67,9 +67,7 @@ public class Skill {
     private int uses = 2;
     private int coolDown = 2;
     private int coolDownTracker = 0;
-
-
-    private int push = 2;
+    private int push = 0;
 
 
     private Targeting targeting = Targeting.Melee;
@@ -95,6 +93,7 @@ public class Skill {
         this.spellEffects = b.spellEffects;
         this.spellCoolDown = b.spellCoolDown;
         this.coolDown = b.cooldown;
+        this.push = b.push;
     }
 
     public Array<Entity> createTargeting(World world, Entity player) {
@@ -470,6 +469,7 @@ public class Skill {
         private SpellEffect[] spellEffects = new SpellEffect[]{};
         private SpellCoolDown spellCoolDown = SpellCoolDown.NoCoolDown;
         private int cooldown = 1;
+        private int push = 0;
 
         public Builder name(String val) {
             this.name = val;
@@ -525,6 +525,11 @@ public class Skill {
 
         public Builder spellEffects(SpellEffect... val) {
             this.spellEffects = val;
+            return this;
+        }
+
+        public Builder push(int val) {
+            this.push = val;
             return this;
         }
 
