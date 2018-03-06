@@ -13,7 +13,6 @@ import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.BuffComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationMapComponent;
@@ -35,7 +34,7 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 public class Skill {
 
-    public enum Targeting {Ally, Enemy, Melee, Self, FreeAim, StraightShot}
+    public enum Targeting {Ally, Melee, Self, FreeAim, StraightShot}
     public enum Attack {Melee, Ranged, Transformative}
     public enum ActionType {UsesMoveAndAttackAction, UsesAttackAction, UsesMoveAction, Free}
     public enum SpellDamageApplication {Instant, AfterSpellAnimation}
@@ -73,7 +72,7 @@ public class Skill {
     private int push = 2;
 
 
-    private Targeting targeting = Targeting.Enemy;
+    private Targeting targeting = Targeting.Melee;
     private Attack attack = Attack.Ranged;
     private ActionType actionType = ActionType.UsesMoveAndAttackAction;
     private SpellAnimation spellAnimation = SpellAnimation.Projectile;
@@ -105,9 +104,6 @@ public class Skill {
         int range = attack == Attack.Melee ? 1 : player.getComponent(StatComponent.class).attackRange;
 
         switch (targeting) {
-            case Enemy:
-                entityArray = new TargetingFactory().createTargetTiles(world, player, this, range);
-                break;
             case Ally:
                 entityArray = new TargetingFactory().createAllyTargetTiles(world, player, this, range);
                 break;
@@ -128,6 +124,27 @@ public class Skill {
 
         return entityArray;
     }
+
+
+/*
+    public Array<Entity> createEnemyIntent(World world, ){
+
+
+
+
+
+
+
+
+
+
+
+    }
+*/
+
+
+
+
 
     ;
 
@@ -288,6 +305,9 @@ public class Skill {
             }
 
 
+            /**
+             * USED FOR CALCUALTING THE PUSH MOVEMENT OF AN ENEMY
+             */
 
             if(push != 0){
 
@@ -326,22 +346,25 @@ public class Skill {
 
                         //Check if coordinate is off the side of the map. If it is, look back to the previous coordinate.
                         if(!tileSystem.getCoordinateMap().containsKey(pushCoords)){
-                            e.getComponent(MoveToComponent.class).movementPositions.add(
+                            world.getSystem(ActionCameraSystem.class).createMovementAction(e,
                                     tileSystem.getPositionUsingCoordinates(prev, e.getComponent(CenteringBoundaryComponent.class).bound));
+                            world.getSystem(ActionCameraSystem.class).createIntentAction(e);
                             break;
                         }
 
                         if(tileSystem.getOccupiedMap().containsValue(pushCoords, false)){ //Pretend move but bounce back
-                            e.getComponent(MoveToComponent.class).movementPositions.add(
-                                    tileSystem.getPositionUsingCoordinates(pushCoords, e.getComponent(CenteringBoundaryComponent.class).bound));
-                            e.getComponent(MoveToComponent.class).movementPositions.add(
-                                    tileSystem.getPositionUsingCoordinates(prev, e.getComponent(CenteringBoundaryComponent.class).bound));
+                            world.getSystem(ActionCameraSystem.class).createMovementAction(e,
+                                    tileSystem.getPositionUsingCoordinates(pushCoords, e.getComponent(CenteringBoundaryComponent.class).bound),
+                                    tileSystem.getPositionUsingCoordinates(prev, e.getComponent(CenteringBoundaryComponent.class).bound)
+                                    );
+                            world.getSystem(ActionCameraSystem.class).createIntentAction(e);
                             break;
                         };
 
                         if(i == pushCoordinateArray.length - 1){ //Final loop
-                            e.getComponent(MoveToComponent.class).movementPositions.add(
+                            world.getSystem(ActionCameraSystem.class).createMovementAction(e,
                                     tileSystem.getPositionUsingCoordinates(pushCoords, e.getComponent(CenteringBoundaryComponent.class).bound));
+                            world.getSystem(ActionCameraSystem.class).createIntentAction(e);
                         }
 
                         //Check if end of coordinate array
@@ -438,7 +461,7 @@ public class Skill {
         private String name = "N/A";
         private String description = "N/A";
         private String icon;
-        private Targeting targeting = Targeting.Enemy;
+        private Targeting targeting = Targeting.StraightShot;
         private Attack attack = Attack.Ranged;
         private ActionType actionType = ActionType.UsesMoveAndAttackAction;
         private SpellAnimation spellAnimation = SpellAnimation.Projectile;

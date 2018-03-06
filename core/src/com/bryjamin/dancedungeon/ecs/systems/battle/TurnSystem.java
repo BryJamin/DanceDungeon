@@ -16,6 +16,7 @@ import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComp
 
 import static com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem.TURN.ALLY;
 import static com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem.TURN.ENEMY;
+import static com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem.TURN.INTENT;
 
 /**
  * Created by BB on 21/10/2017.
@@ -58,7 +59,7 @@ public class TurnSystem extends EntitySystem {
 
 
     public enum TURN {
-        ENEMY, ALLY
+        ENEMY, ALLY, INTENT
     }
 
     private TURN turn = ENEMY;
@@ -102,6 +103,13 @@ public class TurnSystem extends EntitySystem {
 
     }
 
+
+    public void endAllyTurn(){
+        turn = INTENT;
+        battleState = STATE.NEXT_TURN;
+    }
+
+
     public void setUp(TURN turn) {
 
         this.turn = turn;
@@ -137,6 +145,32 @@ public class TurnSystem extends EntitySystem {
     //TODO organise, as it is quite messy
     @Override
     protected void processSystem() {
+
+
+        System.out.println(turn);
+        System.out.println(battleState);
+
+        if(turn == INTENT){
+
+            switch (battleState){
+
+                case NEXT_TURN:
+                    if(world.getSystem(EnemyIntentSystem.class).releaseAttack()){
+                        battleState = STATE.WAITING;
+                    } else {
+                        setUp(ENEMY);
+                    }
+                    break;
+                case WAITING:
+                    if (!world.getSystem(ActionCameraSystem.class).isProcessing()) {
+                        battleState = STATE.NEXT_TURN;
+                    }
+                    break;
+            }
+
+            return;
+        }
+
 
         //if (world.getSystem(ActionCameraSystem.class).isProcessing()) return;
 

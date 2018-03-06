@@ -23,6 +23,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.UITargetingComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyIntentComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.ReselectEntityComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.SelectedEntityComponent;
 import com.bryjamin.dancedungeon.ecs.systems.BattleStageUISystem;
@@ -390,6 +391,25 @@ public class TargetingFactory {
 
         return bag;
     }
+
+
+    public ComponentBag highlightBox(Rectangle r) {
+        ComponentBag bag = new ComponentBag();
+
+        bag.add(new PositionComponent(r.x, r.y));
+        bag.add(new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE,
+                new TextureDescription.Builder(TextureStrings.BLOCK)
+                        .color(new Color(Color.RED.r, Color.RED.g, Color.RED.b, 0.6f))
+                        .width(r.getWidth())
+                        .height(r.getHeight())
+                        .build()));
+        bag.add(new HitBoxComponent(new HitBox(r)));
+        bag.add(new CenteringBoundaryComponent());
+        bag.add(new EnemyIntentComponent());
+
+        return bag;
+    }
+
 
     public ComponentBag whiteMarkerBox(Rectangle r) {
         ComponentBag bag = new ComponentBag();

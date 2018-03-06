@@ -106,7 +106,7 @@ public class BattleStageUISystem extends EntitySystem {
         endTurn.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                world.getSystem(TurnSystem.class).setUp(TurnSystem.TURN.ENEMY);
+                world.getSystem(TurnSystem.class).endAllyTurn();
                 world.getSystem(BattleStageUISystem.class).reset();
             }
         });

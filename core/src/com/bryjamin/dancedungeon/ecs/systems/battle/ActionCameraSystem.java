@@ -5,6 +5,7 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.artemis.World;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.Queue;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
@@ -28,14 +29,11 @@ import com.bryjamin.dancedungeon.utils.math.Coordinates;
 public class ActionCameraSystem extends EntitySystem {
 
 
-    private OrderedMap<WorldConditionalAction, Entity> queuedActionMap = new OrderedMap<WorldConditionalAction, Entity>();
+    private OrderedMap<WorldConditionalAction, Entity> queuedActioEntityMap = new OrderedMap<WorldConditionalAction, Entity>();
 
     private Queue<WorldConditionalAction> actionQueue = new Queue<WorldConditionalAction>();
 
     private ComponentMapper<WaitActionComponent> waitActionMapper;
-
-
-    private WorldConditionalAction currentConditionalAction;
 
     private boolean hasBegun = false;
 
@@ -61,7 +59,7 @@ public class ActionCameraSystem extends EntitySystem {
         boolean isEntityDead = true;
 
         for(Entity e : this.getEntities()){
-            if(queuedActionMap.get(actionQueue.first()).equals(e)){
+            if(queuedActioEntityMap.get(actionQueue.first()).equals(e)){
                 isEntityDead = false;
                 break;
             }
@@ -72,6 +70,10 @@ public class ActionCameraSystem extends EntitySystem {
 
     @Override
     protected void processSystem() {
+
+
+        System.out.println(this.getEntities().size());
+        System.out.println(state);
 
         if(this.getEntities().size() == 0){
             actionQueue.clear();
@@ -84,12 +86,15 @@ public class ActionCameraSystem extends EntitySystem {
             case PERFORM_ACTION:
                 if (actionQueue.size == 0) return;
 
-                if(isActionEntityDead()) return;
+                System.out.println(isActionEntityDead());
+                if(isActionEntityDead()) {
+                    actionQueue.removeFirst();
+                    return;
+                }
 
-                actionQueue.first().performAction(world,
-                        queuedActionMap.get(actionQueue.first()));
-
-                queuedActionMap.get(actionQueue.first()).edit().add(new WaitActionComponent());
+                Entity queued = queuedActioEntityMap.get(actionQueue.first());
+                actionQueue.first().performAction(world, queued);
+                queued.edit().add(new WaitActionComponent());
                 state = State.WAIT_ACTION;
                 break;
 
@@ -103,9 +108,9 @@ public class ActionCameraSystem extends EntitySystem {
                 }
 
 
-                if (actionQueue.first().condition(world, queuedActionMap.get(actionQueue.first()))) {
+                if (actionQueue.first().condition(world, queuedActioEntityMap.get(actionQueue.first()))) {
 
-                    Entity current = queuedActionMap.get(actionQueue.first());
+                    Entity current = queuedActioEntityMap.get(actionQueue.first());
 
                     actionQueue.removeFirst();
                     state = State.PERFORM_ACTION;
@@ -113,7 +118,7 @@ public class ActionCameraSystem extends EntitySystem {
                     boolean noMoreActions = true;
 
                     for(WorldConditionalAction wca : actionQueue){
-                        if(queuedActionMap.get(wca).equals(current)){
+                        if(queuedActioEntityMap.get(wca).equals(current)){
                             noMoreActions = false;
                             break;
                         }
@@ -131,9 +136,15 @@ public class ActionCameraSystem extends EntitySystem {
     }
 
 
-    public void pushLastAction(Entity e, WorldConditionalAction wca) {
+    @Override
+    public void removed(Entity e) {
+
+
+    }
+
+    public void pushLastAction(Entity e, WorldConditionalAction wca) {//Pushes a new action to the queue and adds a WaitActionComponent
         actionQueue.addLast(wca);
-        queuedActionMap.put(wca, e);
+        queuedActioEntityMap.put(wca, e);
         e.edit().add(new WaitActionComponent());
     }
 
@@ -147,6 +158,7 @@ public class ActionCameraSystem extends EntitySystem {
         pushLastAction(entity, new WorldConditionalAction() {
             @Override
             public boolean condition(World world, Entity entity) {
+                System.out.println("Move Using Coords");
                 return entity.getComponent(MoveToComponent.class).isEmpty();
             }
 
@@ -168,6 +180,7 @@ public class ActionCameraSystem extends EntitySystem {
         pushLastAction(entity, new WorldConditionalAction() {
             @Override
             public boolean condition(World world, Entity entity) {
+                System.out.println("Death Wait");
                 return false;
             }
 
@@ -176,6 +189,45 @@ public class ActionCameraSystem extends EntitySystem {
             }
         });
 
+    }
+
+    public void createMovementAction(Entity entity, final Vector3... positions){
+
+        pushLastAction(entity, new WorldConditionalAction() {
+            @Override
+            public boolean condition(World world, Entity entity) {
+
+                System.out.println("Move Action using position");
+
+                return entity.getComponent(MoveToComponent.class).isEmpty();
+            }
+
+            @Override
+            public void performAction(World world, Entity entity) {
+                for (Vector3 p : positions) {
+                    entity.getComponent(MoveToComponent.class).movementPositions.add(p);
+                }
+            }
+        });
+    }
+
+
+
+    public void createIntentAction(Entity entity){
+
+
+        pushLastAction(entity, new WorldConditionalAction() {
+            @Override
+            public boolean condition(World world, Entity entity) {
+                System.out.println("Intent");
+                return true;
+            }
+
+            @Override
+            public void performAction(World world, Entity entity) {
+                world.getSystem(EnemyIntentSystem.class).updateIntent();
+            }
+        });
     }
 
 

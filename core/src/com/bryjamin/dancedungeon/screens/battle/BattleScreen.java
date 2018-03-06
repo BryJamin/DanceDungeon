@@ -23,6 +23,7 @@ import com.bryjamin.dancedungeon.ecs.systems.battle.BuffSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BulletSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.DeathSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.EndBattleSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.EnemyIntentSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ExplosionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.GenerateTargetsSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.HealthSystem;
@@ -112,6 +113,7 @@ public class BattleScreen extends AbstractScreen {
                         new NoMoreActionsSystem(),
                         new PlayerGraphicalTargetingSystem(),
                         new BattleMessageSystem(gameport),
+                        new EnemyIntentSystem(),
                         new AnimationSystem(game),
                         new RenderingSystem(game, gameport),
                         new HealthBarSystem(game, gameport),

@@ -21,9 +21,8 @@ import com.bryjamin.dancedungeon.ecs.systems.ParentChildSystem;
 public class DeathSystem extends EntityProcessingSystem {
 
 
-
-        ComponentMapper<ParentComponent> parentMapper;
-        ComponentMapper<OnDeathActionsComponent> onDeathActionsMapper;
+    ComponentMapper<ParentComponent> parentMapper;
+    ComponentMapper<OnDeathActionsComponent> onDeathActionsMapper;
 
 
 

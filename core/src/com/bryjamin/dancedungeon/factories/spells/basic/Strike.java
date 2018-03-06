@@ -13,7 +13,7 @@ public class Strike extends Skill {
         super(new Builder()
                 .name("Strike")
                 .icon(TextureStrings.SKILLS_SLASH)
-                .targeting(Targeting.Enemy)
+                .targeting(Targeting.StraightShot)
                 .spellAnimation(SpellAnimation.Slash)
                 .spellType(SpellType.PhysicalAttack)
                 .attack(Attack.Melee));
