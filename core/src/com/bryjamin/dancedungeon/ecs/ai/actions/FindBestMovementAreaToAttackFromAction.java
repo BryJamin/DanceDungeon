@@ -40,7 +40,7 @@ public class FindBestMovementAreaToAttackFromAction implements WorldAction {
 
             float score = 1;
 
-            coordinateScores.add(c);
+          //  coordinateScores.add(c);
 
         }
 
