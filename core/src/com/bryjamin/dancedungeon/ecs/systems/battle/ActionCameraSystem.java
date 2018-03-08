@@ -72,10 +72,6 @@ public class ActionCameraSystem extends EntitySystem {
     @Override
     protected void processSystem() {
 
-
-        System.out.println(this.getEntities().size());
-        System.out.println(state);
-
         if(this.getEntities().size() == 0){
             actionQueue.clear();
             state = State.PERFORM_ACTION;
@@ -87,7 +83,6 @@ public class ActionCameraSystem extends EntitySystem {
             case PERFORM_ACTION:
                 if (actionQueue.size == 0) return;
 
-                System.out.println(isActionEntityDead());
                 if(isActionEntityDead()) {
                     actionQueue.removeFirst();
                     return;
@@ -161,7 +156,6 @@ public class ActionCameraSystem extends EntitySystem {
         pushLastAction(entity, new WorldConditionalAction() {
             @Override
             public boolean condition(World world, Entity entity) {
-                System.out.println("Move Using Coords");
                 return entity.getComponent(MoveToComponent.class).isEmpty();
             }
 
@@ -183,7 +177,6 @@ public class ActionCameraSystem extends EntitySystem {
         pushLastAction(entity, new WorldConditionalAction() {
             @Override
             public boolean condition(World world, Entity entity) {
-                System.out.println("Death Wait");
                 return false;
             }
 
@@ -227,7 +220,6 @@ public class ActionCameraSystem extends EntitySystem {
         pushLastAction(entity, new WorldConditionalAction() {
             @Override
             public boolean condition(World world, Entity entity) {
-                System.out.println("Intent");
                 return true;
             }
 

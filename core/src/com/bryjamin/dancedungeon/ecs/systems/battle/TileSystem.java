@@ -99,10 +99,14 @@ public class TileSystem extends EntitySystem {
 
 
 
-        new UnitFactory().baseTileBag(world, new Coordinates(3, 3));
-        new UnitFactory().baseTileBag(world, new Coordinates(3, 1));
-        new UnitFactory().baseTileBag(world, new Coordinates(4, 2));
-        new UnitFactory().baseTileBag(world, new Coordinates(4, 3));
+        //new UnitFactory().baseTileBag(world, new Coordinates(3, 3));
+        new UnitFactory().baseTileBag(world, new Coordinates(0, 4));
+        //new UnitFactory().baseTileBag(world, new Coordinates(3, 3));
+        new UnitFactory().baseTileBag(world, new Coordinates(3, 2));
+        //new UnitFactory().baseTileBag(world, new Coordinates(3, 1));
+        new UnitFactory().baseTileBag(world, new Coordinates(3, 0));
+        new UnitFactory().baseAlliedTileBag(world, new Coordinates(
+                4, 5));
 
 
 
@@ -411,7 +415,6 @@ public class TileSystem extends EntitySystem {
         OrderedMap<Coordinates, Array<Entity>> om = world.getSystem(TileSystem.class).getCoordinateMap();
 
         //Most Left
-
 
         for(int i = 0; i < d.length; i++) {
 

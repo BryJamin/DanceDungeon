@@ -13,11 +13,11 @@ public class HeavyStrike extends Skill{
     public HeavyStrike() {
         super(new Builder()
                 .name("Heavy Strike")
-                .description("Deals 1 damage. Pushes a target 1 tile")
+                .description("Deals 1 damage. Pushes a storedTargetCoordinates 1 tile")
                 .icon(TextureStrings.CLASS_WARRIOR)
                 .targeting(Targeting.Melee)
                 .spellAnimation(Skill.SpellAnimation.Slash)
-                .spellType(SpellType.MagicAttack)
+                .spellType(SpellType.Attack)
                 .push(1)
                 .attack(Attack.Melee));
 

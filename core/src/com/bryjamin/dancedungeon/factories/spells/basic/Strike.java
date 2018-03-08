@@ -15,7 +15,7 @@ public class Strike extends Skill {
                 .icon(TextureStrings.SKILLS_SLASH)
                 .targeting(Targeting.StraightShot)
                 .spellAnimation(SpellAnimation.Slash)
-                .spellType(SpellType.PhysicalAttack)
+                .spellType(SpellType.Attack)
                 .attack(Attack.Melee));
     }
 

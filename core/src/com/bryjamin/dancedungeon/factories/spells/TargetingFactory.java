@@ -237,6 +237,39 @@ public class TargetingFactory {
             }
             i--;
 
+        }
+
+        return entityArray;
+
+
+    }
+
+
+    public Array<Entity> createRedTargetingMarkers(World world, Coordinates unitCoords, Coordinates target){
+
+        Array<Entity> entityArray = new Array<Entity>();
+        Coordinates markerCoords = new Coordinates(target);
+
+        int i = 100;
+
+        while(!unitCoords.equals(markerCoords) && i > 0) {
+
+            if (unitCoords.getX() < target.getX() && unitCoords.getY() == target.getY()) {
+                markerCoords.set(markerCoords.getX() - 1, markerCoords.getY());
+            } else if (unitCoords.getX() > target.getX() && unitCoords.getY() == target.getY()) {
+                markerCoords.set(markerCoords.getX() + 1, markerCoords.getY());
+            } else if (unitCoords.getX() == target.getX() && unitCoords.getY() < target.getY()) {
+                markerCoords.set(markerCoords.getX(), markerCoords.getY() - 1);
+            } else if (unitCoords.getX() == target.getX() && unitCoords.getY() > target.getY()) {
+                markerCoords.set(markerCoords.getX(), markerCoords.getY() + 1);
+            } else {
+                System.out.println("ERROR");
+                break;
+            }
+            if(!unitCoords.equals(markerCoords)) {
+                entityArray.add(redMarkerBox(world, markerCoords));
+            }
+            i--;
 
         }
 
@@ -321,7 +354,7 @@ public class TargetingFactory {
         TileSystem tileSystem = world.getSystem(TileSystem.class);
 
 
-        //This Map establishes which paths have been generated and may be used to target enemies
+        //This Map establishes which paths have been generated and may be used to storedTargetCoordinates enemies
         final OrderedMap<Coordinates, Queue<Coordinates>> coordinatesWithPathMap = createPathsToCoordinatesInMovementRange(tileSystem, player,
                 coordinateComponent.coordinates, movementRange);
 
@@ -386,13 +419,13 @@ public class TargetingFactory {
 
 
     /**
-     * Gets All targets of an entity's target component that are in range of a given co-ordinates
+     * Gets All targets of an entity's storedTargetCoordinates component that are in range of a given co-ordinates
      *
      * @param world
      * @param startCoordinates - The co-ordinate the scan orignates from
      * @param targetEntities  - Target Component of the entity
      * @param range            - The distance of the scan
-     * @return - All entities within range of the target co-ordinate
+     * @return - All entities within range of the storedTargetCoordinates co-ordinate
      */
     public Array<Entity> getTargetsInRange(World world, Coordinates startCoordinates, Array<Entity> targetEntities, int range) {
 
@@ -402,7 +435,7 @@ public class TargetingFactory {
         for (Entity e : targetEntities) {
 
             Coordinates targetCoordinates = e.getComponent(CoordinateComponent.class).coordinates;
-            //Checks if the Map contains the target
+            //Checks if the Map contains the storedTargetCoordinates
 
             //TODO maybe change occupied Map to a different check, (Like just check the entity is there)
             if (tileSystem.getOccupiedMap().containsKey(e)
@@ -459,7 +492,7 @@ public class TargetingFactory {
     }
 
 
-    public ComponentBag whiteMarkerBox(Rectangle r) {
+    public ComponentBag whiteMarkerBox(Rectangle r, Color c) {
         ComponentBag bag = new ComponentBag();
 
         float size = Measure.units(2.5f);
@@ -470,7 +503,7 @@ public class TargetingFactory {
                 CenterMath.centerOnPositionY(size, center.y)));
         bag.add(new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE,
                 new TextureDescription.Builder(TextureStrings.BLOCK)
-                        .color(new Color(Color.WHITE))
+                        .color(c)
                         .width(size)
                         .height(size)
                         .build()));
@@ -491,9 +524,23 @@ public class TargetingFactory {
 
         TileSystem tileSystem = world.getSystem(TileSystem.class);
 
-        Entity redBox = BagToEntity.bagToEntity(world.createEntity(), whiteMarkerBox(tileSystem.createRectangleUsingCoordinates(coordinates)));
+        Entity redBox = BagToEntity.bagToEntity(world.createEntity(), whiteMarkerBox(tileSystem.createRectangleUsingCoordinates(coordinates), new Color(Color.WHITE)));
 
         return redBox;
+    }
+
+    public Entity redMarkerBox(World world, Coordinates coordinates){
+
+        TileSystem tileSystem = world.getSystem(TileSystem.class);
+
+        Entity redBox = BagToEntity.bagToEntity(world.createEntity(), whiteMarkerBox(tileSystem.createRectangleUsingCoordinates(coordinates),
+                new Color(Color.RED)));
+
+        redBox.edit().remove(UITargetingComponent.class);
+        redBox.edit().add(new EnemyIntentComponent());
+
+        return redBox;
+
     }
 
 

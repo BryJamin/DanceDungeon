@@ -11,6 +11,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.FriendlyComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
@@ -46,13 +47,15 @@ public class FindBestMovementAreaToAttackFromAction implements WorldAction {
 
         TileSystem tileSystem = world.getSystem(TileSystem.class);
 
-        //Coordinates where your target is
+        //Coordinates where your storedTargetCoordinates is
         Array<Coordinates> targetCoordinatesArray = new Array<Coordinates>();
 
         for(Entity e : entity.getComponent(TargetComponent.class).getTargets(world)){
             targetCoordinatesArray.add(new Coordinates(e.getComponent(CoordinateComponent.class).coordinates));
         };
 
+
+        System.out.println("Target coords size " + targetCoordinatesArray.size);
 
 
 
@@ -63,9 +66,13 @@ public class FindBestMovementAreaToAttackFromAction implements WorldAction {
 
             float score = 0;
 
-            for(Coordinates targetCoordinates : targetCoordinatesArray) {
-                if(mainSkill.getAffectedCoordinates(world, c).contains(targetCoordinates, false)){
+            for(Entity e : entity.getComponent(TargetComponent.class).getTargets(world)) {
+                if(mainSkill.getAffectedCoordinates(world, c).contains(e.getComponent(CoordinateComponent.class).coordinates, false)){
                     score += 10; //Good Coordinate
+
+                    if(e.getComponent(FriendlyComponent.class) != null){
+                        score += 5; //Focus on objectives
+                    }
 
                     Queue<Coordinates> path = new Queue<Coordinates>();
                     if(tileSystem.findShortestPath(entity, path, c,  statComponent.movementRange)){
@@ -85,8 +92,6 @@ public class FindBestMovementAreaToAttackFromAction implements WorldAction {
 
                 }
             }
-
-            System.out.println(score);
 
             coordinateScores.add(new CoordinateScore(c, score));
         }

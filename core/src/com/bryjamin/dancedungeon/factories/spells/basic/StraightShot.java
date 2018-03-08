@@ -11,11 +11,11 @@ public class StraightShot extends Skill {
     public StraightShot() {
         super(new Builder()
                 .name("Straight Shot")
-                .description("Ranged Attack that deals 1 damage, Pushes target 1 tile")
+                .description("Ranged Attack that deals 1 damage, Pushes storedTargetCoordinates 1 tile")
                 .icon("skills/LaserScope")
                 .push(1)
                 .targeting(Targeting.StraightShot)
-                .spellType(SpellType.MagicAttack)
+                .spellType(SpellType.Attack)
                 .actionType(ActionType.UsesMoveAndAttackAction)
                 .spellAnimation(SpellAnimation.Projectile)
                 .attack(Attack.Ranged));

@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.ai.StoredSkillComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.EnemyIntentSystem;
@@ -37,7 +38,11 @@ public class BasicAttackAction implements WorldAction {
 
         for (Coordinates c : skill.getAffectedCoordinates(world, entity.getComponent(CoordinateComponent.class).coordinates)) {
             if (targetCoordinatesArray.contains(c, false)) {
-                skill.cast(world, entity, c);
+
+                entity.edit().add(new StoredSkillComponent(entity.getComponent(CoordinateComponent.class).coordinates,
+                        c, skill));
+
+                //skill.cast(world, entity, c);
                 break;
             }
         }

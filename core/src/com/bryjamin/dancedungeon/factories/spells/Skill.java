@@ -13,7 +13,7 @@ import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.BuffComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.PushabaleComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.UnPushableComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationMapComponent;
@@ -47,7 +47,7 @@ public class Skill {
 
     public enum SpellAnimation {Projectile, Slash, Glitter}
 
-    public enum SpellType {Heal, HealOverTime, MagicAttack, PhysicalAttack, Burn}
+    public enum SpellType {Heal, HealOverTime, Attack, Burn}
 
     public enum SpellEffect {
         Stun, OnFire, Dodge, Armor;
@@ -79,13 +79,13 @@ public class Skill {
     private int coolDownTracker = 0;
     private int push = 0;
 
-    private int baseDamage = 0;
+    private int baseDamage = 1;
 
     private Targeting targeting = Targeting.Melee;
     private Attack attack = Attack.Ranged;
     private ActionType actionType = ActionType.UsesMoveAndAttackAction;
     private SpellAnimation spellAnimation = SpellAnimation.Projectile;
-    private SpellType spellType = SpellType.MagicAttack;
+    private SpellType spellType = SpellType.Attack;
     private SpellDamageApplication spellDamageApplication = SpellDamageApplication.Instant;
     private SpellCoolDown spellCoolDown = SpellCoolDown.NoCoolDown;
     private SpellEffect[] spellEffects;
@@ -321,13 +321,9 @@ public class Skill {
 
                 switch (spellType) {
 
-                    case MagicAttack:
-                    case PhysicalAttack:
-
-                        e.getComponent(HealthComponent.class).applyDamage(sc.attack);
-
+                    case Attack:
+                        e.getComponent(HealthComponent.class).applyDamage(baseDamage);
                         break;
-
                     case Heal:
                         e.getComponent(HealthComponent.class).applyHealing(sc.attack);
                         break;
@@ -339,7 +335,7 @@ public class Skill {
              * USED FOR CALCUALTING THE PUSH MOVEMENT OF AN ENEMY
              */
 
-            if (push != 0 && e.getComponent(PushabaleComponent.class) == null) { //If the entity can be pushed
+            if (push != 0 && e.getComponent(UnPushableComponent.class) == null) { //If the entity can be pushed
 
                 TileSystem tileSystem = world.getSystem(TileSystem.class);
 
@@ -352,7 +348,7 @@ public class Skill {
                     Coordinates[] pushCoordinateArray = new Coordinates[push + 1];
 
 
-                    for (int i = 0; i <= push; i++) { //Decides the direction used to shove a target
+                    for (int i = 0; i <= push; i++) { //Decides the direction used to shove a storedTargetCoordinates
 
                         if (castCoords.getX() < target.getX() && castCoords.getY() == target.getY()) {
                             pushCoordinateArray[i] = new Coordinates(target.getX() + i, target.getY());
@@ -442,6 +438,10 @@ public class Skill {
 
     public SpellType getSpellType() {
         return spellType;
+    }
+
+    public Targeting getTargeting() {
+        return targeting;
     }
 
     public Attack getAttack() {

@@ -285,10 +285,6 @@ public class MapStageUISystem extends BaseSystem {
                     tooltipTable.setWidth(Measure.units(25f));
                     tooltipTable.setHeight(Measure.units(30f));
                     tooltipTable.add(new Label(s.getName(), uiSkin));
-                    System.out.println(pos.x);
-
-                    System.out.println("ax " + actor.getX());
-                    System.out.println("ay " + actor.getY());
 
                     tooltipTable.setPosition(pos.x - tooltipTable.getWidth(), pos.y - tooltipTable.getHeight() / 2);
                     tooltipTable.row();

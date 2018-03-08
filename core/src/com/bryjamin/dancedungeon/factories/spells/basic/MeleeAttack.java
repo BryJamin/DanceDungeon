@@ -22,7 +22,7 @@ public class MeleeAttack extends Skill {
                 .icon(TextureStrings.SKILLS_SLASH)
                 .targeting(Targeting.Melee)
                 .spellAnimation(SpellAnimation.Slash)
-                .spellType(SpellType.PhysicalAttack)
+                .spellType(SpellType.Attack)
                 .attack(Attack.Melee));
     }
 }

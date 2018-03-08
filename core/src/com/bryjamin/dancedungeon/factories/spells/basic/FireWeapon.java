@@ -14,7 +14,7 @@ public class FireWeapon extends Skill {
                 .description("Uses Attack And Movement Action")
                 .icon("skills/LaserScope")
                 .targeting(Targeting.StraightShot)
-                .spellType(SpellType.MagicAttack)
+                .spellType(SpellType.Attack)
                 .actionType(ActionType.UsesMoveAndAttackAction)
                 .spellAnimation(SpellAnimation.Slash)
                 .attack(Attack.Ranged));

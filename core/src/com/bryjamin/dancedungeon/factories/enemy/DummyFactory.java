@@ -38,6 +38,8 @@ public class DummyFactory {
 
     public static final float width = Measure.units(5f);
     public static final float height = Measure.units(5f);
+    private static final int health = 2;
+    private static final int sprinterHealth = 3;
 
     private UnitFactory unitFactory = new UnitFactory();
 
@@ -73,7 +75,8 @@ public class DummyFactory {
     public ComponentBag targetDummyWalker() {
 
         UnitData unitData = new UnitData("Eugh");
-        unitData.setStatComponent(new StatComponent.StatBuilder().movementRange(3)
+        unitData.setStatComponent(new StatComponent.StatBuilder()
+                .movementRange(3)
                 .build());
 
         ComponentBag bag = targetDummy(unitData);
@@ -102,7 +105,7 @@ public class DummyFactory {
 
         UnitData unitData = new UnitData("Eugh");
         unitData.setStatComponent(new StatComponent.StatBuilder().movementRange(6)
-                .healthAndMax(15)
+                .healthAndMax(sprinterHealth)
                 .build());
 
         ComponentBag bag = targetDummy(unitData);
