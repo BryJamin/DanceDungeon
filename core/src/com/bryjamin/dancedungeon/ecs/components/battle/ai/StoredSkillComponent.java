@@ -11,22 +11,22 @@ import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
 public class StoredSkillComponent extends Component {
 
-    public Coordinates current;
-    public Coordinates target;
+    public Coordinates storedCoordinates;
+    public Coordinates storedTargetCoordinates;
 
     public Skill skill;
 
 
     public StoredSkillComponent(){
-        current = new Coordinates();
-        target = new Coordinates();
+        storedCoordinates = new Coordinates();
+        storedTargetCoordinates = new Coordinates();
         skill = new Foresight();
     }
 
 
-    public StoredSkillComponent(Coordinates current, Coordinates target, Skill skill){
-        this.current = current;
-        this.target = target;
+    public StoredSkillComponent(Coordinates storedCoordinates, Coordinates storedTargetCoordinates, Skill skill){
+        this.storedCoordinates = storedCoordinates;
+        this.storedTargetCoordinates = storedTargetCoordinates;
         this.skill = skill;
     }
 

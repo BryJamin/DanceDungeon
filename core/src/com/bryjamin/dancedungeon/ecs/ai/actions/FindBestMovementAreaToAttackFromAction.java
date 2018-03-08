@@ -47,7 +47,7 @@ public class FindBestMovementAreaToAttackFromAction implements WorldAction {
 
         TileSystem tileSystem = world.getSystem(TileSystem.class);
 
-        //Coordinates where your storedTargetCoordinates is
+        //Coordinates where your target is
         Array<Coordinates> targetCoordinatesArray = new Array<Coordinates>();
 
         for(Entity e : entity.getComponent(TargetComponent.class).getTargets(world)){

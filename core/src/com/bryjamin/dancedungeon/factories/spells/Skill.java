@@ -348,7 +348,7 @@ public class Skill {
                     Coordinates[] pushCoordinateArray = new Coordinates[push + 1];
 
 
-                    for (int i = 0; i <= push; i++) { //Decides the direction used to shove a storedTargetCoordinates
+                    for (int i = 0; i <= push; i++) { //Decides the direction used to shove a target
 
                         if (castCoords.getX() < target.getX() && castCoords.getY() == target.getY()) {
                             pushCoordinateArray[i] = new Coordinates(target.getX() + i, target.getY());

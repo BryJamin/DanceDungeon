@@ -354,7 +354,7 @@ public class TargetingFactory {
         TileSystem tileSystem = world.getSystem(TileSystem.class);
 
 
-        //This Map establishes which paths have been generated and may be used to storedTargetCoordinates enemies
+        //This Map establishes which paths have been generated and may be used to target enemies
         final OrderedMap<Coordinates, Queue<Coordinates>> coordinatesWithPathMap = createPathsToCoordinatesInMovementRange(tileSystem, player,
                 coordinateComponent.coordinates, movementRange);
 
@@ -419,13 +419,13 @@ public class TargetingFactory {
 
 
     /**
-     * Gets All targets of an entity's storedTargetCoordinates component that are in range of a given co-ordinates
+     * Gets All targets of an entity's target component that are in range of a given co-ordinates
      *
      * @param world
      * @param startCoordinates - The co-ordinate the scan orignates from
      * @param targetEntities  - Target Component of the entity
      * @param range            - The distance of the scan
-     * @return - All entities within range of the storedTargetCoordinates co-ordinate
+     * @return - All entities within range of the target co-ordinate
      */
     public Array<Entity> getTargetsInRange(World world, Coordinates startCoordinates, Array<Entity> targetEntities, int range) {
 
@@ -435,7 +435,7 @@ public class TargetingFactory {
         for (Entity e : targetEntities) {
 
             Coordinates targetCoordinates = e.getComponent(CoordinateComponent.class).coordinates;
-            //Checks if the Map contains the storedTargetCoordinates
+            //Checks if the Map contains the target
 
             //TODO maybe change occupied Map to a different check, (Like just check the entity is there)
             if (tileSystem.getOccupiedMap().containsKey(e)

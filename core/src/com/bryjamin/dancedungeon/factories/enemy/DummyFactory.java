@@ -76,6 +76,7 @@ public class DummyFactory {
 
         UnitData unitData = new UnitData("Eugh");
         unitData.setStatComponent(new StatComponent.StatBuilder()
+                .healthAndMax(health)
                 .movementRange(3)
                 .build());
 
