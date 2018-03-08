@@ -8,9 +8,16 @@ import com.badlogic.gdx.utils.Queue;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
+import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
+import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.factories.spells.TargetingFactory;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
+
+import java.util.Comparator;
 
 
 /**
@@ -30,22 +37,78 @@ public class FindBestMovementAreaToAttackFromAction implements WorldAction {
         StatComponent statComponent = entity.getComponent(StatComponent.class);
         Coordinates current = entity.getComponent(CoordinateComponent.class).coordinates;
 
-        OrderedMap<Coordinates, Queue<Coordinates>> possiblePaths = targetingFactory.createPathsToCoordinatesInMovementRange(world.getSystem(TileSystem.class), entity, current, statComponent.movementRange);
+        OrderedMap<Coordinates, Queue<Coordinates>> possiblePaths = new OrderedMap<Coordinates, Queue<Coordinates>>();
 
         Array<CoordinateScore> coordinateScores = new Array<CoordinateScore>();
 
+        SkillsComponent skillsComponent = entity.getComponent(SkillsComponent.class);
+        Skill mainSkill = skillsComponent.skills.first();
 
-        for(Coordinates c : possiblePaths.orderedKeys()){
+        TileSystem tileSystem = world.getSystem(TileSystem.class);
+
+        //Coordinates where your target is
+        Array<Coordinates> targetCoordinatesArray = new Array<Coordinates>();
+
+        for(Entity e : entity.getComponent(TargetComponent.class).getTargets(world)){
+            targetCoordinatesArray.add(new Coordinates(e.getComponent(CoordinateComponent.class).coordinates));
+        };
 
 
-            float score = 1;
 
-          //  coordinateScores.add(c);
 
+        Array<Coordinates> allCoords = tileSystem.getCoordinateMap().orderedKeys();
+        allCoords.shuffle(); //Avoids just picking the next coordinate in line
+
+        for(Coordinates c : allCoords){
+
+            float score = 0;
+
+            for(Coordinates targetCoordinates : targetCoordinatesArray) {
+                if(mainSkill.getAffectedCoordinates(world, c).contains(targetCoordinates, false)){
+                    score += 10; //Good Coordinate
+
+                    Queue<Coordinates> path = new Queue<Coordinates>();
+                    if(tileSystem.findShortestPath(entity, path, c,  statComponent.movementRange)){
+                        possiblePaths.put(c, path);
+                        if(path.size > statComponent.movementRange)
+                            score -= 5; //Can't be reached in one movement
+                    } else {
+                        score = 0;
+                    }
+
+
+                } else {
+
+
+
+                    //TODO WHAT HAPPENS IF YOU CAN'T ATTACK? DO YOU JUST TRY TO FIND COORDINATES CLOSEST?
+
+                }
+            }
+
+            System.out.println(score);
+
+            coordinateScores.add(new CoordinateScore(c, score));
         }
 
+        coordinateScores.sort(new Comparator<CoordinateScore>() {
+            @Override
+            public int compare(CoordinateScore c1, CoordinateScore c2) {
+                return c1.score > c2.score ? -1 : (c1.score == c2.score ? 0 : 1);
+            }
+        });
 
 
+        Queue<Coordinates> path = new Queue<Coordinates>();
+
+        for(CoordinateScore cs: coordinateScores){
+            if(cs.score == 0) continue;
+            path = possiblePaths.get(cs.coordinates);
+            break;
+        }
+
+        world.getSystem(ActionCameraSystem.class).createMovementAction(entity, path);
+        entity.getComponent(TurnComponent.class).movementActionAvailable = false;
 
 
 

@@ -210,6 +210,54 @@ public class TargetingFactory {
     }
 
 
+
+    public Array<Entity> createWhiteTargetingMarkers(World world, Coordinates unitCoords, Coordinates target){
+
+        Array<Entity> entityArray = new Array<Entity>();
+        Coordinates markerCoords = new Coordinates(target);
+
+        int i = 100;
+
+        while(!unitCoords.equals(markerCoords) && i > 0) {
+
+            if (unitCoords.getX() < target.getX() && unitCoords.getY() == target.getY()) {
+                markerCoords.set(markerCoords.getX() - 1, markerCoords.getY());
+            } else if (unitCoords.getX() > target.getX() && unitCoords.getY() == target.getY()) {
+                markerCoords.set(markerCoords.getX() + 1, markerCoords.getY());
+            } else if (unitCoords.getX() == target.getX() && unitCoords.getY() < target.getY()) {
+                markerCoords.set(markerCoords.getX(), markerCoords.getY() - 1);
+            } else if (unitCoords.getX() == target.getX() && unitCoords.getY() > target.getY()) {
+                markerCoords.set(markerCoords.getX(), markerCoords.getY() + 1);
+            } else {
+                System.out.println("ERROR");
+                break;
+            }
+            if(!unitCoords.equals(markerCoords)) {
+                entityArray.add(whiteSquareMarker(world, markerCoords));
+            }
+            i--;
+
+
+        }
+
+        return entityArray;
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public void increaseCoordinatesByOneUsingDirection(Direction d, Coordinates c1, Coordinates c2){
 
         switch (d) {

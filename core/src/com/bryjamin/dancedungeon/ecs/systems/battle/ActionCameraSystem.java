@@ -34,6 +34,7 @@ public class ActionCameraSystem extends EntitySystem {
     private Queue<WorldConditionalAction> actionQueue = new Queue<WorldConditionalAction>();
 
     private ComponentMapper<WaitActionComponent> waitActionMapper;
+    private ComponentMapper<MoveToComponent> mtcMapper;
 
     private boolean hasBegun = false;
 
@@ -155,6 +156,8 @@ public class ActionCameraSystem extends EntitySystem {
 
     public void createMovementAction(Entity entity, final Iterable<Coordinates> coordinatesSequence) {
 
+        if(!mtcMapper.has(entity)) return;
+
         pushLastAction(entity, new WorldConditionalAction() {
             @Override
             public boolean condition(World world, Entity entity) {
@@ -193,17 +196,22 @@ public class ActionCameraSystem extends EntitySystem {
 
     public void createMovementAction(Entity entity, final Vector3... positions){
 
+        if(!mtcMapper.has(entity)) return;
+
         pushLastAction(entity, new WorldConditionalAction() {
             @Override
             public boolean condition(World world, Entity entity) {
-
-                System.out.println("Move Action using position");
-
                 return entity.getComponent(MoveToComponent.class).isEmpty();
             }
 
             @Override
             public void performAction(World world, Entity entity) {
+
+                if(entity.getComponent(MoveToComponent.class) == null) {
+                    return;
+                }
+
+
                 for (Vector3 p : positions) {
                     entity.getComponent(MoveToComponent.class).movementPositions.add(p);
                 }

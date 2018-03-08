@@ -17,7 +17,9 @@ import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.SolidComponent;
 import com.bryjamin.dancedungeon.factories.decor.FloorFactory;
+import com.bryjamin.dancedungeon.factories.player.UnitFactory;
 import com.bryjamin.dancedungeon.utils.Measure;
+import com.bryjamin.dancedungeon.utils.enums.Direction;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.math.CoordinateSorter;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
@@ -42,7 +44,7 @@ public class TileSystem extends EntitySystem {
     private float originX = Measure.units(12.5f);
     private float originY = Measure.units(17.5f);
     private float width = Measure.units(75f);
-    private float height = Measure.units(40f);
+    private float height = Measure.units(35f);
 
     private int rows = 5;
     private int columns = 10;
@@ -93,7 +95,34 @@ public class TileSystem extends EntitySystem {
         }
 
         new FloorFactory().createFloor(world, originX, originY, width, height, rows, columns);
+
+
+
+
+        new UnitFactory().baseTileBag(world, new Coordinates(3, 3));
+        new UnitFactory().baseTileBag(world, new Coordinates(3, 1));
+        new UnitFactory().baseTileBag(world, new Coordinates(4, 2));
+        new UnitFactory().baseTileBag(world, new Coordinates(4, 3));
+
+
+
+
+
     }
+
+
+    public void removeInvalidCoordinates(Array<Coordinates> coordinatesArray){
+
+        Array<Coordinates> copyArray = new Array<Coordinates>(coordinatesArray);
+
+        for(Coordinates c : copyArray){
+            if(!coordinateMap.containsKey(c)){
+                coordinatesArray.removeValue(c, false);
+            }
+        }
+    }
+
+
 
     public OrderedMap<Entity, Coordinates> getOccupiedMap() {
         return occupiedMap;
@@ -367,6 +396,78 @@ public class TileSystem extends EntitySystem {
         }
 
         return aStarPathCalculator;
+    }
+
+
+
+    public Array<Coordinates> getFreeCoordinateInAGivenDirection(Coordinates c, Direction[] d){
+
+
+        Array<Coordinates> coordinatesArray = new Array<Coordinates>();
+        Array<Entity> entityArray = new Array<Entity>();
+
+        Coordinates current = c;
+
+        OrderedMap<Coordinates, Array<Entity>> om = world.getSystem(TileSystem.class).getCoordinateMap();
+
+        //Most Left
+
+
+        for(int i = 0; i < d.length; i++) {
+
+            Coordinates shotCoords = new Coordinates(current);
+            increaseCoordinatesByOneUsingDirection(d[i], shotCoords, current);
+
+            Coordinates future = new Coordinates();
+
+            while (true) {
+
+                if(om.get(shotCoords) == null){
+                    break;
+                } else if (om.get(shotCoords).size > 0) {
+                    coordinatesArray.add(shotCoords);
+                    break;
+                } else {
+                    increaseCoordinatesByOneUsingDirection(d[i], future, shotCoords);
+                    if (!om.containsKey(future)) {
+                        boolean b = (d[i] == Direction.DOWN || d[i] == Direction.UP) ? Math.abs(future.getY() - current.getY()) > 1 : Math.abs(future.getX() - current.getX()) > 1;
+                        if (b) {
+                            coordinatesArray.add(shotCoords);
+                        }
+                        break;
+                    } else {
+                        shotCoords.set(future);
+                    }
+
+                }
+
+            }
+
+        }
+
+        return coordinatesArray;
+
+    }
+
+
+    public void increaseCoordinatesByOneUsingDirection(Direction d, Coordinates c1, Coordinates c2){
+
+        switch (d) {
+            case DOWN:
+                c1.set(c2.getX(), c2.getY() - 1);
+                break;
+            case UP:
+                c1.set(c2.getX(), c2.getY() + 1);
+                break;
+            case LEFT:
+                c1.set(c2.getX() - 1, c2.getY());
+                break;
+            case RIGHT:
+                c1.set(c2.getX() + 1, c2.getY());
+                break;
+        }
+
+
     }
 
 

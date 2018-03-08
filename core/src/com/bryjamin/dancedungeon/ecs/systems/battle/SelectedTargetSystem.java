@@ -36,6 +36,7 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
 
     private TileSystem tileSystem;
     private ComponentMapper<PlayerControlledComponent> playerControlledM;
+    private ComponentMapper<TurnComponent> turnMapper;
     private boolean processingFlag = false;
 
     public SelectedTargetSystem() {
@@ -91,14 +92,19 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
 
         Coordinates c = world.getSystem(TileSystem.class).getCoordinatesUsingPosition(x, y);
 
+
+
         if (world.getSystem(TileSystem.class).getOccupiedMap().containsValue(c, false)) {
 
             Entity selected = world.getSystem(TileSystem.class).getOccupiedMap().findKey(c, false);
 
-            if(selected.getComponent(TurnComponent.class).hasActions()){//TODO you can't select a character if it has no actions left
-                world.getSystem(TileSystem.class).getOccupiedMap().findKey(c, false).edit().add(new SelectedEntityComponent());
+            if(turnMapper.has(selected)) {
+
+                if (selected.getComponent(TurnComponent.class).hasActions()) {//TODO you can't select a character if it has no actions left
+                    world.getSystem(TileSystem.class).getOccupiedMap().findKey(c, false).edit().add(new SelectedEntityComponent());
+                }
+                return true;
             }
-            return true;
         }
 
         return false;

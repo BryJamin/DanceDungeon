@@ -7,7 +7,7 @@ import com.bryjamin.dancedungeon.ecs.ai.ActionScoreCalculator;
 import com.bryjamin.dancedungeon.ecs.ai.UtilityAiCalculator;
 import com.bryjamin.dancedungeon.ecs.ai.actions.BasicAttackAction;
 import com.bryjamin.dancedungeon.ecs.ai.actions.EndTurnAction;
-import com.bryjamin.dancedungeon.ecs.ai.actions.MeleeMoveToAction;
+import com.bryjamin.dancedungeon.ecs.ai.actions.FindBestMovementAreaToAttackFromAction;
 import com.bryjamin.dancedungeon.ecs.ai.calculations.CanMoveCalculator;
 import com.bryjamin.dancedungeon.ecs.ai.calculations.CanUseSkillCalculator;
 import com.bryjamin.dancedungeon.ecs.ai.calculations.IsNextToCalculator;
@@ -91,7 +91,7 @@ public class DummyFactory {
     public UtilityAiCalculator dummyAi(Skill slash) {
         return new UtilityAiCalculator(
                 new ActionScoreCalculator(new EndTurnAction()),
-                new ActionScoreCalculator(new MeleeMoveToAction(), new IsNextToCalculator(null, 100f),
+                new ActionScoreCalculator(new FindBestMovementAreaToAttackFromAction(), new IsNextToCalculator(null, 100f),
                         new CanMoveCalculator(100f, null)),
                 new ActionScoreCalculator(new BasicAttackAction(), new IsNextToCalculator(150f, null), new CanUseSkillCalculator(slash, 100f, null)
                 ));
@@ -102,7 +102,7 @@ public class DummyFactory {
 
         UnitData unitData = new UnitData("Eugh");
         unitData.setStatComponent(new StatComponent.StatBuilder().movementRange(6)
-                .healthAndMax(100)
+                .healthAndMax(15)
                 .build());
 
         ComponentBag bag = targetDummy(unitData);

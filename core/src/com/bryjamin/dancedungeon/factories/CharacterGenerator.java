@@ -86,7 +86,7 @@ public class CharacterGenerator {
 
 
     private String genName(){
-        return names[MathUtils.random(names.length)];
+        return names[MathUtils.random(names.length - 1)];
     }
 
 
