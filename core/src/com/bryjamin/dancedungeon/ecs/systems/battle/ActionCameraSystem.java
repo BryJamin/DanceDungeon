@@ -29,12 +29,15 @@ import com.bryjamin.dancedungeon.utils.math.Coordinates;
 public class ActionCameraSystem extends EntitySystem {
 
 
-    private OrderedMap<WorldConditionalAction, Entity> queuedActioEntityMap = new OrderedMap<WorldConditionalAction, Entity>();
+    private OrderedMap<WorldConditionalAction, Entity> queuedActionMap = new OrderedMap<WorldConditionalAction, Entity>();
 
     private Queue<WorldConditionalAction> actionQueue = new Queue<WorldConditionalAction>();
 
     private ComponentMapper<WaitActionComponent> waitActionMapper;
+
     private ComponentMapper<MoveToComponent> mtcMapper;
+
+    private WorldConditionalAction currentConditionalAction;
 
     private boolean hasBegun = false;
 
@@ -60,7 +63,7 @@ public class ActionCameraSystem extends EntitySystem {
         boolean isEntityDead = true;
 
         for(Entity e : this.getEntities()){
-            if(queuedActioEntityMap.get(actionQueue.first()).equals(e)){
+            if(queuedActionMap.get(actionQueue.first()).equals(e)){
                 isEntityDead = false;
                 break;
             }
@@ -83,14 +86,12 @@ public class ActionCameraSystem extends EntitySystem {
             case PERFORM_ACTION:
                 if (actionQueue.size == 0) return;
 
-                if(isActionEntityDead()) {
-                    actionQueue.removeFirst();
-                    return;
-                }
+                if(isActionEntityDead()) return;
 
-                Entity queued = queuedActioEntityMap.get(actionQueue.first());
-                actionQueue.first().performAction(world, queued);
-                queued.edit().add(new WaitActionComponent());
+                actionQueue.first().performAction(world,
+                        queuedActionMap.get(actionQueue.first()));
+
+                queuedActionMap.get(actionQueue.first()).edit().add(new WaitActionComponent());
                 state = State.WAIT_ACTION;
                 break;
 
@@ -104,9 +105,9 @@ public class ActionCameraSystem extends EntitySystem {
                 }
 
 
-                if (actionQueue.first().condition(world, queuedActioEntityMap.get(actionQueue.first()))) {
+                if (actionQueue.first().condition(world, queuedActionMap.get(actionQueue.first()))) {
 
-                    Entity current = queuedActioEntityMap.get(actionQueue.first());
+                    Entity current = queuedActionMap.get(actionQueue.first());
 
                     actionQueue.removeFirst();
                     state = State.PERFORM_ACTION;
@@ -114,7 +115,7 @@ public class ActionCameraSystem extends EntitySystem {
                     boolean noMoreActions = true;
 
                     for(WorldConditionalAction wca : actionQueue){
-                        if(queuedActioEntityMap.get(wca).equals(current)){
+                        if(queuedActionMap.get(wca).equals(current)){
                             noMoreActions = false;
                             break;
                         }
@@ -132,15 +133,9 @@ public class ActionCameraSystem extends EntitySystem {
     }
 
 
-    @Override
-    public void removed(Entity e) {
-
-
-    }
-
-    public void pushLastAction(Entity e, WorldConditionalAction wca) {//Pushes a new action to the queue and adds a WaitActionComponent
+    public void pushLastAction(Entity e, WorldConditionalAction wca) {
         actionQueue.addLast(wca);
-        queuedActioEntityMap.put(wca, e);
+        queuedActionMap.put(wca, e);
         e.edit().add(new WaitActionComponent());
     }
 
@@ -213,9 +208,36 @@ public class ActionCameraSystem extends EntitySystem {
     }
 
 
+    public void createASyncMovementAction(Entity entity, final Vector3... positions){
+
+        if(!mtcMapper.has(entity)) return;
+
+        System.out.println("CREATING ASYNC");
+
+        pushLastAction(entity, new WorldConditionalAction() {
+            @Override
+            public boolean condition(World world, Entity entity) {
+                return entity.getComponent(MoveToComponent.class).isEmpty();
+            }
+
+            @Override
+            public void performAction(World world, Entity entity) {
+
+                if(entity.getComponent(MoveToComponent.class) == null) {
+                    return;
+                }
+
+
+                for (Vector3 p : positions) {
+                    entity.getComponent(MoveToComponent.class).movementPositions.add(p);
+                }
+            }
+        });
+    }
+
+
 
     public void createIntentAction(Entity entity){
-
 
         pushLastAction(entity, new WorldConditionalAction() {
             @Override
@@ -229,7 +251,6 @@ public class ActionCameraSystem extends EntitySystem {
             }
         });
     }
-
 
     @Override
     protected boolean checkProcessing() {
