@@ -60,7 +60,7 @@ public class TurnSystem extends EntitySystem {
         ENEMY, ALLY, INTENT
     }
 
-    private TURN turn = ENEMY;
+    private TURN turn = INTENT;
 
     public TURN getTurn() {
         return turn;

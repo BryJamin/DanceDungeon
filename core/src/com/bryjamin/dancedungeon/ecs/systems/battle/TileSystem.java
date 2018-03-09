@@ -4,6 +4,7 @@ import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -43,11 +44,11 @@ public class TileSystem extends EntitySystem {
 
     private float originX = Measure.units(12.5f);
     private float originY = Measure.units(17.5f);
-    private float width = Measure.units(75f);
-    private float height = Measure.units(35f);
+    private float width = Measure.units(70f);
+    private float height = Measure.units(40f);
 
-    private int rows = 5;
-    private int columns = 10;
+    private int rows = 6;
+    private int columns = 9;
 
     private int maxX;
     private int maxY;
@@ -97,20 +98,60 @@ public class TileSystem extends EntitySystem {
         new FloorFactory().createFloor(world, originX, originY, width, height, rows, columns);
 
 
+        UnitFactory unitFactory = new UnitFactory();
+
+        int i = MathUtils.random(100);
+
+        if(i > 50) {
+            createMap1();
+        } else {
+            createMap2();
+        }
+
+/*        //new UnitFactory().baseTileBag(world, new Coordinates(3, 3));
+       #unitFactory.baseTileBag(world, new Coordinates(0, 4));
+       #unitFactory.baseTileBag(world, new Coordinates(3, 3));
+       #unitFactory.baseTileBag(world, new Coordinates(3, 2));
+       #unitFactory.baseTileBag(world, new Coordinates(3, 1));
+       #unitFactory.baseTileBag(world, new Coordinates(3, 0));
+       #unitFactory.baseAlliedTileBag(world, new Coordinates(
+       #        4, 5));*/
 
 
-        //new UnitFactory().baseTileBag(world, new Coordinates(3, 3));
-        new UnitFactory().baseTileBag(world, new Coordinates(0, 4));
-        //new UnitFactory().baseTileBag(world, new Coordinates(3, 3));
-        new UnitFactory().baseTileBag(world, new Coordinates(3, 2));
-        //new UnitFactory().baseTileBag(world, new Coordinates(3, 1));
-        new UnitFactory().baseTileBag(world, new Coordinates(3, 0));
-        new UnitFactory().baseAlliedTileBag(world, new Coordinates(
-                4, 5));
+    }
 
 
+    public void createMap1(){
+        UnitFactory unitFactory = new UnitFactory();
 
+        //Corners
+        unitFactory.baseTileBag(world, new Coordinates(0, 0));
+        unitFactory.baseTileBag(world, new Coordinates(0, 4));
+        unitFactory.baseTileBag(world, new Coordinates(8, 0));
+        unitFactory.baseTileBag(world, new Coordinates(8, 4));
 
+        unitFactory.baseTileBag(world, new Coordinates(3, 0));
+        unitFactory.baseAlliedTileBag(world, new Coordinates(3, 1));
+        unitFactory.baseAlliedTileBag(world, new Coordinates(2, 4));
+    }
+
+    public void createMap2(){
+
+        UnitFactory unitFactory = new UnitFactory();
+
+        //Corners
+        unitFactory.baseTileBag(world, new Coordinates(0, 0));
+        unitFactory.baseTileBag(world, new Coordinates(0, 4));
+        unitFactory.baseTileBag(world, new Coordinates(7, 0));
+        unitFactory.baseTileBag(world, new Coordinates(8, 0));
+
+        unitFactory.baseTileBag(world, new Coordinates(4, 0));
+        unitFactory.baseAlliedTileBag(world, new Coordinates(3, 1));
+        unitFactory.baseAlliedTileBag(world, new Coordinates(2, 3));
+
+    }
+
+    public void createMap3(){
 
     }
 

@@ -258,7 +258,8 @@ public class Skill {
                         .add(new AnimationMapComponent().put(SLASH_ANIMATION, TextureStrings.SKILLS_SLASH, 0.3f, Animation.PlayMode.NORMAL))
                         .add(new KillOnAnimationEndComponent(SLASH_ANIMATION));
 
-                world.getSystem(ActionCameraSystem.class).createDeathWaitAction(slash);
+                //world.getSystem(ActionCameraSystem.class).createDeathWaitAction(slash);
+                //TODO Commented out due to push. Need to figure out how to do simultaneous actions.
 
                 break;
 

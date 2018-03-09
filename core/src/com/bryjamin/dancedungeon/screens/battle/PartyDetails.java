@@ -12,6 +12,7 @@ public class PartyDetails {
     public int grenades;
     public int medicalSupplies;
     public int reputation;
+    public int morale = 10;
 
     private UnitData[] party = new UnitData[4];
 

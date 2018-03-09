@@ -29,7 +29,6 @@ public class PlayerFactory {
     private static final int BODY_DRAWABLE = 24;
 
     private DrawableDescription.DrawableDescriptionBuilder createPlayerTexture(String id){
-
         return new TextureDescription.Builder(id)
                 .identifier(BODY_DRAWABLE)
                 .size(height);

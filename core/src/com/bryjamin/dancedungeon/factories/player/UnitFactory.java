@@ -45,6 +45,7 @@ public class UnitFactory {
                 .add(new CoordinateComponent(c))
                 .add(new VelocityComponent())
                 .add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE, new TextureDescription.Builder(TextureStrings.BLOCK)
+                        //.offsetX()
                         .size(Measure.units(5f)).build()))
                 .add(new CenteringBoundaryComponent(new Rectangle(0, 0, Measure.units(3f), Measure.units(3f))));
 
@@ -56,10 +57,10 @@ public class UnitFactory {
     public Entity baseAlliedTileBag(World world, Coordinates c){
         Entity e = baseTileBag(world, c);
         e.edit().remove(UnPushableComponent.class);
-        e.edit().add(new HealthComponent(1));
+        e.edit().add(new HealthComponent(2));
         e.edit().add(new FriendlyComponent());
         e.edit().add(new StatComponent(new StatComponent.StatBuilder().healthAndMax(1)));
-        e.getComponent(DrawableComponent.class).drawables.getColor().set(new Color(Color.RED));
+        e.getComponent(DrawableComponent.class).drawables.getColor().set(new Color(Color.ORANGE));
         return e;
     }
 

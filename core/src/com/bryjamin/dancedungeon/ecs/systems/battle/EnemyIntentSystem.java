@@ -5,6 +5,7 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.artemis.utils.IntBag;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.StoredSkillComponent;
@@ -110,8 +111,12 @@ public class EnemyIntentSystem extends EntitySystem {
                         storedSkillComponent.storedCoordinates.set(coordinates);
                     }
 
-                    Entity highlight = BagToEntity.bagToEntity(world.createEntity(), targetingFactory.highlightBox(tileSystem.getRectangleUsingCoordinates(storedSkillComponent.storedTargetCoordinates)));
+                    Rectangle r = tileSystem.getRectangleUsingCoordinates(storedSkillComponent.storedTargetCoordinates);
 
+                    if(r != null){ //This exists incase an enemies intent is pushed outside the bounds of the maps
+                        //TODO decide what to do in this situation.
+                        Entity highlight = BagToEntity.bagToEntity(world.createEntity(), targetingFactory.highlightBox(r));
+                    }
             }
 
 
@@ -135,6 +140,11 @@ public class EnemyIntentSystem extends EntitySystem {
         processingFlag = true;
     }
 
+
+    @Override
+    public void removed(Entity e) {
+        updateIntent();
+    }
 
     public boolean releaseAttack(){
 

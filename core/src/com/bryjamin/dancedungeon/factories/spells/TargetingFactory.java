@@ -371,6 +371,7 @@ public class TargetingFactory {
                     player.edit().add(new ReselectEntityComponent());
                     player.edit().remove(SelectedEntityComponent.class);
                     world.getSystem(ActionCameraSystem.class).pushLastAction(player, createMovementAction(player, coordinatesWithPathMap.get(c)));
+                    world.getSystem(ActionCameraSystem.class).createIntentAction(world.createEntity());
                 }
             }));
         }

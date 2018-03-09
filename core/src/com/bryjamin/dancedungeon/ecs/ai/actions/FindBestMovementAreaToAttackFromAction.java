@@ -74,6 +74,9 @@ public class FindBestMovementAreaToAttackFromAction implements WorldAction {
                         score += 5; //Focus on objectives
                     }
 
+                    //TODO GET ALL 'ENEMY INTENT' AND THEIR CORRESPONDING COORDINATES. IF THEY ARE OVER A TILE, REDUCE THE SCORE TO AVOID BLOCKING EACH OTHER
+
+
                     Queue<Coordinates> path = new Queue<Coordinates>();
                     if(tileSystem.findShortestPath(entity, path, c,  statComponent.movementRange)){
                         possiblePaths.put(c, path);

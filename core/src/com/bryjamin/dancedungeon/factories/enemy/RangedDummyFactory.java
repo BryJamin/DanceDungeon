@@ -40,6 +40,8 @@ public class RangedDummyFactory {
     private static final int basicAttackRange = 3;
     private static final int movementRange = 4;
 
+    private static final int health = 2;
+
     private UnitFactory unitFactory = new UnitFactory();
 
 
@@ -53,7 +55,7 @@ public class RangedDummyFactory {
         Skill fireball = new StraightShot();
 
         StatComponent statComponent = new StatComponent.StatBuilder()
-                .healthAndMax(10)
+                .healthAndMax(health)
                 .attack(3)
                 .attackRange(basicAttackRange)
                 .movementRange(4)
