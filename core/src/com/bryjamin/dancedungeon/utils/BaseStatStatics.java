@@ -6,6 +6,6 @@ package com.bryjamin.dancedungeon.utils;
 
 public class BaseStatStatics {
 
-    public static final int BASE_MOVEMENT = 4;
+    public static final int BASE_MOVEMENT = 3;
 
 }

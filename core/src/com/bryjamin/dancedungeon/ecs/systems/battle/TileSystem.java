@@ -126,13 +126,13 @@ public class TileSystem extends EntitySystem {
 
         //Corners
         unitFactory.baseTileBag(world, new Coordinates(0, 0));
-        unitFactory.baseTileBag(world, new Coordinates(0, 4));
+        unitFactory.baseTileBag(world, new Coordinates(0, 5));
         unitFactory.baseTileBag(world, new Coordinates(8, 0));
-        unitFactory.baseTileBag(world, new Coordinates(8, 4));
+        unitFactory.baseTileBag(world, new Coordinates(8, 5));
 
         unitFactory.baseTileBag(world, new Coordinates(3, 0));
         unitFactory.baseAlliedTileBag(world, new Coordinates(3, 1));
-        unitFactory.baseAlliedTileBag(world, new Coordinates(2, 4));
+        unitFactory.baseAlliedTileBag(world, new Coordinates(2, 5));
     }
 
     public void createMap2(){
@@ -146,7 +146,7 @@ public class TileSystem extends EntitySystem {
         unitFactory.baseTileBag(world, new Coordinates(8, 0));
 
         unitFactory.baseTileBag(world, new Coordinates(4, 0));
-        unitFactory.baseAlliedTileBag(world, new Coordinates(3, 1));
+        unitFactory.baseAlliedTileBag(world, new Coordinates(3, 3));
         unitFactory.baseAlliedTileBag(world, new Coordinates(2, 3));
 
     }
@@ -243,6 +243,7 @@ public class TileSystem extends EntitySystem {
         CoordinateComponent coordinateComponent = e.getComponent(CoordinateComponent.class);
 
         if (occupiedMap.containsValue(e.getComponent(CoordinateComponent.class).coordinates, false) || !coordinateMap.containsKey(coordinateComponent.coordinates)) {
+            System.out.println("relocate");
             if (!relocateEntity(e))
                 e.deleteFromWorld(); //TODO decide what to do if a there is no space to place something
         } else {
