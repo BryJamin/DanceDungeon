@@ -37,11 +37,11 @@ public class EventGenerationSystem extends BaseSystem {
 
         Array<BattleEvent> battleEventArray = new Array<BattleEvent>();
 
-        battleEventArray.add(new BattleEvent(EnemyFactory.FAST_BLOB, EnemyFactory.FAST_BLOB));
-        battleEventArray.add(new BattleEvent(EnemyFactory.MAGE_BLOB, EnemyFactory.MAGE_BLOB));
-        battleEventArray.add(new BattleEvent(EnemyFactory.MAGE_BLOB, EnemyFactory.MAGE_BLOB, EnemyFactory.MAGE_BLOB));
-        battleEventArray.add(new BattleEvent(EnemyFactory.BLOB, EnemyFactory.BLOB, EnemyFactory.BLOB, EnemyFactory.BLOB));
-        battleEventArray.add(new BattleEvent(EnemyFactory.FAST_BLOB, EnemyFactory.BLOB, EnemyFactory.FAST_BLOB, EnemyFactory.BLOB));
+        battleEventArray.add(new BattleEvent(EnemyFactory.MAGE_BLOB, EnemyFactory.MAGE_BLOB, EnemyFactory.FAST_BLOB));
+        battleEventArray.add(new BattleEvent(EnemyFactory.MAGE_BLOB, EnemyFactory.FAST_BLOB, EnemyFactory.BLOB));
+        battleEventArray.add(new BattleEvent(EnemyFactory.MAGE_BLOB, EnemyFactory.FAST_BLOB, EnemyFactory.MAGE_BLOB));
+        battleEventArray.add(new BattleEvent(EnemyFactory.FAST_BLOB, EnemyFactory.FAST_BLOB, EnemyFactory.MAGE_BLOB, EnemyFactory.FAST_BLOB));
+        battleEventArray.add(new BattleEvent(EnemyFactory.FAST_BLOB, EnemyFactory.MAGE_BLOB, EnemyFactory.FAST_BLOB, EnemyFactory.FAST_BLOB));
 
         battleEventArray.shuffle();
 

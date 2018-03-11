@@ -20,9 +20,9 @@ public class MeleeAttack extends Skill {
         super(new Builder()
                 .name("Attack")
                 .icon(TextureStrings.SKILLS_SLASH)
-                .targeting(Targeting.Enemy)
+                .targeting(Targeting.Melee)
                 .spellAnimation(SpellAnimation.Slash)
-                .spellType(SpellType.PhysicalAttack)
+                .spellType(SpellType.Attack)
                 .attack(Attack.Melee));
     }
 }

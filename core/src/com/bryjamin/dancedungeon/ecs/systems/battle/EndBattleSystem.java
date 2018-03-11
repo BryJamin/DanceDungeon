@@ -117,7 +117,7 @@ public class EndBattleSystem extends EntitySystem {
                     }
 
 
-                    ((BattleScreen) game.getScreen()).victory();
+                    ((BattleScreen) game.getScreen()).victory(partyDetails);
 
                     processingFlag = false;
 

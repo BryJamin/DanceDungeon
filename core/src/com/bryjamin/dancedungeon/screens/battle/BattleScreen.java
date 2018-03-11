@@ -8,11 +8,11 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.bryjamin.dancedungeon.MainGame;
+import com.bryjamin.dancedungeon.ecs.systems.BattleStageUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MoveToTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ParentChildSystem;
-import com.bryjamin.dancedungeon.ecs.systems.SkillUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.ActionOnTapSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.BattleWorldInputHandlerSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.ConditionalActionSystem;
@@ -23,6 +23,7 @@ import com.bryjamin.dancedungeon.ecs.systems.battle.BuffSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BulletSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.DeathSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.EndBattleSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.EnemyIntentSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ExplosionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.GenerateTargetsSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.HealthSystem;
@@ -43,12 +44,10 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.ScaleTransformationSystem
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
-import com.bryjamin.dancedungeon.factories.spells.SpellFactory;
 import com.bryjamin.dancedungeon.screens.AbstractScreen;
 import com.bryjamin.dancedungeon.screens.VictoryScreen;
 import com.bryjamin.dancedungeon.screens.menu.DefeatScreen;
 import com.bryjamin.dancedungeon.utils.GameDelta;
-import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
 
 
 /**
@@ -104,7 +103,7 @@ public class BattleScreen extends AbstractScreen {
                 )
                 .with(WorldConfigurationBuilder.Priority.LOWEST,
                         new ActionOnTapSystem(),
-                        new SkillUISystem(UIStage, game),
+                        new BattleStageUISystem(UIStage, game),
                         new ActionCameraSystem(),
 
                         //Rendering     Effects
@@ -114,6 +113,7 @@ public class BattleScreen extends AbstractScreen {
                         new NoMoreActionsSystem(),
                         new PlayerGraphicalTargetingSystem(),
                         new BattleMessageSystem(gameport),
+                        new EnemyIntentSystem(),
                         new AnimationSystem(game),
                         new RenderingSystem(game, gameport),
                         new HealthBarSystem(game, gameport),
@@ -128,7 +128,7 @@ public class BattleScreen extends AbstractScreen {
 
         world = new World(config);
 
-        BagToEntity.bagToEntity(world.createEntity(), new SpellFactory().endTurnButton(0, 0));
+       // BagToEntity.bagToEntity(world.createEntity(), new SpellFactory().endTurnButton(0, 0));
     }
 
     @Override
@@ -143,8 +143,8 @@ public class BattleScreen extends AbstractScreen {
         GameDelta.delta(world, delta);
     }
 
-    public void victory(){
-        game.setScreen(new VictoryScreen(game, this));
+    public void victory(PartyDetails partyDetails){
+        game.setScreen(new VictoryScreen(game, this, partyDetails));
     }
 
 

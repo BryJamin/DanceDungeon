@@ -4,6 +4,7 @@ import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -15,8 +16,11 @@ import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.SolidComponent;
 import com.bryjamin.dancedungeon.factories.decor.FloorFactory;
+import com.bryjamin.dancedungeon.factories.player.UnitFactory;
 import com.bryjamin.dancedungeon.utils.Measure;
+import com.bryjamin.dancedungeon.utils.enums.Direction;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.math.CoordinateSorter;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
@@ -34,16 +38,17 @@ public class TileSystem extends EntitySystem {
 
 
     private ComponentMapper<PlayerControlledComponent> pcm;
+    private ComponentMapper<SolidComponent> sm;
     private ComponentMapper<EnemyComponent> enemym;
 
 
     private float originX = Measure.units(12.5f);
     private float originY = Measure.units(17.5f);
-    private float width = Measure.units(75f);
+    private float width = Measure.units(70f);
     private float height = Measure.units(40f);
 
-    private int rows = 5;
-    private int columns = 10;
+    private int rows = 6;
+    private int columns = 9;
 
     private int maxX;
     private int maxY;
@@ -91,7 +96,78 @@ public class TileSystem extends EntitySystem {
         }
 
         new FloorFactory().createFloor(world, originX, originY, width, height, rows, columns);
+
+
+        UnitFactory unitFactory = new UnitFactory();
+
+        int i = MathUtils.random(100);
+
+        if(i > 50) {
+            createMap1();
+        } else {
+            createMap2();
+        }
+
+/*        //new UnitFactory().baseTileBag(world, new Coordinates(3, 3));
+       #unitFactory.baseTileBag(world, new Coordinates(0, 4));
+       #unitFactory.baseTileBag(world, new Coordinates(3, 3));
+       #unitFactory.baseTileBag(world, new Coordinates(3, 2));
+       #unitFactory.baseTileBag(world, new Coordinates(3, 1));
+       #unitFactory.baseTileBag(world, new Coordinates(3, 0));
+       #unitFactory.baseAlliedTileBag(world, new Coordinates(
+       #        4, 5));*/
+
+
     }
+
+
+    public void createMap1(){
+        UnitFactory unitFactory = new UnitFactory();
+
+        //Corners
+        unitFactory.baseTileBag(world, new Coordinates(0, 0));
+        unitFactory.baseTileBag(world, new Coordinates(0, 5));
+        unitFactory.baseTileBag(world, new Coordinates(8, 0));
+        unitFactory.baseTileBag(world, new Coordinates(8, 5));
+
+        unitFactory.baseTileBag(world, new Coordinates(3, 0));
+        unitFactory.baseAlliedTileBag(world, new Coordinates(3, 1));
+        unitFactory.baseAlliedTileBag(world, new Coordinates(2, 5));
+    }
+
+    public void createMap2(){
+
+        UnitFactory unitFactory = new UnitFactory();
+
+        //Corners
+        unitFactory.baseTileBag(world, new Coordinates(0, 0));
+        unitFactory.baseTileBag(world, new Coordinates(0, 4));
+        unitFactory.baseTileBag(world, new Coordinates(7, 0));
+        unitFactory.baseTileBag(world, new Coordinates(8, 0));
+
+        unitFactory.baseTileBag(world, new Coordinates(4, 0));
+        unitFactory.baseAlliedTileBag(world, new Coordinates(3, 3));
+        unitFactory.baseAlliedTileBag(world, new Coordinates(2, 3));
+
+    }
+
+    public void createMap3(){
+
+    }
+
+
+    public void removeInvalidCoordinates(Array<Coordinates> coordinatesArray){
+
+        Array<Coordinates> copyArray = new Array<Coordinates>(coordinatesArray);
+
+        for(Coordinates c : copyArray){
+            if(!coordinateMap.containsKey(c)){
+                coordinatesArray.removeValue(c, false);
+            }
+        }
+    }
+
+
 
     public OrderedMap<Entity, Coordinates> getOccupiedMap() {
         return occupiedMap;
@@ -147,7 +223,9 @@ public class TileSystem extends EntitySystem {
 
     private void addEntityToMaps(Entity e, Coordinates coordinates) {
 
-        occupiedMap.put(e, coordinates);
+        if(sm.has(e)) {
+            occupiedMap.put(e, coordinates);
+        }
 
         if(coordinateMap.get(coordinates) != null) {
             coordinateMap.get(coordinates).add(e);
@@ -165,6 +243,7 @@ public class TileSystem extends EntitySystem {
         CoordinateComponent coordinateComponent = e.getComponent(CoordinateComponent.class);
 
         if (occupiedMap.containsValue(e.getComponent(CoordinateComponent.class).coordinates, false) || !coordinateMap.containsKey(coordinateComponent.coordinates)) {
+            System.out.println("relocate");
             if (!relocateEntity(e))
                 e.deleteFromWorld(); //TODO decide what to do if a there is no space to place something
         } else {
@@ -353,7 +432,7 @@ public class TileSystem extends EntitySystem {
 
         AStarPathCalculator aStarPathCalculator;
 
-        if(pcm.has(e)) {
+        if(pcm.has(e)) {//TODO What happens if you have allied units?
             aStarPathCalculator = new AStarPathCalculator(coordinateMap.keys().toArray(), occupiedMap.values().toArray(),
                     playerControlledMap.values().toArray());
 
@@ -363,6 +442,77 @@ public class TileSystem extends EntitySystem {
         }
 
         return aStarPathCalculator;
+    }
+
+
+
+    public Array<Coordinates> getFreeCoordinateInAGivenDirection(Coordinates c, Direction[] d){
+
+
+        Array<Coordinates> coordinatesArray = new Array<Coordinates>();
+        Array<Entity> entityArray = new Array<Entity>();
+
+        Coordinates current = c;
+
+        OrderedMap<Coordinates, Array<Entity>> om = world.getSystem(TileSystem.class).getCoordinateMap();
+
+        //Most Left
+
+        for(int i = 0; i < d.length; i++) {
+
+            Coordinates shotCoords = new Coordinates(current);
+            increaseCoordinatesByOneUsingDirection(d[i], shotCoords, current);
+
+            Coordinates future = new Coordinates();
+
+            while (true) {
+
+                if(om.get(shotCoords) == null){
+                    break;
+                } else if (om.get(shotCoords).size > 0) {
+                    coordinatesArray.add(shotCoords);
+                    break;
+                } else {
+                    increaseCoordinatesByOneUsingDirection(d[i], future, shotCoords);
+                    if (!om.containsKey(future)) {
+                        boolean b = (d[i] == Direction.DOWN || d[i] == Direction.UP) ? Math.abs(future.getY() - current.getY()) > 1 : Math.abs(future.getX() - current.getX()) > 1;
+                        if (b) {
+                            coordinatesArray.add(shotCoords);
+                        }
+                        break;
+                    } else {
+                        shotCoords.set(future);
+                    }
+
+                }
+
+            }
+
+        }
+
+        return coordinatesArray;
+
+    }
+
+
+    public void increaseCoordinatesByOneUsingDirection(Direction d, Coordinates c1, Coordinates c2){
+
+        switch (d) {
+            case DOWN:
+                c1.set(c2.getX(), c2.getY() - 1);
+                break;
+            case UP:
+                c1.set(c2.getX(), c2.getY() + 1);
+                break;
+            case LEFT:
+                c1.set(c2.getX() - 1, c2.getY());
+                break;
+            case RIGHT:
+                c1.set(c2.getX() + 1, c2.getY());
+                break;
+        }
+
+
     }
 
 

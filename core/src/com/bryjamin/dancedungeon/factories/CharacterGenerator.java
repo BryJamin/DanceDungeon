@@ -6,11 +6,8 @@ import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.player.UnitMap;
-import com.bryjamin.dancedungeon.factories.spells.basic.FireWeapon;
-import com.bryjamin.dancedungeon.factories.spells.basic.Foresight;
 import com.bryjamin.dancedungeon.factories.spells.basic.HeavyStrike;
 import com.bryjamin.dancedungeon.factories.spells.basic.StraightShot;
-import com.bryjamin.dancedungeon.factories.spells.restorative.Heal;
 import com.bryjamin.dancedungeon.utils.BaseStatStatics;
 
 /**
@@ -22,6 +19,8 @@ import com.bryjamin.dancedungeon.utils.BaseStatStatics;
 
 public class CharacterGenerator {
 
+    private static final int health = 3;
+
     public UnitData createWarrior(){
         UnitData warrior = new UnitData(UnitMap.UNIT_WARRIOR);
 
@@ -31,11 +30,11 @@ public class CharacterGenerator {
                 .movementRange(BaseStatStatics.BASE_MOVEMENT)
                 .attackRange(3)
                 .attack(5)
-                .healthAndMax(15).build());
+                .healthAndMax(health).build());
 
         warrior.setSkillsComponent(new SkillsComponent(
-                new HeavyStrike(),
-                new Foresight()
+                new HeavyStrike()
+                //new Foresight()
                 ));
 
         return warrior;
@@ -47,14 +46,15 @@ public class CharacterGenerator {
         mage.setStatComponent(
                 new StatComponent.StatBuilder()
                         .movementRange(BaseStatStatics.BASE_MOVEMENT )
-                        .healthAndMax(20)
+                        .healthAndMax(health)
                         .attackRange(6)
                         .attack(7).build());
 
         mage.setSkillsComponent(
                 new SkillsComponent(
-                        new FireWeapon(),
-                        new Heal()
+                        new StraightShot()
+                        //new FireWeapon(),
+                        //new Heal()
                 ));
 
         mage.name = genName();
@@ -69,13 +69,13 @@ public class CharacterGenerator {
         mage.setStatComponent(
                 new StatComponent.StatBuilder()
                         .movementRange(BaseStatStatics.BASE_MOVEMENT)
-                        .healthAndMax(20)
+                        .healthAndMax(health)
                         .attackRange(6)
                         .attack(7).build());
 
         mage.setSkillsComponent(
                 new SkillsComponent(
-                        new FireWeapon(),
+                        //new FireWeapon(),
                         new StraightShot()
                 ));
 
@@ -86,7 +86,7 @@ public class CharacterGenerator {
 
 
     private String genName(){
-        return names[MathUtils.random(names.length)];
+        return names[MathUtils.random(names.length - 1)];
     }
 
 

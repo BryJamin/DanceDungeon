@@ -12,12 +12,12 @@ import com.bryjamin.dancedungeon.ecs.components.actions.ConditionalActionsCompon
 import com.bryjamin.dancedungeon.ecs.components.actions.OnDeathActionsComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
-import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
+import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
@@ -42,6 +42,7 @@ public class BasicProjectile {
     private float speed;
 
     private DrawableComponent drawableComponent;
+    private Skill skill;
 
 
     public BasicProjectile(BasicProjectileBuilder b){
@@ -50,7 +51,7 @@ public class BasicProjectile {
         this.damage = b.damage;
         this.drawableComponent = b.drawableComponent;
         this.speed = b.speed;
-
+        this.skill = b.skill;
     }
 
 
@@ -64,6 +65,7 @@ public class BasicProjectile {
         private float speed = Measure.units(60f);
 
         private DrawableComponent drawableComponent = new DrawableComponent();
+        private Skill skill = new Skill(new Skill.Builder());
 
         public BasicProjectileBuilder width(float val)
         { width = val; return this; }
@@ -80,16 +82,20 @@ public class BasicProjectile {
         public BasicProjectileBuilder drawableComponent(DrawableComponent val)
         { drawableComponent = val; return this; }
 
+        public BasicProjectileBuilder skill(Skill val){
+            skill = val; return this;
+        }
+
         public BasicProjectile build()
         { return new BasicProjectile(this); }
 
     }
 
 
-   public void cast(World world, Entity entity, final Coordinates target){
+   public void cast(World world, final Entity user, final Coordinates target){
 
-       PositionComponent positionComponent = entity.getComponent(PositionComponent.class);
-       CenteringBoundaryComponent cbc = entity.getComponent(CenteringBoundaryComponent.class);
+       PositionComponent positionComponent = user.getComponent(PositionComponent.class);
+       CenteringBoundaryComponent cbc = user.getComponent(CenteringBoundaryComponent.class);
 
        float x = CenterMath.centerOnPositionX(width, cbc.bound.getX() + cbc.bound.getWidth() / 2);
        float y = CenterMath.centerOnPositionY(height, cbc.bound.getY() + cbc.bound.getHeight() / 2);
@@ -129,15 +135,7 @@ public class BasicProjectile {
        projectile.edit().add(new OnDeathActionsComponent(new WorldAction() {
            @Override
            public void performAction(World world, Entity entity) {
-
-               TileSystem tileSystem = world.getSystem(TileSystem.class);
-
-               for(Entity e : tileSystem.getCoordinateMap().get(target)){
-                   if(world.getMapper(HealthComponent.class).has(e)){
-                       e.getComponent(HealthComponent.class).applyDamage(damage);
-                   }
-               };
-
+               skill.castSpellOnTargetLocation(world, user, target);
            }
        }));
 

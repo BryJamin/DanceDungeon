@@ -10,9 +10,8 @@ import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
-import com.bryjamin.dancedungeon.ecs.systems.SkillUISystem;
+import com.bryjamin.dancedungeon.ecs.systems.BattleStageUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.EndBattleSystem;
-import com.bryjamin.dancedungeon.ecs.systems.battle.PlayerControlledSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
 import com.bryjamin.dancedungeon.factories.enemy.EnemyFactory;
@@ -58,8 +57,8 @@ public class BattleEvent extends com.bryjamin.dancedungeon.factories.map.event.M
     @Override
     public void setUpEvent(World world) {
 
-        world.getSystem(TurnSystem.class).setUp(TurnSystem.TURN.ALLY);
-        world.getSystem(SkillUISystem.class).reset();
+        world.getSystem(TurnSystem.class).setUp(TurnSystem.TURN.INTENT); //Run intent first since enemies do not exist yet. //TODO look into this
+        world.getSystem(BattleStageUISystem.class).reset();
 
         setUpPlayerLocations(world);
         setUpEnemyLocations(world, convertEnemiesIntoComponentBags());
@@ -74,43 +73,17 @@ public class BattleEvent extends com.bryjamin.dancedungeon.factories.map.event.M
     @Override
     public void cleanUpEvent(World world) {
 
-        Array<Entity> entityArray = world.getSystem(PlayerControlledSystem.class).getPlayerBag();
-
-        for(Entity e : entityArray){
-
-            Coordinates c = e.getComponent(CoordinateComponent.class).coordinates;
-
-            e.getComponent(MoveToComponent.class).movementPositions.add(
-                    world.getSystem(TileSystem.class).getPositionUsingCoordinates(world.getSystem(TileSystem.class).getMaxX() + 3, c.getY(),
-                            e.getComponent(CenteringBoundaryComponent.class).bound
-                            )
-            );
-        }
-
     }
 
     @Override
     public boolean cleanUpComplete(World world) {
-
-        boolean allInPosition = true;
-
-        Array<Entity> entityArray = world.getSystem(PlayerControlledSystem.class).getPlayerBag();
-
-        for(Entity e : entityArray){
-            if(!e.getComponent(MoveToComponent.class).isEmpty()){
-                allInPosition = false;
-            };
-        }
-
-        return allInPosition;
-
-
+        return true;
     }
+
 
     private void setPlayerCoordinate(CoordinateComponent coordinateComponent, int partyPosition) {
 
         Coordinates c = coordinateComponent.coordinates;
-        coordinateComponent.freePlacement = true;
 
         switch (partyPosition) {
             case 0:
@@ -127,25 +100,18 @@ public class BattleEvent extends com.bryjamin.dancedungeon.factories.map.event.M
                 break;
         }
 
-
     }
 
 
     private void setUpIntro(World world, Entity entity) {
 
-
         TileSystem tileSystem = world.getSystem(TileSystem.class);
-
         Coordinates c = entity.getComponent(CoordinateComponent.class).coordinates;
 
         entity.getComponent(PositionComponent.class).position.set(
-                tileSystem.getPositionUsingCoordinates(c.getX() - 4, c.getY(),
+                tileSystem.getPositionUsingCoordinates(c.getX(), c.getY(),
                         entity.getComponent(CenteringBoundaryComponent.class).bound)
         );
-
-        entity.getComponent(MoveToComponent.class).movementPositions.add(tileSystem.getPositionUsingCoordinates(c,
-                entity.getComponent(CenteringBoundaryComponent.class).bound));
-
 
     }
 
@@ -157,6 +123,7 @@ public class BattleEvent extends com.bryjamin.dancedungeon.factories.map.event.M
         for(int i = 0; i < entityBag.size(); i++){
             setPlayerCoordinate(entityBag.get(i).getComponent(CoordinateComponent.class), i);
             setUpIntro(world, entityBag.get(i));
+           // setUpIntro(world, entityBag.get(i));
         }
     }
 
@@ -170,7 +137,7 @@ public class BattleEvent extends com.bryjamin.dancedungeon.factories.map.event.M
 
             if (enemy != null) {
                 Coordinates c = enemy.getComponent(CoordinateComponent.class).coordinates;
-                enemy.getComponent(CoordinateComponent.class).freePlacement = true;
+                //enemy.getComponent(CoordinateComponent.class).freePlacement = true;
 
 
                 switch (i) {

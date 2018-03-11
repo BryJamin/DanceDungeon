@@ -2,21 +2,18 @@ package com.bryjamin.dancedungeon.ecs.systems.ui;
 
 import com.artemis.Aspect;
 import com.artemis.BaseSystem;
-import com.artemis.Entity;
-import com.artemis.World;
 import com.artemis.utils.IntBag;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -26,21 +23,16 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.assets.Skins;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
-import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
-import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
-import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PartyUiComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
-import com.bryjamin.dancedungeon.factories.ButtonFactory;
+import com.bryjamin.dancedungeon.factories.CharacterGenerator;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
 import com.bryjamin.dancedungeon.screens.strategy.MapScreen;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
-import com.bryjamin.dancedungeon.utils.math.CenteringFrame;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
@@ -50,20 +42,27 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 public class ExpeditionScreenCreationSystem extends BaseSystem {
 
-    private static int PARTY_SIZE = 4;
+    private static int PARTY_SIZE = 3;
 
     private StageUIRenderingSystem stageUIRenderingSystem;
     private RenderingSystem renderingSystem;
     private Skin uiSkin;
     private Table container;
     private Table characterPane;
+    private Table partyTable;
 
 
     private Viewport gameport;
     private MainGame game;
 
     private Array<UnitData> availableMembers;
-    private Array<UnitData> partyMembers = new Array<UnitData>(4);
+    private Array<UnitData> partyMembers = new Array<UnitData>(PARTY_SIZE);
+
+
+    private UnitData[] defenders;
+    UnitData[] attackers;
+    UnitData[] support;
+
 
     public ExpeditionScreenCreationSystem(MainGame game, Viewport gameport, Array<UnitData> availableMembers, Array<UnitData> partyMembers) {
         this.gameport = gameport;
@@ -74,11 +73,20 @@ public class ExpeditionScreenCreationSystem extends BaseSystem {
             this.partyMembers.add(null);
         }
         this.uiSkin = Skins.DEFAULT_SKIN(game.assetManager);
+
+        CharacterGenerator cg = new CharacterGenerator();
+
+
+        defenders = new UnitData[]{cg.createWarrior(), cg.createArcher(), cg.createWarrior()};
+        attackers = new UnitData[]{cg.createArcher(), cg.createArcher(), cg.createArcher()};
+        support = new UnitData[]{cg.createMage(), cg.createMage(), cg.createMage()};
+
+
     }
 
     private void createWorldMap() {
 
-        float size = gameport.getWorldHeight() * 1.75f;
+        float size = gameport.getWorldHeight() * 2f;
 
 
         world.createEntity().edit().add(new PositionComponent(CenterMath.centerOnPositionX(size, MainGame.GAME_WIDTH / 2) - Measure.units(10f),
@@ -92,6 +100,11 @@ public class ExpeditionScreenCreationSystem extends BaseSystem {
 
 
     @Override
+    protected void processSystem() {
+
+    }
+
+    @Override
     protected void initialize() {
 
         createWorldMap();
@@ -102,99 +115,85 @@ public class ExpeditionScreenCreationSystem extends BaseSystem {
         //Better option is to have an intialize and 'redraw' method. When refreshinging tables
         if(characterPane == null) {
             characterPane = new Table(uiSkin);
-        } else {
-           // characterPane.remove();
-           // characterPane.clear();
         }
-        float btnW = Measure.units(25f);
-        float btnHeight = Measure.units(7.5f);
-        CenteringFrame centeringFrame = new CenteringFrame(Measure.units(0), Measure.units(0), Measure.units(30f), Measure.units(12.5f));
-        centeringFrame.setWidthPer(btnW);
-        centeringFrame.setHeightPer(btnHeight);
-        Vector2 position = centeringFrame.calculatePosition(0);
-
-        new ButtonFactory.ButtonBuilder()
-                .pos(position.x, position.y)
-                .width(btnW)
-                .height(btnHeight)
-                .text("Start Expedition")
-                .buttonAction(new WorldAction() {
-                    @Override
-                    public void performAction(World world, Entity entity) {
-                        game.getScreen().dispose();
-
-                        PartyDetails partyDetails = new PartyDetails();
-
-                        for (int i = 0; i < PARTY_SIZE; i++) {
-                            try {
-                                partyDetails.addPartyMember(partyMembers.get(i), i);
-                            } catch (IndexOutOfBoundsException e) {
-                                partyDetails.addPartyMember(null, i);
-                            }
-                        }
-
-                        game.setScreen(new MapScreen(game, partyDetails));
-                    }
-                })
-                .build(world);
-
 
     }
 
 
+    /**
+     * Creates the Current Patty frame used for expeditions
+     */
     private void createCurrentPartyFrame(){
 
-        Rectangle frame = new Rectangle(Measure.units(0), Measure.units(0f), gameport.getWorldWidth(), Measure.units(12.5f));
 
-        CenteringFrame centeringFrame = new CenteringFrame(frame);
-        centeringFrame.setWidthPer(Measure.units(7.5f));
-        centeringFrame.setHeightPer(Measure.units(7.5f));
-        centeringFrame.setColumns(4);
-        centeringFrame.setRows(1);
-        centeringFrame.setxGap(Measure.units(2.5f));
+        if(partyTable == null){
+            partyTable = new Table(uiSkin);
+        } else {
+            partyTable.remove();
+            partyTable.clear();
+        }
 
-        Entity backdrop = world.createEntity();
-        backdrop.edit().add(new PositionComponent(frame.x, frame.y))
-                .add(new PartyUiComponent())
-                .add(new DrawableComponent(Layer.BACKGROUND_LAYER_NEAR,
-                        new TextureDescription.Builder(TextureStrings.BLOCK)
-                                .width(frame.width)
-                                .height(frame.height)
-                                .color(new Color(0,0,0,0.8f))
-                                .build()));
+        stageUIRenderingSystem.stage.addActor(partyTable);
+        partyTable.setBackground(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.BLOCK)).tint(new Color(0,0,0,0.6f)));
+        partyTable.setWidth(stageUIRenderingSystem.stage.getWidth());
+        partyTable.setHeight(Measure.units(12.5f));
+        partyTable.setDebug(true);
+
+
+        float size = Measure.units(7.5f);
+
+        TextButton startExpedition = new TextButton("Start Expedition", uiSkin);
+        startExpedition.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.getScreen().dispose();
+
+                PartyDetails partyDetails = new PartyDetails();
+
+                for (int i = 0; i < PARTY_SIZE; i++) {
+                    try {
+                        partyDetails.addPartyMember(partyMembers.get(i), i);
+                    } catch (IndexOutOfBoundsException e) {
+                        partyDetails.addPartyMember(null, i);
+                    }
+                }
+
+                game.setScreen(new MapScreen(game, partyDetails));
+            }
+        });
+
+        partyTable.add(startExpedition).width(Measure.units(25f)).height(Measure.units(7.5f))
+                .padRight(Measure.units(2.5f));
+
+
 
         for (int i = 0; i < PARTY_SIZE; i++) {
 
-            Vector2 position = centeringFrame.calculatePosition(i);
+            final UnitData unitData = partyMembers.get(i);
 
-            if (partyMembers.get(i) != null) {
-                Entity e = createPartyIcon(position.x, position.y, partyMembers.get(i));
-                e.edit().add(new ActionOnTapComponent(new WorldAction() {
+            if (unitData != null) {
+
+                Button pty = new Button(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(unitData.icon)));
+                pty.addListener(new ChangeListener() {
                     @Override
-                    public void performAction(World world, Entity entity) {
-
-                        int i = partyMembers.indexOf(entity.getComponent(UnitComponent.class).getUnitData(), false);
-
+                    public void changed(ChangeEvent event, Actor actor) {
+                        int i = partyMembers.indexOf(unitData, false);
                         if (i != -1) {
                             partyMembers.set(i, null);
                             updateUi();
                         }
-
                     }
-                }));
-            } else {
-                float width = Measure.units(7.5f);
+                });
 
-                Entity e = world.createEntity().edit()
-                        .add(new PositionComponent(position.x, position.y))
-                        .add(new PartyUiComponent())
-                        .add(new HitBoxComponent(width, width))
-                        .add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE,
-                                new TextureDescription.Builder(TextureStrings.BLOCK)
-                                        .width(width)
-                                        .height(width)
-                                        .color(new Color(1,1,1, 0.7f))
-                                        .build())).getEntity();
+                partyTable.add(pty).width(size).height(size);
+
+            } else {
+                partyTable.add(
+                        new ImageButton(
+                                new TextureRegionDrawable(
+                                        renderingSystem.getAtlas().findRegion(TextureStrings.BLOCK)).tint(new Color(Color.GRAY))))
+                        .width(size)
+                        .height(size);
             }
 
         }
@@ -208,63 +207,79 @@ public class ExpeditionScreenCreationSystem extends BaseSystem {
 
 
         container = new Table();
+        stage.addActor(container);
         container.setDebug(true);
+        container.setBackground(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.BLOCK)).tint(new Color(0,0,0,0.6f)));
         container.setWidth(stage.getWidth());
         container.setHeight(stage.getHeight());
-        container.align(Align.right);
+        container.align(Align.top);
 
-        Table partyMemberContainer = new Table();
-        partyMemberContainer.setDebug(true);
+        float padTop = Measure.units(3.5f);
 
-        ScrollPane scrollPane = new ScrollPane(partyMemberContainer, uiSkin);
-        container.add(scrollPane).width(Measure.units(30f)).height(stage.getHeight());
+        CharacterGenerator cg = new CharacterGenerator();
+
+        //TODO Create rows of Defender, Attacker, Support
+
+        Label selectYourParty = new Label("Select Your Party Members", uiSkin);
+        container.add(selectYourParty).expandX();
+        container.row();
+
+        Table defenderTable = new Table(uiSkin);
+
+        Label selectDefender = new Label("Defender", uiSkin);
+        container.add(selectDefender).padTop(padTop);
+        container.row();
+
+        container.add(createPartyTable(defenders, 0));
+        container.row();
+
+        Label selectAttacker = new Label("Attacker", uiSkin);
+        container.add(selectAttacker).padTop(padTop);;
+        container.row();
+
+        container.add(createPartyTable(attackers, 1));
+        container.row();
+
+        Label selectSupport = new Label("Support", uiSkin);
+        container.add(selectSupport).padTop(padTop);
+        container.row();
+
+        container.add(createPartyTable(support, 2));
+
+    }
 
 
-        stage.addActor(container);
-
-        //Right hand column
-        for (int i = 0; i < availableMembers.size; i++) {
+    private Table createPartyTable(UnitData[] units, final int position){
 
 
-            TextureRegionDrawable drawable = new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(availableMembers.get(i).icon));
+        Table table = new Table(uiSkin);
 
-            final UnitData unitData = availableMembers.get(i);
+        int i = 0;
+        for(final UnitData unitData : units){
 
-            Button btn = new Button(drawable);
+            TextureRegionDrawable drawable = new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(unitData.icon));
+            Button btn = new Button(drawable, drawable.tint(new Color(0.1f, 0.1f, 0.1f, 1)));
 
-            if (partyMembers.contains(availableMembers.get(i), true)){
-                btn = new Button(drawable.tint(new Color(0.1f, 0.1f, 0.1f, 0.7f)));
-
+            if (partyMembers.contains(unitData, true)){
+                btn = new Button(drawable.tint(new Color(0.1f, 0.1f, 0.1f, 1)));
             } else {
                 btn.addListener(new ClickListener(){
 
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
-                        addToParty(unitData);
+                        partyMembers.set(position, unitData);
+                        updateUi();
                     }
                 });
             }
-
-            partyMemberContainer.add(btn).width(Measure.units(7.5f)).height(Measure.units(7.5f));
-            partyMemberContainer.add(new Label(unitData.name, uiSkin));
-
-            drawable = new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.BLOCK));
-            Button characterInfo = new Button(uiSkin);
-            characterInfo.addListener(new ChangeListener() {
-                @Override
-                public void changed(ChangeEvent event, Actor actor) {
-                    createCharacterInformationWindow(unitData);
-                }
-            });
-            partyMemberContainer.add(characterInfo).prefSize(Measure.units(5f), Measure.units(5f));
-
-            partyMemberContainer.row();
+            table.add(btn).width(Measure.units(7.5f)).height(Measure.units(7.5f)).padRight(i == units.length - 1 ? 0 : Measure.units(1.5f));
+            i++;
         }
+        return table;
 
 
 
     }
-
 
     private void addToParty(UnitData unitData) {
 
@@ -338,25 +353,6 @@ public class ExpeditionScreenCreationSystem extends BaseSystem {
     }
 
 
-    private Entity createPartyIcon(float x, float y, UnitData unitData) {
-
-        float width = Measure.units(7.5f);
-
-        Entity e = world.createEntity().edit()
-                .add(new PositionComponent(x, y))
-                .add(new UnitComponent(unitData))
-                .add(new PartyUiComponent())
-                .add(new HitBoxComponent(width, width))
-                .add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE,
-                        new TextureDescription.Builder(unitData.icon)
-                                .width(width)
-                                .height(width)
-                                .build())).getEntity();
-
-        return e;
-    }
-
-
     private void updateUi() {
 
         IntBag unitEntities = world.getAspectSubscriptionManager().get(Aspect.all(PartyUiComponent.class)).getEntities();
@@ -369,9 +365,4 @@ public class ExpeditionScreenCreationSystem extends BaseSystem {
 
     }
 
-
-    @Override
-    protected void processSystem() {
-
-    }
 }

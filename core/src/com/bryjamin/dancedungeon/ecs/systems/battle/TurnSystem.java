@@ -16,6 +16,7 @@ import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComp
 
 import static com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem.TURN.ALLY;
 import static com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem.TURN.ENEMY;
+import static com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem.TURN.INTENT;
 
 /**
  * Created by BB on 21/10/2017.
@@ -45,8 +46,6 @@ public class TurnSystem extends EntitySystem {
     private Array<Entity> enemyTurnEntities = new Array<Entity>();
     private Array<Entity> allyTurnEntities = new Array<Entity>();
 
-    private TurnComponent currentTurnComponent;
-
     private boolean processingFlag = true;
 
 
@@ -57,11 +56,11 @@ public class TurnSystem extends EntitySystem {
     private STATE battleState = STATE.NEXT_TURN;
 
 
-    public enum TURN {
-        ENEMY, ALLY
+    public enum TURN { //ENEMY - Enemy Turn, //ALLY - Ally Turn, //INTENT - Stored enemy actions
+        ENEMY, ALLY, INTENT
     }
 
-    private TURN turn = ENEMY;
+    private TURN turn = INTENT;
 
     public TURN getTurn() {
         return turn;
@@ -102,6 +101,13 @@ public class TurnSystem extends EntitySystem {
 
     }
 
+
+    public void endAllyTurn(){
+        turn = INTENT;
+        battleState = STATE.NEXT_TURN;
+    }
+
+
     public void setUp(TURN turn) {
 
         this.turn = turn;
@@ -137,6 +143,28 @@ public class TurnSystem extends EntitySystem {
     //TODO organise, as it is quite messy
     @Override
     protected void processSystem() {
+
+        if(turn == INTENT){
+
+            switch (battleState){
+
+                case NEXT_TURN:
+                    if(world.getSystem(EnemyIntentSystem.class).releaseAttack()){
+                        battleState = STATE.WAITING;
+                    } else {
+                        setUp(ENEMY);
+                    }
+                    break;
+                case WAITING:
+                    if (!world.getSystem(ActionCameraSystem.class).isProcessing()) {
+                        battleState = STATE.NEXT_TURN;
+                    }
+                    break;
+            }
+
+            return;
+        }
+
 
         //if (world.getSystem(ActionCameraSystem.class).isProcessing()) return;
 

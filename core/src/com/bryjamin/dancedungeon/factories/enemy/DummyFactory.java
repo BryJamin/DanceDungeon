@@ -7,7 +7,7 @@ import com.bryjamin.dancedungeon.ecs.ai.ActionScoreCalculator;
 import com.bryjamin.dancedungeon.ecs.ai.UtilityAiCalculator;
 import com.bryjamin.dancedungeon.ecs.ai.actions.BasicAttackAction;
 import com.bryjamin.dancedungeon.ecs.ai.actions.EndTurnAction;
-import com.bryjamin.dancedungeon.ecs.ai.actions.MeleeMoveToAction;
+import com.bryjamin.dancedungeon.ecs.ai.actions.FindBestMovementAreaToAttackFromAction;
 import com.bryjamin.dancedungeon.ecs.ai.calculations.CanMoveCalculator;
 import com.bryjamin.dancedungeon.ecs.ai.calculations.CanUseSkillCalculator;
 import com.bryjamin.dancedungeon.ecs.ai.calculations.IsNextToCalculator;
@@ -18,10 +18,11 @@ import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
+import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.player.UnitFactory;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
-import com.bryjamin.dancedungeon.factories.spells.basic.Strike;
 import com.bryjamin.dancedungeon.factories.spells.basic.MeleeAttack;
+import com.bryjamin.dancedungeon.factories.spells.basic.Strike;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
@@ -37,6 +38,8 @@ public class DummyFactory {
 
     public static final float width = Measure.units(5f);
     public static final float height = Measure.units(5f);
+    private static final int health = 2;
+    private static final int sprinterHealth = 3;
 
     private UnitFactory unitFactory = new UnitFactory();
 
@@ -51,11 +54,11 @@ public class DummyFactory {
     }
 
 
-    private ComponentBag targetDummy(StatComponent statComponent) {
+    private ComponentBag targetDummy(UnitData unitData) {
 
         Skill slash = new Strike();
 
-        ComponentBag bag = unitFactory.baseEnemyUnitBag(statComponent); //new ComponentBag();
+        ComponentBag bag = unitFactory.baseEnemyUnitBag(unitData); //new ComponentBag();
 
         bag.add(new MoveToComponent(Measure.units(80f)));
         bag.add(new CenteringBoundaryComponent(width, height));
@@ -70,8 +73,14 @@ public class DummyFactory {
 
 
     public ComponentBag targetDummyWalker() {
-        ComponentBag bag = targetDummy(new StatComponent.StatBuilder().movementRange(3)
+
+        UnitData unitData = new UnitData("Eugh");
+        unitData.setStatComponent(new StatComponent.StatBuilder()
+                .healthAndMax(health)
+                .movementRange(3)
                 .build());
+
+        ComponentBag bag = targetDummy(unitData);
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, blob.color(Color.CYAN).build()));
         bag.add(new StatComponent.StatBuilder().movementRange(3)
                 .build());
@@ -86,7 +95,7 @@ public class DummyFactory {
     public UtilityAiCalculator dummyAi(Skill slash) {
         return new UtilityAiCalculator(
                 new ActionScoreCalculator(new EndTurnAction()),
-                new ActionScoreCalculator(new MeleeMoveToAction(), new IsNextToCalculator(null, 100f),
+                new ActionScoreCalculator(new FindBestMovementAreaToAttackFromAction(), new IsNextToCalculator(null, 100f),
                         new CanMoveCalculator(100f, null)),
                 new ActionScoreCalculator(new BasicAttackAction(), new IsNextToCalculator(150f, null), new CanUseSkillCalculator(slash, 100f, null)
                 ));
@@ -95,10 +104,15 @@ public class DummyFactory {
 
     public ComponentBag targetDummySprinter() {
 
-        ComponentBag bag = targetDummy(new StatComponent.StatBuilder().movementRange(6)
+        UnitData unitData = new UnitData("Eugh");
+        unitData.setStatComponent(new StatComponent.StatBuilder().movementRange(6)
+                .healthAndMax(sprinterHealth)
                 .build());
+
+        ComponentBag bag = targetDummy(unitData);
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, blob.color(Color.WHITE).build()));
         bag.add(new StatComponent.StatBuilder().movementRange(6)
+                .healthAndMax(100)
                 .build());
         return bag;
 

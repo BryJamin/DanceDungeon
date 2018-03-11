@@ -6,12 +6,10 @@ import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.graphics.Color;
-import com.bryjamin.dancedungeon.assets.Fonts;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.FollowPositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
@@ -19,13 +17,11 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.ScaleTransformationComp
 import com.bryjamin.dancedungeon.ecs.components.graphics.UITargetingComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.SelectedEntityComponent;
-import com.bryjamin.dancedungeon.ecs.systems.SkillUISystem;
+import com.bryjamin.dancedungeon.ecs.systems.BattleStageUISystem;
 import com.bryjamin.dancedungeon.factories.spells.TargetingFactory;
-import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
-import com.bryjamin.dancedungeon.utils.texture.TextDescription;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 /**
@@ -39,15 +35,9 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 public class SelectedTargetSystem extends EntityProcessingSystem {
 
     private TileSystem tileSystem;
-
     private ComponentMapper<PlayerControlledComponent> playerControlledM;
-
-    private static final float infoX = Measure.units(2.5f);
-    private static final float infoY = Measure.units(50f);
-    private static final float infoSize = Measure.units(5f);
-
+    private ComponentMapper<TurnComponent> turnMapper;
     private boolean processingFlag = false;
-
 
     public SelectedTargetSystem() {
         super(Aspect.all(SelectedEntityComponent.class));
@@ -56,7 +46,7 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
     @Override
     protected void process(Entity e) {
         if (!e.getComponent(TurnComponent.class).hasActions()) {
-            world.getSystem(SkillUISystem.class).reset();
+            world.getSystem(BattleStageUISystem.class).reset();
             e.edit().remove(SelectedEntityComponent.class);
         }
     }
@@ -69,7 +59,7 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
             for (Entity entity : this.getEntities()) {
                 entity.edit().remove(SelectedEntityComponent.class);
             }
-            world.getSystem(SkillUISystem.class).reset();
+            world.getSystem(BattleStageUISystem.class).reset();
         }
 
         setUpCharacter(e);
@@ -78,7 +68,7 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
     @Override
     public void removed(Entity e) {
         if (this.getEntities().size() <= 0) {
-            //world.getSystem(SkillUISystem.class).reset();
+            //world.getSystem(BattleStageUISystem.class).reset();
         }
     }
 
@@ -102,14 +92,19 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
 
         Coordinates c = world.getSystem(TileSystem.class).getCoordinatesUsingPosition(x, y);
 
+
+
         if (world.getSystem(TileSystem.class).getOccupiedMap().containsValue(c, false)) {
 
             Entity selected = world.getSystem(TileSystem.class).getOccupiedMap().findKey(c, false);
 
-            if(selected.getComponent(TurnComponent.class).hasActions()){//TODO you can't select a character if it has no actions left
-                world.getSystem(TileSystem.class).getOccupiedMap().findKey(c, false).edit().add(new SelectedEntityComponent());
+            if(turnMapper.has(selected)) {
+
+                if (selected.getComponent(TurnComponent.class).hasActions()) {//TODO you can't select a character if it has no actions left
+                    world.getSystem(TileSystem.class).getOccupiedMap().findKey(c, false).edit().add(new SelectedEntityComponent());
+                }
+                return true;
             }
-            return true;
         }
 
         return false;
@@ -132,11 +127,11 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
         }
 
         createTargetReticle(world, playableCharacter);
-        createUnitInformationEntity(world, playableCharacter);
+        //createUnitInformationEntity(world, playableCharacter);
 
         if (playerControlledM.has(playableCharacter)) {
             createMovementAndAttackTiles(playableCharacter);
-            world.getSystem(SkillUISystem.class).createSkillUi(playableCharacter);
+            world.getSystem(BattleStageUISystem.class).createSkillUi(playableCharacter);
         }
     }
 
@@ -179,31 +174,6 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
                         .height(height)
                         .color(playerControlledM.has(entity) ? new Color(Color.WHITE) : new Color(Color.RED))
                         .build()));
-
-    }
-
-
-    public void createUnitInformationEntity(World world, Entity entity) {
-
-        StatComponent stats = entity.getComponent(StatComponent.class);
-        HealthComponent health = entity.getComponent(HealthComponent.class);
-
-        Entity info = world.createEntity();
-        info.edit().add(new PositionComponent(infoX, infoY));
-        info.edit().add(new CenteringBoundaryComponent(infoSize, infoSize));
-        info.edit().add(new DrawableComponent(entity.getComponent(DrawableComponent.class)));
-        info.edit().add(new UITargetingComponent());
-
-
-        Entity hpText = world.createEntity();
-        hpText.edit().add(new PositionComponent(infoX, infoY - infoSize));
-        hpText.edit().add(new CenteringBoundaryComponent(infoSize, infoSize));
-        hpText.edit().add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE,
-                new TextDescription.Builder(Fonts.SMALL)
-                        .color(new Color(Color.WHITE))
-                        .text("HP " + (int) health.health + "/" + stats.maxHealth)
-                        .build()));
-        hpText.edit().add(new UITargetingComponent());
 
     }
 

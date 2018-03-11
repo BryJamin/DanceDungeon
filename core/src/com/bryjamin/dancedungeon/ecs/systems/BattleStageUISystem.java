@@ -5,14 +5,17 @@ import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.artemis.utils.IntBag;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -25,8 +28,11 @@ import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.SkillButtonComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.UITargetingComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BattleMessageSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
+import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.utils.Measure;
 
@@ -38,13 +44,15 @@ import com.bryjamin.dancedungeon.utils.Measure;
  * It can also be called to update and remove certain parts of the skill UI.
  */
 
-public class SkillUISystem extends EntitySystem {
+public class BattleStageUISystem extends EntitySystem {
 
     private static final float SIZE = Measure.units(10f);
     private TileSystem tileSystem;
     private Table container = new Table();
     private Table skillsTable = new Table();
     private Table infoTable = new Table();
+
+    private Table profileTable = new Table();
 
     private Label title;
     private Label description;
@@ -57,7 +65,7 @@ public class SkillUISystem extends EntitySystem {
     private TextureAtlas atlas;
     private Skin uiSkin;
 
-    public SkillUISystem(Stage stage, MainGame game) {
+    public BattleStageUISystem(Stage stage, MainGame game) {
         super(Aspect.all(SkillButtonComponent.class, CenteringBoundaryComponent.class));
         this.game = game;
         this.stage = stage;
@@ -72,17 +80,20 @@ public class SkillUISystem extends EntitySystem {
         container = new Table(uiSkin);
         container.setDebug(true);
         container.setWidth(stage.getWidth());
-        container.setHeight(Measure.units(17.5f));
-        container.align(Align.bottom);
+        container.setHeight(Measure.units(20f));
+        container.align(Align.bottomLeft);
         container.setTransform(false);
 
+        profileTable = new Table(uiSkin);
+        container.add(profileTable);
+
+
+
+
         infoTable = new Table(uiSkin);
-        Window window = new Window("Skills", uiSkin);
         skillsTable = new Table(uiSkin);
         skillsTable.setDebug(true);
-
-        window.add(skillsTable);
-        container.add(window).width(Measure.units(50f));
+        container.add(skillsTable).width(Measure.units(50f));
         container.add(infoTable).width(Measure.units(30f)).height(Measure.units(17.5f));
 
         title = new Label("", uiSkin);
@@ -90,10 +101,22 @@ public class SkillUISystem extends EntitySystem {
         description.setWrap(true);
         description.setAlignment(Align.center);
 
-        infoTable.align(Align.top);
-        infoTable.add(title);
-        infoTable.row();
-        infoTable.add(description).width(infoTable.getWidth());
+
+        TextButton endTurn = new TextButton("End", uiSkin);
+        endTurn.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                world.getSystem(TurnSystem.class).endAllyTurn();
+                world.getSystem(BattleStageUISystem.class).reset();
+            }
+        });
+
+        endTurn.setPosition(0, Measure.units(50f));
+        endTurn.setWidth(Measure.units(12.5f));
+        endTurn.setHeight(Measure.units(10f));
+
+
+        stage.addActor(endTurn);
 
         stage.addActor(container);
 
@@ -107,36 +130,68 @@ public class SkillUISystem extends EntitySystem {
 
 
     public void createSkillUi(Entity e) {
+
+        container.clearChildren();
+        container.clear();
         container.setVisible(true);
+
+
+        UnitData unitData = e.getComponent(UnitComponent.class).getUnitData();
+
+        Label name = new Label(unitData.name, uiSkin);
+        profileTable = new Table(uiSkin);
+        profileTable.add(name).height(Measure.units(5f));
+        profileTable.row();
+
+        Table profileAndHealth = new Table();
+        profileAndHealth.add(new Image(new TextureRegionDrawable(atlas.findRegion(unitData.icon)))).size(Measure.units(7.5f), Measure.units(7.5f)).expandY();
+        profileAndHealth.row();
+
+        int max = unitData.getStatComponent().maxHealth;
+
+        profileAndHealth.add(new Label(String.format("HP: %s/%s", max, max), uiSkin)).expandY();
+
+        profileTable.add(profileAndHealth).width(Measure.units(10f)).height(Measure.units(10f));
+        container.add(profileTable).width(Measure.units(20f));
+        container.add(skillsTable).width(Measure.units(22.5f));
+
         skillsTable.clearChildren();
+
+        skillsTable.add(new Label("Skills", uiSkin)).height(Measure.units(5f));
+        skillsTable.row();
+
         SkillsComponent skillsComponent = e.getComponent(SkillsComponent.class);
         for (int i = 0; i < skillsComponent.skills.size; i++) {
-            createSkillButton(world.createEntity(), e, Measure.units(15f) * (i + 1), 0, skillsComponent.skills.get(i));
+            createSkillButton(e, Measure.units(15f) * (i + 1), 0, skillsComponent.skills.get(i));
         }
     }
 
-
-
-
-    public void refreshSkillUi(Entity e) {
-        container.setVisible(false);
-        //createSkillUi(e);
-    }
-
-
     private void createCreateSkillText(Entity player, Skill skill) {
-        title.setText(skill.getName());
-        description.remove();
 
+        container.clearChildren();
+        createSkillUi(player);
+
+        infoTable.remove();
+        infoTable.reset();
+
+        infoTable = new Table();
+        infoTable.reset();
         infoTable.clear();
-        infoTable.add(title);
+
+        container.add(infoTable).width(Measure.units(40f));
+
+        infoTable.add(new Label(skill.getName(), uiSkin));
+        infoTable.align(Align.top);
         infoTable.row();
 
-       // description = new Label(skill.getDescription(world, player), uiSkin);
+
+        description = new Label(skill.getDescription(world, player), uiSkin);
         description.setWrap(true);
         description.setText(skill.getDescription(world, player));
         description.setAlignment(Align.center);
-        infoTable.add(description).width(infoTable.getWidth());
+
+        infoTable.add(description).width(Measure.units(40f));
+
     }
 
 
@@ -151,7 +206,7 @@ public class SkillUISystem extends EntitySystem {
     }
 
 
-    private void createSkillButton(Entity button, final Entity player, float x, float y, final Skill skill) {
+    private void createSkillButton(final Entity player, float x, float y, final Skill skill) {
 
         float size = Measure.units(7.5f);
 
@@ -185,6 +240,7 @@ public class SkillUISystem extends EntitySystem {
 
     public void reset() {
         this.clearTargetingTiles();
+        container.clearChildren();
         container.setVisible(false);
     }
 

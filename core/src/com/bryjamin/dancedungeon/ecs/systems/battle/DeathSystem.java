@@ -21,9 +21,8 @@ import com.bryjamin.dancedungeon.ecs.systems.ParentChildSystem;
 public class DeathSystem extends EntityProcessingSystem {
 
 
-
-        ComponentMapper<ParentComponent> parentMapper;
-        ComponentMapper<OnDeathActionsComponent> onDeathActionsMapper;
+    ComponentMapper<ParentComponent> parentMapper;
+    ComponentMapper<OnDeathActionsComponent> onDeathActionsMapper;
 
 
 
@@ -42,8 +41,6 @@ public class DeathSystem extends EntityProcessingSystem {
      * @param e
      */
     public void kill(Entity e){
-
-        System.out.println("Dead");
 
         if(onDeathActionsMapper.has(e)){
             for(WorldAction worldAction : onDeathActionsMapper.get(e).actions){

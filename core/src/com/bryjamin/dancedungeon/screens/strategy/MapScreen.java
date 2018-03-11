@@ -5,9 +5,10 @@ import com.artemis.WorldConfiguration;
 import com.artemis.WorldConfigurationBuilder;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.bryjamin.dancedungeon.MainGame;
-import com.bryjamin.dancedungeon.ecs.systems.FixedToCameraPanAndFlingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
+import com.bryjamin.dancedungeon.ecs.systems.FixedToCameraPanAndFlingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MoveToTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ParentChildSystem;
@@ -23,6 +24,8 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.input.MapInputSystem;
 import com.bryjamin.dancedungeon.ecs.systems.strategy.EventGenerationSystem;
 import com.bryjamin.dancedungeon.ecs.systems.strategy.StrategyMapSystem;
+import com.bryjamin.dancedungeon.ecs.systems.ui.MapStageUISystem;
+import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.factories.map.MapGenerator;
 import com.bryjamin.dancedungeon.screens.AbstractScreen;
@@ -55,11 +58,14 @@ public class MapScreen extends AbstractScreen {
                 .with(WorldConfigurationBuilder.Priority.HIGHEST,
 
                         //Initialization Systems
+
                         new EventGenerationSystem(),
                         new StrategyMapSystem(game, gameMap, partyDetails),
 
                         new MapInputSystem(game, gameport, 0, gameMap.getWidth() + Measure.units(20f)),
                         new FixedToCameraPanAndFlingSystem(gameport.getCamera(), 0, 0, gameMap.getWidth() + Measure.units(20f), 0),
+                        new MapStageUISystem(game, partyDetails, gameport), //Updates and is fixed to camera, so need to be below fling system
+
 
                         //Positional Systems
                         new MovementSystem(),
@@ -78,6 +84,7 @@ public class MapScreen extends AbstractScreen {
                         new FadeSystem(),
                         new ScaleTransformationSystem(),
                         new RenderingSystem(game, gameport),
+                        new StageUIRenderingSystem(new Stage(gameport, game.batch)),
                         new BoundsDrawingSystem(batch))
                 .build();
 
@@ -97,6 +104,7 @@ public class MapScreen extends AbstractScreen {
 
     public void battleVictory(){
         world.getSystem(StrategyMapSystem.class).onVictory();
+        world.getSystem(MapStageUISystem.class).updateInformation();
     }
 
 }

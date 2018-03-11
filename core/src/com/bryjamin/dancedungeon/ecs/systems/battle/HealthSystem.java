@@ -47,8 +47,11 @@ public class HealthSystem extends EntityProcessingSystem {
         HealthComponent hc = healthm.get(e);
 
 
-        if(hc.getAccumulatedDamage() > 0 && blinkOnHitMapper.has(e)) {
-            blinkOnHitMapper.get(e).isHit = true;
+        if(hc.getAccumulatedDamage() > 0) {
+
+            if(blinkOnHitMapper.has(e)) {
+                blinkOnHitMapper.get(e).isHit = true;
+            }
 
             if(MathUtils.random(1f) > statm.get(e).getDodgeChance()) {
                 //TODO I grab parts of entity that aren't called in the Aspect class, so there is a null pointer chance

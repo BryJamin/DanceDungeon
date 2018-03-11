@@ -5,6 +5,7 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.artemis.World;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.Queue;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
@@ -34,6 +35,7 @@ public class ActionCameraSystem extends EntitySystem {
 
     private ComponentMapper<WaitActionComponent> waitActionMapper;
 
+    private ComponentMapper<MoveToComponent> mtcMapper;
 
     private WorldConditionalAction currentConditionalAction;
 
@@ -144,6 +146,8 @@ public class ActionCameraSystem extends EntitySystem {
 
     public void createMovementAction(Entity entity, final Iterable<Coordinates> coordinatesSequence) {
 
+        if(!mtcMapper.has(entity)) return;
+
         pushLastAction(entity, new WorldConditionalAction() {
             @Override
             public boolean condition(World world, Entity entity) {
@@ -178,6 +182,75 @@ public class ActionCameraSystem extends EntitySystem {
 
     }
 
+    public void createMovementAction(Entity entity, final Vector3... positions){
+
+        if(!mtcMapper.has(entity)) return;
+
+        pushLastAction(entity, new WorldConditionalAction() {
+            @Override
+            public boolean condition(World world, Entity entity) {
+                return entity.getComponent(MoveToComponent.class).isEmpty();
+            }
+
+            @Override
+            public void performAction(World world, Entity entity) {
+
+                if(entity.getComponent(MoveToComponent.class) == null) {
+                    return;
+                }
+
+
+                for (Vector3 p : positions) {
+                    entity.getComponent(MoveToComponent.class).movementPositions.add(p);
+                }
+            }
+        });
+    }
+
+
+    public void createASyncMovementAction(Entity entity, final Vector3... positions){
+
+        if(!mtcMapper.has(entity)) return;
+
+        System.out.println("CREATING ASYNC");
+
+        pushLastAction(entity, new WorldConditionalAction() {
+            @Override
+            public boolean condition(World world, Entity entity) {
+                return entity.getComponent(MoveToComponent.class).isEmpty();
+            }
+
+            @Override
+            public void performAction(World world, Entity entity) {
+
+                if(entity.getComponent(MoveToComponent.class) == null) {
+                    return;
+                }
+
+
+                for (Vector3 p : positions) {
+                    entity.getComponent(MoveToComponent.class).movementPositions.add(p);
+                }
+            }
+        });
+    }
+
+
+
+    public void createIntentAction(Entity entity){
+
+        pushLastAction(entity, new WorldConditionalAction() {
+            @Override
+            public boolean condition(World world, Entity entity) {
+                return true;
+            }
+
+            @Override
+            public void performAction(World world, Entity entity) {
+                world.getSystem(EnemyIntentSystem.class).updateIntent();
+            }
+        });
+    }
 
     @Override
     protected boolean checkProcessing() {

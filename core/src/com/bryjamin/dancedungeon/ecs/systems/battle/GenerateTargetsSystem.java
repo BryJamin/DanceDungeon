@@ -7,6 +7,7 @@ import com.artemis.EntitySystem;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.FriendlyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 
 /**
@@ -43,7 +44,7 @@ public class GenerateTargetsSystem extends EntitySystem {
             targetComponent.allyBuilder = Aspect.all(PlayerControlledComponent.class, CoordinateComponent.class);
             targetComponent.enemyBuilder = Aspect.all(EnemyComponent.class, CoordinateComponent.class);
         } else if(enemyM.has(e)){
-            targetComponent.enemyBuilder = Aspect.all(PlayerControlledComponent.class, CoordinateComponent.class);
+            targetComponent.enemyBuilder = Aspect.one(PlayerControlledComponent.class, FriendlyComponent.class).all(CoordinateComponent.class);
             targetComponent.allyBuilder = Aspect.all(EnemyComponent.class, CoordinateComponent.class);
         }
 

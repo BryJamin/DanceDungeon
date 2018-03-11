@@ -23,9 +23,10 @@ import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.UITargetingComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyIntentComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.ReselectEntityComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.SelectedEntityComponent;
-import com.bryjamin.dancedungeon.ecs.systems.SkillUISystem;
+import com.bryjamin.dancedungeon.ecs.systems.BattleStageUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.utils.HitBox;
@@ -104,8 +105,30 @@ public class TargetingFactory {
 
         Array<Entity> entityArray = new Array<Entity>();
 
+        TileSystem tileSystem = world.getSystem(TileSystem.class);
+
         for (Coordinates c : CoordinateMath.getCoordinatesInSquareRange(player.getComponent(CoordinateComponent.class).coordinates, range)) {
-            entityArray.add(createTargetingBox(world, player, c, spell, true));
+
+            if(tileSystem.getCoordinateMap().containsKey(c)) {
+                entityArray.add(createTargetingBox(world, player, c, spell, true));
+            }
+        }
+
+        return entityArray;
+    }
+
+
+    public Array<Entity> createAdjacentTiles(World world, final Entity player, final Skill spell, int range) {
+
+        Array<Entity> entityArray = new Array<Entity>();
+
+        TileSystem tileSystem = world.getSystem(TileSystem.class);
+
+        for (Coordinates c : CoordinateMath.getCoordinatesInLine(player.getComponent(CoordinateComponent.class).coordinates, range)) {
+
+            if(tileSystem.getCoordinateMap().containsKey(c)) {
+                entityArray.add(createTargetingBox(world, player, c, spell, true));
+            }
         }
 
         return entityArray;
@@ -121,7 +144,7 @@ public class TargetingFactory {
             @Override
             public void performAction(World world, final Entity e) {
                 skill.cast(world, player, coordinates);
-                world.getSystem(SkillUISystem.class).reset();
+                world.getSystem(BattleStageUISystem.class).reset();
             }
         }));
 
@@ -185,6 +208,87 @@ public class TargetingFactory {
 
 
     }
+
+
+
+    public Array<Entity> createWhiteTargetingMarkers(World world, Coordinates unitCoords, Coordinates target){
+
+        Array<Entity> entityArray = new Array<Entity>();
+        Coordinates markerCoords = new Coordinates(target);
+
+        int i = 100;
+
+        while(!unitCoords.equals(markerCoords) && i > 0) {
+
+            if (unitCoords.getX() < target.getX() && unitCoords.getY() == target.getY()) {
+                markerCoords.set(markerCoords.getX() - 1, markerCoords.getY());
+            } else if (unitCoords.getX() > target.getX() && unitCoords.getY() == target.getY()) {
+                markerCoords.set(markerCoords.getX() + 1, markerCoords.getY());
+            } else if (unitCoords.getX() == target.getX() && unitCoords.getY() < target.getY()) {
+                markerCoords.set(markerCoords.getX(), markerCoords.getY() - 1);
+            } else if (unitCoords.getX() == target.getX() && unitCoords.getY() > target.getY()) {
+                markerCoords.set(markerCoords.getX(), markerCoords.getY() + 1);
+            } else {
+                System.out.println("ERROR");
+                break;
+            }
+            if(!unitCoords.equals(markerCoords)) {
+                entityArray.add(whiteSquareMarker(world, markerCoords));
+            }
+            i--;
+
+        }
+
+        return entityArray;
+
+
+    }
+
+
+    public Array<Entity> createRedTargetingMarkers(World world, Coordinates unitCoords, Coordinates target){
+
+        Array<Entity> entityArray = new Array<Entity>();
+        Coordinates markerCoords = new Coordinates(target);
+
+        int i = 100;
+
+        while(!unitCoords.equals(markerCoords) && i > 0) {
+
+            if (unitCoords.getX() < target.getX() && unitCoords.getY() == target.getY()) {
+                markerCoords.set(markerCoords.getX() - 1, markerCoords.getY());
+            } else if (unitCoords.getX() > target.getX() && unitCoords.getY() == target.getY()) {
+                markerCoords.set(markerCoords.getX() + 1, markerCoords.getY());
+            } else if (unitCoords.getX() == target.getX() && unitCoords.getY() < target.getY()) {
+                markerCoords.set(markerCoords.getX(), markerCoords.getY() - 1);
+            } else if (unitCoords.getX() == target.getX() && unitCoords.getY() > target.getY()) {
+                markerCoords.set(markerCoords.getX(), markerCoords.getY() + 1);
+            } else {
+                System.out.println("ERROR");
+                break;
+            }
+            if(!unitCoords.equals(markerCoords)) {
+                entityArray.add(redMarkerBox(world, markerCoords));
+            }
+            i--;
+
+        }
+
+        return entityArray;
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     public void increaseCoordinatesByOneUsingDirection(Direction d, Coordinates c1, Coordinates c2){
@@ -263,10 +367,11 @@ public class TargetingFactory {
             box.edit().add(new ActionOnTapComponent(new WorldAction() {
                 @Override
                 public void performAction(World world, Entity entity) {
-                    world.getSystem(SkillUISystem.class).reset();
+                    world.getSystem(BattleStageUISystem.class).reset();
                     player.edit().add(new ReselectEntityComponent());
                     player.edit().remove(SelectedEntityComponent.class);
                     world.getSystem(ActionCameraSystem.class).pushLastAction(player, createMovementAction(player, coordinatesWithPathMap.get(c)));
+                    world.getSystem(ActionCameraSystem.class).createIntentAction(world.createEntity());
                 }
             }));
         }
@@ -369,7 +474,26 @@ public class TargetingFactory {
         return bag;
     }
 
-    public ComponentBag whiteMarkerBox(Rectangle r) {
+
+    public ComponentBag highlightBox(Rectangle r) {
+        ComponentBag bag = new ComponentBag();
+
+        bag.add(new PositionComponent(r.x, r.y));
+        bag.add(new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE,
+                new TextureDescription.Builder(TextureStrings.BLOCK)
+                        .color(new Color(Color.RED.r, Color.RED.g, Color.RED.b, 0.6f))
+                        .width(r.getWidth())
+                        .height(r.getHeight())
+                        .build()));
+        bag.add(new HitBoxComponent(new HitBox(r)));
+        bag.add(new CenteringBoundaryComponent());
+        bag.add(new EnemyIntentComponent());
+
+        return bag;
+    }
+
+
+    public ComponentBag whiteMarkerBox(Rectangle r, Color c) {
         ComponentBag bag = new ComponentBag();
 
         float size = Measure.units(2.5f);
@@ -380,7 +504,7 @@ public class TargetingFactory {
                 CenterMath.centerOnPositionY(size, center.y)));
         bag.add(new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE,
                 new TextureDescription.Builder(TextureStrings.BLOCK)
-                        .color(new Color(Color.WHITE))
+                        .color(c)
                         .width(size)
                         .height(size)
                         .build()));
@@ -401,9 +525,23 @@ public class TargetingFactory {
 
         TileSystem tileSystem = world.getSystem(TileSystem.class);
 
-        Entity redBox = BagToEntity.bagToEntity(world.createEntity(), whiteMarkerBox(tileSystem.createRectangleUsingCoordinates(coordinates)));
+        Entity redBox = BagToEntity.bagToEntity(world.createEntity(), whiteMarkerBox(tileSystem.createRectangleUsingCoordinates(coordinates), new Color(Color.WHITE)));
 
         return redBox;
+    }
+
+    public Entity redMarkerBox(World world, Coordinates coordinates){
+
+        TileSystem tileSystem = world.getSystem(TileSystem.class);
+
+        Entity redBox = BagToEntity.bagToEntity(world.createEntity(), whiteMarkerBox(tileSystem.createRectangleUsingCoordinates(coordinates),
+                new Color(Color.RED)));
+
+        redBox.edit().remove(UITargetingComponent.class);
+        redBox.edit().add(new EnemyIntentComponent());
+
+        return redBox;
+
     }
 
 

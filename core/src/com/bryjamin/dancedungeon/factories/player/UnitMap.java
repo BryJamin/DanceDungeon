@@ -44,7 +44,7 @@ public class UnitMap {
         playerUnits.put(UNIT_ARCHER, new Command() {
             @Override
             public ComponentBag getUnit(UnitData unitData) {
-                return new PlayerFactory().player(unitData);
+                return new PlayerFactory().archer(unitData);
             }
         });
 

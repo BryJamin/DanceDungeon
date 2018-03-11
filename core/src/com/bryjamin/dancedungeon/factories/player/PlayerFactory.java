@@ -29,7 +29,6 @@ public class PlayerFactory {
     private static final int BODY_DRAWABLE = 24;
 
     private DrawableDescription.DrawableDescriptionBuilder createPlayerTexture(String id){
-
         return new TextureDescription.Builder(id)
                 .identifier(BODY_DRAWABLE)
                 .size(height);
@@ -38,19 +37,45 @@ public class PlayerFactory {
 
     public ComponentBag player(UnitData unitData){
 
-        ComponentBag bag = unitFactory.basePlayerUnitBag(unitData.getStatComponent());
+        ComponentBag bag = unitFactory.basePlayerUnitBag(unitData);
 
         bag.add(unitData.getSkillsComponent());
         bag.add(new CenteringBoundaryComponent(new Rectangle(0, 0, width, height)));
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, createPlayerTexture(TextureStrings.WARRIOR).build()));
 
+        int STANDING_ANIMATION = 23;
+
+        bag.add(new AnimationStateComponent(STANDING_ANIMATION));
+        bag.add(new AnimationMapComponent()
+                .put(STANDING_ANIMATION, TextureStrings.WARRIOR, 0.4f, Animation.PlayMode.LOOP));
+
         return bag;
 
     }
 
+
+    public ComponentBag archer(UnitData unitData){
+
+        ComponentBag bag = unitFactory.basePlayerUnitBag(unitData);
+
+        bag.add(unitData.getSkillsComponent());
+        bag.add(new CenteringBoundaryComponent(new Rectangle(0, 0, width, height)));
+        bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, createPlayerTexture(TextureStrings.ARCHER).build()));
+
+        int STANDING_ANIMATION = 23;
+
+        bag.add(new AnimationStateComponent(STANDING_ANIMATION));
+        bag.add(new AnimationMapComponent()
+                .put(STANDING_ANIMATION, TextureStrings.ARCHER, 0.4f, Animation.PlayMode.LOOP));
+
+        return bag;
+
+    }
+
+
     public ComponentBag mage(UnitData unitData){
 
-        ComponentBag bag = unitFactory.basePlayerUnitBag(unitData.getStatComponent());
+        ComponentBag bag = unitFactory.basePlayerUnitBag(unitData);
 
         bag.add(unitData.getSkillsComponent());
         bag.add(new CenteringBoundaryComponent(new Rectangle(0, 0, width, height)));
