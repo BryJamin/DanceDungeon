@@ -339,34 +339,32 @@ public class Skill {
             if (push != 0 && e.getComponent(UnPushableComponent.class) == null) { //If the entity can be pushed
 
                 TileSystem tileSystem = world.getSystem(TileSystem.class);
+                Coordinates casterCoords = casterEntity.getComponent(CoordinateComponent.class).coordinates;
 
-                Coordinates castCoords = casterEntity.getComponent(CoordinateComponent.class).coordinates;
-
-                if (push > 0) {
+                if (push != 0) {
 
                     //PUSH MECHANIC.
 
-                    Coordinates[] pushCoordinateArray = new Coordinates[push + 1];
+                    Coordinates[] pushCoordinateArray = new Coordinates[Math.abs(push) + 1];
 
 
-                    for (int i = 0; i <= push; i++) { //Decides the direction used to shove a target
+                    for (int i = 0; i <= Math.abs(push); i++) { //Decides the direction used to shove a target
 
-                        if (castCoords.getX() < target.getX() && castCoords.getY() == target.getY()) {
-                            pushCoordinateArray[i] = new Coordinates(target.getX() + i, target.getY());
-                        } else if (castCoords.getX() > target.getX() && castCoords.getY() == target.getY()) {
-                            pushCoordinateArray[i] = new Coordinates(target.getX() - i, target.getY());
-                        } else if (castCoords.getX() == target.getX() && castCoords.getY() < target.getY()) {
-                            pushCoordinateArray[i] = new Coordinates(target.getX(), target.getY() + i);
-                        } else if (castCoords.getX() == target.getX() && castCoords.getY() > target.getY()) {
-                            pushCoordinateArray[i] = new Coordinates(target.getX(), target.getY() - i);
-                        } else {
-                            System.out.println("ERROR");
-                            return;
+                        int x = casterCoords.getY() == target.getY() ? casterCoords.getX() < target.getX() ? i : -i : 0;
+                        int y = casterCoords.getX() == target.getX() ? casterCoords.getY() < target.getY() ? i : -i : 0;
+
+                        if(push < 0){
+                            x *= -1;
+                            y *= -1;
+                        }
+
+                        if((x == 0 && y != 0) || (x != 0 && y == 0) || (x == 0 && y == 0)) {
+                            pushCoordinateArray[i] = new Coordinates(target.getX() + x, target.getY() + y);
                         }
                     }
 
 
-                    for (int i = 1; i < pushCoordinateArray.length; i++) {
+                    for (int i = 1; i < pushCoordinateArray.length; i++) { //Starts at one incase you are knocked back to the previous coordinate
 
                         Coordinates pushCoords = pushCoordinateArray[i];
                         Coordinates prev = pushCoordinateArray[i - 1];

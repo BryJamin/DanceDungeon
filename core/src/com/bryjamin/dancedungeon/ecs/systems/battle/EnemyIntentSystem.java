@@ -56,8 +56,6 @@ public class EnemyIntentSystem extends EntitySystem {
 
             //For use of skills that have a fixed target, So upon movement their storedTargetCoordinates stays the same
 
-            System.out.println(storedSkillComponent.skill.getTargeting());
-
             switch (storedSkillComponent.skill.getTargeting()){
 
                 case StraightShot:
@@ -87,7 +85,6 @@ public class EnemyIntentSystem extends EntitySystem {
                     System.out.println(coordinatesArray.first());
 
                         for(Coordinates c : coordinatesArray) { //There is only one I need to refactor to have a none coordinates array return value
-                            System.out.println("INSIDE");
 
                             Entity highlight = BagToEntity.bagToEntity(world.createEntity(), targetingFactory.highlightBox(tileSystem.getRectangleUsingCoordinates(c)));
                             storedSkillComponent.storedTargetCoordinates = c;

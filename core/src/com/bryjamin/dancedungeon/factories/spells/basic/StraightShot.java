@@ -13,7 +13,7 @@ public class StraightShot extends Skill {
                 .name("Straight Shot")
                 .description("Ranged Attack that deals 1 damage, Pushes target 1 tile")
                 .icon("skills/LaserScope")
-                .push(1)
+                .push(-2)
                 .targeting(Targeting.StraightShot)
                 .spellType(SpellType.Attack)
                 .actionType(ActionType.UsesMoveAndAttackAction)

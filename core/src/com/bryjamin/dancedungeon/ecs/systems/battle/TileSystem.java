@@ -243,7 +243,6 @@ public class TileSystem extends EntitySystem {
         CoordinateComponent coordinateComponent = e.getComponent(CoordinateComponent.class);
 
         if (occupiedMap.containsValue(e.getComponent(CoordinateComponent.class).coordinates, false) || !coordinateMap.containsKey(coordinateComponent.coordinates)) {
-            System.out.println("relocate");
             if (!relocateEntity(e))
                 e.deleteFromWorld(); //TODO decide what to do if a there is no space to place something
         } else {
