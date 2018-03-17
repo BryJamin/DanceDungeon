@@ -1,24 +1,26 @@
 package com.bryjamin.dancedungeon.factories.spells.basic;
 
+import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
 
 /**
- * Created by BB on 18/11/2017.
+ * Created by BB on 17/03/2018.
  */
 
-public class Fireball extends Skill {
+public class HookShot extends Skill {
 
-    public Fireball() {
+    public HookShot() {
         super(new Builder()
-                .name("Fireball")
-                .icon("skills/Fire")
-                .description("Fires a ball of flame at the enemy. This is a FREE Action")
+                .name("Hook Shot")
+                .description("Grabs a target and pulls them 1 tile. Deals 1 damage")
+                .icon(TextureStrings.CLASS_BOW_SPEICALIST)
                 .targeting(Targeting.StraightShot)
-                .spellType(SpellType.Attack)
+                .push(-1)
                 .spellApplication(SpellDamageApplication.AfterSpellAnimation)
                 .spellAnimation(SpellAnimation.Projectile)
-                .spellCoolDown(3)
                 .attack(Attack.Ranged));
     }
 
 }
+
+

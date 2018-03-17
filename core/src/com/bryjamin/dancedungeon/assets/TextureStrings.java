@@ -13,12 +13,12 @@ public class TextureStrings {
     public static final String ARCHER = "player/phi_walk";
     public static final String BLOB = "enemy/blob";
     public static final String BIGGABLOBBA = "enemy/boss/biggablobba";
+    public static final String SPITTER = "enemy/silverhead_standing";
     public static final String TARGETING = "player/targeting";
     public static final String END_TURN_BUTTON = "player/end_turn";
     public static final String FLOOR_TEXTURE_BRICK = "backgrounds/brick_floor";
 
     public static final String WORLD_MAP = "map";
-
 
 
 
@@ -31,7 +31,7 @@ public class TextureStrings {
     public static final String ICON_MONEY = "icons/icon_money";
 
 
-
+    public static final String ICON_WARNING = "icons/warning";
 
 
     public static final String CLASS_MAGE = "icons/units/mage";

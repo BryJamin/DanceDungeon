@@ -37,8 +37,6 @@ public class BasicProjectile {
     private float width;
     private float height;
 
-    private float damage;
-
     private float speed;
 
     private DrawableComponent drawableComponent;
@@ -48,7 +46,6 @@ public class BasicProjectile {
     public BasicProjectile(BasicProjectileBuilder b){
         this.width = b.width;
         this.height = b.height;
-        this.damage = b.damage;
         this.drawableComponent = b.drawableComponent;
         this.speed = b.speed;
         this.skill = b.skill;
@@ -60,8 +57,6 @@ public class BasicProjectile {
         private float width;
         private float height;
 
-        private float damage;
-
         private float speed = Measure.units(60f);
 
         private DrawableComponent drawableComponent = new DrawableComponent();
@@ -72,9 +67,6 @@ public class BasicProjectile {
 
         public BasicProjectileBuilder height(float val)
         { height = val; return this; }
-
-        public BasicProjectileBuilder damage(float val)
-        { damage = val; return this; }
 
         public BasicProjectileBuilder speed(float val)
         { speed = val; return this; }
@@ -92,20 +84,19 @@ public class BasicProjectile {
     }
 
 
-   public void cast(World world, final Entity user, final Coordinates target){
+   public void cast(World world, final Coordinates casterCoordinates, final Coordinates target){
 
-       PositionComponent positionComponent = user.getComponent(PositionComponent.class);
-       CenteringBoundaryComponent cbc = user.getComponent(CenteringBoundaryComponent.class);
+       Rectangle cr = world.getSystem(TileSystem.class).createRectangleUsingCoordinates(casterCoordinates);
 
-       float x = CenterMath.centerOnPositionX(width, cbc.bound.getX() + cbc.bound.getWidth() / 2);
-       float y = CenterMath.centerOnPositionY(height, cbc.bound.getY() + cbc.bound.getHeight() / 2);
+       float x = CenterMath.centerOnPositionX(width, cr.getX() + cr.getWidth() / 2);
+       float y = CenterMath.centerOnPositionY(height, cr.getY() + cr.getHeight() / 2);
 
 
        Rectangle r = world.getSystem(TileSystem.class).createRectangleUsingCoordinates(target);
 
        Entity projectile = world.createEntity();
        projectile.edit().add(new PositionComponent(x, y));
-       world.getSystem(ActionCameraSystem.class).createDeathWaitAction(projectile);
+       world.getSystem(ActionCameraSystem.class).createDeathWaitAction(projectile); //Wait for the projectile to die. To remove the action
 
        projectile.edit().add(new MoveToComponent(speed, new Vector3(
                CenterMath.centerOnPositionX(width, r.getCenter(new Vector2()).x),
@@ -135,7 +126,7 @@ public class BasicProjectile {
        projectile.edit().add(new OnDeathActionsComponent(new WorldAction() {
            @Override
            public void performAction(World world, Entity entity) {
-               skill.castSpellOnTargetLocation(world, user, target);
+               skill.castSpellOnTargetLocation(world, casterCoordinates, target);
            }
        }));
 

@@ -22,7 +22,8 @@ import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.player.UnitFactory;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.factories.spells.basic.MeleeAttack;
-import com.bryjamin.dancedungeon.factories.spells.basic.Strike;
+import com.bryjamin.dancedungeon.factories.spells.enemy.EnemyWarpStrike;
+import com.bryjamin.dancedungeon.factories.spells.enemy.Strike;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
@@ -84,6 +85,29 @@ public class DummyFactory {
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, blob.color(Color.CYAN).build()));
         bag.add(new StatComponent.StatBuilder().movementRange(3)
                 .build());
+
+        return bag;
+
+    }
+
+
+    public ComponentBag targetDummySpitter() {
+
+        UnitData unitData = new UnitData("Eugh");
+        unitData.setStatComponent(new StatComponent.StatBuilder()
+                .healthAndMax(2)
+                .movementRange(3)
+                .build());
+
+        ComponentBag bag = targetDummy(unitData);
+        bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, blob.color(Color.GOLD).build()));
+        bag.add(new StatComponent.StatBuilder().movementRange(3)
+                .build());
+
+
+        bag.getComponent(SkillsComponent.class).skills.clear();
+        bag.getComponent(SkillsComponent.class).skills.add(new EnemyWarpStrike());
+
 
         return bag;
 

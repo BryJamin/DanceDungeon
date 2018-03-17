@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.Queue;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
+import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.WaitActionComponent;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
@@ -63,6 +64,7 @@ public class ActionCameraSystem extends EntitySystem {
         boolean isEntityDead = true;
 
         for(Entity e : this.getEntities()){
+
             if(queuedActionMap.get(actionQueue.first()).equals(e)){
                 isEntityDead = false;
                 break;
@@ -71,6 +73,7 @@ public class ActionCameraSystem extends EntitySystem {
 
         return isEntityDead;
     }
+
 
     @Override
     protected void processSystem() {
@@ -81,12 +84,22 @@ public class ActionCameraSystem extends EntitySystem {
         }
 
 
+        System.out.println(state);
+
+
         switch (state) {
 
             case PERFORM_ACTION:
+
+                System.out.println(actionQueue.size);
+                System.out.println(isActionEntityDead());
+
                 if (actionQueue.size == 0) return;
 
-                if(isActionEntityDead()) return;
+                if(isActionEntityDead()) {
+                    actionQueue.removeFirst();
+                    return;
+                }
 
                 actionQueue.first().performAction(world,
                         queuedActionMap.get(actionQueue.first()));
@@ -203,6 +216,29 @@ public class ActionCameraSystem extends EntitySystem {
                 for (Vector3 p : positions) {
                     entity.getComponent(MoveToComponent.class).movementPositions.add(p);
                 }
+            }
+        });
+    }
+
+
+
+    public void createDamageApplicationAction(Entity entity, final int damage){ //TODO check if it has health component
+
+        if(!mtcMapper.has(entity)) return;
+
+        pushLastAction(entity, new WorldConditionalAction() {
+            @Override
+            public boolean condition(World world, Entity entity) {
+                return true;
+            }
+
+            @Override
+            public void performAction(World world, Entity entity) {
+
+                if(entity.getComponent(HealthComponent.class) == null) {
+                    return;
+                }
+                entity.getComponent(HealthComponent.class).applyDamage(damage);
             }
         });
     }

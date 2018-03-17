@@ -117,4 +117,22 @@ public class CoordinateMath {
 
     }
 
+    public static Array<Coordinates> getCoordinatesInLine(Coordinates coordinates, int minRange, int maxRange){
+
+        OrderedSet<Coordinates> coordinatesArray = new OrderedSet<Coordinates>();
+        if(minRange <= 0) return coordinatesArray.orderedItems();
+
+        for(int i = minRange; i <= maxRange; i++){
+
+            coordinatesArray.add(new Coordinates(coordinates.getX() + i, coordinates.getY()));
+            coordinatesArray.add(new Coordinates(coordinates.getX() - i, coordinates.getY()));
+            coordinatesArray.add(new Coordinates(coordinates.getX(), coordinates.getY() + i));
+            coordinatesArray.add(new Coordinates(coordinates.getX(), coordinates.getY() - i));
+
+        }
+
+        return coordinatesArray.orderedItems();
+
+    }
+
 }

@@ -20,7 +20,7 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.player.UnitFactory;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
-import com.bryjamin.dancedungeon.factories.spells.enemy.Fireball;
+import com.bryjamin.dancedungeon.factories.spells.enemy.EnemyWarpStrike;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
@@ -29,10 +29,10 @@ import com.bryjamin.dancedungeon.utils.texture.Layer;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 /**
- * Created by BB on 14/11/2017.
+ * Created by BB on 17/03/2018.
  */
 
-public class RangedDummyFactory {
+public class SpitterFactory {
 
     public static final float width = Measure.units(5f);
     public static final float height = Measure.units(5f);
@@ -45,14 +45,14 @@ public class RangedDummyFactory {
     private UnitFactory unitFactory = new UnitFactory();
 
 
-    public final DrawableDescription.DrawableDescriptionBuilder player = new TextureDescription.Builder(TextureStrings.BIGGABLOBBA)
+    public final DrawableDescription.DrawableDescriptionBuilder player = new TextureDescription.Builder(TextureStrings.SPITTER)
             .index(2)
             .size(height);
 
 
     public ComponentBag rangedDummy() {
 
-        Skill fireball = new Fireball();
+        Skill fireball = new EnemyWarpStrike();
 
         StatComponent statComponent = new StatComponent.StatBuilder()
                 .healthAndMax(health)
@@ -84,7 +84,7 @@ public class RangedDummyFactory {
 
         bag.add(new AnimationStateComponent(STANDING_ANIMATION));
         bag.add(new AnimationMapComponent()
-                .put(STANDING_ANIMATION, TextureStrings.BIGGABLOBBA, 0.6f, Animation.PlayMode.LOOP));
+                .put(STANDING_ANIMATION, TextureStrings.SPITTER, 1.2f, Animation.PlayMode.LOOP));
 
         return bag;
 

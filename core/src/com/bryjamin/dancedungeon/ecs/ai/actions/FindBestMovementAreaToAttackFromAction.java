@@ -55,8 +55,6 @@ public class FindBestMovementAreaToAttackFromAction implements WorldAction {
         };
 
 
-        System.out.println("Target coords size " + targetCoordinatesArray.size);
-
 
 
         Array<Coordinates> allCoords = tileSystem.getCoordinateMap().orderedKeys();
@@ -68,10 +66,14 @@ public class FindBestMovementAreaToAttackFromAction implements WorldAction {
 
             for(Entity e : entity.getComponent(TargetComponent.class).getTargets(world)) {
                 if(mainSkill.getAffectedCoordinates(world, c).contains(e.getComponent(CoordinateComponent.class).coordinates, false)){
+
+                   // System.out.println(mainSkill.getAffectedCoordinates(world, c));
+                   // System.out.println(" ");
+
                     score += 10; //Good Coordinate
 
                     if(e.getComponent(FriendlyComponent.class) != null){
-                        score += 5; //Focus on objectives
+                        score += 10; //Focus on objectives
                     }
 
                     //TODO GET ALL 'ENEMY INTENT' AND THEIR CORRESPONDING COORDINATES. IF THEY ARE OVER A TILE, REDUCE THE SCORE TO AVOID BLOCKING EACH OTHER

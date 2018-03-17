@@ -47,7 +47,7 @@ public class UnitFactory {
                 .add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE, new TextureDescription.Builder(TextureStrings.BLOCK)
                         //.offsetX()
                         .size(Measure.units(5f)).build()))
-                .add(new CenteringBoundaryComponent(new Rectangle(0, 0, Measure.units(3f), Measure.units(3f))));
+                .add(new CenteringBoundaryComponent(new Rectangle(0, 0, Measure.units(5f), Measure.units(5f))));
 
         return e;
 

@@ -35,6 +35,9 @@ import com.bryjamin.dancedungeon.utils.Measure;
 
 /**
  * Created by BB on 17/12/2017.
+ *
+ * Screen used during the game. For navigating between battles
+ *
  */
 
 public class MapScreen extends AbstractScreen {

@@ -1,4 +1,4 @@
-package com.bryjamin.dancedungeon.factories.spells.basic;
+package com.bryjamin.dancedungeon.factories.spells.enemy;
 
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.factories.spells.Skill;

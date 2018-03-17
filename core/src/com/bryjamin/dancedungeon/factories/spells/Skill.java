@@ -13,9 +13,9 @@ import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.BuffComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.UnPushableComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.UnPushableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationMapComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationStateComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
@@ -81,6 +81,17 @@ public class Skill {
 
     private int baseDamage = 1;
 
+    //Min and Max Range only affects certain skills
+    private int minRange = 1;
+    private int maxRange = 1;
+
+    public Skill affectedAreaSkill;
+    public Coordinates[] affectedAreas = new Coordinates[]{};
+
+
+    public static final int MAX_MAX_RANGE = 10; //Maximum range possible for a skill. To avoid counting
+
+
     private Targeting targeting = Targeting.Melee;
     private Attack attack = Attack.Ranged;
     private ActionType actionType = ActionType.UsesMoveAndAttackAction;
@@ -105,6 +116,9 @@ public class Skill {
         this.spellCoolDown = b.spellCoolDown;
         this.coolDown = b.cooldown;
         this.push = b.push;
+        this.baseDamage = b.baseDamage;
+        this.minRange = b.minRange;
+        this.maxRange = b.maxRange;
     }
 
 
@@ -114,7 +128,9 @@ public class Skill {
 
         switch (targeting) {
             case Melee:
-                coordinatesArray = CoordinateMath.getCoordinatesInLine(coordinates, 1);
+
+                coordinatesArray = CoordinateMath.getCoordinatesInLine(coordinates, minRange, maxRange);
+
                 break;
             case StraightShot:
                 Direction[] directions = {Direction.DOWN, Direction.LEFT, Direction.RIGHT, Direction.UP};
@@ -220,6 +236,18 @@ public class Skill {
                 break;
         }
 
+        createSpellEffects(world, entity.getComponent(CoordinateComponent.class).coordinates, target);
+
+
+        if(spellDamageApplication == SpellDamageApplication.Instant && spellAnimation != SpellAnimation.Projectile) {
+            castSpellOnTargetLocation(world, entity.getComponent(CoordinateComponent.class).coordinates, target);
+        }
+
+    }
+
+
+
+    public void createSpellEffects(World world, Coordinates casterCoordinates, Coordinates target){
 
         Rectangle rectangle = world.getSystem(TileSystem.class).createRectangleUsingCoordinates(target);
 
@@ -278,21 +306,9 @@ public class Skill {
                         .width(width)
                         .height(height)
                         .speed(Measure.units(85f))
-                        .damage(entity.getComponent(StatComponent.class).attack)
                         .skill(this)
                         .build()
-                        .cast(world, entity, target);
-
-                return;
-        }
-
-
-        switch (spellDamageApplication) {
-
-            case Instant:
-                castSpellOnTargetLocation(world, entity, target);
-                break;
-
+                        .cast(world, casterCoordinates, target);
 
         }
 
@@ -300,7 +316,14 @@ public class Skill {
     }
 
 
-    public void castSpellOnTargetLocation(World world, Entity casterEntity, Coordinates target) {
+
+
+
+    public void castSpellOnTargetLocation(World world, Coordinates casterCoords, Coordinates target) {
+
+        Array<Entity> entityArray = world.getSystem(TileSystem.class).getCoordinateMap().get(target);
+        //If a coordinate is selected outside of map coordinates
+        if(entityArray == null) return;
 
         for (Entity e : world.getSystem(TileSystem.class).getCoordinateMap().get(target)) {
 
@@ -318,15 +341,13 @@ public class Skill {
 
             if (world.getMapper(HealthComponent.class).has(e)) {
 
-                StatComponent sc = casterEntity.getComponent(StatComponent.class);
-
                 switch (spellType) {
 
                     case Attack:
                         e.getComponent(HealthComponent.class).applyDamage(baseDamage);
                         break;
                     case Heal:
-                        e.getComponent(HealthComponent.class).applyHealing(sc.attack);
+                        e.getComponent(HealthComponent.class).applyHealing(baseDamage);
                         break;
                 }
             }
@@ -339,7 +360,7 @@ public class Skill {
             if (push != 0 && e.getComponent(UnPushableComponent.class) == null) { //If the entity can be pushed
 
                 TileSystem tileSystem = world.getSystem(TileSystem.class);
-                Coordinates casterCoords = casterEntity.getComponent(CoordinateComponent.class).coordinates;
+                //Coordinates casterCoords = casterEntity.getComponent(CoordinateComponent.class).coordinates;
 
                 if (push != 0) {
 
@@ -379,9 +400,16 @@ public class Skill {
 
                         if (tileSystem.getOccupiedMap().containsValue(pushCoords, false)) { //Pretend move but bounce back
                             world.getSystem(ActionCameraSystem.class).createMovementAction(e,
-                                    tileSystem.getPositionUsingCoordinates(pushCoords, e.getComponent(CenteringBoundaryComponent.class).bound),
+                                    tileSystem.getPositionUsingCoordinates(pushCoords, e.getComponent(CenteringBoundaryComponent.class).bound)
+                            );
+
+                            world.getSystem(ActionCameraSystem.class).createDamageApplicationAction(e, 1); //Push damage is one.
+                            world.getSystem(ActionCameraSystem.class).createDamageApplicationAction(tileSystem.getOccupiedMap().findKey(pushCoords, false), 1);
+
+                            world.getSystem(ActionCameraSystem.class).createMovementAction(e,
                                     tileSystem.getPositionUsingCoordinates(prev, e.getComponent(CenteringBoundaryComponent.class).bound)
                             );
+
                             world.getSystem(ActionCameraSystem.class).createIntentAction(e);
                             break;
                         }
@@ -399,7 +427,28 @@ public class Skill {
 
                 }
             }
+
         }
+
+
+        if(affectedAreas.length > 0){
+
+            TileSystem tileSystem = world.getSystem(TileSystem.class);
+
+            System.out.println("case coords is " + casterCoords);
+
+            for(Coordinates c : affectedAreas){
+                Coordinates affected = new Coordinates(target.getX() + c.getX(), target.getY() + c.getY());
+                Entity e = world.createEntity();
+
+                if(affectedAreaSkill.spellAnimation != SpellAnimation.Projectile) {
+                    affectedAreaSkill.castSpellOnTargetLocation(world, target, affected);
+                }
+                affectedAreaSkill.createSpellEffects(world, target, affected);
+            }
+
+        }
+
     }
 
 
@@ -496,6 +545,9 @@ public class Skill {
         private SpellCoolDown spellCoolDown = SpellCoolDown.NoCoolDown;
         private int cooldown = 1;
         private int push = 0;
+        private int baseDamage = 1;
+        private int minRange = 1;
+        private int maxRange = 1;
 
         public Builder name(String val) {
             this.name = val;
@@ -558,6 +610,22 @@ public class Skill {
             this.push = val;
             return this;
         }
+
+        public Builder baseDamage(int val) {
+            this.baseDamage = val;
+            return this;
+        }
+
+        public Builder minRange(int val) {
+            this.minRange = val;
+            return this;
+        }
+
+        public Builder maxRange(int val) {
+            this.maxRange = val;
+            return this;
+        }
+
 
         public Skill build() {
             return new Skill(this);
