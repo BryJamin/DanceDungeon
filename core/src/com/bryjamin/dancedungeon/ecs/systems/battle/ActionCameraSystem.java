@@ -84,7 +84,7 @@ public class ActionCameraSystem extends EntitySystem {
         }
 
 
-        System.out.println(state);
+//        System.out.println(state);
 
 
         switch (state) {

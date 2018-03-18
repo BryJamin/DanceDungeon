@@ -20,6 +20,7 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationMapComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationStateComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.KillOnAnimationEndComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.SolidComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.factories.spells.animations.BasicProjectile;
@@ -357,8 +358,11 @@ public class Skill {
              * USED FOR CALCUALTING THE PUSH MOVEMENT OF AN ENEMY
              */
 
-            if (push != 0 && e.getComponent(UnPushableComponent.class) == null) { //If the entity can be pushed
 
+
+
+            if (push != 0 && e.getComponent(UnPushableComponent.class) == null && e.getComponent(SolidComponent.class) != null) { //If the entity can be pushed
+                
                 TileSystem tileSystem = world.getSystem(TileSystem.class);
                 //Coordinates casterCoords = casterEntity.getComponent(CoordinateComponent.class).coordinates;
 
@@ -403,12 +407,13 @@ public class Skill {
                                     tileSystem.getPositionUsingCoordinates(pushCoords, e.getComponent(CenteringBoundaryComponent.class).bound)
                             );
 
-                            world.getSystem(ActionCameraSystem.class).createDamageApplicationAction(e, 1); //Push damage is one.
-                            world.getSystem(ActionCameraSystem.class).createDamageApplicationAction(tileSystem.getOccupiedMap().findKey(pushCoords, false), 1);
-
                             world.getSystem(ActionCameraSystem.class).createMovementAction(e,
                                     tileSystem.getPositionUsingCoordinates(prev, e.getComponent(CenteringBoundaryComponent.class).bound)
                             );
+
+                            world.getSystem(ActionCameraSystem.class).createDamageApplicationAction(e, 1); //Push damage is one.
+                            System.out.println("Push coords is: " + pushCoords);
+                            world.getSystem(ActionCameraSystem.class).createDamageApplicationAction(tileSystem.getOccupiedMap().findKey(pushCoords, false), 1);
 
                             world.getSystem(ActionCameraSystem.class).createIntentAction(e);
                             break;

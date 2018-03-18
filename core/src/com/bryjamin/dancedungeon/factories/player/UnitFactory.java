@@ -43,6 +43,7 @@ public class UnitFactory {
                 .add(new SolidComponent())
                 .add(new UnPushableComponent())
                 .add(new CoordinateComponent(c))
+                .add(new MoveToComponent())
                 .add(new VelocityComponent())
                 .add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE, new TextureDescription.Builder(TextureStrings.BLOCK)
                         //.offsetX()
@@ -56,7 +57,7 @@ public class UnitFactory {
 
     public Entity baseAlliedTileBag(World world, Coordinates c){
         Entity e = baseTileBag(world, c);
-        e.edit().remove(UnPushableComponent.class);
+       // e.edit().remove(UnPushableComponent.class);
         e.edit().add(new HealthComponent(2));
         e.edit().add(new FriendlyComponent());
         e.edit().add(new StatComponent(new StatComponent.StatBuilder().healthAndMax(1)));
