@@ -208,6 +208,9 @@ public class TurnSystem extends EntitySystem {
 
     }
 
+    public boolean isTurn(TURN turn){
+        return this.turn == turn;
+    }
 
     /**
      * Runs a entity's turn if it is not being controlled by the player

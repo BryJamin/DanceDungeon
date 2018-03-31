@@ -20,8 +20,10 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.ScaleTransformationComp
 import com.bryjamin.dancedungeon.ecs.components.map.MapNodeComponent;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.factories.map.MapNode;
+import com.bryjamin.dancedungeon.factories.map.event.MapEvent;
 import com.bryjamin.dancedungeon.screens.battle.BattleScreen;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
+import com.bryjamin.dancedungeon.screens.strategy.RestScreen;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
@@ -31,7 +33,7 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
  * Created by BB on 18/12/2017.
  */
 
-public class StrategyMapSystem extends EntitySystem {
+public class MapNodeSystem extends EntitySystem {
 
     private ComponentMapper<ActionOnTapComponent> actionOnTapMapper;
     private EventGenerationSystem eventGenerationSystem;
@@ -50,7 +52,7 @@ public class StrategyMapSystem extends EntitySystem {
     private OrderedMap<MapNode, Entity> nodeEntityOrderedMap = new OrderedMap<MapNode, Entity>();
     private Array<Entity> activeNodes = new Array<Entity>();
 
-    public StrategyMapSystem(MainGame game, GameMap gameMap, PartyDetails partyDetails) {
+    public MapNodeSystem(MainGame game, GameMap gameMap, PartyDetails partyDetails) {
         super(Aspect.all(MapNodeComponent.class));
         this.game = game;
         this.gameMap = gameMap;
@@ -103,8 +105,21 @@ public class StrategyMapSystem extends EntitySystem {
             @Override
             public void performAction(World world, Entity entity) {
                 gameMap.setCurrentMapNode(mapNode);
+
+                MapEvent.EventType eventType = mapNode.getEventType();
+
                 mapNode.setMapEvent(eventGenerationSystem.getMapEvent(mapNode.getEventType()));
-                game.setScreen(new BattleScreen(game, game.getScreen(), gameMap, partyDetails));
+
+
+                switch (eventType){
+
+                    case REST:
+                        game.setScreen(new RestScreen(game, game.getScreen(), partyDetails));
+                        break;
+                    default:
+                        game.setScreen(new BattleScreen(game, game.getScreen(), gameMap, partyDetails));
+
+                }
             }
         };
 

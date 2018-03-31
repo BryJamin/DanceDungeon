@@ -362,7 +362,7 @@ public class Skill {
 
 
             if (push != 0 && e.getComponent(UnPushableComponent.class) == null && e.getComponent(SolidComponent.class) != null) { //If the entity can be pushed
-                
+
                 TileSystem tileSystem = world.getSystem(TileSystem.class);
                 //Coordinates casterCoords = casterEntity.getComponent(CoordinateComponent.class).coordinates;
 

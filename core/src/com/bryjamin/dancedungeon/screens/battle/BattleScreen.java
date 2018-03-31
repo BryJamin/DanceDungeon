@@ -8,7 +8,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.bryjamin.dancedungeon.MainGame;
-import com.bryjamin.dancedungeon.ecs.systems.BattleStageUISystem;
+import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenCreationSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MoveToTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
@@ -78,6 +78,7 @@ public class BattleScreen extends AbstractScreen {
                 .with(WorldConfigurationBuilder.Priority.HIGHEST,
 
                         new BattleWorldInputHandlerSystem(gameport),
+                        new BattleScreenCreationSystem(UIStage, game),
 
                         new MovementSystem(),
                         new FollowPositionSystem(),
@@ -103,7 +104,6 @@ public class BattleScreen extends AbstractScreen {
                 )
                 .with(WorldConfigurationBuilder.Priority.LOWEST,
                         new ActionOnTapSystem(),
-                        new BattleStageUISystem(UIStage, game),
                         new ActionCameraSystem(),
 
                         //Rendering     Effects

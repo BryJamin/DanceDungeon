@@ -1,4 +1,4 @@
-package com.bryjamin.dancedungeon.ecs.systems;
+package com.bryjamin.dancedungeon.ecs.systems.ui;
 
 import com.artemis.Aspect;
 import com.artemis.Entity;
@@ -29,6 +29,7 @@ import com.bryjamin.dancedungeon.ecs.components.actions.SkillButtonComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.UITargetingComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
+import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BattleMessageSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
@@ -44,7 +45,10 @@ import com.bryjamin.dancedungeon.utils.Measure;
  * It can also be called to update and remove certain parts of the skill UI.
  */
 
-public class BattleStageUISystem extends EntitySystem {
+public class BattleScreenCreationSystem extends EntitySystem {
+
+    private TurnSystem turnSystem;
+    private ActionCameraSystem actionCameraSystem;
 
     private static final float SIZE = Measure.units(10f);
     private TileSystem tileSystem;
@@ -58,6 +62,8 @@ public class BattleStageUISystem extends EntitySystem {
     private Label description;
     private ImageButton[] buttons;
 
+    private TextButton endTurn;
+
     private Stage stage;
 
 
@@ -65,7 +71,7 @@ public class BattleStageUISystem extends EntitySystem {
     private TextureAtlas atlas;
     private Skin uiSkin;
 
-    public BattleStageUISystem(Stage stage, MainGame game) {
+    public BattleScreenCreationSystem(Stage stage, MainGame game) {
         super(Aspect.all(SkillButtonComponent.class, CenteringBoundaryComponent.class));
         this.game = game;
         this.stage = stage;
@@ -102,12 +108,14 @@ public class BattleStageUISystem extends EntitySystem {
         description.setAlignment(Align.center);
 
 
-        TextButton endTurn = new TextButton("End", uiSkin);
+        endTurn = new TextButton("End", uiSkin);
+
+
         endTurn.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 world.getSystem(TurnSystem.class).endAllyTurn();
-                world.getSystem(BattleStageUISystem.class).reset();
+                world.getSystem(BattleScreenCreationSystem.class).reset();
             }
         });
 
@@ -125,6 +133,17 @@ public class BattleStageUISystem extends EntitySystem {
 
     @Override
     protected void processSystem() {
+
+        System.out.println(endTurn.isDisabled());
+
+        if(actionCameraSystem.isProcessing() || !turnSystem.isTurn(TurnSystem.TURN.ALLY)){
+            //endTurn.setDisabled(true);
+            endTurn.setVisible(false);
+        } else {
+            endTurn.setVisible(true);
+            //endTurn.setDisabled(false);
+        }
+
     }
 
 

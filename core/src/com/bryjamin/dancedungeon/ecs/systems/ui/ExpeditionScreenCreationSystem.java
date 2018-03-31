@@ -40,7 +40,7 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
  * Created by BB on 10/02/2018.
  */
 
-public class CharacterSelectionScreenCreationSystem extends BaseSystem {
+public class ExpeditionScreenCreationSystem extends BaseSystem {
 
     private static int PARTY_SIZE = 3;
 
@@ -65,7 +65,7 @@ public class CharacterSelectionScreenCreationSystem extends BaseSystem {
     UnitData[] support;
 
 
-    public CharacterSelectionScreenCreationSystem(MainGame game, Viewport gameport, Array<UnitData> availableMembers) {
+    public ExpeditionScreenCreationSystem(MainGame game, Viewport gameport, Array<UnitData> availableMembers) {
         this.gameport = gameport;
         this.game = game;
         this.availableMembers = availableMembers;

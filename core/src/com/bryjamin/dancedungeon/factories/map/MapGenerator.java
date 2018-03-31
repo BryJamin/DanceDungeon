@@ -60,7 +60,7 @@ public class MapGenerator {
         for(int i = 0; i < mapSections.size; i++){
             Array<MapNode> sectionNodes = mapSections.get(i).getMapNodes();
             for(int j = 0 ; j < sectionNodes.size; j++){
-                if(i == 0) sectionNodes.get(j).setEventType(MapEvent.EventType.BATTLE);
+                if(i == 0) sectionNodes.get(j).setEventType(MapEvent.EventType.REST);
                 else if(i == mapSections.size -1 ) sectionNodes.get(j).setEventType(MapEvent.EventType.BOSS);
                 else flippableNodes.add(sectionNodes.get(j));
             }
