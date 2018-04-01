@@ -46,6 +46,7 @@ public class ExpeditionScreenCreationSystem extends BaseSystem {
 
     private StageUIRenderingSystem stageUIRenderingSystem;
     private RenderingSystem renderingSystem;
+
     private Skin uiSkin;
     private Table container;
     private Table characterPane;

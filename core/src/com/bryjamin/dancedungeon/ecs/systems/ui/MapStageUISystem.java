@@ -97,7 +97,7 @@ public class MapStageUISystem extends BaseSystem {
         label.setAlignment(Align.center);
         infoTable.add(label).width(width).align(Align.center);
 
-        label = new Label("Reputation: $" + partyDetails.money, uiSkin);
+        label = new Label(String.format(Locale.ENGLISH,"Morale: %d/%d", partyDetails.morale, PartyDetails.MAX_MORALE), uiSkin);
         label.setAlignment(Align.center);
         infoTable.add(label).width(width).align(Align.center);
 
@@ -197,8 +197,9 @@ public class MapStageUISystem extends BaseSystem {
         characterWindow.add(portrait).size(Measure.units(10f), Measure.units(10f)).expandX();
 
         int max = unitData.getStatComponent().maxHealth;
+        int current = unitData.getStatComponent().health;
 
-        characterWindow.add(new Label(String.format(Locale.ENGLISH, "HP %s/%s", max, max), uiSkin)).expandX();
+        characterWindow.add(new Label(String.format(Locale.ENGLISH, "HP %s/%s", current, max), uiSkin)).expandX();
 
 
         container.setTouchable(Touchable.enabled);

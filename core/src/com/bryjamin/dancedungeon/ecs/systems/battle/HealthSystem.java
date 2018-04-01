@@ -17,8 +17,10 @@ import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.AffectMoraleComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
+import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
 import com.bryjamin.dancedungeon.utils.texture.TextDescription;
@@ -29,11 +31,14 @@ import com.bryjamin.dancedungeon.utils.texture.TextDescription;
 
 public class HealthSystem extends EntityProcessingSystem {
 
+    PlayerPartyManagementSystem playerPartyManagementSystem;
+
     ComponentMapper<StatComponent> statm;
     ComponentMapper<HealthComponent> healthm;
     ComponentMapper<VelocityComponent> vm;
     ComponentMapper<PlayerControlledComponent> pm;
     ComponentMapper<BlinkOnHitComponent> blinkOnHitMapper;
+    ComponentMapper<AffectMoraleComponent> affectMapper;
 
     @SuppressWarnings("unchecked")
     public HealthSystem() {
@@ -57,6 +62,13 @@ public class HealthSystem extends EntityProcessingSystem {
                 //TODO I grab parts of entity that aren't called in the Aspect class, so there is a null pointer chance
                 createFloatingDamageText(world, Integer.toString((int) hc.getAccumulatedDamage()), new Color(Color.RED), e);
                 hc.health = hc.health - hc.getAccumulatedDamage();
+
+                if(affectMapper.has(e)){
+                    playerPartyManagementSystem.getPartyDetails().morale -= 1;
+                }
+
+
+
             } else {
                 createFloatingDamageText(world, "Dodge", new Color(Color.RED), e);
             }

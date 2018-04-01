@@ -18,6 +18,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.AffectMoraleComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.FriendlyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
@@ -59,6 +60,7 @@ public class UnitFactory {
         Entity e = baseTileBag(world, c);
        // e.edit().remove(UnPushableComponent.class);
         e.edit().add(new HealthComponent(2));
+        e.edit().add(new AffectMoraleComponent());
         e.edit().add(new FriendlyComponent());
         e.edit().add(new StatComponent(new StatComponent.StatBuilder().healthAndMax(1)));
         e.getComponent(DrawableComponent.class).drawables.getColor().set(new Color(Color.ORANGE));
