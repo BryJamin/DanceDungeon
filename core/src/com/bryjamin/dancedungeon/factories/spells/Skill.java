@@ -80,6 +80,8 @@ public class Skill {
     private int coolDownTracker = 0;
     private int push = 0;
 
+    private int storePrice = 3;
+
     private int baseDamage = 1;
 
     //Min and Max Range only affects certain skills
@@ -476,7 +478,15 @@ public class Skill {
         return name;
     }
 
+    //TODO Based on the description, one may need to change the description due to player stats.
+    //TODO however, in future it may be better to have two different descirptionf or the store and for
+    //TODO the player.
+
     public String getDescription(World world, Entity entity) {
+        return description;
+    }
+
+    public String getDescription() {
         return description;
     }
 
@@ -515,6 +525,10 @@ public class Skill {
 
     public SpellEffect[] getSpellEffects() {
         return spellEffects;
+    }
+
+    public int getStorePrice() {
+        return storePrice;
     }
 
     private void setTurnComponentActionBoolean(ActionType actionType, TurnComponent turnComponent) {

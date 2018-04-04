@@ -24,6 +24,7 @@ import com.bryjamin.dancedungeon.factories.map.event.MapEvent;
 import com.bryjamin.dancedungeon.screens.battle.BattleScreen;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
 import com.bryjamin.dancedungeon.screens.strategy.RestScreen;
+import com.bryjamin.dancedungeon.screens.strategy.ShopScreen;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
@@ -116,6 +117,11 @@ public class MapNodeSystem extends EntitySystem {
                     case REST:
                         game.setScreen(new RestScreen(game, game.getScreen(), partyDetails));
                         break;
+
+                    case SHOP:
+                        game.setScreen(new ShopScreen(game, game.getScreen(), partyDetails));
+                        break;
+
                     default:
                         game.setScreen(new BattleScreen(game, game.getScreen(), gameMap, partyDetails));
 
