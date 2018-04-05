@@ -43,9 +43,9 @@ public class TileSystem extends EntitySystem {
 
 
     private float originX = Measure.units(12.5f);
-    private float originY = Measure.units(17.5f);
+    private float originY = Measure.units(15f);
     private float width = Measure.units(70f);
-    private float height = Measure.units(40f);
+    private float height = Measure.units(35f);
 
     private int rows = 6;
     private int columns = 9;

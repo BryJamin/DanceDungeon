@@ -12,7 +12,7 @@ import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
  */
 
 public class PlayerPartyManagementSystem extends BaseSystem {
-    
+
     private PartyDetails partyDetails;
     private Array<Observer> observerArray = new Array<Observer>();
 

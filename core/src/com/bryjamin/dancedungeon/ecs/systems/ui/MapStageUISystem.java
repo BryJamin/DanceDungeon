@@ -43,6 +43,7 @@ import java.util.Locale;
 public class MapStageUISystem extends BaseSystem {
 
     private StageUIRenderingSystem stageUIRenderingSystem;
+    private InformationBannerSystem informationBannerSystem;
     private RenderingSystem renderingSystem;
     private FixedToCameraPanAndFlingSystem camSys;
     private MainGame game;
@@ -72,50 +73,30 @@ public class MapStageUISystem extends BaseSystem {
 
 
         container = new Table(uiSkin);
+        stage.addActor(container);
+
+
         container.setDebug(true);
         container.setWidth(stage.getWidth());
         container.setHeight(stage.getHeight());
-        container.align(Align.top);
+        container.align(Align.bottom);
 
         characterWindowContainer = new Table();
         characterWindowContainer.setVisible(false);
 
         tooltipTable = new Table();
         tooltipTable.setVisible(false);
-
+/*
         Label label = new Label("Select Your Next Destination", uiSkin);
         container.add(label);
-        container.row();
-
-        float width = container.getWidth() / 3;
-
-        Table infoTable = new Table(uiSkin);
-        infoTable.align(Align.center);
-        container.add(infoTable).height(Measure.units(5f));
-
-        label = new Label("Money: $" + partyDetails.money, uiSkin);
-        label.setAlignment(Align.center);
-        infoTable.add(label).width(width).align(Align.center);
-
-        label = new Label(String.format(Locale.ENGLISH,"Morale: %d/%d", partyDetails.morale, PartyDetails.MAX_MORALE), uiSkin);
-        label.setAlignment(Align.center);
-        infoTable.add(label).width(width).align(Align.center);
-
-        label = new Label("Something Else: $" + partyDetails.money, uiSkin);
-        label.setAlignment(Align.center);
-        infoTable.add(label).width(width).align(Align.center);
-
-
-        stage.addActor(container);
-
+        container.row();*/
 
         container.row();
 
         Table testbottom = new Table(uiSkin);
-        testbottom.align(Align.center);
+        testbottom.align(Align.bottom);
         testbottom.setWidth(stage.getWidth());
-        //testbottom.setDebug(true);
-        container.add(testbottom).height(Measure.units(5f)).padTop(stage.getHeight() - Measure.units(15f));
+        container.add(testbottom).height(Measure.units(5f));
         buttonArray.clear();
 
 
@@ -155,6 +136,7 @@ public class MapStageUISystem extends BaseSystem {
 
     @Override
     protected void processSystem() {
+
         container.setPosition(CameraMath.getBtmLftX(gameport), CameraMath.getBtmY(gameport.getCamera()));
 
         if (characterWindowContainer.isVisible()) {
@@ -182,11 +164,13 @@ public class MapStageUISystem extends BaseSystem {
         characterWindowContainer.setVisible(true);
         stage.addActor(characterWindowContainer);
 
+        float WINDOW_WIDTH = Measure.units(80f);
+
         final Table characterWindow = new Table(uiSkin);
         characterWindow.setDebug(true);
         characterWindow.setBackground(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.BLOCK)).tint(Colors.RGBtoColor(34, 49, 63, 1)));
         characterWindow.align(Align.top);
-        characterWindowContainer.add(characterWindow).size(Measure.units(60f), Measure.units(40f));
+        characterWindowContainer.add(characterWindow).size(WINDOW_WIDTH, Measure.units(40f));
 
         Label label = new Label(unitData.name, uiSkin);
         characterWindow.add(label).expandX().colspan(5);
@@ -202,8 +186,8 @@ public class MapStageUISystem extends BaseSystem {
         characterWindow.add(new Label(String.format(Locale.ENGLISH, "HP %s/%s", current, max), uiSkin)).expandX();
 
 
-        container.setTouchable(Touchable.enabled);
-        container.addListener(new InputListener() { //Tracks taps outside of the character Window in order to close window
+        //Adds A listenerer to the container to monitor if the player taps outside the window, in order to close it
+        stage.addListener(new InputListener() { //Tracks taps outside of the character Window in order to close window
 
 
             @Override
@@ -223,7 +207,6 @@ public class MapStageUISystem extends BaseSystem {
                     }
 
                     if (close) {
-                        container.setTouchable(Touchable.childrenOnly);
                         closeCharacterWindow();
                         stage.removeListener(this);
                     }
@@ -235,19 +218,51 @@ public class MapStageUISystem extends BaseSystem {
         });
 
 
+
+
         //Skills Table Row / Upgrades
         characterWindow.row();
+        characterWindow.add(new Label("Skills", uiSkin)).colspan(5).expandX();
+        characterWindow.row();
+
         Table skillsTable = new Table(uiSkin);
-        characterWindow.add(skillsTable).height(Measure.units(25f)).colspan(5).expandX();
+        characterWindow.add(skillsTable).colspan(5).width(WINDOW_WIDTH).height(Measure.units(20f));
         skillsTable.setDebug(true);
         skillsTable.align(Align.left);
 
-        Label skillsLabel = new Label("Skills", uiSkin);
-        skillsTable.add(skillsLabel).padRight(Measure.units(10f));
+       // float imageSize = Measure.units(5f);
+       // float labelSize = Measure.units()
+
+        //Since we know the maximum amount of skill is two
 
 
-        for (final Skill s : unitData.getSkillsComponent().skills) {
+        for(int i = 0; i < UnitData.MAXIMUM_SKILLS; i++){
 
+            skillsTable.row();
+
+            try {
+                Skill s = unitData.getSkillsComponent().skills.get(i);
+
+                if (s != null) {
+                    skillsTable.add(new Image(renderingSystem.getAtlas().findRegion(s.getIcon()))).height(Measure.units(5f)).width(Measure.units(5f)).padRight(Measure.units(1.5f));
+                    skillsTable.add(new Label(s.getName(), uiSkin)).padRight(Measure.units(1.5f)).expandY();
+
+                    Label skillDescription = new Label(s.getDescription(), uiSkin);
+                    skillDescription.setWrap(true);
+                    skillDescription.setAlignment(Align.center);
+                    skillsTable.add(skillDescription).expandX().fill();
+                }
+
+            } catch (IndexOutOfBoundsException e){
+                skillsTable.add(new Label("This Skill Slot is Empty", uiSkin)).colspan(3).expandY().expandX().fill().align(Align.center);
+            }
+
+
+        }
+
+
+
+            /*
 
             Table upgradeTable = new Table(uiSkin);
 
@@ -268,11 +283,6 @@ public class MapStageUISystem extends BaseSystem {
             skillButton.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
-
-
-          /*          if(tooltipTable.isVisible()){
-                        tooltipTable.clear();
-                    }*/
 
                     tooltipTable.remove();
                     tooltipTable.clear();
@@ -323,7 +333,9 @@ public class MapStageUISystem extends BaseSystem {
                 }
             });
 
-        }
+            */
+
+
 
 
     }

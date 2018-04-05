@@ -58,6 +58,7 @@ public class BattleScreenCreationSystem extends EntitySystem {
 
     private Table profileTable = new Table();
 
+
     private Label title;
     private Label description;
     private ImageButton[] buttons;
@@ -71,7 +72,8 @@ public class BattleScreenCreationSystem extends EntitySystem {
     private TextureAtlas atlas;
     private Skin uiSkin;
 
-    public BattleScreenCreationSystem(Stage stage, MainGame game) {
+    public
+    BattleScreenCreationSystem(Stage stage, MainGame game) {
         super(Aspect.all(SkillButtonComponent.class, CenteringBoundaryComponent.class));
         this.game = game;
         this.stage = stage;
@@ -86,11 +88,10 @@ public class BattleScreenCreationSystem extends EntitySystem {
         container = new Table(uiSkin);
         container.setDebug(true);
         container.setWidth(stage.getWidth());
-        container.setHeight(Measure.units(20f));
+        container.setHeight(Measure.units(15f));
         container.align(Align.bottomLeft);
         container.setTransform(false);
 
-        profileTable = new Table(uiSkin);
         container.add(profileTable);
 
 
@@ -108,7 +109,7 @@ public class BattleScreenCreationSystem extends EntitySystem {
         description.setAlignment(Align.center);
 
 
-        endTurn = new TextButton("End", uiSkin);
+        endTurn = new TextButton("End Turn", uiSkin);
 
 
         endTurn.addListener(new ChangeListener() {
@@ -119,7 +120,7 @@ public class BattleScreenCreationSystem extends EntitySystem {
             }
         });
 
-        endTurn.setPosition(0, Measure.units(50f));
+        endTurn.setPosition(0, Measure.units(40f));
         endTurn.setWidth(Measure.units(12.5f));
         endTurn.setHeight(Measure.units(10f));
 
@@ -133,8 +134,6 @@ public class BattleScreenCreationSystem extends EntitySystem {
 
     @Override
     protected void processSystem() {
-
-        System.out.println(endTurn.isDisabled());
 
         if(actionCameraSystem.isProcessing() || !turnSystem.isTurn(TurnSystem.TURN.ALLY)){
             //endTurn.setDisabled(true);
@@ -159,18 +158,12 @@ public class BattleScreenCreationSystem extends EntitySystem {
 
         Label name = new Label(unitData.name, uiSkin);
         profileTable = new Table(uiSkin);
-        profileTable.add(name).height(Measure.units(5f));
+        profileTable.add(name).height(Measure.units(5f)).expandY();
         profileTable.row();
+        profileTable.add(new Image(new TextureRegionDrawable(atlas.findRegion(unitData.icon)))).size(Measure.units(7.5f), Measure.units(7.5f)).expandY();
 
-        Table profileAndHealth = new Table();
-        profileAndHealth.add(new Image(new TextureRegionDrawable(atlas.findRegion(unitData.icon)))).size(Measure.units(7.5f), Measure.units(7.5f)).expandY();
-        profileAndHealth.row();
 
-        int max = unitData.getStatComponent().maxHealth;
 
-        profileAndHealth.add(new Label(String.format("HP: %s/%s", max, max), uiSkin)).expandY();
-
-        profileTable.add(profileAndHealth).width(Measure.units(10f)).height(Measure.units(10f));
         container.add(profileTable).width(Measure.units(20f));
         container.add(skillsTable).width(Measure.units(22.5f));
 

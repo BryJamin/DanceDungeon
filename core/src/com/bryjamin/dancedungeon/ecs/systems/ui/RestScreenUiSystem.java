@@ -58,7 +58,7 @@ public class RestScreenUiSystem extends BaseSystem {
         container.align(Align.top);
 
         Label label = new Label("You've Reached a Rest Site", uiSkin);
-        container.add(label).padTop(Measure.units(5f)).expandX();
+        container.add(label).padTop(Measure.units(10f)).expandX();
         container.row();
 
 

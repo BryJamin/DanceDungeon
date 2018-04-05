@@ -7,6 +7,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.player.UnitMap;
 import com.bryjamin.dancedungeon.factories.spells.basic.HeavyStrike;
+import com.bryjamin.dancedungeon.factories.spells.basic.HookShot;
 import com.bryjamin.dancedungeon.factories.spells.basic.StraightShot;
 import com.bryjamin.dancedungeon.factories.spells.basic.WarpBomb;
 import com.bryjamin.dancedungeon.factories.spells.basic.WarpStrike;
@@ -35,7 +36,8 @@ public class CharacterGenerator {
                 .healthAndMax(health).build());
 
         warrior.setSkillsComponent(new SkillsComponent(
-                new HeavyStrike()
+                new HeavyStrike(),
+                new HookShot()
                 //new Foresight()
                 ));
 

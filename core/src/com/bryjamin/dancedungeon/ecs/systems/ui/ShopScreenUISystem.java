@@ -19,6 +19,7 @@ import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.assets.Skins;
 import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
+import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.factories.spells.basic.HookShot;
 import com.bryjamin.dancedungeon.factories.spells.basic.StunStrike;
@@ -83,7 +84,7 @@ public class ShopScreenUISystem extends BaseSystem {
 
 
         Label label = new Label("Welcome to the shop!", uiSkin);
-        container.add(label).padTop(Measure.units(5f)).expandX();
+        container.add(label).padTop(Measure.units(10f)).expandX();
         container.row();
 
 
@@ -196,18 +197,6 @@ public class ShopScreenUISystem extends BaseSystem {
 
         Table shopTable = new Table(uiSkin);
         ScrollPane shopItemPane = new ScrollPane(shopTable);
-
-/*
-
-        Label skillLabel = new Label("Skill", uiSkin);
-        Label nameLabel = new Label("Name", uiSkin);
-        Label descriptionLabel = new Label("Description", uiSkin);
-        Label priceLabel = new Label("Price", uiSkin);
-
-        shopTable.add(skillLabel).expandX();
-        shopTable.add(nameLabel).expandX();
-        shopTable.add(descriptionLabel).expandX();
-        shopTable.add(priceLabel).expandX();*/
 
         if(partyManagementSystem.getPartyDetails().getSkillInventory().size == 0 && partyManagementSystem.getPartyDetails().getEquippedInventory().size == 0){
             Label youHaveNothingToSell = new Label("Your Inventory is Empty", uiSkin);

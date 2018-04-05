@@ -43,6 +43,7 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.PlayerGraphicalTargetingS
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.ScaleTransformationSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
+import com.bryjamin.dancedungeon.ecs.systems.ui.InformationBannerSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.screens.AbstractScreen;
@@ -82,6 +83,7 @@ public class BattleScreen extends AbstractScreen {
                         new BattleScreenCreationSystem(UIStage, game),
 
                         new PlayerPartyManagementSystem(partyDetails),
+                        new InformationBannerSystem(game, gameport),
 
                         new MovementSystem(),
                         new FollowPositionSystem(),
