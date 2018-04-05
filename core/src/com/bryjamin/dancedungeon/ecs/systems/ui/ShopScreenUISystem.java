@@ -81,8 +81,9 @@ public class ShopScreenUISystem extends BaseSystem {
 
         container.align(Align.top);
 
+
         Label label = new Label("Welcome to the shop!", uiSkin);
-        container.add(label).expandX();
+        container.add(label).padTop(Measure.units(5f)).expandX();
         container.row();
 
 
@@ -154,7 +155,7 @@ public class ShopScreenUISystem extends BaseSystem {
         Table shopTable = new Table(uiSkin);
         ScrollPane shopItemPane = new ScrollPane(shopTable);
 
-        Label skillLabel = new Label("Skill", uiSkin);
+/*        Label skillLabel = new Label("Skill", uiSkin);
         Label nameLabel = new Label("Name", uiSkin);
         Label descriptionLabel = new Label("Description", uiSkin);
         Label priceLabel = new Label("Price", uiSkin);
@@ -162,7 +163,15 @@ public class ShopScreenUISystem extends BaseSystem {
         shopTable.add(skillLabel).expandX();
         shopTable.add(nameLabel).expandX();
         shopTable.add(descriptionLabel).expandX();
-        shopTable.add(priceLabel).expandX();
+        shopTable.add(priceLabel).expandX();*/
+
+
+        if(skillToBuyArray.size == 0){
+            Label youHaveNothingToSell = new Label("There is Nothing Left To Buy", uiSkin);
+            shopTable.add(youHaveNothingToSell);
+            return shopItemPane;
+        }
+
 
         for(final Skill s : skillToBuyArray){
             shopTable.row();
@@ -270,7 +279,7 @@ public class ShopScreenUISystem extends BaseSystem {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
                     partyManagementSystem.getPartyDetails().addSkillToInventory(s);
-                    partyManagementSystem.getPartyDetails().changeMoney(-price);
+                    partyManagementSystem.editMoney(-price);
                     skillToBuyArray.removeValue(s, true);
                     refreshUI();
                 }
@@ -306,7 +315,7 @@ public class ShopScreenUISystem extends BaseSystem {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
                     partyManagementSystem.getPartyDetails().removeSkillFromInventoryOrParty(s);
-                    partyManagementSystem.getPartyDetails().changeMoney(price);
+                    partyManagementSystem.editMoney(price);
                     skillToBuyArray.removeValue(s, true);
                     refreshUI();
                 }

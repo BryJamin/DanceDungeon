@@ -64,7 +64,7 @@ public class HealthSystem extends EntityProcessingSystem {
                 hc.health = hc.health - hc.getAccumulatedDamage();
 
                 if(affectMapper.has(e)){
-                    playerPartyManagementSystem.getPartyDetails().morale -= 1;
+                    playerPartyManagementSystem.editMorale(-1);
                 }
 
 

@@ -18,6 +18,7 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.screens.strategy.MapScreen;
 import com.bryjamin.dancedungeon.screens.strategy.RestScreen;
+import com.bryjamin.dancedungeon.utils.Measure;
 
 /**
  * Created by BB on 31/03/2018.
@@ -57,7 +58,7 @@ public class RestScreenUiSystem extends BaseSystem {
         container.align(Align.top);
 
         Label label = new Label("You've Reached a Rest Site", uiSkin);
-        container.add(label).expandX();
+        container.add(label).padTop(Measure.units(5f)).expandX();
         container.row();
 
 
@@ -99,7 +100,7 @@ public class RestScreenUiSystem extends BaseSystem {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
 
-                partyManagementSystem.getPartyDetails().changeMorale(1);
+                partyManagementSystem.editMorale(1);
                 Screen menu = restScreen.getPreviousScreen();
                 game.getScreen().dispose();
                 game.setScreen(menu);

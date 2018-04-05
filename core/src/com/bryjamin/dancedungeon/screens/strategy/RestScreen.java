@@ -23,6 +23,7 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.ScaleTransformationSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.input.BasicInputSystemWithStage;
+import com.bryjamin.dancedungeon.ecs.systems.ui.InformationBannerSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.RestScreenUiSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
 import com.bryjamin.dancedungeon.screens.AbstractScreen;
@@ -56,6 +57,7 @@ public class RestScreen extends AbstractScreen {
                         new BasicInputSystemWithStage(gameport),
                         new RestScreenUiSystem(game, gameport, this),
                         new PlayerPartyManagementSystem(partyDetails),
+                        new InformationBannerSystem(game, gameport),
 
                         //Positional Systems
                         new MovementSystem(),
