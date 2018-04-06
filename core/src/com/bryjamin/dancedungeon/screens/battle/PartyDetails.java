@@ -3,6 +3,7 @@ package com.bryjamin.dancedungeon.screens.battle;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
+import com.bryjamin.dancedungeon.factories.spells.basic.StunStrike;
 
 
 /**
@@ -12,6 +13,7 @@ import com.bryjamin.dancedungeon.factories.spells.Skill;
 public class PartyDetails {
 
     public static int MAX_MORALE = 10;
+    public static int MAX_INVENTORY = 4;
 
     public int money = 10;
     public int grenades;
@@ -23,6 +25,10 @@ public class PartyDetails {
 
 
     private Array<Skill> skillInventory = new Array<Skill>();
+
+    public PartyDetails(){
+        skillInventory.add(new StunStrike());
+    }
 
     public void addPartyMember(UnitData unitData, int position){
         if(position - 1 > party.length) throw new RuntimeException("Not place for the party member");
