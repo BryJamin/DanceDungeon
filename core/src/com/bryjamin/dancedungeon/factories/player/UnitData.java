@@ -23,7 +23,7 @@ public class UnitData {
     public String name = "Jeff";
 
     public StatComponent statComponent = new StatComponent();
-    public SkillsComponent skillsComponent = new SkillsComponent();
+    private SkillsComponent skillsComponent = new SkillsComponent();
 
     public UnitData(String id){
         this.id = id;

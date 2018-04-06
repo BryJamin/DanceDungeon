@@ -72,6 +72,9 @@ public class MapStageUISystem extends BaseSystem {
     private Array<Button> buttonArray = new Array<Button>();
 
 
+    private UnitData selectedCharacter;
+
+
     private Array<Actor> equippedSkills = new Array<Actor>();
     private Array<Actor> inventorySkills = new Array<Actor>();
 
@@ -172,6 +175,8 @@ public class MapStageUISystem extends BaseSystem {
 
     private void openCharacterWindow(final UnitData unitData) {
 
+        this.selectedCharacter = unitData;
+
         final Stage stage = stageUIRenderingSystem.stage;
 
         dragAndDrop = new DragAndDrop();
@@ -261,41 +266,9 @@ public class MapStageUISystem extends BaseSystem {
         equippedSkillsTable = new Table(uiSkin);
         leftSideCharacterTable.add(equippedSkillsTable).colspan(5).width(leftSideWidth).height(Measure.units(20f));
 
-
         equippedSkillsTable.setDebug(true);
-        equippedSkills.clear();
+        updateEquippedSkillTable(equippedSkillsTable, unitData);
 
-
-        for(int i = 0; i < UnitData.MAXIMUM_SKILLS; i++){
-
-            try {
-                final Skill s = unitData.getSkillsComponent().skills.get(i);
-
-                if (s != null) {
-
-
-                    final Button skillButton = new Button(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(s.getIcon())));
-                    equippedSkillsTable.add(skillButton).height(Measure.units(5f)).width(Measure.units(5f)).padRight(Measure.units(1.5f)).expandX();
-                    skillButton.addListener(new SelectedActorListener(s));
-
-                    equippedSkills.add(skillButton);
-                    dragAndDrop.addSource(new EquippedSource(skillButton, s, i));
-
-                   // Label skillDescription = new Label(s.getDescription(), uiSkin);
-                   // skillDescription.setWrap(true);
-                   // skillDescription.setAlignment(Align.center);
-                   // skillsTable.add(skillDescription).expandX().fill();
-                }
-
-            } catch (IndexOutOfBoundsException e){
-
-                Label l = (new Label("Empty", uiSkin));
-                equippedSkills.add(l);
-                equippedSkillsTable.add(l).colspan(3).expandY().expandX().fill().align(Align.center);
-            }
-
-
-        }
 
 
         //CHARACTER PANE END
@@ -310,28 +283,28 @@ public class MapStageUISystem extends BaseSystem {
 
         inventoryTable.add(new Label("Inventory", uiSkin)).expandX().padBottom(Padding.SMALL);
 
-        updateInventoryTable(inventoryTable);
-
-
-        dragAndDrop.addTarget(new DragAndDrop.Target(inventoryTable) {
+/*        dragAndDrop.addTarget(new DragAndDrop.Target(inventoryTable) {
             @Override
             public boolean drag(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
-                return partyDetails.getSkillInventory().size < 2; //PartyDetails.MAX_INVENTORY;
+                return partyDetails.getSkillInventory().size < PartyDetails.MAX_INVENTORY;
             }
 
             @Override
             public void drop(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
-                EquippedSource a = (EquippedSource) payload.getObject();
+                SkillSource a = (SkillSource) source;
 
-                equippedSkillsTable.removeActor(a.actor);
-
-                unitData.getSkillsComponent().skills.removeValue(a.s, true);
-                partyDetails.getSkillInventory().add(a.s);
-
-                updateInventoryTable(inventoryTable);
+                if(a.isEquipped) {
+                    equippedSkillsTable.removeActor(a.actor);
+                    unitData.getSkillsComponent().skills.removeValue(a.s, true);
+                    partyDetails.getSkillInventory().add(a.s);
+                    updateInventoryTable(inventoryTable);
+                }
 
             }
-        });
+        });*/
+
+
+        updateInventoryTable(inventoryTable);
 
 
         //--------------------- INVENTORY PANE END ----------------------------//
@@ -343,7 +316,7 @@ public class MapStageUISystem extends BaseSystem {
         characterWindow.add(skillInformationTable).width(Measure.units(30f));
         updateSkillInformationTable(skillInformationTable, null);
 /*
-        dragAndDrop.addSource(new EquippedSource()DragAndDrop.Source(skillsTable) {
+        dragAndDrop.addSource(new SkillSource()DragAndDrop.Source(skillsTable) {
 
             final DragAndDrop.Payload payload = new DragAndDrop.Payload();
 
@@ -358,7 +331,13 @@ public class MapStageUISystem extends BaseSystem {
     }
 
 
-
+    /**
+     * Clears and updates the inventory Table.
+     *
+     * This is usually triggers when a skill is dragged into either the inventory table or an inventory slot.
+     *
+     * @param inventoryTable
+     */
     private void updateInventoryTable(Table inventoryTable){
 
         if(inventoryTable.hasChildren()){
@@ -383,11 +362,14 @@ public class MapStageUISystem extends BaseSystem {
                 inventoryTable.add(skillButton).height(BUTTON_SIZE).width(BUTTON_SIZE).padRight(Measure.units(1.5f)).expandX().padBottom(Padding.SMALL);;
                 skillButton.addListener(new SelectedActorListener(s));
                 inventorySkills.add(skillButton);
+                dragAndDrop.addSource(new InventorySource(skillButton, s, i));
+                dragAndDrop.addTarget(new InventoryTarget(skillButton, s, i));
 
             } catch (IndexOutOfBoundsException e){
                 Image image = new Image(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.BLOCK)).tint(Color.GRAY));
                 inventoryTable.add(image).size(BUTTON_SIZE).padBottom(Padding.SMALL);
                 inventorySkills.add(image);
+                dragAndDrop.addTarget(new InventoryTarget(image, null, i));
             }
         }
 
@@ -395,6 +377,54 @@ public class MapStageUISystem extends BaseSystem {
     }
 
 
+    private void updateEquippedSkillTable(Table equippedSkillsTable, UnitData unitData){
+
+        float BUTTON_SIZE = Measure.units(7.5f);
+
+        if(equippedSkillsTable.hasChildren()){
+            equippedSkillsTable.clear();
+        }
+
+        for(int i = 0; i < UnitData.MAXIMUM_SKILLS; i++){
+
+            try {
+                final Skill s = unitData.getSkillsComponent().skills.get(i);
+
+                if (s != null) {
+
+
+                    final Button skillButton = new Button(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(s.getIcon())));
+                    equippedSkillsTable.add(skillButton).height(BUTTON_SIZE).width(BUTTON_SIZE).padRight(Padding.SMALL).expandX();
+                    skillButton.addListener(new SelectedActorListener(s));
+
+                    equippedSkills.add(skillButton);
+                    dragAndDrop.addSource(new SkillSource(skillButton, s, i));
+                    dragAndDrop.addTarget(new EquippedTarget(skillButton, s, i));
+                }
+
+            } catch (IndexOutOfBoundsException e){
+
+                Image image = new Image(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.BLOCK)).tint(Color.GRAY));
+                equippedSkillsTable.add(image).size(BUTTON_SIZE).padRight(Padding.SMALL).expandX();
+                dragAndDrop.addTarget(new EquippedTarget(image, null, i));
+            }
+
+
+        }
+
+    }
+
+
+
+    /**
+     * Sets up the skill information table with the new skill supplied to it.
+     *
+     * This table displays both the skill's title and it's description.
+     *
+     * @param skillInformationTable
+     * @param s
+     * @return
+     */
     private Table updateSkillInformationTable(Table skillInformationTable, Skill s){
 
         if(skillInformationTable.hasChildren()){
@@ -443,6 +473,12 @@ public class MapStageUISystem extends BaseSystem {
     }
 
 
+    /**
+     * Listener for when a skill is tapped.
+     *
+     * It triggers and updates the table used for displaying skill descriptions
+     *
+     */
     private class SelectedActorListener extends ChangeListener {
 
         private Skill s;
@@ -460,14 +496,14 @@ public class MapStageUISystem extends BaseSystem {
 
 
 
-    private class EquippedSource extends DragAndDrop.Source {
+    private class SkillSource extends DragAndDrop.Source {
 
         private Skill s;
         private int index;
         private Actor actor;
-        public boolean isEquipped;
+        public boolean isEquipped = true;
 
-        public EquippedSource(Actor actor, Skill s, int index) {
+        public SkillSource(Actor actor, Skill s, int index) {
             super(actor);
             this.s = s;
             this.actor = actor;
@@ -499,11 +535,123 @@ public class MapStageUISystem extends BaseSystem {
         }
     }
 
-    private class InventorySource extends EquippedSource {
+    private class InventorySource extends SkillSource {
+
+        private Skill skill;
+        private int index;
 
         public InventorySource(Actor actor, Skill s, int index) {
             super(actor, s, index);
             this.isEquipped = false;
+        }
+    }
+
+
+
+
+    private class EquippedTarget extends DragAndDrop.Target {
+
+        private Skill skill;
+        private int index;
+
+        public EquippedTarget(Actor actor, Skill s, int index) {
+            super(actor);
+
+            this.skill = s;
+            this.index = index;
+
+        }
+
+        @Override
+        public boolean drag(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
+            return true;
+        }
+
+        @Override
+        public void drop(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
+
+
+            System.out.println("Inside");
+
+            SkillSource es =  (SkillSource) source;
+
+            if(es.isEquipped){
+
+            } else {
+
+                Skill inventorySkill = es.s;
+                ; //selectedCharacter.getSkillsComponent().skills.get(es.index);
+
+                if(skill != null) { //If the Equipped slot is Empty, add the New Skill into the Slot.
+
+                    System.out.println("Oh jeez");
+
+                    selectedCharacter.getSkillsComponent().skills.set(index, inventorySkill);
+                    partyDetails.getSkillInventory().set(es.index, skill);
+                } else { //If Equipped slot is null add into the player's equipped.
+                    selectedCharacter.getSkillsComponent().skills.add(inventorySkill);
+                    partyDetails.getSkillInventory().removeValue(inventorySkill, true);
+                }
+
+                updateInventoryTable(inventoryTable);
+                updateEquippedSkillTable(equippedSkillsTable, selectedCharacter);
+
+            }
+
+
+        }
+    }
+
+
+
+
+    /**
+     * Used for Drag And Drop. This class is for when an Inventory item is the target.
+     */
+    private class InventoryTarget extends DragAndDrop.Target {
+
+
+        private Skill skill;
+        private int index;
+
+        public InventoryTarget(Actor actor, Skill s, int index) {
+            super(actor);
+            this.skill = s;
+            this.index = index;
+        }
+
+        @Override
+        public boolean drag(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
+            return true;
+        }
+
+        @Override
+        public void drop(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
+
+            SkillSource es =  (SkillSource) source;
+
+            if(es.isEquipped){
+
+                Skill old = es.s; //selectedCharacter.getSkillsComponent().skills.get(es.index);
+
+
+                if(skill != null) {
+                    selectedCharacter.getSkillsComponent().skills.set(es.index, skill);
+                    partyDetails.getSkillInventory().set(index, old);
+                } else {
+                    selectedCharacter.getSkillsComponent().skills.removeIndex(es.index);
+                    partyDetails.getSkillInventory().add(old);
+                }
+
+                updateInventoryTable(inventoryTable);
+                updateEquippedSkillTable(equippedSkillsTable, selectedCharacter);
+
+            } else {
+
+
+
+
+            }
         }
     }
 

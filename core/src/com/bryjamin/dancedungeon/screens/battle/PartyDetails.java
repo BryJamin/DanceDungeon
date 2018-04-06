@@ -65,6 +65,7 @@ public class PartyDetails {
     }
 
     public void removeSkillFromInventoryOrParty(Skill s){
+
         skillInventory.removeValue(s, true);
 
         for(UnitData unitData : party){
