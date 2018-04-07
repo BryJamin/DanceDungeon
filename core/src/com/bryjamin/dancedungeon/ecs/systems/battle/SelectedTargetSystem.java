@@ -131,7 +131,7 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
 
         if (playerControlledM.has(playableCharacter)) {
             createMovementAndAttackTiles(playableCharacter);
-            world.getSystem(BattleScreenCreationSystem.class).createSkillUi(playableCharacter);
+            world.getSystem(BattleScreenCreationSystem.class).createChaacterSkillHUD(playableCharacter);
         }
     }
 

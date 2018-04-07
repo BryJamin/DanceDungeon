@@ -6,10 +6,12 @@ import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.artemis.utils.Bag;
 import com.bryjamin.dancedungeon.MainGame;
+import com.bryjamin.dancedungeon.Observer;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
+import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.factories.map.event.MapEvent;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
@@ -23,7 +25,9 @@ import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
  * Created by BB on 28/11/2017.
  */
 
-public class EndBattleSystem extends EntitySystem {
+public class EndBattleSystem extends EntitySystem implements Observer {
+
+    private PlayerPartyManagementSystem playerPartyManagementSystem;
 
     private ComponentMapper<EnemyComponent> enemyMapper;
     private ComponentMapper<PlayerControlledComponent> pcMapper;
@@ -40,6 +44,23 @@ public class EndBattleSystem extends EntitySystem {
     private boolean processingFlag = true;
 
     private MapEvent currentEvent;
+
+    @Override
+    public void onNotify() {
+        //TODO, decide if notify is appropriate. Also, there is not really a reason for the state change,
+
+        //UNTIL I CAN FIX TEH ACTION CAMERA SYSTEM IN REGARDS TO THE SIMULTANEOUS ATTACKS HAPPENS
+        //ON DIFFERENT PARTS OF THE MAP I NEED TO ADD A CHECK FOR IF THE FLAG IS FALSE
+        //OTHERWISE THIS WILL CRASH
+
+        if(!processingFlag) return;
+
+
+        if(playerPartyManagementSystem.getPartyDetails().morale == 0) {
+            ((BattleScreen) game.getScreen()).defeat();
+            processingFlag = false;
+        }
+    }
 
     private enum State {
         CLEAN_UP, START_UP, DURING, END
@@ -75,6 +96,8 @@ public class EndBattleSystem extends EntitySystem {
             }
 
         }
+
+        playerPartyManagementSystem.addObserver(this);
 
     }
 

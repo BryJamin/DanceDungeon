@@ -47,13 +47,14 @@ public class TileSystem extends EntitySystem {
     private ComponentMapper<EnemyComponent> enemym;
 
 
-    private float originX = Measure.units(12.5f);
-    private float originY = Measure.units(15f);
-    private float width = Measure.units(70f);
+    private float width = Measure.units(60f);
     private float height = Measure.units(35f);
 
+    private float originX = Measure.units(7.5f);
+    private float originY = Measure.units(15f);
+
     private int rows = 6;
-    private int columns = 9;
+    private int columns = 8;
 
     private int maxX;
     private int maxY;
@@ -93,7 +94,7 @@ public class TileSystem extends EntitySystem {
         this.maxX = columns;
         this.maxY = rows;
 
-        TiledMap map = new TmxMapLoader(new InternalFileHandleResolver()).load("maps/map_1.tmx");
+        TiledMap map = new TmxMapLoader(new InternalFileHandleResolver()).load("maps/map_2.tmx");
         TiledMapTileLayer objects =  (TiledMapTileLayer) map.getLayers().get("Object");
         TiledMapTileLayer background =  (TiledMapTileLayer) map.getLayers().get("Background");
 
@@ -134,35 +135,6 @@ public class TileSystem extends EntitySystem {
         }
 
         new FloorFactory().createFloor(world, originX, originY, width, height, rows, columns);
-
-        //TiledMap map = new TmxMapLoader(new InternalFileHandleResolver()).load("maps/map.tmx");
-        //TiledMapTileLayer t =  (TiledMapTileLayer) map.getLayers().get(0);
-
-
-       // System.out.println("TILE WIDTH " + t.getWidth());
-
-        //t.getCell(0,0).getTile().getProperties().get
-
-
-/*        UnitFactory unitFactory = new UnitFactory();
-
-        int i = MathUtils.random(100);
-
-        if(i > 50) {
-            createMap1();
-        } else {
-            createMap2();
-        }*/
-
-/*        //new UnitFactory().baseTileBag(world, new Coordinates(3, 3));
-       #unitFactory.baseTileBag(world, new Coordinates(0, 4));
-       #unitFactory.baseTileBag(world, new Coordinates(3, 3));
-       #unitFactory.baseTileBag(world, new Coordinates(3, 2));
-       #unitFactory.baseTileBag(world, new Coordinates(3, 1));
-       #unitFactory.baseTileBag(world, new Coordinates(3, 0));
-       #unitFactory.baseAlliedTileBag(world, new Coordinates(
-       #        4, 5));*/
-
 
     }
 

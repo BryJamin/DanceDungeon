@@ -83,7 +83,7 @@ public class DummyFactory {
 
         ComponentBag bag = targetDummy(unitData);
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, blob.color(Color.CYAN).build()));
-        bag.add(new StatComponent.StatBuilder().movementRange(3)
+        bag.add(new StatComponent.StatBuilder().movementRange(4)
                 .build());
 
         return bag;
@@ -101,7 +101,7 @@ public class DummyFactory {
 
         ComponentBag bag = targetDummy(unitData);
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, blob.color(Color.GOLD).build()));
-        bag.add(new StatComponent.StatBuilder().movementRange(3)
+        bag.add(new StatComponent.StatBuilder().movementRange(4)
                 .build());
 
 
@@ -135,7 +135,7 @@ public class DummyFactory {
 
         ComponentBag bag = targetDummy(unitData);
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, blob.color(Color.WHITE).build()));
-        bag.add(new StatComponent.StatBuilder().movementRange(6)
+        bag.add(new StatComponent.StatBuilder().movementRange(4)
                 .healthAndMax(100)
                 .build());
         return bag;

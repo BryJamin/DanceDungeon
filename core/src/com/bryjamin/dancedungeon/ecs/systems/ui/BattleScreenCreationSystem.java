@@ -120,8 +120,8 @@ public class BattleScreenCreationSystem extends EntitySystem {
             }
         });
 
-        endTurn.setPosition(0, Measure.units(40f));
-        endTurn.setWidth(Measure.units(12.5f));
+        endTurn.setPosition(stage.getWidth() - Measure.units(15f), Measure.units(40f));
+        endTurn.setWidth(Measure.units(15f));
         endTurn.setHeight(Measure.units(10f));
 
 
@@ -136,18 +136,20 @@ public class BattleScreenCreationSystem extends EntitySystem {
     protected void processSystem() {
 
         if(actionCameraSystem.isProcessing() || !turnSystem.isTurn(TurnSystem.TURN.ALLY)){
-            //endTurn.setDisabled(true);
             endTurn.setVisible(false);
         } else {
             endTurn.setVisible(true);
-            //endTurn.setDisabled(false);
         }
 
     }
 
 
-
-    public void createSkillUi(Entity e) {
+    /**
+     * Populates the bottom of the scene with a HUD that displays the selected character's name and skills.
+     * You can interact with the skills to view what they do and show where they will target on the battle map.
+     * @param e
+     */
+    public void createChaacterSkillHUD(Entity e) {
 
         container.clearChildren();
         container.clear();
@@ -181,7 +183,7 @@ public class BattleScreenCreationSystem extends EntitySystem {
     private void createCreateSkillText(Entity player, Skill skill) {
 
         container.clearChildren();
-        createSkillUi(player);
+        createChaacterSkillHUD(player);
 
         infoTable.remove();
         infoTable.reset();
@@ -190,7 +192,7 @@ public class BattleScreenCreationSystem extends EntitySystem {
         infoTable.reset();
         infoTable.clear();
 
-        container.add(infoTable).width(Measure.units(40f));
+        container.add(infoTable).width(Measure.units(60f)).expandX().fill();
 
         infoTable.add(new Label(skill.getName(), uiSkin));
         infoTable.align(Align.top);
@@ -202,7 +204,7 @@ public class BattleScreenCreationSystem extends EntitySystem {
         description.setText(skill.getDescription(world, player));
         description.setAlignment(Align.center);
 
-        infoTable.add(description).width(Measure.units(40f));
+        infoTable.add(description).width(Measure.units(60f));
 
     }
 
