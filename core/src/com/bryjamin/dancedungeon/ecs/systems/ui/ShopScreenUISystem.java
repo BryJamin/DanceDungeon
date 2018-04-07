@@ -143,7 +143,7 @@ public class ShopScreenUISystem extends BaseSystem {
         }
 
         container.row();
-        container.add(leaveRestArea).width(stage.getWidth()).align(Align.bottom);
+        container.add(leaveRestArea).width(stage.getWidth()).height(Measure.units(7.5f)).align(Align.bottom);
 
 
     }

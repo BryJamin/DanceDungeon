@@ -4,6 +4,11 @@ import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -88,6 +93,39 @@ public class TileSystem extends EntitySystem {
         this.maxX = columns;
         this.maxY = rows;
 
+        TiledMap map = new TmxMapLoader(new InternalFileHandleResolver()).load("maps/map_1.tmx");
+        TiledMapTileLayer objects =  (TiledMapTileLayer) map.getLayers().get("Object");
+        TiledMapTileLayer background =  (TiledMapTileLayer) map.getLayers().get("Background");
+
+        UnitFactory unitFactory = new UnitFactory();
+
+        for(int i = 0; i < objects.getWidth(); i++){
+
+            for(int j = 0; j < objects.getHeight(); j++){
+
+
+                if(objects.getCell(i, j) == null) continue;
+
+                TiledMapTile tile = objects.getCell(i, j).getTile();
+
+                    if (tile.getProperties().containsKey("Type")) {
+
+                        String property = (String) tile.getProperties().get("Type");
+
+                        if(property.equals("Wall")){
+                            unitFactory.baseTileBag(world, new Coordinates(i, j));
+                        } else if(property.equals("Ally")){
+                            unitFactory.baseAlliedTileBag(world, new Coordinates(i, j));
+                        }
+
+                    }
+
+
+            }
+
+        }
+
+
         for (int i = 0; i < columns; i++) {
             for (int j = 0; j < rows; j++) {
                 coordinateMap.put(new Coordinates(i, j), new Array<Entity>());
@@ -97,8 +135,16 @@ public class TileSystem extends EntitySystem {
 
         new FloorFactory().createFloor(world, originX, originY, width, height, rows, columns);
 
+        //TiledMap map = new TmxMapLoader(new InternalFileHandleResolver()).load("maps/map.tmx");
+        //TiledMapTileLayer t =  (TiledMapTileLayer) map.getLayers().get(0);
 
-        UnitFactory unitFactory = new UnitFactory();
+
+       // System.out.println("TILE WIDTH " + t.getWidth());
+
+        //t.getCell(0,0).getTile().getProperties().get
+
+
+/*        UnitFactory unitFactory = new UnitFactory();
 
         int i = MathUtils.random(100);
 
@@ -106,7 +152,7 @@ public class TileSystem extends EntitySystem {
             createMap1();
         } else {
             createMap2();
-        }
+        }*/
 
 /*        //new UnitFactory().baseTileBag(world, new Coordinates(3, 3));
        #unitFactory.baseTileBag(world, new Coordinates(0, 4));

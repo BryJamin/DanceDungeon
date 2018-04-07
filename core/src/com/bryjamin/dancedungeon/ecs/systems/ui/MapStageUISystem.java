@@ -254,7 +254,7 @@ public class MapStageUISystem extends BaseSystem {
         int current = unitData.getStatComponent().health;
 
         leftSideCharacterTable.row();
-        leftSideCharacterTable.add(new Label(String.format(Locale.ENGLISH, "HP %s/%s", current, max), uiSkin)).expandX();
+        leftSideCharacterTable.add(new Label(String.format(Locale.ENGLISH, "HP %skill/%skill", current, max), uiSkin)).expandX();
 
 
 
@@ -295,8 +295,8 @@ public class MapStageUISystem extends BaseSystem {
 
                 if(a.isEquipped) {
                     equippedSkillsTable.removeActor(a.actor);
-                    unitData.getSkillsComponent().skills.removeValue(a.s, true);
-                    partyDetails.getSkillInventory().add(a.s);
+                    unitData.getSkillsComponent().skills.removeValue(a.skill, true);
+                    partyDetails.getSkillInventory().add(a.skill);
                     updateInventoryTable(inventoryTable);
                 }
 
@@ -419,7 +419,7 @@ public class MapStageUISystem extends BaseSystem {
     /**
      * Sets up the skill information table with the new skill supplied to it.
      *
-     * This table displays both the skill's title and it's description.
+     * This table displays both the skill'skill title and it'skill description.
      *
      * @param skillInformationTable
      * @param s
@@ -498,14 +498,14 @@ public class MapStageUISystem extends BaseSystem {
 
     private class SkillSource extends DragAndDrop.Source {
 
-        private Skill s;
+        private Skill skill;
         private int index;
         private Actor actor;
         public boolean isEquipped = true;
 
-        public SkillSource(Actor actor, Skill s, int index) {
+        public SkillSource(Actor actor, Skill skill, int index) {
             super(actor);
-            this.s = s;
+            this.skill = skill;
             this.actor = actor;
             this.index = index;
         }
@@ -515,7 +515,7 @@ public class MapStageUISystem extends BaseSystem {
         @Override
         public DragAndDrop.Payload dragStart(InputEvent event, float x, float y, int pointer) {
 
-            Image i = new Image(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(s.getIcon())));
+            Image i = new Image(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(skill.getIcon())));
             i.setHeight(Measure.units(10f));
             i.setWidth(Measure.units(10f));
 
@@ -570,25 +570,20 @@ public class MapStageUISystem extends BaseSystem {
         @Override
         public void drop(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
 
-
-            System.out.println("Inside");
-
             SkillSource es =  (SkillSource) source;
 
             if(es.isEquipped){
 
             } else {
 
-                Skill inventorySkill = es.s;
+                Skill inventorySkill = es.skill;
                 ; //selectedCharacter.getSkillsComponent().skills.get(es.index);
 
                 if(skill != null) { //If the Equipped slot is Empty, add the New Skill into the Slot.
 
-                    System.out.println("Oh jeez");
-
                     selectedCharacter.getSkillsComponent().skills.set(index, inventorySkill);
                     partyDetails.getSkillInventory().set(es.index, skill);
-                } else { //If Equipped slot is null add into the player's equipped.
+                } else { //If Equipped slot is null add into the player'skill equipped.
                     selectedCharacter.getSkillsComponent().skills.add(inventorySkill);
                     partyDetails.getSkillInventory().removeValue(inventorySkill, true);
                 }
@@ -632,7 +627,7 @@ public class MapStageUISystem extends BaseSystem {
 
             if(es.isEquipped){
 
-                Skill old = es.s; //selectedCharacter.getSkillsComponent().skills.get(es.index);
+                Skill old = es.skill; //selectedCharacter.getSkillsComponent().skills.get(es.index);
 
 
                 if(skill != null) {
