@@ -10,7 +10,8 @@ import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
-import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenCreationSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.BattleDeploymentSystem;
+import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.EndBattleSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
@@ -46,7 +47,6 @@ public class BattleEvent extends com.bryjamin.dancedungeon.factories.map.event.M
 
         return enemyBags;
 
-
     }
 
     @Override
@@ -56,12 +56,10 @@ public class BattleEvent extends com.bryjamin.dancedungeon.factories.map.event.M
 
     @Override
     public void setUpEvent(World world) {
-
-        world.getSystem(TurnSystem.class).setUp(TurnSystem.TURN.INTENT); //Run intent first since enemies do not exist yet. //TODO look into this
-        world.getSystem(BattleScreenCreationSystem.class).reset();
-
+        //world.getSystem(TurnSystem.class).setUp(TurnSystem.TURN.INTENT); //Run intent first since enemies do not exist yet. //TODO look into this
+        world.getSystem(BattleScreenUISystem.class).reset();
         setUpPlayerLocations(world);
-        setUpEnemyLocations(world, convertEnemiesIntoComponentBags());
+        //setUpEnemyLocations(world, convertEnemiesIntoComponentBags());
     }
 
 

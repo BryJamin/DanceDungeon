@@ -9,7 +9,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
-import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenCreationSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.BattleDeploymentSystem;
+import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MoveToTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
@@ -46,6 +47,7 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.InformationBannerSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
+import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
 import com.bryjamin.dancedungeon.screens.AbstractScreen;
 import com.bryjamin.dancedungeon.screens.VictoryScreen;
 import com.bryjamin.dancedungeon.screens.menu.DefeatScreen;
@@ -80,7 +82,7 @@ public class BattleScreen extends AbstractScreen {
                 .with(WorldConfigurationBuilder.Priority.HIGHEST,
 
                         new BattleWorldInputHandlerSystem(gameport),
-                        new BattleScreenCreationSystem(UIStage, game),
+                        new BattleScreenUISystem(UIStage, game),
 
                         new PlayerPartyManagementSystem(partyDetails),
                         new InformationBannerSystem(game, gameport),
@@ -93,6 +95,8 @@ public class BattleScreen extends AbstractScreen {
 
                         //Initialize Tiles
                         new TileSystem(),
+                        new BattleDeploymentSystem((BattleEvent) gameMap.getCurrentMapNode().getMapEvent()),
+
                         new MoveToTargetSystem()
                 )
                 .with(WorldConfigurationBuilder.Priority.HIGH,

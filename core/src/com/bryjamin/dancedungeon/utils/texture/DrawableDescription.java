@@ -36,6 +36,8 @@ public abstract class DrawableDescription {
         this.resetColor = ddb.resetColor;
         this.origin = ddb.origin;
         this.rotation = ddb.rotation;
+        this.color.a = ddb.alpha; //TODO Find a better way to store previous colors and alpha?
+        this.resetColor.a = ddb.alpha;
     }
 
 
@@ -54,6 +56,7 @@ public abstract class DrawableDescription {
 
         private Color color = new Color(Color.WHITE);
         private Color resetColor = new Color(Color.WHITE);
+        private float alpha = 1.0f;
 
 
         public DrawableDescriptionBuilder(){}
@@ -69,6 +72,7 @@ public abstract class DrawableDescription {
             rotation = d.rotation;
             color = new Color(d.color);
             resetColor = new Color(d.resetColor);
+            alpha = resetColor.a;
         }
 
 
@@ -106,8 +110,8 @@ public abstract class DrawableDescription {
         { origin = val; return getThis(); }
 
         public T alpha(float val) {
-            color.a = val;
-            resetColor.a = val;
+            alpha = val;
+            alpha = val;
             return getThis();
         }
 

@@ -17,7 +17,7 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.ScaleTransformationComp
 import com.bryjamin.dancedungeon.ecs.components.graphics.UITargetingComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.SelectedEntityComponent;
-import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenCreationSystem;
+import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
 import com.bryjamin.dancedungeon.factories.spells.TargetingFactory;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
@@ -46,7 +46,7 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
     @Override
     protected void process(Entity e) {
         if (!e.getComponent(TurnComponent.class).hasActions()) {
-            world.getSystem(BattleScreenCreationSystem.class).reset();
+            world.getSystem(BattleScreenUISystem.class).reset();
             e.edit().remove(SelectedEntityComponent.class);
         }
     }
@@ -59,7 +59,7 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
             for (Entity entity : this.getEntities()) {
                 entity.edit().remove(SelectedEntityComponent.class);
             }
-            world.getSystem(BattleScreenCreationSystem.class).reset();
+            world.getSystem(BattleScreenUISystem.class).reset();
         }
 
         setUpCharacter(e);
@@ -68,7 +68,7 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
     @Override
     public void removed(Entity e) {
         if (this.getEntities().size() <= 0) {
-            //world.getSystem(BattleScreenCreationSystem.class).reset();
+            //world.getSystem(BattleScreenUISystem.class).reset();
         }
     }
 
@@ -131,7 +131,7 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
 
         if (playerControlledM.has(playableCharacter)) {
             createMovementAndAttackTiles(playableCharacter);
-            world.getSystem(BattleScreenCreationSystem.class).createChaacterSkillHUD(playableCharacter);
+            world.getSystem(BattleScreenUISystem.class).createChaacterSkillHUD(playableCharacter);
         }
     }
 

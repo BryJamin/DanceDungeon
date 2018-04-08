@@ -45,7 +45,7 @@ import com.bryjamin.dancedungeon.utils.Measure;
  * It can also be called to update and remove certain parts of the skill UI.
  */
 
-public class BattleScreenCreationSystem extends EntitySystem {
+public class BattleScreenUISystem extends EntitySystem {
 
     private TurnSystem turnSystem;
     private ActionCameraSystem actionCameraSystem;
@@ -72,8 +72,7 @@ public class BattleScreenCreationSystem extends EntitySystem {
     private TextureAtlas atlas;
     private Skin uiSkin;
 
-    public
-    BattleScreenCreationSystem(Stage stage, MainGame game) {
+    public BattleScreenUISystem(Stage stage, MainGame game) {
         super(Aspect.all(SkillButtonComponent.class, CenteringBoundaryComponent.class));
         this.game = game;
         this.stage = stage;
@@ -116,7 +115,7 @@ public class BattleScreenCreationSystem extends EntitySystem {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 world.getSystem(TurnSystem.class).endAllyTurn();
-                world.getSystem(BattleScreenCreationSystem.class).reset();
+                world.getSystem(BattleScreenUISystem.class).reset();
             }
         });
 
