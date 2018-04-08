@@ -6,6 +6,7 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.bryjamin.dancedungeon.ecs.systems.battle.BattleDeploymentSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.SelectedTargetSystem;
@@ -60,7 +61,7 @@ public class BattleWorldInputHandlerSystem extends BaseSystem {
 
             if (world.getSystem(ActionCameraSystem.class).isProcessing()) return false;
 
-            if (world.getSystem(TurnSystem.class).getTurn() == TurnSystem.TURN.ALLY) {
+            if (world.getSystem(TurnSystem.class).getTurn() == TurnSystem.TURN.ALLY || world.getSystem(BattleDeploymentSystem.class).isProcessing()) {
 
                 if (world.getSystem(ActionOnTapSystem.class).touch(input.x, input.y))
                     return true;

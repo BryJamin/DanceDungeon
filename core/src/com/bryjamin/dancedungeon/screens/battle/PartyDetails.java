@@ -14,6 +14,7 @@ public class PartyDetails {
 
     public static int MAX_MORALE = 10;
     public static int MAX_INVENTORY = 4;
+    public static int PARTY_SIZE = 3;
 
     public int money = 10;
     public int grenades;
@@ -21,7 +22,7 @@ public class PartyDetails {
     public int reputation;
     public int morale = 5;
 
-    private UnitData[] party = new UnitData[3];
+    private UnitData[] party = new UnitData[PARTY_SIZE];
 
 
     private Array<Skill> skillInventory = new Array<Skill>();

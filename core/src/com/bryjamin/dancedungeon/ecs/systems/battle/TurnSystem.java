@@ -46,7 +46,7 @@ public class TurnSystem extends EntitySystem {
     private Array<Entity> enemyTurnEntities = new Array<Entity>();
     private Array<Entity> allyTurnEntities = new Array<Entity>();
 
-    private boolean processingFlag = true;
+    private boolean processingFlag = false;
 
 
     private enum STATE {
@@ -258,7 +258,8 @@ public class TurnSystem extends EntitySystem {
 
     }
 
-
-
+    public void setProcessingFlag(boolean processingFlag) {
+        this.processingFlag = processingFlag;
+    }
 }
 

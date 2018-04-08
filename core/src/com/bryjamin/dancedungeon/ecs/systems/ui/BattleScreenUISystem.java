@@ -93,9 +93,6 @@ public class BattleScreenUISystem extends EntitySystem {
 
         container.add(profileTable);
 
-
-
-
         infoTable = new Table(uiSkin);
         skillsTable = new Table(uiSkin);
         skillsTable.setDebug(true);

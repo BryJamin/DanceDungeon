@@ -84,21 +84,7 @@ public class EndBattleSystem extends EntitySystem implements Observer {
 
     @Override
     protected void initialize() {
-
-        UnitMap unitMap = new UnitMap();
-
-        for (int i = 0; i < partyDetails.getParty().length; i++) {
-
-            if (partyDetails.getParty()[i] != null) {
-                UnitData unitData = partyDetails.getParty()[i];
-                ComponentBag player = unitMap.getUnit(unitData);
-                Entity e = BagToEntity.bagToEntity(world.createEntity(), player);
-            }
-
-        }
-
         playerPartyManagementSystem.addObserver(this);
-
     }
 
 
@@ -108,11 +94,11 @@ public class EndBattleSystem extends EntitySystem implements Observer {
         //TODO I convert to state end after there has been a defeat,
         //TODO it might be better to have some kind of method that, then turns off this system
         //TODO once the battle is over
-        if (playerBag.isEmpty()) {
+/*        if (playerBag.isEmpty()) {
             ((BattleScreen) game.getScreen()).defeat();
             state = State.END;
             processingFlag = false;
-        }
+        }*/
 
         switch (state){
             case START_UP:

@@ -254,7 +254,7 @@ public class MapStageUISystem extends BaseSystem {
         int current = unitData.getStatComponent().health;
 
         leftSideCharacterTable.row();
-        leftSideCharacterTable.add(new Label(String.format(Locale.ENGLISH, "HP %skill/%skill", current, max), uiSkin)).expandX();
+        leftSideCharacterTable.add(new Label(String.format(Locale.ENGLISH, "HP %s/%s", current, max), uiSkin)).expandX();
 
 
 
@@ -283,49 +283,16 @@ public class MapStageUISystem extends BaseSystem {
 
         inventoryTable.add(new Label("Inventory", uiSkin)).expandX().padBottom(Padding.SMALL);
 
-/*        dragAndDrop.addTarget(new DragAndDrop.Target(inventoryTable) {
-            @Override
-            public boolean drag(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
-                return partyDetails.getSkillInventory().size < PartyDetails.MAX_INVENTORY;
-            }
-
-            @Override
-            public void drop(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
-                SkillSource a = (SkillSource) source;
-
-                if(a.isEquipped) {
-                    equippedSkillsTable.removeActor(a.actor);
-                    unitData.getSkillsComponent().skills.removeValue(a.skill, true);
-                    partyDetails.getSkillInventory().add(a.skill);
-                    updateInventoryTable(inventoryTable);
-                }
-
-            }
-        });*/
-
-
         updateInventoryTable(inventoryTable);
 
 
         //--------------------- INVENTORY PANE END ----------------------------//
 
 
-
         //RIGHT SIDE - SKILL INFORMATION, WHEN PLAYER CLICKS A SKILL ICON.
         skillInformationTable = new Table(uiSkin);
         characterWindow.add(skillInformationTable).width(Measure.units(30f));
         updateSkillInformationTable(skillInformationTable, null);
-/*
-        dragAndDrop.addSource(new SkillSource()DragAndDrop.Source(skillsTable) {
-
-            final DragAndDrop.Payload payload = new DragAndDrop.Payload();
-
-            public DragAndDrop.Payload dragStart (InputEvent event, float x, float y, int pointer) {
-                payload.setDragActor(new Label("Dragging", uiSkin));
-                payload.setObject(event.getRelatedActor());
-                return payload;
-            }
-        });*/
 
 
     }

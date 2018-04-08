@@ -22,7 +22,7 @@ public class BoundsDrawingSystem extends EntitySystem {
     ComponentMapper<HitBoxComponent> hitboxm;
     ComponentMapper<CenteringBoundaryComponent> boundm;
 
-    private boolean isDrawing = false;
+    private boolean isDrawing = true;
 
     private Array<Rectangle> bounds = new Array<Rectangle>();
     private Array<Rectangle> hitboxes = new Array<Rectangle>();

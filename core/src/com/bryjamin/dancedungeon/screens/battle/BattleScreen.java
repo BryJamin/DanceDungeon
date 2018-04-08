@@ -81,6 +81,10 @@ public class BattleScreen extends AbstractScreen {
         WorldConfiguration config = new WorldConfigurationBuilder()
                 .with(WorldConfigurationBuilder.Priority.HIGHEST,
 
+                        //Initialize Tiles
+                        new TileSystem(),
+                        new BattleDeploymentSystem((BattleEvent) gameMap.getCurrentMapNode().getMapEvent()),
+
                         new BattleWorldInputHandlerSystem(gameport),
                         new BattleScreenUISystem(UIStage, game),
 
@@ -92,10 +96,6 @@ public class BattleScreen extends AbstractScreen {
                         new UpdatePositionSystem(),
 
                         new BuffSystem(),
-
-                        //Initialize Tiles
-                        new TileSystem(),
-                        new BattleDeploymentSystem((BattleEvent) gameMap.getCurrentMapNode().getMapEvent()),
 
                         new MoveToTargetSystem()
                 )
