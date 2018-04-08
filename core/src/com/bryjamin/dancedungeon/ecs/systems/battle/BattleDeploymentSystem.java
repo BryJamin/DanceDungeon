@@ -5,19 +5,33 @@ import com.artemis.BaseSystem;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.artemis.World;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
+import com.bryjamin.dancedungeon.MainGame;
+import com.bryjamin.dancedungeon.Observer;
+import com.bryjamin.dancedungeon.assets.Padding;
+import com.bryjamin.dancedungeon.assets.Skins;
 import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.DeploymentComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
 import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
+import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
+import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
+import com.bryjamin.dancedungeon.ecs.systems.ui.InformationBannerSystem;
+import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
 import com.bryjamin.dancedungeon.factories.enemy.EnemyFactory;
 import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.player.UnitFactory;
 import com.bryjamin.dancedungeon.factories.player.UnitMap;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
+import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
@@ -39,7 +53,12 @@ public class BattleDeploymentSystem extends EntitySystem {
     private TileSystem tileSystem;
     private TurnSystem turnSystem;
     private PlayerPartyManagementSystem playerPartyManagementSystem;
+    private BattleScreenUISystem battleScreenUISystem;
+    private StageUIRenderingSystem stageUIRenderingSystem;
+    private InformationBannerSystem informationBannerSystem;
+    private RenderingSystem renderingSystem;
 
+    private int count;
     private boolean[] deployedArray = new boolean[PartyDetails.PARTY_SIZE];
 
     private BattleEvent battleEvent;
@@ -47,15 +66,21 @@ public class BattleDeploymentSystem extends EntitySystem {
     private Array<Coordinates> enemySpawning;
     private Array<Coordinates> deploymentLocations;
 
+
+    private Table deploymentTable;
+
     private UnitFactory unitFactory = new UnitFactory();
 
+    public Array<Observer> observers = new Array<Observer>();
 
     private boolean processingFlag = true;
 
+    private Skin uiSkin;
 
-    public BattleDeploymentSystem(BattleEvent battleEvent) {
+    public BattleDeploymentSystem(MainGame game, BattleEvent battleEvent) {
         super(Aspect.all(DeploymentComponent.class));
         this.battleEvent = battleEvent;
+        this.uiSkin = Skins.DEFAULT_SKIN(game.assetManager);
     }
 
     @Override
@@ -81,12 +106,24 @@ public class BattleDeploymentSystem extends EntitySystem {
 
         deploymentLocations = new Array<Coordinates>(tileSystem.getAllySpawningLocations());
 
+        deploymentTable = new Table(uiSkin);
+        stageUIRenderingSystem.stage.addActor(deploymentTable);
+
         createDeploymentLocations();
+
 
     }
 
 
     public void createDeploymentLocations(){
+
+
+        for(int i = 0; i < deployedArray.length; i++) {
+            if(!deployedArray[i]) {
+                updateDeploymentTable(playerPartyManagementSystem.getPartyDetails().getParty()[i]);
+                break;
+            }
+        }
 
         for(final Coordinates c : deploymentLocations){
             Entity e = unitFactory.baseDeploymentZone(world, tileSystem.createRectangleUsingCoordinates(c), c);
@@ -96,6 +133,8 @@ public class BattleDeploymentSystem extends EntitySystem {
                 public void performAction(World world, Entity entity) {
 
                     for(int i = 0; i < deployedArray.length; i++){
+
+                        count = i + 1;
 
                         if(!deployedArray[i]){
                             UnitMap unitMap = new UnitMap();
@@ -111,20 +150,19 @@ public class BattleDeploymentSystem extends EntitySystem {
 
                                 if(!deployedArray[deployedArray.length - 1]) {
                                     createDeploymentLocations();
+                                } else {
+                                    processingFlag = false;
+                                    turnSystem.setProcessingFlag(true);
+                                    deploymentTable.remove();
                                 }
                                 clear();
+
                                 break;
                             }
 
                         }
 
                     }
-
-                    if(deployedArray[deployedArray.length - 1]){
-                        processingFlag = false;
-                        turnSystem.setProcessingFlag(true);
-                    }
-
 
 
                 }
@@ -134,11 +172,31 @@ public class BattleDeploymentSystem extends EntitySystem {
 
     }
 
+
+
+    public void updateDeploymentTable(UnitData unitData){
+
+        if(deploymentTable.hasChildren()){
+            deploymentTable.clear();
+        }
+
+        deploymentTable.setDebug(true);
+        deploymentTable.setWidth(stageUIRenderingSystem.stage.getWidth());
+        deploymentTable.setHeight(Measure.units(15f));
+        deploymentTable.setPosition(0, 0);
+
+        Label deployingLabel = new Label("Please Select Where To Deploy: ", uiSkin);
+
+        deploymentTable.add(deployingLabel).pad(Padding.SMALL);
+
+        deploymentTable.add(new Image(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(unitData.icon)))).size(Measure.units(7.5f), Measure.units(7.5f));
+
+    }
+
+
     private void clear(){
-        System.out.println("hmm");
         for(Entity e : this.getEntities()){
-            e.edit().add(new DeadComponent());
-            System.out.println("Inside");
+            e.deleteFromWorld();
         }
     }
 
@@ -150,4 +208,9 @@ public class BattleDeploymentSystem extends EntitySystem {
     public boolean isProcessing(){
         return processingFlag;
     }
+
+    public UnitData getDeployingUnit(){
+        return playerPartyManagementSystem.getPartyDetails().getParty()[count];
+    }
+
 }

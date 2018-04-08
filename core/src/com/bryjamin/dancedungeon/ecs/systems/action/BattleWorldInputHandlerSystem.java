@@ -61,9 +61,19 @@ public class BattleWorldInputHandlerSystem extends BaseSystem {
 
             if (world.getSystem(ActionCameraSystem.class).isProcessing()) return false;
 
-            if (world.getSystem(TurnSystem.class).getTurn() == TurnSystem.TURN.ALLY || world.getSystem(BattleDeploymentSystem.class).isProcessing()) {
+            //TODO It may be beter to have the input system of 'Battle' have states. So within certain states,
+            //TODO you are unabelt o interact with other objects. Such as during deployment you cna't activate movment
 
-                if (world.getSystem(ActionOnTapSystem.class).touch(input.x, input.y))
+            //TODO this currently does this but is not clean.
+
+            if (world.getSystem(BattleDeploymentSystem.class).isProcessing()) {
+
+                if(world.getSystem(ActionOnTapSystem.class).touch(input.x, input.y))
+                    return true;
+
+            } else if (world.getSystem(TurnSystem.class).getTurn() == TurnSystem.TURN.ALLY) {
+
+                if(world.getSystem(ActionOnTapSystem.class).touch(input.x, input.y))
                     return true;
 
                 if (world.getSystem(SelectedTargetSystem.class).selectCharacter(input.x, input.y))
@@ -72,6 +82,8 @@ public class BattleWorldInputHandlerSystem extends BaseSystem {
                 world.getSystem(BattleScreenUISystem.class).reset();
 
             }
+
+
             return false;
         }
     }

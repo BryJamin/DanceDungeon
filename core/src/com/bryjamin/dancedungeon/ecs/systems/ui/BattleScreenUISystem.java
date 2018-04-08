@@ -22,7 +22,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.MainGame;
+import com.bryjamin.dancedungeon.Observer;
 import com.bryjamin.dancedungeon.assets.FileStrings;
+import com.bryjamin.dancedungeon.assets.Padding;
 import com.bryjamin.dancedungeon.assets.Skins;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.SkillButtonComponent;
@@ -30,6 +32,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.UITargetingComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.BattleDeploymentSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BattleMessageSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
@@ -53,10 +56,13 @@ public class BattleScreenUISystem extends EntitySystem {
     private static final float SIZE = Measure.units(10f);
     private TileSystem tileSystem;
     private Table container = new Table();
-    private Table skillsTable = new Table();
-    private Table infoTable = new Table();
 
-    private Table profileTable = new Table();
+
+    private Table skillButtonsTable = new Table();
+    private Table skillInformationTable = new Table();
+    private Table characterProfileAndHealthTable = new Table();
+
+    private static final float BOTTOM_TABLE_HEIGHT = Measure.units(20f);
 
 
     private Label title;
@@ -91,19 +97,13 @@ public class BattleScreenUISystem extends EntitySystem {
         container.align(Align.bottomLeft);
         container.setTransform(false);
 
-        container.add(profileTable);
 
-        infoTable = new Table(uiSkin);
-        skillsTable = new Table(uiSkin);
-        skillsTable.setDebug(true);
-        container.add(skillsTable).width(Measure.units(50f));
-        container.add(infoTable).width(Measure.units(30f)).height(Measure.units(17.5f));
 
-        title = new Label("", uiSkin);
-        description = new Label("", uiSkin);
-        description.setWrap(true);
-        description.setAlignment(Align.center);
+        container.add(characterProfileAndHealthTable);
 
+        skillInformationTable = new Table(uiSkin);
+        skillButtonsTable = new Table(uiSkin);
+        skillButtonsTable.setDebug(true);
 
         endTurn = new TextButton("End Turn", uiSkin);
 
@@ -131,11 +131,12 @@ public class BattleScreenUISystem extends EntitySystem {
     @Override
     protected void processSystem() {
 
-        if(actionCameraSystem.isProcessing() || !turnSystem.isTurn(TurnSystem.TURN.ALLY)){
+        if (actionCameraSystem.isProcessing() || !turnSystem.isTurn(TurnSystem.TURN.ALLY)) {
             endTurn.setVisible(false);
         } else {
             endTurn.setVisible(true);
         }
+
 
     }
 
@@ -155,20 +156,20 @@ public class BattleScreenUISystem extends EntitySystem {
         UnitData unitData = e.getComponent(UnitComponent.class).getUnitData();
 
         Label name = new Label(unitData.name, uiSkin);
-        profileTable = new Table(uiSkin);
-        profileTable.add(name).height(Measure.units(5f)).expandY();
-        profileTable.row();
-        profileTable.add(new Image(new TextureRegionDrawable(atlas.findRegion(unitData.icon)))).size(Measure.units(7.5f), Measure.units(7.5f)).expandY();
+        characterProfileAndHealthTable = new Table(uiSkin);
+        characterProfileAndHealthTable.add(name).height(Measure.units(5f)).expandY();
+        characterProfileAndHealthTable.row();
+        characterProfileAndHealthTable.add(new Image(new TextureRegionDrawable(atlas.findRegion(unitData.icon)))).size(Measure.units(7.5f), Measure.units(7.5f)).expandY();
 
 
 
-        container.add(profileTable).width(Measure.units(20f));
-        container.add(skillsTable).width(Measure.units(22.5f));
+        container.add(characterProfileAndHealthTable).width(Measure.units(20f));
+        container.add(skillButtonsTable).width(Measure.units(22.5f));
 
-        skillsTable.clearChildren();
+        skillButtonsTable.clearChildren();
 
-        skillsTable.add(new Label("Skills", uiSkin)).height(Measure.units(5f));
-        skillsTable.row();
+        skillButtonsTable.add(new Label("Skills", uiSkin)).height(Measure.units(5f));
+        skillButtonsTable.row();
 
         SkillsComponent skillsComponent = e.getComponent(SkillsComponent.class);
         for (int i = 0; i < skillsComponent.skills.size; i++) {
@@ -181,18 +182,18 @@ public class BattleScreenUISystem extends EntitySystem {
         container.clearChildren();
         createChaacterSkillHUD(player);
 
-        infoTable.remove();
-        infoTable.reset();
+        skillInformationTable.remove();
+        skillInformationTable.reset();
 
-        infoTable = new Table();
-        infoTable.reset();
-        infoTable.clear();
+        skillInformationTable = new Table();
+        skillInformationTable.reset();
+        skillInformationTable.clear();
 
-        container.add(infoTable).width(Measure.units(60f)).expandX().fill();
+        container.add(skillInformationTable).width(Measure.units(60f)).expandX().fill();
 
-        infoTable.add(new Label(skill.getName(), uiSkin));
-        infoTable.align(Align.top);
-        infoTable.row();
+        skillInformationTable.add(new Label(skill.getName(), uiSkin));
+        skillInformationTable.align(Align.top);
+        skillInformationTable.row();
 
 
         description = new Label(skill.getDescription(world, player), uiSkin);
@@ -200,7 +201,7 @@ public class BattleScreenUISystem extends EntitySystem {
         description.setText(skill.getDescription(world, player));
         description.setAlignment(Align.center);
 
-        infoTable.add(description).width(Measure.units(60f));
+        skillInformationTable.add(description).width(Measure.units(60f));
 
     }
 
@@ -222,7 +223,7 @@ public class BattleScreenUISystem extends EntitySystem {
 
         Drawable drawable = new TextureRegionDrawable(atlas.findRegion(skill.getIcon()));
         Button btn = new Button(drawable);
-        skillsTable.add(btn).width(size).height(size).pad(Measure.units(1.5f));
+        skillButtonsTable.add(btn).width(size).height(size).pad(Measure.units(1.5f));
         btn.addListener(new ClickListener(){
 
             @Override
@@ -236,7 +237,6 @@ public class BattleScreenUISystem extends EntitySystem {
         });
 
     }
-
 
     /**
      * Clears the button entities and selected entity from the system
@@ -253,6 +253,5 @@ public class BattleScreenUISystem extends EntitySystem {
         container.clearChildren();
         container.setVisible(false);
     }
-
 
 }

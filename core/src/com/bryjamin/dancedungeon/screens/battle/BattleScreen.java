@@ -83,7 +83,7 @@ public class BattleScreen extends AbstractScreen {
 
                         //Initialize Tiles
                         new TileSystem(),
-                        new BattleDeploymentSystem((BattleEvent) gameMap.getCurrentMapNode().getMapEvent()),
+                        new BattleDeploymentSystem(game, (BattleEvent) gameMap.getCurrentMapNode().getMapEvent()),
 
                         new BattleWorldInputHandlerSystem(gameport),
                         new BattleScreenUISystem(UIStage, game),

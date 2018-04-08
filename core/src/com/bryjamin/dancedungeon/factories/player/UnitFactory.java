@@ -22,6 +22,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.AffectMoraleComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.FriendlyComponent;
@@ -88,12 +89,19 @@ public class UnitFactory {
                         .width(r.width)
                         .height(r.height)
                         .build()))
-                .add(new ActionOnTapComponent(new WorldAction() {
-                    @Override
-                    public void performAction(World world, Entity entity) {
-                        System.out.println("Hi");
-                    }
-                }));
+/*                .add(new FadeComponent(new FadeComponent.FadeBuilder()
+                        .fadeIn(true)
+                        .alpha(0.17f)
+                        .minAlpha(0.15f)
+                        .maxAlpha(0.55f)
+                        .maximumTime(1.5f)));*/
+                .add(new FadeComponent(
+                        new FadeComponent.FadeBuilder()
+                                .fadeIn(true)
+                                .minAlpha(0.15f)
+                                .maxAlpha(0.85f)
+                               // .endless(true)
+                                .maximumTime(1.5f)));
         return e;
     }
 
