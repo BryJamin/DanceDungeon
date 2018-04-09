@@ -5,6 +5,7 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.badlogic.gdx.utils.Array;
+import com.bryjamin.dancedungeon.Observer;
 import com.bryjamin.dancedungeon.ecs.components.actions.UtilityAiComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.BuffComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
@@ -34,6 +35,8 @@ public class TurnSystem extends EntitySystem {
     private ComponentMapper<SkillsComponent> skillMapper;
     private ComponentMapper<StatComponent> statMapper;
 
+
+    private Array<Observer> nextTurnObservers = new Array<Observer>();
 
     private ComponentMapper<UtilityAiComponent> utilityAiMapper;
 
@@ -116,6 +119,12 @@ public class TurnSystem extends EntitySystem {
         if (turn == ENEMY) {
             currentTurnEntities.addAll(enemyTurnEntities);
         } else if (turn == ALLY) {
+
+
+            for(Observer o : nextTurnObservers){ //Notifies observers it is now the player's turn.
+                o.onNotify();
+            }
+
             currentTurnEntities.addAll(allyTurnEntities);
            // world.getSystem(SelectedTargetSystem.class).reselectEntityAfterActionComplete();
         }
@@ -260,6 +269,11 @@ public class TurnSystem extends EntitySystem {
 
     public void setProcessingFlag(boolean processingFlag) {
         this.processingFlag = processingFlag;
+    }
+
+
+    public void addNextTurnObserver(Observer o){
+        this.nextTurnObservers.add(o);
     }
 }
 

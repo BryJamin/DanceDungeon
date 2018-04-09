@@ -1,6 +1,7 @@
 package com.bryjamin.dancedungeon.factories.map.event.objectives;
 
 import com.artemis.World;
+import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.Observer;
 
 public abstract class AbstractObjective implements Observer {
@@ -10,6 +11,8 @@ public abstract class AbstractObjective implements Observer {
         END_TURN,
         MORALE_HIT
     }
+
+    private Array<Observer> observerArray = new Array<Observer>();
 
 
     private UpdateOn[] updateOnArray;
@@ -25,4 +28,16 @@ public abstract class AbstractObjective implements Observer {
     public UpdateOn[] getUpdateOnArray() {
         return updateOnArray;
     }
+
+    public void addObserver(Observer o){
+        observerArray.add(o);
+    }
+
+    @Override
+    public void onNotify() {
+        for(Observer o : observerArray){
+            o.onNotify();
+        }
+    }
+
 }

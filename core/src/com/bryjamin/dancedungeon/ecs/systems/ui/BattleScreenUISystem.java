@@ -23,6 +23,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.assets.FileStrings;
+import com.bryjamin.dancedungeon.assets.Padding;
 import com.bryjamin.dancedungeon.assets.Skins;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.SkillButtonComponent;
@@ -33,6 +34,7 @@ import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BattleMessageSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
+import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.utils.Measure;
@@ -58,6 +60,8 @@ public class BattleScreenUISystem extends EntitySystem {
     private Table skillButtonsTable = new Table();
     private Table skillInformationTable = new Table();
     private Table characterProfileAndHealthTable = new Table();
+
+    private Table objectivesTable;
 
     private static final float BOTTOM_TABLE_HEIGHT = Measure.units(15f);
 
@@ -102,6 +106,13 @@ public class BattleScreenUISystem extends EntitySystem {
         skillButtonsTable = new Table(uiSkin);
         skillButtonsTable.setDebug(true);
 
+        objectivesTable = new Table(uiSkin);
+        objectivesTable.setWidth(Measure.units(30f));
+        objectivesTable.setHeight(Measure.units(27.5f));
+        objectivesTable.setPosition(stage.getWidth() - Measure.units(30f), Measure.units(25f));
+        objectivesTable.setDebug(true);
+        stage.addActor(objectivesTable);
+
         endTurn = new TextButton("End Turn", uiSkin);
 
 
@@ -113,7 +124,7 @@ public class BattleScreenUISystem extends EntitySystem {
             }
         });
 
-        endTurn.setPosition(stage.getWidth() - Measure.units(22.5f), Measure.units(15f));
+        endTurn.setPosition(stage.getWidth() - Measure.units(20f), Measure.units(15f));
         endTurn.setWidth(Measure.units(20f));
         endTurn.setHeight(Measure.units(7.5f));
 
@@ -121,10 +132,6 @@ public class BattleScreenUISystem extends EntitySystem {
         stage.addActor(endTurn);
 
         stage.addActor(container);
-
-
-
-
 
 
     }
@@ -142,19 +149,25 @@ public class BattleScreenUISystem extends EntitySystem {
     }
 
 
-    public Table objectiveTable(){
+    public void updateObjectiveTable(BattleEvent battleEvent){
 
-        Table objectivesTable = new Table(uiSkin);
+        if(objectivesTable.hasChildren()){
+            objectivesTable.clear();
+        }
 
-        stage.addActor(objectivesTable);
+        objectivesTable.add(new Label("Objectives", uiSkin)).padBottom(Padding.SMALL);
 
+        objectivesTable.row();
 
+        objectivesTable.add(new Label(battleEvent.getPrimaryObjective().getDescription(), uiSkin)).padBottom(Padding.SMALL);;
 
+        objectivesTable.row();
 
-        return new Table(uiSkin);
+        objectivesTable.add(new Label("Bonus", uiSkin)).padBottom(Padding.SMALL);;
 
+        objectivesTable.row();
 
-
+        objectivesTable.add(new Label(battleEvent.getBonusObjective().getDescription(), uiSkin)).padBottom(Padding.SMALL);;
     }
 
 

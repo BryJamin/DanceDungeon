@@ -12,8 +12,11 @@ import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
+import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
+import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
 import com.bryjamin.dancedungeon.factories.map.event.MapEvent;
+import com.bryjamin.dancedungeon.factories.map.event.objectives.AbstractObjective;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.player.UnitMap;
 import com.bryjamin.dancedungeon.screens.battle.BattleScreen;
@@ -28,6 +31,8 @@ import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
 public class EndBattleSystem extends EntitySystem implements Observer {
 
     private PlayerPartyManagementSystem playerPartyManagementSystem;
+    private BattleScreenUISystem battleScreenUISystem;
+    private TurnSystem turnSystem;
     private ActionCameraSystem actionCameraSystem;
 
     private ComponentMapper<EnemyComponent> enemyMapper;
@@ -44,54 +49,8 @@ public class EndBattleSystem extends EntitySystem implements Observer {
 
     private boolean processingFlag = true;
 
-    private MapEvent currentEvent;
+    private BattleEvent currentEvent;
 
-    @Override
-    public void onNotify() {
-        //TODO, decide if notify is appropriate. Also, there is not really a reason for the state change,
-
-        //UNTIL I CAN FIX TEH ACTION CAMERA SYSTEM IN REGARDS TO THE SIMULTANEOUS ATTACKS HAPPENS
-        //ON DIFFERENT PARTS OF THE MAP I NEED TO ADD A CHECK FOR IF THE FLAG IS FALSE
-        //OTHERWISE THIS WILL CRASH
-
-        if(!processingFlag) return;
-
-
-        if(playerPartyManagementSystem.getPartyDetails().morale == 0) {
-            ((BattleScreen) game.getScreen()).defeat();
-
-            actionCameraSystem.observerArray.removeValue(this, true);
-        }
-
-        if (currentEvent.isComplete(world)) {
-            state = State.CLEAN_UP;
-            currentEvent.cleanUpEvent(world);
-
-            for(Entity e : playerBag){
-                HealthComponent hc = e.getComponent(HealthComponent.class);
-                StatComponent statComponent = e.getComponent(StatComponent.class);
-
-                statComponent.health = (int) hc.health;
-                statComponent.maxHealth = (int) hc.maxHealth;
-            }
-
-            actionCameraSystem.observerArray.removeValue(this, true);
-
-            ((BattleScreen) game.getScreen()).victory(partyDetails);
-
-        }
-
-    }
-
-    private enum State {
-        CLEAN_UP, START_UP, DURING, END
-    }
-
-    private State state = State.START_UP;
-
-    public Bag<Entity> getPlayerBag() {
-        return playerBag;
-    }
 
     public EndBattleSystem(MainGame game, GameMap gameMap, PartyDetails partyDetails) {
         super(Aspect.one(EnemyComponent.class, PlayerControlledComponent.class));
@@ -99,13 +58,31 @@ public class EndBattleSystem extends EntitySystem implements Observer {
         this.game = game;
         this.gameMap = gameMap;
         //partyDetails.getPlayerParty().
-        this.currentEvent = gameMap.getCurrentMapNode().getMapEvent();
+        this.currentEvent = (BattleEvent) gameMap.getCurrentMapNode().getMapEvent();
 
     }
 
     @Override
     protected void initialize() {
         actionCameraSystem.observerArray.add(this);
+
+        AbstractObjective[] objectives = new AbstractObjective[]{currentEvent.getPrimaryObjective(), currentEvent.getBonusObjective()};
+
+        for(int i = 0; i < objectives.length; i++) {
+            for(int j = 0; j < objectives[i].getUpdateOnArray().length; j++){
+                switch (objectives[i].getUpdateOnArray()[j]){
+                    case END_TURN:
+                        turnSystem.addNextTurnObserver(objectives[i]);
+                        break;
+                }
+            }
+
+            objectives[i].addObserver(this);
+
+        }
+
+        battleScreenUISystem.updateObjectiveTable(currentEvent);
+
     }
 
     @Override
@@ -132,10 +109,48 @@ public class EndBattleSystem extends EntitySystem implements Observer {
     }
 
 
-    public void endBattle() {
-
+    public BattleEvent getCurrentEvent() {
+        return currentEvent;
     }
 
 
+    @Override
+    public void onNotify() {
+        //TODO, decide if notify is appropriate. Also, there is not really a reason for the state change,
+
+        //UNTIL I CAN FIX TEH ACTION CAMERA SYSTEM IN REGARDS TO THE SIMULTANEOUS ATTACKS HAPPENS
+        //ON DIFFERENT PARTS OF THE MAP I NEED TO ADD A CHECK FOR IF THE FLAG IS FALSE
+        //OTHERWISE THIS WILL CRASH
+
+        if(!processingFlag) return;
+
+
+        if(playerPartyManagementSystem.getPartyDetails().morale == 0) {
+            ((BattleScreen) game.getScreen()).defeat();
+
+            actionCameraSystem.observerArray.removeValue(this, true);
+        }
+
+        if (currentEvent.isComplete(world)) {
+            currentEvent.cleanUpEvent(world);
+
+            for(Entity e : playerBag){
+                HealthComponent hc = e.getComponent(HealthComponent.class);
+                StatComponent statComponent = e.getComponent(StatComponent.class);
+
+                statComponent.health = (int) hc.health;
+                statComponent.maxHealth = (int) hc.maxHealth;
+            }
+
+            actionCameraSystem.observerArray.removeValue(this, true);
+
+            ((BattleScreen) game.getScreen()).victory(partyDetails);
+
+        }
+
+        battleScreenUISystem.updateObjectiveTable(currentEvent);
+
+
+    }
 
 }
