@@ -28,6 +28,7 @@ import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
 public class EndBattleSystem extends EntitySystem implements Observer {
 
     private PlayerPartyManagementSystem playerPartyManagementSystem;
+    private ActionCameraSystem actionCameraSystem;
 
     private ComponentMapper<EnemyComponent> enemyMapper;
     private ComponentMapper<PlayerControlledComponent> pcMapper;
@@ -58,8 +59,28 @@ public class EndBattleSystem extends EntitySystem implements Observer {
 
         if(playerPartyManagementSystem.getPartyDetails().morale == 0) {
             ((BattleScreen) game.getScreen()).defeat();
-            processingFlag = false;
+
+            actionCameraSystem.observerArray.removeValue(this, true);
         }
+
+        if (currentEvent.isComplete(world)) {
+            state = State.CLEAN_UP;
+            currentEvent.cleanUpEvent(world);
+
+            for(Entity e : playerBag){
+                HealthComponent hc = e.getComponent(HealthComponent.class);
+                StatComponent statComponent = e.getComponent(StatComponent.class);
+
+                statComponent.health = (int) hc.health;
+                statComponent.maxHealth = (int) hc.maxHealth;
+            }
+
+            actionCameraSystem.observerArray.removeValue(this, true);
+
+            ((BattleScreen) game.getScreen()).victory(partyDetails);
+
+        }
+
     }
 
     private enum State {
@@ -84,69 +105,17 @@ public class EndBattleSystem extends EntitySystem implements Observer {
 
     @Override
     protected void initialize() {
-        playerPartyManagementSystem.addObserver(this);
+        actionCameraSystem.observerArray.add(this);
     }
-
 
     @Override
     protected void processSystem() {
 
-        //TODO I convert to state end after there has been a defeat,
-        //TODO it might be better to have some kind of method that, then turns off this system
-        //TODO once the battle is over
-/*        if (playerBag.isEmpty()) {
-            ((BattleScreen) game.getScreen()).defeat();
-            state = State.END;
-            processingFlag = false;
-        }*/
-
-        switch (state){
-            case START_UP:
-                currentEvent.setUpEvent(world);
-                state = State.DURING;
-                break;
-
-            case DURING:
-                if (currentEvent.isComplete(world)) {
-                    state = State.CLEAN_UP;
-                    currentEvent.cleanUpEvent(world);
-                }
-                break;
-
-            case CLEAN_UP:
-
-                if(currentEvent.cleanUpComplete(world)){
-
-                    for(Entity e : playerBag){
-                        HealthComponent hc = e.getComponent(HealthComponent.class);
-                        StatComponent statComponent = e.getComponent(StatComponent.class);
-
-                        statComponent.health = (int) hc.health;
-                        statComponent.maxHealth = (int) hc.maxHealth;
-                    }
-
-
-                    ((BattleScreen) game.getScreen()).victory(partyDetails);
-
-                    processingFlag = false;
-
-                    state = State.END;
-                }
-
-                break;
-        }
-
     }
-
-
-    private void setupEvent(MapEvent mapEvent) {
-        mapEvent.setUpEvent(world);
-    }
-
 
     @Override
     protected boolean checkProcessing() {
-        return processingFlag;
+        return false;
     }
 
 

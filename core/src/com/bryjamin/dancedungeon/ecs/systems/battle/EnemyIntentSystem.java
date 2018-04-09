@@ -8,6 +8,7 @@ import com.artemis.utils.IntBag;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
+import com.bryjamin.dancedungeon.Observer;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
@@ -31,7 +32,7 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
  * Used to show enemy intent to players
  */
 
-public class EnemyIntentSystem extends EntitySystem {
+public class EnemyIntentSystem extends EntitySystem implements Observer{
 
 
     TileSystem tileSystem;
@@ -40,12 +41,19 @@ public class EnemyIntentSystem extends EntitySystem {
     ComponentMapper<StoredSkillComponent> storedMapper;
     ComponentMapper<CoordinateComponent> coordinateMapper;
 
+    private ActionCameraSystem actionCameraSystem;
+
     TargetingFactory targetingFactory = new TargetingFactory();
 
     private boolean processingFlag = false;
 
     public EnemyIntentSystem() {
         super(Aspect.all(StoredSkillComponent.class, CoordinateComponent.class));
+    }
+
+    @Override
+    protected void initialize() {
+        actionCameraSystem.observerArray.add(this);
     }
 
     @Override
@@ -182,17 +190,8 @@ public class EnemyIntentSystem extends EntitySystem {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    @Override
+    public void onNotify() {//The Intent system watches both the turn and action camera system to decide when to update itself
+        updateIntent();
+    }
 }

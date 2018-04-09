@@ -22,9 +22,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.MainGame;
-import com.bryjamin.dancedungeon.Observer;
 import com.bryjamin.dancedungeon.assets.FileStrings;
-import com.bryjamin.dancedungeon.assets.Padding;
 import com.bryjamin.dancedungeon.assets.Skins;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.SkillButtonComponent;
@@ -32,7 +30,6 @@ import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.UITargetingComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
-import com.bryjamin.dancedungeon.ecs.systems.battle.BattleDeploymentSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BattleMessageSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
@@ -62,7 +59,7 @@ public class BattleScreenUISystem extends EntitySystem {
     private Table skillInformationTable = new Table();
     private Table characterProfileAndHealthTable = new Table();
 
-    private static final float BOTTOM_TABLE_HEIGHT = Measure.units(20f);
+    private static final float BOTTOM_TABLE_HEIGHT = Measure.units(15f);
 
 
     private Label title;
@@ -93,7 +90,7 @@ public class BattleScreenUISystem extends EntitySystem {
         container = new Table(uiSkin);
         container.setDebug(true);
         container.setWidth(stage.getWidth());
-        container.setHeight(Measure.units(15f));
+        container.setHeight(BOTTOM_TABLE_HEIGHT);
         container.align(Align.bottomLeft);
         container.setTransform(false);
 
@@ -116,14 +113,18 @@ public class BattleScreenUISystem extends EntitySystem {
             }
         });
 
-        endTurn.setPosition(stage.getWidth() - Measure.units(15f), Measure.units(40f));
-        endTurn.setWidth(Measure.units(15f));
-        endTurn.setHeight(Measure.units(10f));
+        endTurn.setPosition(stage.getWidth() - Measure.units(22.5f), Measure.units(15f));
+        endTurn.setWidth(Measure.units(20f));
+        endTurn.setHeight(Measure.units(7.5f));
 
 
         stage.addActor(endTurn);
 
         stage.addActor(container);
+
+
+
+
 
 
     }
@@ -141,12 +142,29 @@ public class BattleScreenUISystem extends EntitySystem {
     }
 
 
+    public Table objectiveTable(){
+
+        Table objectivesTable = new Table(uiSkin);
+
+        stage.addActor(objectivesTable);
+
+
+
+
+        return new Table(uiSkin);
+
+
+
+    }
+
+
+
     /**
      * Populates the bottom of the scene with a HUD that displays the selected character's name and skills.
      * You can interact with the skills to view what they do and show where they will target on the battle map.
      * @param e
      */
-    public void createChaacterSkillHUD(Entity e) {
+    public void createCharacterSkillHUD(Entity e) {
 
         container.clearChildren();
         container.clear();
@@ -180,7 +198,7 @@ public class BattleScreenUISystem extends EntitySystem {
     private void createCreateSkillText(Entity player, Skill skill) {
 
         container.clearChildren();
-        createChaacterSkillHUD(player);
+        createCharacterSkillHUD(player);
 
         skillInformationTable.remove();
         skillInformationTable.reset();

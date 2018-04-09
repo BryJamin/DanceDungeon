@@ -16,6 +16,8 @@ import com.bryjamin.dancedungeon.ecs.systems.battle.EndBattleSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
 import com.bryjamin.dancedungeon.factories.enemy.EnemyFactory;
+import com.bryjamin.dancedungeon.factories.map.event.objectives.AbstractObjective;
+import com.bryjamin.dancedungeon.factories.map.event.objectives.DefeatAllEnemiesObjective;
 import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
@@ -25,6 +27,12 @@ import com.bryjamin.dancedungeon.utils.math.Coordinates;
  */
 
 public class BattleEvent extends com.bryjamin.dancedungeon.factories.map.event.MapEvent {
+
+
+    private AbstractObjective primaryObjective = new DefeatAllEnemiesObjective();
+    private AbstractObjective bonusObjective = new DefeatAllEnemiesObjective();
+
+
 
     private Array<String> enemies = new Array<String>();
 

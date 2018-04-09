@@ -6,8 +6,10 @@ import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.artemis.World;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.Queue;
+import com.bryjamin.dancedungeon.Observer;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
@@ -41,6 +43,8 @@ public class ActionCameraSystem extends EntitySystem {
     private WorldConditionalAction currentConditionalAction;
 
     private boolean hasBegun = false;
+
+    public Array<Observer> observerArray = new Array<Observer>();
 
     private boolean processingFlag = true;
 
@@ -81,6 +85,15 @@ public class ActionCameraSystem extends EntitySystem {
         if(this.getEntities().size() == 0){
             actionQueue.clear();
             state = State.PERFORM_ACTION;
+
+            processingFlag = false;
+
+            for(Observer o : observerArray){
+                o.onNotify();
+            }
+
+        } else {
+            processingFlag = true;
         }
 
 
@@ -135,6 +148,9 @@ public class ActionCameraSystem extends EntitySystem {
                     }
 
                     if(noMoreActions){
+
+
+
                         current.edit().remove(WaitActionComponent.class);
                     }
 
@@ -150,10 +166,11 @@ public class ActionCameraSystem extends EntitySystem {
         actionQueue.addLast(wca);
         queuedActionMap.put(wca, e);
         e.edit().add(new WaitActionComponent());
+        processingFlag = true;
     }
 
     public boolean isProcessing() {
-        return checkProcessing();
+        return processingFlag;
     }
 
 
@@ -288,9 +305,9 @@ public class ActionCameraSystem extends EntitySystem {
         });
     }
 
-    @Override
-    protected boolean checkProcessing() {
+
+/*    protected boolean checkProcessing() {
         processingFlag = actionQueue.size != 0;
         return processingFlag;
-    }
+    }*/
 }
