@@ -15,8 +15,10 @@ public class Skins {
     public static Skin DEFAULT_SKIN(AssetManager assetManager){
         Skin uiSkin = new Skin();
         uiSkin.add("myFont12", assetManager.get(Fonts.MEDIUM));
+        uiSkin.add(Fonts.SMALL_FONT, assetManager.get(Fonts.SMALL));
         uiSkin.addRegions(new TextureAtlas(Gdx.files.internal("uiskin.atlas")));
         uiSkin.load(Gdx.files.internal("uiskin.json"));
+
         return uiSkin;
     }
 

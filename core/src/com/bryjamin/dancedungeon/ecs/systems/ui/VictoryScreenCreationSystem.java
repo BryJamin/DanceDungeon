@@ -17,6 +17,7 @@ import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.assets.Skins;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
+import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
 import com.bryjamin.dancedungeon.screens.battle.BattleScreen;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
 import com.bryjamin.dancedungeon.screens.strategy.MapScreen;
@@ -36,8 +37,10 @@ public class VictoryScreenCreationSystem extends BaseSystem {
     private Viewport gameport;
     private MainGame game;
     private PartyDetails partyDetails;
+    private BattleEvent battleEvent;
 
-    public VictoryScreenCreationSystem(MainGame game, Viewport gameport, Screen nextScreen, PartyDetails partyDetails){
+
+    public VictoryScreenCreationSystem(MainGame game, Viewport gameport, Screen nextScreen, BattleEvent battleEvent, PartyDetails partyDetails){
         this.nextScreen = nextScreen;
         this.gameport = gameport;
         this.game = game;
@@ -57,10 +60,12 @@ public class VictoryScreenCreationSystem extends BaseSystem {
 
     }
 
-
     @Override
-    protected void initialize() {
+    protected boolean checkProcessing() {
+        return false;
+    }
 
+    public void createVictoryRewards(){
         Stage stage = stageUIRenderingSystem.stage;
 
         Table container = stageUIRenderingSystem.createContainerTable();
@@ -92,9 +97,8 @@ public class VictoryScreenCreationSystem extends BaseSystem {
         });
 
         victoryTable.add(textButton).height(Measure.units(5f)).expandX();
-
-
     }
+
 
     public Table createRewardTable(){
         Table rewardTable = new Table(uiSkin);

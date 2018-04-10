@@ -25,6 +25,16 @@ public abstract class AbstractObjective implements Observer {
     public abstract String getDescription();
     public abstract boolean isComplete(World world);
 
+    /**
+     * This is mainly used for bonus objectives.
+     * @param world
+     * @return
+     */
+    public boolean isFailed(World world){
+        return false;
+    }
+
+
     public UpdateOn[] getUpdateOnArray() {
         return updateOnArray;
     }

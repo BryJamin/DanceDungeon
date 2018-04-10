@@ -46,6 +46,7 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.ScaleTransformationSystem
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.InformationBannerSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
+import com.bryjamin.dancedungeon.ecs.systems.ui.VictoryScreenCreationSystem;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
 import com.bryjamin.dancedungeon.screens.AbstractScreen;
@@ -83,6 +84,9 @@ public class BattleScreen extends AbstractScreen {
 
                         //Initialize Tiles
                         new TileSystem(),
+
+                        new VictoryScreenCreationSystem(game, gameport, this, (BattleEvent) gameMap.getCurrentMapNode().getMapEvent(), partyDetails),
+
                         new BattleDeploymentSystem(game, (BattleEvent) gameMap.getCurrentMapNode().getMapEvent()),
 
                         new BattleWorldInputHandlerSystem(gameport),

@@ -132,7 +132,6 @@ public class EndBattleSystem extends EntitySystem implements Observer {
         }
 
         if (currentEvent.isComplete(world)) {
-            currentEvent.cleanUpEvent(world);
 
             for(Entity e : playerBag){
                 HealthComponent hc = e.getComponent(HealthComponent.class);

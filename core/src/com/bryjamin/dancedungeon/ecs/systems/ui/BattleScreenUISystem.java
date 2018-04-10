@@ -4,6 +4,7 @@ import com.artemis.Aspect;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.artemis.utils.IntBag;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -23,6 +24,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.assets.FileStrings;
+import com.bryjamin.dancedungeon.assets.Fonts;
 import com.bryjamin.dancedungeon.assets.Padding;
 import com.bryjamin.dancedungeon.assets.Skins;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
@@ -98,8 +100,6 @@ public class BattleScreenUISystem extends EntitySystem {
         container.align(Align.bottomLeft);
         container.setTransform(false);
 
-
-
         container.add(characterProfileAndHealthTable);
 
         skillInformationTable = new Table(uiSkin);
@@ -167,7 +167,9 @@ public class BattleScreenUISystem extends EntitySystem {
 
         objectivesTable.row();
 
-        objectivesTable.add(new Label(battleEvent.getBonusObjective().getDescription(), uiSkin)).padBottom(Padding.SMALL);;
+        objectivesTable.add(new Label(battleEvent.getBonusObjective().getDescription(), uiSkin, Fonts.SMALL_FONT,
+                battleEvent.getBonusObjective().isFailed(world) ? new Color(Color.GRAY) : new Color(Color.WHITE)
+                )).padBottom(Padding.SMALL);;
     }
 
 

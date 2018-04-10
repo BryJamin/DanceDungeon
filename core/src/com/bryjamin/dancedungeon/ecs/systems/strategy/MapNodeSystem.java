@@ -105,12 +105,11 @@ public class MapNodeSystem extends EntitySystem {
         return new WorldAction() {
             @Override
             public void performAction(World world, Entity entity) {
+
                 gameMap.setCurrentMapNode(mapNode);
 
                 MapEvent.EventType eventType = mapNode.getEventType();
-
                 mapNode.setMapEvent(eventGenerationSystem.getMapEvent(mapNode.getEventType()));
-
 
                 switch (eventType){
 
