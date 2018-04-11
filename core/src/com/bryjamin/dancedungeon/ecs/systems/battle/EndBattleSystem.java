@@ -13,6 +13,7 @@ import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
+import com.bryjamin.dancedungeon.ecs.systems.ui.VictoryScreenCreationSystem;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
 import com.bryjamin.dancedungeon.factories.map.event.MapEvent;
@@ -143,7 +144,9 @@ public class EndBattleSystem extends EntitySystem implements Observer {
 
             actionCameraSystem.observerArray.removeValue(this, true);
 
-            ((BattleScreen) game.getScreen()).victory(partyDetails);
+            world.getSystem(VictoryScreenCreationSystem.class).createRewardTable();
+
+           // ((BattleScreen) game.getScreen()).victory(partyDetails);
 
         }
 

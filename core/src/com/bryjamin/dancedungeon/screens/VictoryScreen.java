@@ -45,7 +45,7 @@ public class VictoryScreen extends AbstractScreen {
         WorldConfiguration config = new WorldConfigurationBuilder()
                 .with(WorldConfigurationBuilder.Priority.HIGHEST,
 
-                        new VictoryScreenCreationSystem(game, gameport, prev, partyDetails),
+                       // new VictoryScreenCreationSystem(game, gameport, prev, partyDetails),
                         new BasicInputSystemWithStage(gameport),
 
                         new MovementSystem(),
