@@ -81,7 +81,7 @@ public class BattleScreen extends AbstractScreen {
                 .with(WorldConfigurationBuilder.Priority.HIGHEST,
 
                         //Initialize Tiles
-                        new TileSystem(),
+                        new TileSystem(battleEvent),
                         new BattleDeploymentSystem(game, battleEvent),
 
                         new BattleWorldInputHandlerSystem(gameport),

@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.bryjamin.dancedungeon.factories.map.event.EventManager;
 import com.bryjamin.dancedungeon.factories.map.event.MapEvent;
 import com.bryjamin.dancedungeon.factories.map.event.MapSection;
 import com.bryjamin.dancedungeon.utils.Measure;
@@ -32,14 +33,34 @@ public class MapGenerator {
 
     private static final int numberOfSections = 12;
 
+    EventManager eventManager = new EventManager();
+
+    private WeightedRoll<String> battleEventRoller = new WeightedRoll<String>(MathUtils.random);
+
     public GameMap generateGameMap(){
-        Array<MapSection> mapSections = calculateMap(generateMapSections());
+        Array<MapSection> mapSections = calculateMapNodeConnections(generateMapSections());
+
+
+
+
         setupMapEventTypes(mapSections);
         return new GameMap(mapSections);
     }
 
 
+
+
+
+
+    /**
+     * Given the Set of MapSection sets up what each Node will be, Either a shop, a battle or a rest.
+     * @param mapSections - Set of MapSections
+     */
     private void setupMapEventTypes(Array<MapSection> mapSections){
+
+        for(String s : eventManager.getKeys()){
+            battleEventRoller.addWeightedObjects(new WeightedObject<String>(s, 20));
+        }
 
 
         WeightedRoll<MapEvent.EventType> eventRoller = new WeightedRoll<MapEvent.EventType>(new Random());
@@ -60,9 +81,12 @@ public class MapGenerator {
         for(int i = 0; i < mapSections.size; i++){
             Array<MapNode> sectionNodes = mapSections.get(i).getMapNodes();
             for(int j = 0 ; j < sectionNodes.size; j++){
-                if(i == 0) sectionNodes.get(j).setEventType(MapEvent.EventType.BATTLE);
+                if(i == 0) setEventType(sectionNodes.get(j), MapEvent.EventType.BATTLE);
                 else if(i == mapSections.size -1 ) sectionNodes.get(j).setEventType(MapEvent.EventType.BOSS);
-                else flippableNodes.add(sectionNodes.get(j));
+                else {
+                    setEventType(sectionNodes.get(j), MapEvent.EventType.BATTLE);
+                    flippableNodes.add(sectionNodes.get(j));
+                }
             }
         }
 
@@ -71,6 +95,48 @@ public class MapGenerator {
         flipNodesToEvent(flippableNodes, MapEvent.EventType.SHOP, 5);
 
     }
+
+
+    /**
+     * Sets the event type of the map node, as well as set up it's id depending on which event type
+     * is chosen.
+     */
+    public void setEventType(MapNode mapNode, MapEvent.EventType eventType){
+
+
+        mapNode.setEventType(eventType);
+
+        switch (eventType){
+
+            case BATTLE:
+
+                //TODO verify if the ids of the parent and successor, is not the same
+
+                WeightedObject<String> roll = battleEventRoller.rollForWeight();
+                mapNode.setEventId(roll.obj());
+
+                int n = roll.getWeight() / 2;
+                if(n <= 0) n = 1;
+
+                roll.setWeight(n); //Lowers the chances of the event being picked
+
+                break;
+
+
+        }
+
+
+
+    }
+
+
+
+
+
+
+
+
+
 
 
     private void flipNodesToEvent(Array<MapNode> flippableNodes, MapEvent.EventType eventType, int count){
@@ -164,10 +230,17 @@ public class MapGenerator {
     }
 
 
-
-
-
-    private Array<MapSection> calculateMap(Array<MapSection> sections){
+    /**
+     * Walks through all sections in the array and links all nodes from the left section to
+     * the right section.
+     *
+     * This method verifies that there are no overlaps with lines.
+     *
+     * Two paths should not cross each other.
+     *
+     * @return
+     */
+    private Array<MapSection> calculateMapNodeConnections(Array<MapSection> sections){
 
         Array<MapSection> walkThroughSectionArray = new Array<MapSection>(sections);
 

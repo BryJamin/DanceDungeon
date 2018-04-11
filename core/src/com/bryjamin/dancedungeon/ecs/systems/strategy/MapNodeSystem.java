@@ -40,6 +40,8 @@ public class MapNodeSystem extends EntitySystem {
     private ComponentMapper<ActionOnTapComponent> actionOnTapMapper;
     private EventGenerationSystem eventGenerationSystem;
 
+    private EventManager eventManager = new EventManager(); //TODO how does one determine the level?
+
     private float width = Measure.units(6.5f);
     private float height = Measure.units(6.5f);
     private float gap = Measure.units(10f);
@@ -123,10 +125,7 @@ public class MapNodeSystem extends EntitySystem {
 
                     default:
                     case BATTLE:
-
-                        EventManager eventManager = new EventManager();
-                        eventManager.getKey();
-                        game.setScreen(new BattleScreen(game, game.getScreen(), eventManager.getLevel1Event(eventManager.getKey()).getEvent(), partyDetails));
+                        game.setScreen(new BattleScreen(game, game.getScreen(), eventManager.getLevel1Event(mapNode.getEventId()).getEvent(), partyDetails));
                         break;
 
                 }

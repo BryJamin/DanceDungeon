@@ -12,12 +12,12 @@ import com.bryjamin.dancedungeon.factories.map.event.MapEvent;
 
 public class MapNode {
 
+    private String eventId = "undefined";
+
     private Vector2 position = new Vector2();
 
     private Array<MapNode> successors = new Array<MapNode>();
     private Array<MapNode> parents = new Array<MapNode>();
-
-    private MapEvent mapEvent = new BattleEvent(EnemyFactory.BLOB);
 
     private MapEvent.EventType eventType = MapEvent.EventType.BATTLE;
 
@@ -62,14 +62,6 @@ public class MapNode {
         return parents.size;
     }
 
-    public void setMapEvent(MapEvent mapEvent) {
-        this.mapEvent = mapEvent;
-    }
-
-    public MapEvent getMapEvent() {
-        return mapEvent;
-    }
-
     public Array<MapNode> getSuccessors() {
         return successors;
     }
@@ -84,5 +76,13 @@ public class MapNode {
 
     public Array<MapNode> getParents() {
         return parents;
+    }
+
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
+    }
+
+    public String getEventId() {
+        return eventId;
     }
 }

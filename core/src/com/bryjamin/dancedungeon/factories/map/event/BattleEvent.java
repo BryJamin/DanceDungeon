@@ -13,6 +13,7 @@ import com.bryjamin.dancedungeon.factories.map.event.objectives.DefeatAllEnemies
 
 public class BattleEvent extends MapEvent {
 
+    private String id = "unidentified";
     private String mapLocation = MapData.MAP_1;
 
     private AbstractObjective primaryObjective = new DefeatAllEnemiesObjective();
@@ -29,9 +30,6 @@ public class BattleEvent extends MapEvent {
         this.mapLocation = b.mapLocation;
         this.primaryObjective = b.primaryObjective;
         this.bonusObjectives = b.bonusObjectives;
-
-        System.out.println(bonusObjectives.length);
-        System.out.println("Odd");
         this.enemies = b.enemyPool;
 
         System.out.println(enemies.size);
@@ -39,7 +37,6 @@ public class BattleEvent extends MapEvent {
 
 
     public Array<String> getEnemies() {
-        System.out.println("Inside here");
         return enemies;
     }
 
@@ -60,6 +57,10 @@ public class BattleEvent extends MapEvent {
     @Override
     public boolean isComplete(World world) {
         return (primaryObjective.isComplete(world));
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getMapLocation() {

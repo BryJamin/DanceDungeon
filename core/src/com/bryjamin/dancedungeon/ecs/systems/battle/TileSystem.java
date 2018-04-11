@@ -24,6 +24,7 @@ import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.SolidComponent;
 import com.bryjamin.dancedungeon.factories.decor.FloorFactory;
+import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
 import com.bryjamin.dancedungeon.factories.player.UnitFactory;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.enums.Direction;
@@ -49,6 +50,9 @@ public class TileSystem extends EntitySystem {
     private ComponentMapper<PlayerControlledComponent> pcm;
     private ComponentMapper<SolidComponent> sm;
     private ComponentMapper<EnemyComponent> enemym;
+
+    private TiledMap map;
+    private BattleEvent battleEvent;
 
 
     private float width = Measure.units(60f);
@@ -88,8 +92,9 @@ public class TileSystem extends EntitySystem {
     }
 
     @SuppressWarnings("unchecked")
-    public TileSystem() {
+    public TileSystem(BattleEvent battleEvent) {
         super(Aspect.all(CoordinateComponent.class, CenteringBoundaryComponent.class, PositionComponent.class));
+        this.battleEvent = battleEvent;
     }
 
     @Override
@@ -101,12 +106,8 @@ public class TileSystem extends EntitySystem {
         this.maxX = columns;
         this.maxY = rows;
 
-        TiledMap map;
-        if(MathUtils.randomBoolean()){
-            map = new TmxMapLoader(new InternalFileHandleResolver()).load(MapData.MAP_1);
-        } else {
-            map = new TmxMapLoader(new InternalFileHandleResolver()).load(MapData.MAP_2);
-        }
+        map = new TmxMapLoader(new InternalFileHandleResolver()).load(battleEvent.getMapLocation());
+
 
         TiledMapTileLayer objects =  (TiledMapTileLayer) map.getLayers().get("Object");
         TiledMapTileLayer background =  (TiledMapTileLayer) map.getLayers().get("Background");

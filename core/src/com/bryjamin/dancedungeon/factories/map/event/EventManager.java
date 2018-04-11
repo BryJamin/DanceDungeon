@@ -1,5 +1,6 @@
 package com.bryjamin.dancedungeon.factories.map.event;
 
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.bryjamin.dancedungeon.assets.MapData;
 import com.bryjamin.dancedungeon.factories.enemy.EnemyFactory;
@@ -7,6 +8,8 @@ import com.bryjamin.dancedungeon.factories.map.event.objectives.AbstractObjectiv
 import com.bryjamin.dancedungeon.factories.map.event.objectives.CompleteWithinObjective;
 import com.bryjamin.dancedungeon.factories.map.event.objectives.DefeatAllEnemiesObjective;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
+import com.bryjamin.dancedungeon.utils.random.WeightedObject;
+import com.bryjamin.dancedungeon.utils.random.WeightedRoll;
 
 import java.util.Map;
 
@@ -14,7 +17,7 @@ public class EventManager {
 
 
     private OrderedMap<String, EventCommand> level1BattleEvents = new OrderedMap<String, EventCommand>();
-
+    //private WeightedRoll<>
 
     private String[] keys = {
             "64f80f4a-e313-401c-91bb-981c9f623eb8",
@@ -23,18 +26,20 @@ public class EventManager {
 
 
     public EventManager() { //All events require IDs as each
-        level1BattleEvents.put("64f80f4a-e313-401c-91bb-981c9f623eb8", battleEvent1());
-        level1BattleEvents.put("1e46533c-31ed-41d6-a34e-489c8be40767", battleEvent2());
+        //level1BattleEvents.put("64f80f4a-e313-401c-91bb-981c9f623eb8", battleEvent1());
+        //level1BattleEvents.put("64f80f4a-e313-401c-91bb-981c9f623eb8", battleEvent1());
+        level1BattleEvents.put("1e46533c-31ed-41d6-a34e-489c8be40767", enemyBattle());
     }
 
 
     public EventCommand getLevel1Event(String id){
+        System.out.println(id);
         return level1BattleEvents.get(id);
     }
 
 
-    public String getKey(){
-        return level1BattleEvents.keys().toArray().get(0);
+    public Array<String> getKeys(){
+        return level1BattleEvents.keys().toArray();
     }
 
 
@@ -69,6 +74,19 @@ public class EventManager {
         };
     }
 
+
+    private EventCommand enemyBattle(){
+        return new EventCommand() {
+            @Override
+            public BattleEvent getEvent() {
+                return new BattleEvent.Builder(MapData.MAP_3)
+                        .enemyPool()
+                        .primaryObjective(new DefeatAllEnemiesObjective())
+                        .bonusObjective(new CompleteWithinObjective(AbstractObjective.Reward.MORALE, 99))
+                        .build();
+            }
+        };
+    }
 
 
 
