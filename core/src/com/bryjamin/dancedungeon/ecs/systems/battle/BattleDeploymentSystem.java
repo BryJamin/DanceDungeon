@@ -98,6 +98,9 @@ public class BattleDeploymentSystem extends EntitySystem {
         //TODO Should events determine whetehr they spawn something or should a system be a deicider?
 
         for(int i = 0; i < 3; i++){
+
+            if(battleEvent.getEnemies().size == 0) continue; //TODO this could be cleaner, if I fail to include enemies, an error should be printed.
+
             Entity e = BagToEntity.bagToEntity(world.createEntity(), enemyFactory.get(battleEvent.getEnemies().random()));
             Coordinates selected = tileSystem.getEnemySpawningLocations().random();
             spawningLocations.removeValue(selected, true);

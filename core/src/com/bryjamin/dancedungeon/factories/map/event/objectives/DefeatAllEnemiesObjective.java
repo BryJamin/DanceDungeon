@@ -10,6 +10,11 @@ public class DefeatAllEnemiesObjective extends AbstractObjective {
         super(UpdateOn.ENEMY_DEATH);
     }
 
+
+    public DefeatAllEnemiesObjective(Reward reward) {
+        super(UpdateOn.ENEMY_DEATH);
+    }
+
     @Override
     public String getDescription() {
         return "Defeat All Enemies";

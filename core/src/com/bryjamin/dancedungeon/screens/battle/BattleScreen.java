@@ -60,16 +60,16 @@ import com.bryjamin.dancedungeon.utils.GameDelta;
 public class BattleScreen extends AbstractScreen {
 
     private PartyDetails partyDetails;
-    private GameMap gameMap;
+    private BattleEvent battleEvent;
 
     private Screen previousScreen;
     private World world;
 
-    public BattleScreen(MainGame game, Screen previousScreen, GameMap gameMap, PartyDetails partyDetails) {
+    public BattleScreen(MainGame game, Screen previousScreen, BattleEvent battleEvent, PartyDetails partyDetails) {
         super(game);
         this.previousScreen = previousScreen;
         this.partyDetails = partyDetails;
-        this.gameMap = gameMap;
+        this.battleEvent = battleEvent;
         createWorld();
     }
 
@@ -82,7 +82,7 @@ public class BattleScreen extends AbstractScreen {
 
                         //Initialize Tiles
                         new TileSystem(),
-                        new BattleDeploymentSystem(game, (BattleEvent) gameMap.getCurrentMapNode().getMapEvent()),
+                        new BattleDeploymentSystem(game, battleEvent),
 
                         new BattleWorldInputHandlerSystem(gameport),
                         new BattleScreenUISystem(UIStage, game),
@@ -108,7 +108,7 @@ public class BattleScreen extends AbstractScreen {
                         new BlinkOnHitSystem(),
                         new ExpireSystem(),
                         new PlayerControlledSystem(game),
-                        new EndBattleSystem(game, gameMap, partyDetails)
+                        new EndBattleSystem(game, battleEvent, partyDetails)
                 )
                 .with(WorldConfigurationBuilder.Priority.LOWEST,
                         new ActionOnTapSystem(),

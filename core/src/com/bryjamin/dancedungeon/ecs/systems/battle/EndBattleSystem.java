@@ -16,6 +16,7 @@ import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.BattleWorldInputHandlerSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
+import com.bryjamin.dancedungeon.factories.map.MapNode;
 import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
 import com.bryjamin.dancedungeon.factories.map.event.objectives.AbstractObjective;
 import com.bryjamin.dancedungeon.screens.battle.BattleScreen;
@@ -51,13 +52,13 @@ public class EndBattleSystem extends EntitySystem implements Observer {
     private BattleEvent currentEvent;
 
 
-    public EndBattleSystem(MainGame game, GameMap gameMap, PartyDetails partyDetails) {
+    public EndBattleSystem(MainGame game, BattleEvent battleEvent, PartyDetails partyDetails) {
         super(Aspect.one(EnemyComponent.class, PlayerControlledComponent.class));
         this.partyDetails = partyDetails;
         this.game = game;
         this.gameMap = gameMap;
         //partyDetails.getPlayerParty().
-        this.currentEvent = (BattleEvent) gameMap.getCurrentMapNode().getMapEvent();
+        this.currentEvent = battleEvent;
 
     }
 

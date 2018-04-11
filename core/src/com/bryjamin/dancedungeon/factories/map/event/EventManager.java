@@ -16,10 +16,25 @@ public class EventManager {
     private OrderedMap<String, EventCommand> level1BattleEvents = new OrderedMap<String, EventCommand>();
 
 
+    private String[] keys = {
+            "64f80f4a-e313-401c-91bb-981c9f623eb8",
+            "1e46533c-31ed-41d6-a34e-489c8be40767"
+    };
+
 
     public EventManager() { //All events require IDs as each
         level1BattleEvents.put("64f80f4a-e313-401c-91bb-981c9f623eb8", battleEvent1());
         level1BattleEvents.put("1e46533c-31ed-41d6-a34e-489c8be40767", battleEvent2());
+    }
+
+
+    public EventCommand getLevel1Event(String id){
+        return level1BattleEvents.get(id);
+    }
+
+
+    public String getKey(){
+        return level1BattleEvents.keys().toArray().get(0);
     }
 
 
@@ -35,7 +50,7 @@ public class EventManager {
                         .enemyPool(EnemyFactory.FAST_BLOB, EnemyFactory.MAGE_BLOB)
                         .primaryObjective(new DefeatAllEnemiesObjective())
                         .bonusObjective(new CompleteWithinObjective(AbstractObjective.Reward.MORALE, 3))
-                        .bonusObjective().build();
+                        .build();
             }
         };
     }
@@ -48,7 +63,8 @@ public class EventManager {
                 return new BattleEvent.Builder(MapData.MAP_2)
                         .enemyPool(EnemyFactory.SPITTER_BLOB, EnemyFactory.FAST_BLOB)
                         .primaryObjective(new DefeatAllEnemiesObjective())
-                        .bonusObjective().build();
+                        .bonusObjective(new CompleteWithinObjective(AbstractObjective.Reward.MORALE, 3))
+                        .build();
             }
         };
     }

@@ -13,7 +13,19 @@ public abstract class AbstractObjective implements Observer {
     }
 
     public enum Reward { //Describes what reward is given upon the completion of an objective. s
-        MONEY, MORALE, SKILL_POINT
+        MONEY, MORALE, SKILL_POINT;
+
+        int value = 1;
+
+        Reward(){}
+
+        Reward(int value){//If there is ever a case where you get multiple value of something for doing a task.
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
     }
 
     protected Reward reward = Reward.MONEY;

@@ -16,7 +16,7 @@ public class BattleEvent extends MapEvent {
     private String mapLocation = MapData.MAP_1;
 
     private AbstractObjective primaryObjective = new DefeatAllEnemiesObjective();
-    private AbstractObjective[] bonusObjectives = new AbstractObjective[]{new CompleteWithinObjective(3)};
+    private AbstractObjective[] bonusObjectives = new AbstractObjective[]{new CompleteWithinObjective(7)};
 
     private Array<String> enemies = new Array<String>();
 
@@ -29,10 +29,17 @@ public class BattleEvent extends MapEvent {
         this.mapLocation = b.mapLocation;
         this.primaryObjective = b.primaryObjective;
         this.bonusObjectives = b.bonusObjectives;
+
+        System.out.println(bonusObjectives.length);
+        System.out.println("Odd");
+        this.enemies = b.enemyPool;
+
+        System.out.println(enemies.size);
     }
 
 
     public Array<String> getEnemies() {
+        System.out.println("Inside here");
         return enemies;
     }
 
@@ -80,7 +87,10 @@ public class BattleEvent extends MapEvent {
         { this.primaryObjective = val; return this; }
 
         public Builder bonusObjective(AbstractObjective... val)
-        { this.bonusObjectives = val; return this; }
+        { this.bonusObjectives = val;
+            System.out.println("BONUS OBJECTIVE LENGTH IS" + this.bonusObjectives.length);
+
+        return this; }
 
         public BattleEvent build(){
             return new BattleEvent(this);

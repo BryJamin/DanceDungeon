@@ -19,7 +19,7 @@ public class PartyDetails {
     public int money = 10;
     public int grenades;
     public int medicalSupplies;
-    public int reputation;
+    public int skillPoints;
     public int morale = 5;
 
     private UnitData[] party = new UnitData[PARTY_SIZE];

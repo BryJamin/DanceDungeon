@@ -288,20 +288,42 @@ public class BattleScreenUISystem extends EntitySystem {
         container.setBackground(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.BLOCK)).tint(new Color(0,0,0,0.6f)));
 
         stage.addActor(container);
-        Table victoryTable = new Table(uiSkin);
-        victoryTable.align(Align.top);
+        Table victoryContainer = new Table(uiSkin);
+        victoryContainer.align(Align.top);
 
-        container.add(victoryTable).width(Measure.units(40f)).height(Measure.units(40f));
+        container.add(victoryContainer).width(Measure.units(40f)).height(Measure.units(40f));
 
 
+        //TITLE
         Label victory = new Label("Victory", uiSkin);
-        victoryTable.add(victory).height(Measure.units(5f));
-        victoryTable.row();
-        Table rewardTable = new Table(uiSkin);
-        victoryTable.add(rewardTable).height(Measure.units(30f));
-        populateRewardTable(rewardTable,battleEvent, partyDetails);
-        victoryTable.row();
+        victoryContainer.add(victory).height(Measure.units(5f)).padTop(Padding.SMALL);
+        victoryContainer.row();
 
+
+
+
+        //PRIMARY OBJECTIVE
+        Table rewardTable = new Table(uiSkin);
+        victoryContainer.add(rewardTable).height(Measure.units(5f));
+        populateRewardTable(rewardTable, battleEvent.getPrimaryObjective(), partyDetails);
+        victoryContainer.row();
+
+        //SECONDARY OBEJECTIVE
+        Label bonus = new Label("Bonus", uiSkin);
+        victoryContainer.add(bonus);
+
+        for(AbstractObjective bonusObjective : battleEvent.getBonusObjective()) {
+            victoryContainer.row();
+
+            Table bonusObjectiveTable = new Table(uiSkin);
+            populateRewardTable(bonusObjectiveTable, bonusObjective, partyDetails);
+            victoryContainer.add(bonusObjectiveTable);
+        }
+
+
+        victoryContainer.row();
+
+        //victoryContainer.align(Align.bottom);
 
         TextButton textButton = new TextButton("Continue", uiSkin);
         textButton.addListener(new ChangeListener() {
@@ -314,29 +336,51 @@ public class BattleScreenUISystem extends EntitySystem {
             }
         });
 
-        victoryTable.add(textButton).height(Measure.units(5f)).expandX();
+        victoryContainer.add(textButton).height(Measure.units(5f)).bottom().expandX().expandY().fillX();
     }
 
 
-    public Table populateRewardTable(Table rewardTable, BattleEvent battleEvent, PartyDetails partyDetails){
+    private void populateRewardTable(Table rewardTable, AbstractObjective abstractObjective, PartyDetails partyDetails){
 
-        Label reputation = new Label("Reputation", uiSkin);
-        rewardTable.add(reputation);
+        rewardTable.align(Align.top);
 
-        partyDetails.reputation = partyDetails.reputation + 5;
-        Label reputationIncrease = new Label(" +5", uiSkin);
-        rewardTable.add(reputationIncrease);
+        AbstractObjective.Reward reward = abstractObjective.getReward();
+
+        switch (reward){
+            case MONEY:
+
+                Label goldLabel = new Label("Gold", uiSkin);
+                rewardTable.add(goldLabel);
+
+                Label goldIncrease = new Label(" +" + reward.getValue(), uiSkin);
+                rewardTable.add(goldIncrease);
+
+                partyDetails.money += reward.getValue();
+                break;
+            case MORALE:
+
+                Label gold = new Label("Morale", uiSkin);
+                rewardTable.add(gold);
+
+                Label reputationIncrease = new Label(" +" + reward.getValue(), uiSkin);
+                rewardTable.add(reputationIncrease);
+
+                partyDetails.morale += reward.getValue();
+                break;
+            case SKILL_POINT:
+
+                Label skill_point = new Label("Skill Point", uiSkin);
+                rewardTable.add(skill_point);
+
+                Label skillPointIncrease = new Label(" +" + reward.getValue(), uiSkin);
+                rewardTable.add(skillPointIncrease);
+
+                partyDetails.skillPoints += reward.getValue();
+        }
 
         rewardTable.row();
 
-        Label gold = new Label("Gold", uiSkin);
-        rewardTable.add(gold);
-
-        partyDetails.money = partyDetails.money + 5;
-        Label goldIncrease = new Label(" +5", uiSkin);
-        rewardTable.add(goldIncrease);
-
-        return rewardTable;
+        return;
 
     }
 

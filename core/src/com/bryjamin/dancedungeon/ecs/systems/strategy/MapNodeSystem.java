@@ -20,6 +20,7 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.ScaleTransformationComp
 import com.bryjamin.dancedungeon.ecs.components.map.MapNodeComponent;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.factories.map.MapNode;
+import com.bryjamin.dancedungeon.factories.map.event.EventManager;
 import com.bryjamin.dancedungeon.factories.map.event.MapEvent;
 import com.bryjamin.dancedungeon.screens.battle.BattleScreen;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
@@ -109,7 +110,6 @@ public class MapNodeSystem extends EntitySystem {
                 gameMap.setCurrentMapNode(mapNode);
 
                 MapEvent.EventType eventType = mapNode.getEventType();
-                mapNode.setMapEvent(eventGenerationSystem.getMapEvent(mapNode.getEventType()));
 
                 switch (eventType){
 
@@ -122,7 +122,12 @@ public class MapNodeSystem extends EntitySystem {
                         break;
 
                     default:
-                        game.setScreen(new BattleScreen(game, game.getScreen(), gameMap, partyDetails));
+                    case BATTLE:
+
+                        EventManager eventManager = new EventManager();
+                        eventManager.getKey();
+                        game.setScreen(new BattleScreen(game, game.getScreen(), eventManager.getLevel1Event(eventManager.getKey()).getEvent(), partyDetails));
+                        break;
 
                 }
             }
