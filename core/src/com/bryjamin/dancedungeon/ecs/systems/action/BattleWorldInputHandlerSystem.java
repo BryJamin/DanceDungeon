@@ -29,6 +29,11 @@ public class BattleWorldInputHandlerSystem extends BaseSystem {
     private StageUIRenderingSystem stageUIRenderingSystem;
     private InputMultiplexer multiplexer;
 
+    public enum State {
+        DEPLOYMENT, BATTLING, VICTORY
+    }
+
+    private State state = State.DEPLOYMENT;
 
     GestureDetector gestureDetector;
     private Viewport gameport;
@@ -43,7 +48,10 @@ public class BattleWorldInputHandlerSystem extends BaseSystem {
     @Override
     protected void initialize() {
         multiplexer.addProcessor(stageUIRenderingSystem.stage);
-        multiplexer.addProcessor(gestureDetector);
+
+        if(state != State.VICTORY) {
+            multiplexer.addProcessor(gestureDetector);
+        }
     }
 
     @Override
@@ -89,5 +97,9 @@ public class BattleWorldInputHandlerSystem extends BaseSystem {
     }
 
 
-
+    public void setState(State state) {
+        this.state = state;
+        multiplexer.clear();
+        initialize();
+    }
 }

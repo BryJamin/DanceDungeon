@@ -6,14 +6,19 @@ import com.bryjamin.dancedungeon.Observer;
 
 public abstract class AbstractObjective implements Observer {
 
-    public enum UpdateOn {
+    public enum UpdateOn { //Used to show which events objectives should be listening for.
         ENEMY_DEATH,
         END_TURN,
         MORALE_HIT
     }
 
-    private Array<Observer> observerArray = new Array<Observer>();
+    public enum Reward { //Describes what reward is given upon the completion of an objective. s
+        MONEY, MORALE, SKILL_POINT
+    }
 
+    protected Reward reward = Reward.MONEY;
+
+    private Array<Observer> observerArray = new Array<Observer>(); //Array of observers that listen to the Objective.
 
     private UpdateOn[] updateOnArray;
 
@@ -50,4 +55,7 @@ public abstract class AbstractObjective implements Observer {
         }
     }
 
+    public Reward getReward() {
+        return reward;
+    }
 }

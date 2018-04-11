@@ -4,6 +4,7 @@ import com.artemis.Aspect;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.artemis.utils.IntBag;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -27,6 +28,7 @@ import com.bryjamin.dancedungeon.assets.FileStrings;
 import com.bryjamin.dancedungeon.assets.Fonts;
 import com.bryjamin.dancedungeon.assets.Padding;
 import com.bryjamin.dancedungeon.assets.Skins;
+import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.SkillButtonComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
@@ -36,9 +38,14 @@ import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BattleMessageSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
+import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
+import com.bryjamin.dancedungeon.factories.map.event.objectives.AbstractObjective;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
+import com.bryjamin.dancedungeon.screens.battle.BattleScreen;
+import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
+import com.bryjamin.dancedungeon.screens.strategy.MapScreen;
 import com.bryjamin.dancedungeon.utils.Measure;
 
 /**
@@ -53,6 +60,8 @@ public class BattleScreenUISystem extends EntitySystem {
 
     private TurnSystem turnSystem;
     private ActionCameraSystem actionCameraSystem;
+    private StageUIRenderingSystem stageUIRenderingSystem;
+    private RenderingSystem renderingSystem;
 
     private static final float SIZE = Measure.units(10f);
     private TileSystem tileSystem;
@@ -156,20 +165,17 @@ public class BattleScreenUISystem extends EntitySystem {
         }
 
         objectivesTable.add(new Label("Objectives", uiSkin)).padBottom(Padding.SMALL);
-
         objectivesTable.row();
-
         objectivesTable.add(new Label(battleEvent.getPrimaryObjective().getDescription(), uiSkin)).padBottom(Padding.SMALL);;
-
         objectivesTable.row();
-
         objectivesTable.add(new Label("Bonus", uiSkin)).padBottom(Padding.SMALL);;
 
-        objectivesTable.row();
-
-        objectivesTable.add(new Label(battleEvent.getBonusObjective().getDescription(), uiSkin, Fonts.SMALL_FONT,
-                battleEvent.getBonusObjective().isFailed(world) ? new Color(Color.GRAY) : new Color(Color.WHITE)
-                )).padBottom(Padding.SMALL);;
+        for(AbstractObjective o : battleEvent.getBonusObjective()){
+            objectivesTable.row();
+            objectivesTable.add(new Label(o.getDescription(), uiSkin, Fonts.SMALL_FONT,
+                    o.isFailed(world) ? new Color(Color.GRAY) : new Color(Color.WHITE)
+            )).padBottom(Padding.SMALL);;
+        }
     }
 
 
@@ -270,6 +276,71 @@ public class BattleScreenUISystem extends EntitySystem {
         });
 
     }
+
+
+    public void createVictoryRewards(BattleEvent battleEvent, PartyDetails partyDetails){
+        Stage stage = stageUIRenderingSystem.stage;
+
+        //TODO maybe clear and disable other parts of the system? Handling it here is quite hidden
+        endTurn.setDisabled(true); //Disabled button functionality
+
+        Table container = stageUIRenderingSystem.createContainerTable();
+        container.setBackground(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.BLOCK)).tint(new Color(0,0,0,0.6f)));
+
+        stage.addActor(container);
+        Table victoryTable = new Table(uiSkin);
+        victoryTable.align(Align.top);
+
+        container.add(victoryTable).width(Measure.units(40f)).height(Measure.units(40f));
+
+
+        Label victory = new Label("Victory", uiSkin);
+        victoryTable.add(victory).height(Measure.units(5f));
+        victoryTable.row();
+        Table rewardTable = new Table(uiSkin);
+        victoryTable.add(rewardTable).height(Measure.units(30f));
+        populateRewardTable(rewardTable,battleEvent, partyDetails);
+        victoryTable.row();
+
+
+        TextButton textButton = new TextButton("Continue", uiSkin);
+        textButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                Screen menu = ((BattleScreen) game.getScreen()).getPreviousScreen();
+                game.getScreen().dispose();
+                game.setScreen(menu);
+                ((MapScreen) menu).battleVictory();
+            }
+        });
+
+        victoryTable.add(textButton).height(Measure.units(5f)).expandX();
+    }
+
+
+    public Table populateRewardTable(Table rewardTable, BattleEvent battleEvent, PartyDetails partyDetails){
+
+        Label reputation = new Label("Reputation", uiSkin);
+        rewardTable.add(reputation);
+
+        partyDetails.reputation = partyDetails.reputation + 5;
+        Label reputationIncrease = new Label(" +5", uiSkin);
+        rewardTable.add(reputationIncrease);
+
+        rewardTable.row();
+
+        Label gold = new Label("Gold", uiSkin);
+        rewardTable.add(gold);
+
+        partyDetails.money = partyDetails.money + 5;
+        Label goldIncrease = new Label(" +5", uiSkin);
+        rewardTable.add(goldIncrease);
+
+        return rewardTable;
+
+    }
+
+
 
     /**
      * Clears the button entities and selected entity from the system

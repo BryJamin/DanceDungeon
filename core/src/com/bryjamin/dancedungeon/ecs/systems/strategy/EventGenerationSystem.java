@@ -6,7 +6,6 @@ import com.bryjamin.dancedungeon.factories.enemy.EnemyFactory;
 import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
 import com.bryjamin.dancedungeon.factories.map.event.MapEvent;
 import com.bryjamin.dancedungeon.factories.map.event.RestEvent;
-import com.bryjamin.dancedungeon.factories.map.event.TestEvent;
 
 /**
  * Created by BB on 21/01/2018.
@@ -26,7 +25,7 @@ public class EventGenerationSystem extends BaseSystem {
             case REST:
                 return new RestEvent();
             case SHOP:
-                return new TestEvent();
+                return new RestEvent();
         }
 
 

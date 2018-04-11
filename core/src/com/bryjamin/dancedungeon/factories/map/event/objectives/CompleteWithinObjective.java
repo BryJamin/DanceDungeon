@@ -8,9 +8,17 @@ public class CompleteWithinObjective extends AbstractObjective {
 
     private int rounds;
 
+
+
     public CompleteWithinObjective(int rounds) {
         super(AbstractObjective.UpdateOn.END_TURN);
         this.rounds = rounds;
+    }
+
+    public CompleteWithinObjective(Reward reward, int rounds) {
+        super(AbstractObjective.UpdateOn.END_TURN);
+        this.rounds = rounds;
+        this.reward = reward;
     }
 
     @Override

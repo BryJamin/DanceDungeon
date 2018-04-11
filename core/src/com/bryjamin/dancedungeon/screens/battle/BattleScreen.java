@@ -46,11 +46,9 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.ScaleTransformationSystem
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.InformationBannerSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
-import com.bryjamin.dancedungeon.ecs.systems.ui.VictoryScreenCreationSystem;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
 import com.bryjamin.dancedungeon.screens.AbstractScreen;
-import com.bryjamin.dancedungeon.screens.VictoryScreen;
 import com.bryjamin.dancedungeon.screens.menu.DefeatScreen;
 import com.bryjamin.dancedungeon.utils.GameDelta;
 
@@ -84,9 +82,6 @@ public class BattleScreen extends AbstractScreen {
 
                         //Initialize Tiles
                         new TileSystem(),
-
-                        new VictoryScreenCreationSystem(game, gameport, this, (BattleEvent) gameMap.getCurrentMapNode().getMapEvent(), partyDetails),
-
                         new BattleDeploymentSystem(game, (BattleEvent) gameMap.getCurrentMapNode().getMapEvent()),
 
                         new BattleWorldInputHandlerSystem(gameport),
@@ -155,11 +150,6 @@ public class BattleScreen extends AbstractScreen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         GameDelta.delta(world, delta);
     }
-
-    public void victory(PartyDetails partyDetails){
-        game.setScreen(new VictoryScreen(game, this, partyDetails));
-    }
-
 
     public void defeat(){
         game.setScreen(new DefeatScreen(game, this));

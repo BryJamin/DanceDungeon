@@ -1,29 +1,11 @@
 package com.bryjamin.dancedungeon.factories.map.event;
 
-import com.artemis.Aspect;
-import com.artemis.Entity;
 import com.artemis.World;
-import com.artemis.utils.Bag;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.assets.MapData;
-import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
-import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
-import com.bryjamin.dancedungeon.ecs.systems.battle.BattleDeploymentSystem;
-import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
-import com.bryjamin.dancedungeon.ecs.systems.battle.EndBattleSystem;
-import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
-import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
-import com.bryjamin.dancedungeon.factories.enemy.EnemyFactory;
 import com.bryjamin.dancedungeon.factories.map.event.objectives.AbstractObjective;
 import com.bryjamin.dancedungeon.factories.map.event.objectives.CompleteWithinObjective;
 import com.bryjamin.dancedungeon.factories.map.event.objectives.DefeatAllEnemiesObjective;
-import com.bryjamin.dancedungeon.factories.map.event.objectives.SurviveObjective;
-import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
-import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
-import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
 /**
  * Created by BB on 07/01/2018.
@@ -31,23 +13,24 @@ import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
 public class BattleEvent extends MapEvent {
 
-
-    public enum Reward {
-        MONEY, MORALE, SKILL_POINT
-    }
-
     private String mapLocation = MapData.MAP_1;
 
     private AbstractObjective primaryObjective = new DefeatAllEnemiesObjective();
-    private AbstractObjective bonusObjective = new CompleteWithinObjective(3);
-
-    private Reward reward = Reward.MONEY;
+    private AbstractObjective[] bonusObjectives = new AbstractObjective[]{new CompleteWithinObjective(3)};
 
     private Array<String> enemies = new Array<String>();
 
     public BattleEvent(String... enemies){
         this.enemies.addAll(enemies);
     }
+
+
+    public BattleEvent(Builder b){
+        this.mapLocation = b.mapLocation;
+        this.primaryObjective = b.primaryObjective;
+        this.bonusObjectives = b.bonusObjectives;
+    }
+
 
     public Array<String> getEnemies() {
         return enemies;
@@ -58,8 +41,8 @@ public class BattleEvent extends MapEvent {
         return primaryObjective;
     }
 
-    public AbstractObjective getBonusObjective() {
-        return bonusObjective;
+    public AbstractObjective[] getBonusObjective() {
+        return bonusObjectives;
     }
 
     @Override
@@ -76,7 +59,35 @@ public class BattleEvent extends MapEvent {
         return mapLocation;
     }
 
-    public Reward getBonusReward() {
-        return reward;
+    public static class Builder {
+
+        private final String mapLocation;
+
+        private Array<String> enemyPool = new Array<String>();
+        private AbstractObjective primaryObjective = new DefeatAllEnemiesObjective();
+        private AbstractObjective[] bonusObjectives = new AbstractObjective[]{};
+
+        public Builder(String mapLocation){
+            this.mapLocation = mapLocation;
+        }
+
+        public Builder enemyPool(String... val) {
+            this.enemyPool.clear();
+            this.enemyPool.addAll(val); return this;
+        }
+
+        public Builder primaryObjective(AbstractObjective val)
+        { this.primaryObjective = val; return this; }
+
+        public Builder bonusObjective(AbstractObjective... val)
+        { this.bonusObjectives = val; return this; }
+
+        public BattleEvent build(){
+            return new BattleEvent(this);
+        }
+
+
     }
+
+
 }

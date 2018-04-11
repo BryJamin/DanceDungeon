@@ -5,6 +5,7 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.artemis.utils.Bag;
+import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.Observer;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
@@ -12,18 +13,14 @@ import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
+import com.bryjamin.dancedungeon.ecs.systems.action.BattleWorldInputHandlerSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
-import com.bryjamin.dancedungeon.ecs.systems.ui.VictoryScreenCreationSystem;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
-import com.bryjamin.dancedungeon.factories.map.event.MapEvent;
 import com.bryjamin.dancedungeon.factories.map.event.objectives.AbstractObjective;
-import com.bryjamin.dancedungeon.factories.player.UnitData;
-import com.bryjamin.dancedungeon.factories.player.UnitMap;
 import com.bryjamin.dancedungeon.screens.battle.BattleScreen;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
-import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
-import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
+
 
 /**
  * Created by BB on 28/11/2017.
@@ -33,6 +30,7 @@ public class EndBattleSystem extends EntitySystem implements Observer {
 
     private PlayerPartyManagementSystem playerPartyManagementSystem;
     private BattleScreenUISystem battleScreenUISystem;
+    private BattleWorldInputHandlerSystem battleWorldInputHandlerSystem;
     private TurnSystem turnSystem;
     private ActionCameraSystem actionCameraSystem;
 
@@ -67,19 +65,21 @@ public class EndBattleSystem extends EntitySystem implements Observer {
     protected void initialize() {
         actionCameraSystem.observerArray.add(this);
 
-        AbstractObjective[] objectives = new AbstractObjective[]{currentEvent.getPrimaryObjective(), currentEvent.getBonusObjective()};
 
-        for(int i = 0; i < objectives.length; i++) {
-            for(int j = 0; j < objectives[i].getUpdateOnArray().length; j++){
-                switch (objectives[i].getUpdateOnArray()[j]){
+        Array<AbstractObjective> abstractObjectives = new Array<AbstractObjective>();
+        abstractObjectives.add(currentEvent.getPrimaryObjective());
+        abstractObjectives.addAll(currentEvent.getBonusObjective());
+
+
+        for(int i = 0; i < abstractObjectives.size; i++) {
+            for(int j = 0; j < abstractObjectives.get(i).getUpdateOnArray().length; j++){
+                switch (abstractObjectives.get(i).getUpdateOnArray()[j]){
                     case END_TURN:
-                        turnSystem.addNextTurnObserver(objectives[i]);
+                        turnSystem.addNextTurnObserver(abstractObjectives.get(i));
                         break;
                 }
             }
-
-            objectives[i].addObserver(this);
-
+            abstractObjectives.get(i).addObserver(this);
         }
 
         battleScreenUISystem.updateObjectiveTable(currentEvent);
@@ -144,9 +144,8 @@ public class EndBattleSystem extends EntitySystem implements Observer {
 
             actionCameraSystem.observerArray.removeValue(this, true);
 
-            world.getSystem(VictoryScreenCreationSystem.class).createRewardTable();
-
-           // ((BattleScreen) game.getScreen()).victory(partyDetails);
+            battleScreenUISystem.createVictoryRewards(currentEvent, partyDetails);
+            battleWorldInputHandlerSystem.setState(BattleWorldInputHandlerSystem.State.VICTORY);
 
         }
 
