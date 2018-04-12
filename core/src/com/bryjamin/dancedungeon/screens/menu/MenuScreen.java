@@ -39,7 +39,6 @@ public class MenuScreen extends AbstractScreen {
         table = new Table();
         table.setFillParent(true);
 
-        System.out.println();
         if(QuickSave.isThereAValidQuickSave()){
             TextButton textBtn1 = new TextButton("Continue", uiSkin);
             textBtn1.addListener(new ClickListener() {
@@ -56,6 +55,7 @@ public class MenuScreen extends AbstractScreen {
             });
 
             table.add(textBtn1).width(Measure.units(20f)).padBottom(Padding.SMALL);
+            table.row();
         }
 
 

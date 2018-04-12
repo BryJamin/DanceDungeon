@@ -45,7 +45,6 @@ public class ArchingTextureSystem extends EntityProcessingSystem {
             scaleY = atc.minHeight + ((atc.maxHeight - atc.minHeight) *ratio);
         } else {
             float ratio = 1 - ((currentDistance - midPoint) / midPoint);
-            System.out.println("Ratio: " + ratio);
             scaleX = atc.minWidth + ((atc.maxWidth - atc.minWidth) * ratio);
             scaleY = atc.minHeight + ((atc.maxHeight - atc.minHeight) * ratio);
         }

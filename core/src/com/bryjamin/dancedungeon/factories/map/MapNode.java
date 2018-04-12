@@ -8,6 +8,7 @@ import com.bryjamin.dancedungeon.factories.enemy.EnemyFactory;
 import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
 import com.bryjamin.dancedungeon.factories.map.event.MapEvent;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -113,5 +114,19 @@ public class MapNode {
 
     public Array<String> getParentsIds() {
         return parentsIds;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MapNode mapNode = (MapNode) o;
+        return Objects.equals(id, mapNode.id);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id);
     }
 }

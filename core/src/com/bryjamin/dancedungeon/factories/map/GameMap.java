@@ -68,18 +68,15 @@ public class GameMap {
 
         for(MapNode mapNode : allNodes){
             mapOfNodes.put(mapNode.getId(), mapNode);
-            System.out.println("hey");
+            if(mapNode.getId().equals(currentMapNode.getId()))
+                currentMapNode = mapNode;
         }
 
         for(MapNode mapNode : allNodes){
-            System.out.println("hey");
             for(String s : mapNode.getSuccessorsIds()){
                 mapNode.addSuccessors(mapOfNodes.get(s));
-                System.out.println("hey3");
             }
-
         }
-
 
     }
 

@@ -79,23 +79,33 @@ public class MapNodeSystem extends EntitySystem {
 
     @Override
     protected void initialize() { //Create a visualize representation of the map
+        createMapNodesUsingGameMap(gameMap);
+    }
+
+    @Override
+    protected void processSystem() {
+
+    }
+
+    private void createMapNodesUsingGameMap(GameMap gameMap){
 
 
-
-        for (final MapNode node : gameMap.getAllNodes()) {
+        for (MapNode node : gameMap.getAllNodes()) {
 
             Entity e = createNodeEntity(node);
 
             if (gameMap.getCurrentMapNode() == null) {
-                if (gameMap.getMapNodeSections().first().getMapNodes().contains(node, true)) {
+                if (gameMap.getMapNodeSections().first().getMapNodes().contains(node, false)) {
                     createActiveNode(e);
                 }
             } else {
 
+                System.out.println(gameMap.getCurrentMapNode().getSuccessors());
 
-
-
-
+                if(gameMap.getCurrentMapNode().equals(node))
+                    createCompletedNode(e);
+                else if(gameMap.getCurrentMapNode().getSuccessors().contains(node, false))
+                    createActiveNode(e);
             }
 
             for (MapNode innerNode : node.getSuccessors()) { //Draws a line from the current nodes to its children
@@ -104,10 +114,6 @@ public class MapNodeSystem extends EntitySystem {
 
         }
 
-    }
-
-    @Override
-    protected void processSystem() {
 
     }
 
