@@ -4,8 +4,6 @@ import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.factories.spells.enemy.Push;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
-import java.util.UUID;
-
 
 /**
  * Created by BB on 17/03/2018.
@@ -20,7 +18,7 @@ public class WarpBomb extends Skill {
                 .icon("skills/Fire")
                 .push(0)
                 .targeting(Skill.Targeting.Melee)
-                .spellType(Skill.SpellType.Attack)
+                .attackType(AttackType.Damage)
                 .actionType(Skill.ActionType.UsesMoveAndAttackAction)
                 .spellAnimation(SpellAnimation.Slash)
                 .attack(Skill.Attack.Ranged)

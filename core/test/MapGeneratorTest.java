@@ -25,10 +25,12 @@ public class MapGeneratorTest extends GameTest {
 
         for(int i = 0; i < generations; i++){
             try {
+                mapGenerator = new MapGenerator();
                 mapGenerator.generateGameMap();
             } catch(Exception e) {
                 failCount++;
             }
+            System.out.println(i);
         }
 
         System.out.println("Number of Generations: " + generations);
@@ -47,6 +49,7 @@ public class MapGeneratorTest extends GameTest {
         MapGenerator mapGenerator = new MapGenerator();
 
         for(int i = 0; i < generations; i++){
+            mapGenerator = new MapGenerator();
             GameMap gameMap = mapGenerator.generateGameMap();
 
             MapSection firstSection = gameMap.getMapNodeSections().first();

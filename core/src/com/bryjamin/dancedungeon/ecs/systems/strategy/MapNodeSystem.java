@@ -100,12 +100,11 @@ public class MapNodeSystem extends EntitySystem {
                 }
             } else {
 
-                System.out.println(gameMap.getCurrentMapNode().getSuccessors());
-
-                if(gameMap.getCurrentMapNode().equals(node))
+                if(gameMap.getCurrentMapNode().equals(node) || node.isVisited())
                     createCompletedNode(e);
                 else if(gameMap.getCurrentMapNode().getSuccessors().contains(node, false))
                     createActiveNode(e);
+
             }
 
             for (MapNode innerNode : node.getSuccessors()) { //Draws a line from the current nodes to its children
@@ -156,6 +155,7 @@ public class MapNodeSystem extends EntitySystem {
         for (Entity e : activeNodes) {
             if (gameMap.getCurrentMapNode().equals(e.getComponent(MapNodeComponent.class).getNode())) {
                 createCompletedNode(e);
+                gameMap.getCurrentMapNode().setVisited(true);
             } else {
                 createUnreachableNode(e);
             }

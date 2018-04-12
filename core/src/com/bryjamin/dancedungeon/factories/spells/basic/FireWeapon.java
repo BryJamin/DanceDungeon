@@ -11,10 +11,10 @@ public class FireWeapon extends Skill {
     public FireWeapon() {
         super(new Builder()
                 .name("Fire Weapon")
-                .description("Uses Attack And Movement Action")
+                .description("Uses Damage And Movement Action")
                 .icon("skills/LaserScope")
                 .targeting(Targeting.StraightShot)
-                .spellType(SpellType.Attack)
+                .attackType(AttackType.Damage)
                 .actionType(ActionType.UsesMoveAndAttackAction)
                 .spellAnimation(SpellAnimation.Slash)
                 .attack(Attack.Ranged));

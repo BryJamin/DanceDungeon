@@ -17,7 +17,7 @@ public class HeavyStrike extends Skill{
                 .icon(TextureStrings.CLASS_WARRIOR)
                 .targeting(Targeting.Melee)
                 .spellAnimation(Skill.SpellAnimation.Slash)
-                .spellType(SpellType.Attack)
+                .attackType(AttackType.Damage)
                 .push(1)
                 .attack(Attack.Melee));
 

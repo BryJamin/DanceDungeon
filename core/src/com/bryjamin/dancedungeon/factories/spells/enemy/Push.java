@@ -16,7 +16,7 @@ public class Push extends Skill {
                 .targeting(Targeting.StraightShot)
                 .baseDamage(0)
                 .push(1)
-                .spellType(SpellType.Attack)
+                .attackType(AttackType.Damage)
                 .spellAnimation(SpellAnimation.Projectile)
                 .spellCoolDown(3)
                 .attack(Attack.Ranged));

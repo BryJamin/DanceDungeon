@@ -14,7 +14,7 @@ public class Fireball extends Skill {
                 .icon("skills/Fire")
                 .description("Fires a ball of flame at the enemy. This is a FREE Action")
                 .targeting(Targeting.StraightShot)
-                .spellType(SpellType.Attack)
+                .attackType(AttackType.Damage)
                 .spellApplication(SpellDamageApplication.AfterSpellAnimation)
                 .spellAnimation(SpellAnimation.Projectile)
                 .spellCoolDown(3)

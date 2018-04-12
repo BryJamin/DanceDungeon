@@ -24,11 +24,11 @@ import java.util.Random;
 public class MapGenerator {
 
     private float mapSectionWidth = Measure.units(9f);
-    private float mapSectionHeight = Measure.units(35f);
+    private float mapSectionHeight = Measure.units(32.5f);
     private float mapSectionGap = Measure.units(22.5f);
 
     private float mapStartX = Measure.units(5f);
-    private float mapStartY = Measure.units(10f);
+    private float mapStartY = Measure.units(12.5f);
     private float minimumSpacing = Measure.units(7.5f);
 
     private static final int numberOfSections = 12;
@@ -39,10 +39,6 @@ public class MapGenerator {
 
     public GameMap generateGameMap(){
         Array<MapSection> mapSections = calculateMapNodeConnections(generateMapSections());
-
-
-
-
         setupMapEventTypes(mapSections);
         return new GameMap(mapSections);
     }

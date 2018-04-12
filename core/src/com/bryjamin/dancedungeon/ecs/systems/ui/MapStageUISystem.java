@@ -116,12 +116,15 @@ public class MapStageUISystem extends BaseSystem {
 
         //VIEW INVENTORY AND BOTTOM BUTTONS
 
+        float BOTTOM_BUTTON_WIDTH = Measure.units(10f);
+
         viewInventoryAndQuickSaveTab = new Table(uiSkin);
-        viewInventoryAndQuickSaveTab.align(Align.bottom);
-        container.add(viewInventoryAndQuickSaveTab).height(Measure.units(5f)).width(stage.getWidth());
+        viewInventoryAndQuickSaveTab.setDebug(true);
+        viewInventoryAndQuickSaveTab.align(Align.center);
+        container.add(viewInventoryAndQuickSaveTab).height(Measure.units(7.5f)).width(stage.getWidth());
 
 
-        TextButton quickSave = new TextButton("QuickSave", uiSkin);
+        TextButton quickSave = new TextButton("Quick Save", uiSkin);
 
         quickSave.addListener(new ChangeListener() {
             @Override
@@ -130,7 +133,8 @@ public class MapStageUISystem extends BaseSystem {
             }
         });
 
-        viewInventoryAndQuickSaveTab.add(quickSave);
+        viewInventoryAndQuickSaveTab.add(quickSave).expandX().fill();
+
 
 
         for (final UnitData unitData : partyDetails.getParty()) {
@@ -140,12 +144,21 @@ public class MapStageUISystem extends BaseSystem {
 
             Stack stack = new Stack();
 
+            Table overlay = new Table();
+            overlay.add(new Image(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.BLOCK)).tint(Color.GRAY))).expand().height(Measure.units(3.5f)).width(Measure.units(10f)).fillX().center();
+
+
             TextureRegionDrawable drawable = new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(unitData.icon));
 
-            //stack.add(new Button(uiSkin));
             Button btn = new Button(drawable, drawable.tint(new Color(0.1f, 0.1f, 0.1f, 1)));
-            stack.add(btn);
-            viewInventoryAndQuickSaveTab.add(stack).size(Measure.units(10f), Measure.units(10f)).padRight(Measure.units(2.5f));
+
+            Table buttonOverlay = new Table();
+            buttonOverlay.add(btn).size(Measure.units(7.5f)).center();
+
+
+            stack.add(overlay);
+            stack.add(buttonOverlay);
+            viewInventoryAndQuickSaveTab.add(stack).size(Measure.units(10f), Measure.units(5f)).padRight(Measure.units(2.5f)).expandX();
             buttonArray.add(btn);
 
 

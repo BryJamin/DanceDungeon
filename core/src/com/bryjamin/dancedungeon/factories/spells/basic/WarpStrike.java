@@ -11,11 +11,11 @@ public class WarpStrike extends Skill{
     public WarpStrike() {
         super(new Skill.Builder()
                 .name("Warp Strike")
-                .description("Ranged Attack that deals 1 damage, Pulls Target 1 tile")
+                .description("Ranged Damage that deals 1 damage, Pulls Target 1 tile")
                 .icon("skills/LaserScope")
                 .push(-1)
                 .targeting(Skill.Targeting.Melee)
-                .spellType(Skill.SpellType.Attack)
+                .attackType(AttackType.Damage)
                 .actionType(Skill.ActionType.UsesMoveAndAttackAction)
                 .spellAnimation(SpellAnimation.Slash)
                 .attack(Skill.Attack.Ranged)

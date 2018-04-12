@@ -48,7 +48,7 @@ public class Skill {
 
     public enum SpellAnimation {Projectile, Slash, Glitter}
 
-    public enum SpellType {Heal, HealOverTime, Attack, Burn}
+    public enum AttackType {Heal, HealOverTime, Damage, Burn}
 
     public enum SpellEffect {
         Stun, OnFire, Dodge, Armor;
@@ -99,10 +99,12 @@ public class Skill {
     private Attack attack = Attack.Ranged;
     private ActionType actionType = ActionType.UsesMoveAndAttackAction;
     private SpellAnimation spellAnimation = SpellAnimation.Projectile;
-    private SpellType spellType = SpellType.Attack;
+    private AttackType attackType = AttackType.Damage;
     private SpellDamageApplication spellDamageApplication = SpellDamageApplication.Instant;
     private SpellCoolDown spellCoolDown = SpellCoolDown.NoCoolDown;
     private SpellEffect[] spellEffects;
+
+    public Skill(){}
 
 
     public Skill(Builder b) {
@@ -113,7 +115,7 @@ public class Skill {
         this.attack = b.attack;
         this.actionType = b.actionType;
         this.spellAnimation = b.spellAnimation;
-        this.spellType = b.spellType;
+        this.attackType = b.attackType;
         this.spellDamageApplication = b.spellDamageApplication;
         this.spellEffects = b.spellEffects;
         this.spellCoolDown = b.spellCoolDown;
@@ -131,9 +133,7 @@ public class Skill {
 
         switch (targeting) {
             case Melee:
-
                 coordinatesArray = CoordinateMath.getCoordinatesInLine(coordinates, minRange, maxRange);
-
                 break;
             case StraightShot:
                 Direction[] directions = {Direction.DOWN, Direction.LEFT, Direction.RIGHT, Direction.UP};
@@ -152,15 +152,7 @@ public class Skill {
 
         Array<Entity> entityArray = new Array<Entity>();
 
-        int range = attack == Attack.Melee ? 1 : player.getComponent(StatComponent.class).attackRange;
-
         switch (targeting) {
-            case Ally:
-                entityArray = new TargetingFactory().createAllyTargetTiles(world, player, this, range);
-                break;
-            case FreeAim:
-                entityArray = new TargetingFactory().createFreeAimTargetTiles(world, player, this, range);
-                break;
             case Melee:
             case StraightShot:
                 for (Coordinates c : getAffectedCoordinates(world, player.getComponent(CoordinateComponent.class).coordinates)) {
@@ -175,29 +167,13 @@ public class Skill {
 
                 break;
             case Self:
-                entityArray = new TargetingFactory().createSelfTargetTiles(world, player, this, range);
+                entityArray = new TargetingFactory().createSelfTargetTiles(world, player, this, 1);
                 break;
         }
 
         return entityArray;
     }
 
-
-/*
-    public Array<Entity> createEnemyIntent(World world, ){
-
-
-
-
-
-
-
-
-
-
-
-    }
-*/;
 
     public boolean canCast(World world, Entity entity) {
 
@@ -344,9 +320,9 @@ public class Skill {
 
             if (world.getMapper(HealthComponent.class).has(e)) {
 
-                switch (spellType) {
+                switch (attackType) {
 
-                    case Attack:
+                    case Damage:
                         e.getComponent(HealthComponent.class).applyDamage(baseDamage);
                         break;
                     case Heal:
@@ -499,8 +475,8 @@ public class Skill {
         return spellAnimation;
     }
 
-    public SpellType getSpellType() {
-        return spellType;
+    public AttackType getAttackType() {
+        return attackType;
     }
 
     public Targeting getTargeting() {
@@ -558,7 +534,7 @@ public class Skill {
         private Attack attack = Attack.Ranged;
         private ActionType actionType = ActionType.UsesMoveAndAttackAction;
         private SpellAnimation spellAnimation = SpellAnimation.Projectile;
-        private SpellType spellType = SpellType.Burn;
+        private AttackType attackType = AttackType.Burn;
         private SpellDamageApplication spellDamageApplication = SpellDamageApplication.Instant;
         private SpellEffect[] spellEffects = new SpellEffect[]{};
         private SpellCoolDown spellCoolDown = SpellCoolDown.NoCoolDown;
@@ -603,8 +579,8 @@ public class Skill {
             return this;
         }
 
-        public Builder spellType(SpellType val) {
-            this.spellType = val;
+        public Builder attackType(AttackType val) {
+            this.attackType = val;
             return this;
         }
 

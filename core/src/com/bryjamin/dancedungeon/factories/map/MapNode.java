@@ -22,6 +22,8 @@ public class MapNode {
 
     private Vector2 position = new Vector2();
 
+    private boolean visited = false;
+
     private transient Array<MapNode> successors = new Array<>();
     private transient Array<MapNode> parents = new Array<>();
 
@@ -114,6 +116,14 @@ public class MapNode {
 
     public Array<String> getParentsIds() {
         return parentsIds;
+    }
+
+    public void setVisited(boolean visited) {
+        this.visited = visited;
+    }
+
+    public boolean isVisited() {
+        return visited;
     }
 
     @Override

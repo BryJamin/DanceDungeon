@@ -14,6 +14,7 @@ public class GameMap {
 
     private Array<MapSection> mapNodeSections = new Array<>();
     private Array<MapNode> allNodes = new Array<>();
+    private Array<MapNode> visited = new Array<>();
 
     public GameMap(){}
 
@@ -68,8 +69,10 @@ public class GameMap {
 
         for(MapNode mapNode : allNodes){
             mapOfNodes.put(mapNode.getId(), mapNode);
-            if(mapNode.getId().equals(currentMapNode.getId()))
+            if(currentMapNode != null){
+                if(mapNode.getId().equals(currentMapNode.getId()))
                 currentMapNode = mapNode;
+            }
         }
 
         for(MapNode mapNode : allNodes){
@@ -80,6 +83,11 @@ public class GameMap {
 
     }
 
+
+    public void addToVisited(MapNode mapNode){
+        if(!visited.contains(mapNode, false))
+            visited.add(mapNode);
+    }
 
 
 

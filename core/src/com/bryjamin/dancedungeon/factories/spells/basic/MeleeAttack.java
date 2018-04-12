@@ -6,7 +6,7 @@ import com.bryjamin.dancedungeon.factories.spells.Skill;
 /**
  * Created by BB on 20/12/2017.
  *
- * This Melee Attack
+ * This Melee Damage
  *
  * Used as a basic attack for enemies that do not have a ranged weapon.
  *
@@ -18,11 +18,11 @@ public class MeleeAttack extends Skill {
 
     public MeleeAttack() {
         super(new Builder()
-                .name("Attack")
+                .name("Damage")
                 .icon(TextureStrings.SKILLS_SLASH)
                 .targeting(Targeting.Melee)
                 .spellAnimation(SpellAnimation.Slash)
-                .spellType(SpellType.Attack)
+                .attackType(AttackType.Damage)
                 .attack(Attack.Melee));
     }
 }

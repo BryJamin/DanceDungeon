@@ -1,0 +1,27 @@
+{
+  "a5f2cd73-7ade-4577-8d7b-862299baf774": {
+    "class": "com.bryjamin.dancedungeon.factories.spells.Skill",
+    "name": "Heavy Strike",
+    "description": "Deals 1 damage. Pushes a target 1 tile",
+    "icon": "icons/units/warrior",
+    "push": 1,
+    "baseDamage": 1,
+    "targeting": "Melee",
+    "attack": "Melee",
+    "spellAnimation": "Slash",
+    "attackType": "Damage"
+  },
+
+  "d92aa63f-1f4d-40bf-9dca-344cebd78d31": {
+    "class": "com.bryjamin.dancedungeon.factories.spells.Skill",
+    "name": "Heavier Strike",
+    "description": "Deals 2 damage. Pushes a target 2 tiles",
+    "icon": "icons/units/warrior",
+    "push": 2,
+    "baseDamage": 2,
+    "targeting": "Melee",
+    "attack": "Melee",
+    "spellAnimation": "Slash",
+    "attackType": "Damage"
+  }
+}

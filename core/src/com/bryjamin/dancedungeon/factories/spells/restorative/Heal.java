@@ -13,7 +13,7 @@ public class Heal extends Skill {
                 .name("Heal")
                 .attack(Attack.Ranged)
                 .spellAnimation(SpellAnimation.Glitter)
-                .spellType(SpellType.Heal)
+                .attackType(AttackType.Heal)
                 .icon("skills/Medicine")
                 .targeting(Targeting.Ally));
     }
