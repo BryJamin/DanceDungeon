@@ -21,6 +21,7 @@ public class WarpStrike extends Skill{
                 .attack(Skill.Attack.Ranged)
                 .minRange(2)
                 .maxRange(Skill.MAX_MAX_RANGE));
+
     }
 
 }

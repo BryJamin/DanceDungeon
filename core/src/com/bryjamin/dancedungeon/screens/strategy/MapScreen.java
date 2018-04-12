@@ -48,16 +48,15 @@ public class MapScreen extends AbstractScreen {
     private GameMap gameMap;
     private PartyDetails partyDetails;
 
-    public MapScreen(MainGame game, PartyDetails partyDetails) {
+    public MapScreen(MainGame game, GameMap gameMap, PartyDetails partyDetails) {
         super(game);
         this.partyDetails = partyDetails;
+        this.gameMap = gameMap;
         createWorld();
     }
 
 
     private void createWorld() {
-
-        gameMap = new MapGenerator().generateGameMap();
 
         WorldConfiguration config = new WorldConfigurationBuilder()
                 .with(WorldConfigurationBuilder.Priority.HIGHEST,
@@ -71,7 +70,7 @@ public class MapScreen extends AbstractScreen {
 
                         new MapInputSystem(game, gameport, 0, gameMap.getWidth() + Measure.units(20f)),
                         new FixedToCameraPanAndFlingSystem(gameport.getCamera(), 0, 0, gameMap.getWidth() + Measure.units(20f), 0),
-                        new MapStageUISystem(game, partyDetails, gameport), //Updates and is fixed to camera, so need to be below fling system
+                        new MapStageUISystem(game, gameMap, partyDetails, gameport), //Updates and is fixed to camera, so need to be below fling system
                         new InformationBannerSystem(game, gameport),
 
 

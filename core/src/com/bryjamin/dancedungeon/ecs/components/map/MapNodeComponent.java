@@ -17,6 +17,8 @@ public class MapNodeComponent extends Component {
 
     private MapNode node;
 
+    public boolean active;
+
     public MapNodeComponent(){
 
     };

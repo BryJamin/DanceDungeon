@@ -28,6 +28,7 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PartyUiComponent;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.factories.CharacterGenerator;
+import com.bryjamin.dancedungeon.factories.map.MapGenerator;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
 import com.bryjamin.dancedungeon.screens.strategy.MapScreen;
@@ -167,7 +168,7 @@ public class ExpeditionScreenCreationSystem extends BaseSystem {
                     }
                 }
 
-                game.setScreen(new MapScreen(game, partyDetails));
+                game.setScreen(new MapScreen(game, new MapGenerator().generateGameMap(), partyDetails));
             }
         });
 

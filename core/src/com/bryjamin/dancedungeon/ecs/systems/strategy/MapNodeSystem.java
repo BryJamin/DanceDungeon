@@ -80,16 +80,25 @@ public class MapNodeSystem extends EntitySystem {
     @Override
     protected void initialize() { //Create a visualize representation of the map
 
+
+
         for (final MapNode node : gameMap.getAllNodes()) {
 
             Entity e = createNodeEntity(node);
+
             if (gameMap.getCurrentMapNode() == null) {
                 if (gameMap.getMapNodeSections().first().getMapNodes().contains(node, true)) {
                     createActiveNode(e);
                 }
+            } else {
+
+
+
+
+
             }
 
-            for (MapNode innerNode : node.getSuccessors()) {
+            for (MapNode innerNode : node.getSuccessors()) { //Draws a line from the current nodes to its children
                 drawLineEntity(node, innerNode);
             }
 
@@ -136,7 +145,7 @@ public class MapNodeSystem extends EntitySystem {
     }
 
 
-    public void onVictory() {
+    public void onVictory() { //Runs through the current Active nodes and sets the currnet node to 'Completed'
 
         for (Entity e : activeNodes) {
             if (gameMap.getCurrentMapNode().equals(e.getComponent(MapNodeComponent.class).getNode())) {
@@ -148,12 +157,13 @@ public class MapNodeSystem extends EntitySystem {
 
         activeNodes.clear();
 
-        for (MapNode mapNode : gameMap.getCurrentMapNode().getSuccessors()) {
+        for (MapNode mapNode : gameMap.getCurrentMapNode().getSuccessors()) { //Find next 'active' nodes
             Entity nodeEntity = nodeEntityOrderedMap.get(mapNode);
             activeNodes.add(nodeEntity);
             createActiveNode(nodeEntity);
         }
     }
+
 
     private Entity createNodeEntity(MapNode node) {
 

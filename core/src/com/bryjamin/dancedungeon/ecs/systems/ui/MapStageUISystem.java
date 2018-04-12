@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 
@@ -28,11 +29,13 @@ import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.systems.FixedToCameraPanAndFlingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.input.MapInputSystem;
+import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CameraMath;
+import com.bryjamin.dancedungeon.utils.save.QuickSave;
 
 import java.util.Locale;
 
@@ -47,6 +50,7 @@ public class MapStageUISystem extends BaseSystem {
     private RenderingSystem renderingSystem;
     private FixedToCameraPanAndFlingSystem camSys;
     private MainGame game;
+    private GameMap gameMap;
     private PartyDetails partyDetails;
     private Viewport gameport;
     private Skin uiSkin;
@@ -54,7 +58,8 @@ public class MapStageUISystem extends BaseSystem {
     private Table container;
     private Table characterWindowContainer;
     private Table characterWindow;
-    private Table tooltipTable;
+
+    private Table viewInventoryAndQuickSaveTab;
 
     private DragAndDrop dragAndDrop;
 
@@ -79,9 +84,10 @@ public class MapStageUISystem extends BaseSystem {
     private Array<Actor> inventorySkills = new Array<Actor>();
 
 
-    public MapStageUISystem(MainGame game, PartyDetails partyDetails, Viewport gameport) {
+    public MapStageUISystem(MainGame game, GameMap gameMap, PartyDetails partyDetails, Viewport gameport) {
         this.game = game;
         this.partyDetails = partyDetails;
+        this.gameMap = gameMap;
         this.gameport = gameport;
         this.uiSkin = Skins.DEFAULT_SKIN(game.assetManager);
     }
@@ -105,20 +111,26 @@ public class MapStageUISystem extends BaseSystem {
         characterWindowContainer = new Table();
         characterWindowContainer.setVisible(false);
 
-        tooltipTable = new Table();
-        tooltipTable.setVisible(false);
-/*
-        Label label = new Label("Select Your Next Destination", uiSkin);
-        container.add(label);
-        container.row();*/
 
         container.row();
 
-        Table testbottom = new Table(uiSkin);
-        testbottom.align(Align.bottom);
-        testbottom.setWidth(stage.getWidth());
-        container.add(testbottom).height(Measure.units(5f));
-        buttonArray.clear();
+        //VIEW INVENTORY AND BOTTOM BUTTONS
+
+        viewInventoryAndQuickSaveTab = new Table(uiSkin);
+        viewInventoryAndQuickSaveTab.align(Align.bottom);
+        container.add(viewInventoryAndQuickSaveTab).height(Measure.units(5f)).width(stage.getWidth());
+
+
+        TextButton quickSave = new TextButton("QuickSave", uiSkin);
+
+        quickSave.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                QuickSave.quickSave(gameMap, partyDetails);
+            }
+        });
+
+        viewInventoryAndQuickSaveTab.add(quickSave);
 
 
         for (final UnitData unitData : partyDetails.getParty()) {
@@ -133,7 +145,7 @@ public class MapStageUISystem extends BaseSystem {
             //stack.add(new Button(uiSkin));
             Button btn = new Button(drawable, drawable.tint(new Color(0.1f, 0.1f, 0.1f, 1)));
             stack.add(btn);
-            testbottom.add(stack).size(Measure.units(10f), Measure.units(10f)).padRight(Measure.units(2.5f));
+            viewInventoryAndQuickSaveTab.add(stack).size(Measure.units(10f), Measure.units(10f)).padRight(Measure.units(2.5f));
             buttonArray.add(btn);
 
 

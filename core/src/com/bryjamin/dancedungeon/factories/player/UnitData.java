@@ -25,6 +25,8 @@ public class UnitData {
     public StatComponent statComponent = new StatComponent();
     private SkillsComponent skillsComponent = new SkillsComponent();
 
+    public UnitData(){}
+
     public UnitData(String id){
         this.id = id;
     }

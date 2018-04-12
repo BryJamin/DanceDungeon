@@ -29,6 +29,11 @@ public class MapSection {
     private float minimumSpacing;
 
     /**
+     * No Arg Constructor for Json
+     */
+    public MapSection(){}
+
+    /**
      * Constructor for MapSection
      * @param startX - The x starting position of the sections
      * @param startY - The y starting position of the section
