@@ -13,6 +13,7 @@ import com.bryjamin.dancedungeon.ecs.components.actions.OnDeathActionsComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.ArchingTextureComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
