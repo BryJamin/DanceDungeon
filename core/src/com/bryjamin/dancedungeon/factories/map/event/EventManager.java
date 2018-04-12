@@ -19,16 +19,17 @@ public class EventManager {
     private OrderedMap<String, EventCommand> level1BattleEvents = new OrderedMap<String, EventCommand>();
     //private WeightedRoll<>
 
-    private String[] keys = {
-            "64f80f4a-e313-401c-91bb-981c9f623eb8",
-            "1e46533c-31ed-41d6-a34e-489c8be40767"
-    };
-
+    private int eventCount;
 
     public EventManager() { //All events require IDs as each
-        //level1BattleEvents.put("64f80f4a-e313-401c-91bb-981c9f623eb8", battleEvent1());
-        //level1BattleEvents.put("64f80f4a-e313-401c-91bb-981c9f623eb8", battleEvent1());
-        level1BattleEvents.put("1e46533c-31ed-41d6-a34e-489c8be40767", enemyBattle());
+        put("64f80f4a-e313-401c-91bb-981c9f623eb8", battleEvent1());
+        put("e1f0cfc1-fdc0-44fb-ad6e-dadd764061e2", battleEvent1());
+        put("a5b45152-2ff8-4ff4-a358-ea1ae9df7366", enemyBattle());
+    }
+
+    public void put(String id, EventCommand ec){
+        level1BattleEvents.put(id, ec);
+        eventCount++;
     }
 
 
@@ -42,9 +43,16 @@ public class EventManager {
         return level1BattleEvents.keys().toArray();
     }
 
+    public OrderedMap<String, EventCommand> getLevel1BattleEvents() {
+        return level1BattleEvents;
+    }
 
     public interface EventCommand {
         public BattleEvent getEvent();
+    }
+
+    public int getEventCount() {
+        return eventCount;
     }
 
     private EventCommand battleEvent1(){
