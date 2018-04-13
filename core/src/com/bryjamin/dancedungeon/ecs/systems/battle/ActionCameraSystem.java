@@ -86,11 +86,15 @@ public class ActionCameraSystem extends EntitySystem {
             actionQueue.clear();
             state = State.PERFORM_ACTION;
 
+            if(processingFlag){
+                for(Observer o : observerArray){
+                    o.onNotify();
+                }
+            }
+
             processingFlag = false;
 
-            for(Observer o : observerArray){
-                o.onNotify();
-            }
+
 
         } else {
             processingFlag = true;

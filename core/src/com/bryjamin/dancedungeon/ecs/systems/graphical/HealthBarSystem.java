@@ -19,6 +19,12 @@ import com.bryjamin.dancedungeon.utils.math.CenterMath;
 
 /**
  * Created by BB on 15/11/2017.
+ *
+ * Used to draw the Health bars shown on screen.
+ *
+ * Also to create an 'effect' where after being hit white health is shown and then decreased over time.
+ *
+ *
  */
 
 public class HealthBarSystem extends EntityProcessingSystem {
@@ -60,12 +66,13 @@ public class HealthBarSystem extends EntityProcessingSystem {
 
 
         //Black bar
-
-
         float currentHealthBarWidth = (health / maxHealth) * initialHealthBarWidth;
 
 
-        if (healthBar.redHealthBarLength >= currentHealthBarWidth) {
+        //Sets up the red health bar. If the red health bar is less than the actual player's health
+        //It increases in size until it reaches the correct length.
+
+        if (healthBar.redHealthBarLength >= currentHealthBarWidth) { //The red health bar can not be greater than the player's health
             healthBar.redHealthBarLength = currentHealthBarWidth;
         } else if (healthBar.redHealthBarLength < currentHealthBarWidth) {
             healthBar.redHealthBarLength += redHealthBarSpeed * world.delta;
@@ -74,11 +81,12 @@ public class HealthBarSystem extends EntityProcessingSystem {
         }
 
 
-        if (healthBar.whiteHealthBarLength < healthBar.redHealthBarLength) {
+        if (healthBar.whiteHealthBarLength < healthBar.redHealthBarLength) { //The white health bar can not be less than the red
             healthBar.whiteHealthBarLength = healthBar.redHealthBarLength;
             healthBar.whiteHealthBarTimer = healthBar.whiteHealthBarResetTimer;
         } else if (healthBar.whiteHealthBarLength >= healthBar.redHealthBarLength) {
 
+            //The white health bar decreases only after period of time to return the red health bar's length.
             healthBar.whiteHealthBarTimer -= world.delta;
 
             if (healthBar.whiteHealthBarTimer <= 0) {

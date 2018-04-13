@@ -14,6 +14,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.BuffComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.StunnedComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.UnPushableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationMapComponent;
@@ -88,7 +89,9 @@ public class Skill {
 
     public Skill affectedAreaSkill;
     public Coordinates[] affectedAreas = new Coordinates[]{};
+
     public static final int MAX_MAX_RANGE = 10; //Maximum range possible for a skill. To avoid counting
+
     private Targeting targeting = Targeting.Melee;
     private ActionType actionType = ActionType.UsesMoveAndAttackAction;
     private SpellAnimation spellAnimation = SpellAnimation.Projectile;
@@ -114,6 +117,32 @@ public class Skill {
         maxRange = 1;
     }
 
+    public Skill (Skill s){
+        this.name = s.name;
+        this.description = s.description;
+        this.icon = s.icon;
+
+        this.uses = s.uses;
+        this.coolDown = s.coolDown;
+        this.coolDownTracker = s.coolDownTracker;
+        this.push = s.push;
+        this.stun = s.stun;
+        this.storePrice = s.storePrice;
+        this.purchasable = s.purchasable;
+        this.baseDamage = s.baseDamage;
+        this.minRange = s.minRange;
+        this.maxRange = s.maxRange;
+        if(s.affectedAreaSkill != null) {
+            this.affectedAreaSkill = new Skill(s.affectedAreaSkill);
+        }
+        this.affectedAreas = s.affectedAreas;
+        this.targeting = s.targeting;
+        this.actionType = s.actionType;
+        this.spellAnimation = s.spellAnimation;
+        this.attackType = s.attackType;
+        this.spellCoolDown = s.spellCoolDown;
+        this.spellEffects = s.spellEffects;
+    }
 
     public Skill(Builder b) {
         this.name = b.name;
@@ -314,6 +343,7 @@ public class Skill {
             System.out.println(stun);
             if(stun > 0){
                 e.getComponent(StatComponent.class).stun = stun;
+                e.edit().add(new StunnedComponent());
             }
 
             for (SpellEffect spellEffect : spellEffects) {

@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BattleDeploymentSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.StunnedSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.ArchingTextureSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
@@ -124,6 +125,7 @@ public class BattleScreen extends AbstractScreen {
                         new PlayerGraphicalTargetingSystem(),
                         new BattleMessageSystem(gameport),
                         new EnemyIntentSystem(),
+                        new StunnedSystem(),
                         new AnimationSystem(game),
                         new RenderingSystem(game, gameport),
                         new HealthBarSystem(game, gameport),

@@ -59,12 +59,13 @@ public class EnemyIntentSystem extends EntitySystem implements Observer{
     @Override
     protected void processSystem() {
 
+        processingFlag = false;
+
         IntBag enemyIntent = world.getAspectSubscriptionManager().get(Aspect.all(EnemyIntentComponent.class)).getEntities();
 
         for(int i = 0; i < enemyIntent.size(); i++){
             world.delete(enemyIntent.get(i));
         }
-
 
 
         for(Entity e : this.getEntities()){
@@ -136,10 +137,6 @@ public class EnemyIntentSystem extends EntitySystem implements Observer{
         }
 
 
-
-
-        processingFlag = false;
-
     }
 
     @Override
@@ -149,6 +146,7 @@ public class EnemyIntentSystem extends EntitySystem implements Observer{
 
     public void updateIntent(){
         processingFlag = true;
+        System.out.println("Update Intent called");
     }
 
 
@@ -192,6 +190,7 @@ public class EnemyIntentSystem extends EntitySystem implements Observer{
 
     @Override
     public void onNotify() {//The Intent system watches both the turn and action camera system to decide when to update itself
+        System.out.println("Notify");
         updateIntent();
     }
 }

@@ -24,12 +24,13 @@ public class SkillLibrary {
         return items;
     }
 
+    //Return a new Skill object to avoid any potential over-writes of the skills within the static array
     public static Skill getSkill(String key){
-        return items.get(key);
+        return new Skill(items.get(key));
     }
 
     public static Skill getEnemySkill(String key){
-        return enemySkills.get(key);
+        return new Skill(enemySkills.get(key));
     }
 
 

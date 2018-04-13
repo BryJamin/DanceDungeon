@@ -108,6 +108,11 @@ public class TurnSystem extends EntitySystem {
     public void endAllyTurn(){
         turn = INTENT;
         battleState = STATE.NEXT_TURN;
+
+        for(Observer o : nextTurnObservers){ //Notifies observers the player has ended their turn.
+            o.onNotify();
+        }
+
     }
 
 
@@ -119,11 +124,6 @@ public class TurnSystem extends EntitySystem {
         if (turn == ENEMY) {
             currentTurnEntities.addAll(enemyTurnEntities);
         } else if (turn == ALLY) {
-
-
-            for(Observer o : nextTurnObservers){ //Notifies observers it is now the player's turn.
-                o.onNotify();
-            }
 
             currentTurnEntities.addAll(allyTurnEntities);
            // world.getSystem(SelectedTargetSystem.class).reselectEntityAfterActionComplete();
