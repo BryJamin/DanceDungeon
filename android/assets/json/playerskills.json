@@ -7,7 +7,6 @@
     "push": 1,
     "baseDamage": 1,
     "targeting": "Melee",
-    "attack": "Melee",
     "spellAnimation": "Slash",
     "attackType": "Damage"
   },
@@ -20,8 +19,40 @@
     "push": 2,
     "baseDamage": 2,
     "targeting": "Melee",
-    "attack": "Melee",
     "spellAnimation": "Slash",
     "attackType": "Damage"
+  },
+
+
+  "cd8ced23-790b-41cd-99dd-f884abccc003": {
+    "class": "com.bryjamin.dancedungeon.factories.spells.Skill",
+    "name": "Hook Shot",
+    "description": "Grabs a target and pulls them 1 tile. Deals 1 damage",
+    "icon": "icons/units/bow_specialist",
+    "push": -1,
+    "baseDamage": 1,
+    "targeting": "StraightShot",
+    "spellAnimation": "Projectile",
+    "attackType": "Damage"
+  },
+
+
+  "0ccac808-557a-4956-b77b-e696d849da68": {
+    "class": "com.bryjamin.dancedungeon.factories.spells.Skill",
+    "name": "Straight Shot",
+    "description": "Ranged Damage that deals 1 damage, Pushes target 1 tile",
+    "icon": "skills/LaserScope",
+    "push": 1,
+    "baseDamage": 1,
+    "targeting": "StraightShot",
+    "spellAnimation": "Projectile",
+    "attackType": "Damage"
   }
+
+
+
+
+
+
+
 }

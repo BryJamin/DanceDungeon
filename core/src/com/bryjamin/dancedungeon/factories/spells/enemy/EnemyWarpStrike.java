@@ -17,7 +17,6 @@ public class EnemyWarpStrike extends Skill {
                 .attackType(AttackType.Damage)
                 .actionType(Skill.ActionType.UsesMoveAndAttackAction)
                 .spellAnimation(SpellAnimation.Slash)
-                .attack(Skill.Attack.Ranged)
                 .minRange(1)
                 .maxRange(3));
     }

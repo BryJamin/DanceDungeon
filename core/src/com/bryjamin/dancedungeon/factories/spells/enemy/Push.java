@@ -18,7 +18,6 @@ public class Push extends Skill {
                 .push(1)
                 .attackType(AttackType.Damage)
                 .spellAnimation(SpellAnimation.Projectile)
-                .spellCoolDown(3)
-                .attack(Attack.Ranged));
+                .spellCoolDown(3));
     }
 }

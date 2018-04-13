@@ -17,8 +17,7 @@ public class StraightShot extends Skill {
                 .targeting(Targeting.StraightShot)
                 .attackType(AttackType.Damage)
                 .actionType(ActionType.UsesMoveAndAttackAction)
-                .spellAnimation(SpellAnimation.Projectile)
-                .attack(Attack.Ranged));
+                .spellAnimation(SpellAnimation.Projectile));
     }
 
 

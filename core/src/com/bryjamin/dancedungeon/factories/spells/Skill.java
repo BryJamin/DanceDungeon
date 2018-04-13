@@ -40,11 +40,7 @@ public class Skill {
 
     public enum Targeting {Ally, Melee, Self, FreeAim, StraightShot}
 
-    public enum Attack {Melee, Ranged, Transformative}
-
     public enum ActionType {UsesMoveAndAttackAction, UsesAttackAction, UsesMoveAction, Free}
-
-    public enum SpellDamageApplication {Instant, AfterSpellAnimation}
 
     public enum SpellAnimation {Projectile, Slash, Glitter}
 
@@ -73,14 +69,14 @@ public class Skill {
 
     private String name = "N/A";
     private String description = "N/A1";
-    private String icon;
-
+    private String icon = TextureStrings.BLOCK;
     private int uses = 2;
     private int coolDown = 2;
     private int coolDownTracker = 0;
     private int push = 0;
+    private final int stun = 0;
 
-    private int storePrice = 3;
+    private int storePrice = 1;
 
     private int baseDamage = 1;
 
@@ -90,17 +86,11 @@ public class Skill {
 
     public Skill affectedAreaSkill;
     public Coordinates[] affectedAreas = new Coordinates[]{};
-
-
     public static final int MAX_MAX_RANGE = 10; //Maximum range possible for a skill. To avoid counting
-
-
     private Targeting targeting = Targeting.Melee;
-    private Attack attack = Attack.Ranged;
     private ActionType actionType = ActionType.UsesMoveAndAttackAction;
     private SpellAnimation spellAnimation = SpellAnimation.Projectile;
     private AttackType attackType = AttackType.Damage;
-    private SpellDamageApplication spellDamageApplication = SpellDamageApplication.Instant;
     private SpellCoolDown spellCoolDown = SpellCoolDown.NoCoolDown;
     private SpellEffect[] spellEffects;
 
@@ -110,11 +100,9 @@ public class Skill {
         description = "N/A";
         icon = TextureStrings.BLOCK;
         targeting = Targeting.StraightShot;
-        attack = Attack.Ranged;
         actionType = ActionType.UsesMoveAndAttackAction;
         spellAnimation = SpellAnimation.Projectile;
         attackType = AttackType.Burn;
-        spellDamageApplication = SpellDamageApplication.Instant;
         spellEffects = new SpellEffect[]{};
         spellCoolDown = SpellCoolDown.NoCoolDown;
         this.coolDown = 1;
@@ -130,11 +118,9 @@ public class Skill {
         this.description = b.description;
         this.icon = b.icon;
         this.targeting = b.targeting;
-        this.attack = b.attack;
         this.actionType = b.actionType;
         this.spellAnimation = b.spellAnimation;
         this.attackType = b.attackType;
-        this.spellDamageApplication = b.spellDamageApplication;
         this.spellEffects = b.spellEffects;
         this.spellCoolDown = b.spellCoolDown;
         this.coolDown = b.cooldown;
@@ -235,8 +221,7 @@ public class Skill {
 
         createSpellEffects(world, entity.getComponent(CoordinateComponent.class).coordinates, target);
 
-
-        if(spellDamageApplication == SpellDamageApplication.Instant && spellAnimation != SpellAnimation.Projectile) {
+        if(spellAnimation != SpellAnimation.Projectile) {
             castSpellOnTargetLocation(world, entity.getComponent(CoordinateComponent.class).coordinates, target);
         }
 
@@ -324,6 +309,9 @@ public class Skill {
 
         for (Entity e : world.getSystem(TileSystem.class).getCoordinateMap().get(target)) {
 
+            if(stun > 0){
+                e.getComponent(StatComponent.class).stun = stun;
+            }
 
             for (SpellEffect spellEffect : spellEffects) {
                 switch (spellEffect) {
@@ -353,10 +341,6 @@ public class Skill {
             /**
              * USED FOR CALCUALTING THE PUSH MOVEMENT OF AN ENEMY
              */
-
-
-
-
             if (push != 0 && e.getComponent(UnPushableComponent.class) == null && e.getComponent(SolidComponent.class) != null) { //If the entity can be pushed
 
                 TileSystem tileSystem = world.getSystem(TileSystem.class);
@@ -501,14 +485,6 @@ public class Skill {
         return targeting;
     }
 
-    public Attack getAttack() {
-        return attack;
-    }
-
-    public SpellDamageApplication getSpellDamageApplication() {
-        return spellDamageApplication;
-    }
-
     public SpellCoolDown getSpellCoolDown() {
         return spellCoolDown;
     }
@@ -549,11 +525,9 @@ public class Skill {
         private String description = "N/A";
         private String icon;
         private Targeting targeting = Targeting.StraightShot;
-        private Attack attack = Attack.Ranged;
         private ActionType actionType = ActionType.UsesMoveAndAttackAction;
         private SpellAnimation spellAnimation = SpellAnimation.Projectile;
         private AttackType attackType = AttackType.Burn;
-        private SpellDamageApplication spellDamageApplication = SpellDamageApplication.Instant;
         private SpellEffect[] spellEffects = new SpellEffect[]{};
         private SpellCoolDown spellCoolDown = SpellCoolDown.NoCoolDown;
         private int cooldown = 1;
@@ -582,11 +556,6 @@ public class Skill {
             return this;
         }
 
-        public Builder attack(Attack val) {
-            this.attack = val;
-            return this;
-        }
-
         public Builder actionType(ActionType val) {
             this.actionType = val;
             return this;
@@ -599,11 +568,6 @@ public class Skill {
 
         public Builder attackType(AttackType val) {
             this.attackType = val;
-            return this;
-        }
-
-        public Builder spellApplication(SpellDamageApplication val) {
-            this.spellDamageApplication = val;
             return this;
         }
 

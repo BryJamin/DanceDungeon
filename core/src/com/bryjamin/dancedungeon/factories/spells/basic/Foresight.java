@@ -17,8 +17,7 @@ public class Foresight extends Skill {
                 .targeting(Targeting.Self)
                 .actionType(ActionType.UsesMoveAndAttackAction)
                 .spellAnimation(SpellAnimation.Glitter)
-                .spellEffects(SpellEffect.Dodge.value(0.2f).duration(3))
-                .attack(Attack.Ranged));
+                .spellEffects(SpellEffect.Dodge.value(0.2f).duration(3)));
     }
 
 

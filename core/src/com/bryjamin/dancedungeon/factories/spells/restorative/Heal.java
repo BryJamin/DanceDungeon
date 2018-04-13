@@ -11,7 +11,6 @@ public class Heal extends Skill {
     public Heal() {
         super(new Builder()
                 .name("Heal")
-                .attack(Attack.Ranged)
                 .spellAnimation(SpellAnimation.Glitter)
                 .attackType(AttackType.Heal)
                 .icon("skills/Medicine")

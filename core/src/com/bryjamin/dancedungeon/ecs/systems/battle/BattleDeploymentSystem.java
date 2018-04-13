@@ -107,7 +107,7 @@ public class BattleDeploymentSystem extends EntitySystem {
             e.getComponent(CoordinateComponent.class).coordinates.set(selected);
         }
 
-        deploymentLocations = new Array<Coordinates>(tileSystem.getAllySpawningLocations());
+        deploymentLocations = new Array<>(tileSystem.getAllySpawningLocations());
 
         deploymentTable = new Table(uiSkin);
         stageUIRenderingSystem.stage.addActor(deploymentTable);

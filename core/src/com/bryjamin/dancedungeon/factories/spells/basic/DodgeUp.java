@@ -17,8 +17,7 @@ public class DodgeUp extends Skill {
                 .actionType(ActionType.UsesMoveAndAttackAction)
                 .spellAnimation(SpellAnimation.Glitter)
                 .spellEffects(SpellEffect.Dodge.value(1).duration(2))
-                .spellCoolDown(3)
-                .attack(Attack.Ranged));
+                .spellCoolDown(3));
     }
 
 

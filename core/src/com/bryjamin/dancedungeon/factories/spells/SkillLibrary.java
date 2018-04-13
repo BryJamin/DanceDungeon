@@ -11,13 +11,9 @@ import com.badlogic.gdx.utils.ObjectMap;
 public class SkillLibrary {
 
     // Hashmap where we store our items as "item name"-"item" pairs
-    private ObjectMap<String, Skill> items = new ObjectMap<String, Skill>();
+    private static final ObjectMap<String, Skill> items;
 
-    public SkillLibrary() {
-        loadItemsFromJSON();
-    }
-
-    private void loadItemsFromJSON() {
+    static { //TODO Is this safe? Research it.
         Json json = new Json();
         items = json.fromJson(ObjectMap.class, Gdx.files.internal("json/playerskills.json"));
     }
@@ -26,13 +22,15 @@ public class SkillLibrary {
         return items;
     }
 
-    public Skill getSkill(String key){
+    public static Skill getSkill(String key){
         return items.get(key);
     }
 
 
-    public static String SKILL_HEAVY_STRIKE = "a5f2cd73-7ade-4577-8d7b-862299baf774";
-    public static String SKILL_HEAVIER_STRIKE = "d92aa63f-1f4d-40bf-9dca-344cebd78d31";
+    public static final String SKILL_HEAVY_STRIKE = "a5f2cd73-7ade-4577-8d7b-862299baf774";
+    public static final String SKILL_HEAVIER_STRIKE = "d92aa63f-1f4d-40bf-9dca-344cebd78d31";
+    public static final String SKILL_HOOK_SHOT = "cd8ced23-790b-41cd-99dd-f884abccc003";
+    public static final String SKILL_STRAIGHT_SHOT = "0ccac808-557a-4956-b77b-e696d849da68";
 
 
 }

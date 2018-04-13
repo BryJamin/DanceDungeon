@@ -15,9 +15,7 @@ public class MageAttack extends Skill {
                 .name("Mage Basic")
                 .icon(TextureStrings.BIGGABLOBBA)
                 .targeting(Targeting.StraightShot)
-                .spellApplication(SpellDamageApplication.AfterSpellAnimation)
-                .spellAnimation(SpellAnimation.Projectile)
-                .attack(Attack.Ranged));
+                .spellAnimation(SpellAnimation.Projectile));
     }
 
 }

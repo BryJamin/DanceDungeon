@@ -19,11 +19,8 @@ import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.assets.Skins;
 import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
-import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
-import com.bryjamin.dancedungeon.factories.spells.basic.HookShot;
-import com.bryjamin.dancedungeon.factories.spells.basic.StunStrike;
-import com.bryjamin.dancedungeon.factories.spells.basic.WarpStrike;
+import com.bryjamin.dancedungeon.factories.spells.SkillLibrary;
 import com.bryjamin.dancedungeon.screens.strategy.MapScreen;
 import com.bryjamin.dancedungeon.screens.strategy.ShopScreen;
 import com.bryjamin.dancedungeon.utils.Measure;
@@ -41,6 +38,7 @@ public class ShopScreenUISystem extends BaseSystem {
     private Viewport gameport;
     private Skin uiSkin;
     private ShopScreen shopScreen;
+    private SkillLibrary skillLibrary;
 
     private Array<Skill> skillToBuyArray = new Array<Skill>();
 
@@ -55,15 +53,19 @@ public class ShopScreenUISystem extends BaseSystem {
         this.gameport = gameport;
         this.uiSkin = Skins.DEFAULT_SKIN(game.assetManager);
         this.shopScreen = shopScreen;
+        this.skillLibrary = new SkillLibrary();
     }
 
     @Override
     protected void initialize() {
 
 
-        skillToBuyArray.add(new WarpStrike());
-        skillToBuyArray.add(new HookShot());
-        skillToBuyArray.add(new StunStrike());
+        Array<Skill> allSkills = skillLibrary.getItems().values().toArray();
+
+        for(int i = 0; i < 3; i++){
+            allSkills.shuffle();
+            skillToBuyArray.add(allSkills.pop());
+        }
 
         createShopUI();
 

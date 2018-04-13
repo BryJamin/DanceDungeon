@@ -21,7 +21,6 @@ public class WarpBomb extends Skill {
                 .attackType(AttackType.Damage)
                 .actionType(Skill.ActionType.UsesMoveAndAttackAction)
                 .spellAnimation(SpellAnimation.Slash)
-                .attack(Skill.Attack.Ranged)
                 .minRange(2)
                 .maxRange(6));
 

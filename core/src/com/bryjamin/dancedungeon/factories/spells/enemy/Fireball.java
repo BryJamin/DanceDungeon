@@ -15,10 +15,8 @@ public class Fireball extends Skill {
                 .description("Fires a ball of flame at the enemy. This is a FREE Action")
                 .targeting(Targeting.StraightShot)
                 .attackType(AttackType.Damage)
-                .spellApplication(SpellDamageApplication.AfterSpellAnimation)
                 .spellAnimation(SpellAnimation.Projectile)
-                .spellCoolDown(3)
-                .attack(Attack.Ranged));
+                .spellCoolDown(3));
     }
 
 }
