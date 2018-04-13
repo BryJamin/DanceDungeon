@@ -9,6 +9,8 @@ import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 
 /**
  * Created by BB on 18/12/2017.
+ *
+ * System used to get an entity to follow a given position.
  */
 
 public class FollowPositionSystem extends EntityProcessingSystem {

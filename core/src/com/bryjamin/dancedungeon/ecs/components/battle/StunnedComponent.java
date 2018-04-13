@@ -1,8 +1,12 @@
 package com.bryjamin.dancedungeon.ecs.components.battle;
 
+import com.artemis.Component;
+
 /**
- * Created by BB on 30/01/2018.
+ * Used as an identify to track if an enemy is stunned.
+ *
+ * This works in conjunction with StatComponent's 'stun' variable.
  */
 
-public class StunnedComponent {
+public class StunnedComponent extends Component{
 }

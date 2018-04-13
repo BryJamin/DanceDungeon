@@ -5,15 +5,25 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.artemis.utils.IntBag;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
+import com.bryjamin.dancedungeon.Observer;
+import com.bryjamin.dancedungeon.assets.TextureStrings;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
+import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
+import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.StoredSkillComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyIntentComponent;
 import com.bryjamin.dancedungeon.factories.spells.TargetingFactory;
-import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
+import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.enums.Direction;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
+import com.bryjamin.dancedungeon.utils.texture.Layer;
+import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 
 /**
@@ -22,7 +32,7 @@ import com.bryjamin.dancedungeon.utils.math.Coordinates;
  * Used to show enemy intent to players
  */
 
-public class EnemyIntentSystem extends EntitySystem {
+public class EnemyIntentSystem extends EntitySystem implements Observer{
 
 
     TileSystem tileSystem;
@@ -30,6 +40,8 @@ public class EnemyIntentSystem extends EntitySystem {
     ComponentMapper<EnemyIntentComponent> eiMapper;
     ComponentMapper<StoredSkillComponent> storedMapper;
     ComponentMapper<CoordinateComponent> coordinateMapper;
+
+    private ActionCameraSystem actionCameraSystem;
 
     TargetingFactory targetingFactory = new TargetingFactory();
 
@@ -40,7 +52,14 @@ public class EnemyIntentSystem extends EntitySystem {
     }
 
     @Override
+    protected void initialize() {
+        actionCameraSystem.observerArray.add(this);
+    }
+
+    @Override
     protected void processSystem() {
+
+        processingFlag = false;
 
         IntBag enemyIntent = world.getAspectSubscriptionManager().get(Aspect.all(EnemyIntentComponent.class)).getEntities();
 
@@ -49,14 +68,11 @@ public class EnemyIntentSystem extends EntitySystem {
         }
 
 
-
         for(Entity e : this.getEntities()){
             Coordinates coordinates = e.getComponent(CoordinateComponent.class).coordinates;
             StoredSkillComponent storedSkillComponent = storedMapper.get(e);
 
             //For use of skills that have a fixed target, So upon movement their storedTargetCoordinates stays the same
-
-            System.out.println(storedSkillComponent.skill.getTargeting());
 
             switch (storedSkillComponent.skill.getTargeting()){
 
@@ -69,9 +85,8 @@ public class EnemyIntentSystem extends EntitySystem {
 
                         Array<Coordinates> coordinatesArray = new Array<Coordinates>();
 
-                    System.out.println(stored);
-                    System.out.println(storedTarget);
-                    System.out.println(coordinates);
+
+
 
                         if(stored.getX() < storedTarget.getX() && stored.getY() == storedTarget.getY()){
                             coordinatesArray = tileSystem.getFreeCoordinateInAGivenDirection(coordinates, new Direction[]{Direction.RIGHT});
@@ -83,13 +98,10 @@ public class EnemyIntentSystem extends EntitySystem {
                             coordinatesArray = tileSystem.getFreeCoordinateInAGivenDirection(coordinates, new Direction[]{Direction.UP});
                         }
 
-                        System.out.println("array size " + coordinatesArray.size);
-                    System.out.println(coordinatesArray.first());
 
                         for(Coordinates c : coordinatesArray) { //There is only one I need to refactor to have a none coordinates array return value
-                            System.out.println("INSIDE");
 
-                            Entity highlight = BagToEntity.bagToEntity(world.createEntity(), targetingFactory.highlightBox(tileSystem.getRectangleUsingCoordinates(c)));
+                            Entity highlight = enemyIntentBox(tileSystem.getRectangleUsingCoordinates(c));
                             storedSkillComponent.storedTargetCoordinates = c;
                             storedSkillComponent.storedCoordinates = coordinates;
                             new TargetingFactory().createRedTargetingMarkers(world, e.getComponent(CoordinateComponent.class).coordinates, c);
@@ -115,7 +127,7 @@ public class EnemyIntentSystem extends EntitySystem {
 
                     if(r != null){ //This exists incase an enemies intent is pushed outside the bounds of the maps
                         //TODO decide what to do in this situation.
-                        Entity highlight = BagToEntity.bagToEntity(world.createEntity(), targetingFactory.highlightBox(r));
+                        Entity highlight = enemyIntentBox(r);
                     }
             }
 
@@ -124,10 +136,6 @@ public class EnemyIntentSystem extends EntitySystem {
 
         }
 
-
-
-
-        processingFlag = false;
 
     }
 
@@ -138,6 +146,7 @@ public class EnemyIntentSystem extends EntitySystem {
 
     public void updateIntent(){
         processingFlag = true;
+        System.out.println("Update Intent called");
     }
 
 
@@ -159,18 +168,29 @@ public class EnemyIntentSystem extends EntitySystem {
 
     }
 
+    public Entity enemyIntentBox(Rectangle r) {
+
+        Entity e = world.createEntity();
+
+        e.edit().add(new PositionComponent(r.x, r.y))
+                .add(new DrawableComponent(Layer.BACKGROUND_LAYER_MIDDLE,
+                        new TextureDescription.Builder(TextureStrings.ICON_WARNING)
+                                .color(new Color(Color.RED.r, Color.RED.g, Color.RED.b, 1f))
+                                .width(r.getWidth())
+                                .height(r.getHeight())
+                                .build()))
+                .add(new HitBoxComponent(new HitBox(r)))
+                .add(new CenteringBoundaryComponent())
+                .add(new FadeComponent(new FadeComponent.FadeBuilder().endless(true).minAlpha(0.5f).maximumTime(2f)))
+                .add(new EnemyIntentComponent());
+
+        return e;
+    }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+    @Override
+    public void onNotify() {//The Intent system watches both the turn and action camera system to decide when to update itself
+        System.out.println("Notify");
+        updateIntent();
+    }
 }

@@ -24,42 +24,8 @@ public class RestEvent extends MapEvent {
     }
 
     @Override
-    public void setUpEvent(World world) {
-
-        new ButtonFactory.ButtonBuilder()
-                .text("Rest")
-                .pos(Measure.units(20f), Measure.units(30f))
-                .width(Measure.units(10f))
-                .height(Measure.units(10f))
-                .buttonAction(new WorldAction() {
-                    @Override
-                    public void performAction(World world, Entity entity) {
-
-                        entity.edit().remove(ActionOnTapComponent.class);
-                        entity.edit().add(new DeadComponent());
-                        complete = true;
-                        for(Entity e : world.getSystem(PlayerControlledSystem.class).getEntities()){
-                            e.getComponent(HealthComponent.class).applyHealing(e.getComponent(HealthComponent.class).maxHealth * 0.3f);
-                        }
-
-                    }
-                })
-                .build(world);
-
-    }
-
-    @Override
     public boolean isComplete(World world) {
         return complete;
     }
 
-    @Override
-    public void cleanUpEvent(World world) {
-
-    }
-
-    @Override
-    public boolean cleanUpComplete(World world) {
-        return true;
-    }
 }

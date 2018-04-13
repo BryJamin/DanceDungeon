@@ -9,9 +9,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.bryjamin.dancedungeon.MainGame;
+import com.bryjamin.dancedungeon.assets.Padding;
 import com.bryjamin.dancedungeon.assets.Skins;
+import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.screens.AbstractScreen;
+import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
+import com.bryjamin.dancedungeon.screens.strategy.MapScreen;
 import com.bryjamin.dancedungeon.utils.Measure;
+import com.bryjamin.dancedungeon.utils.save.QuickSave;
 
 /**
  * Created by BB on 08/10/2017.
@@ -34,6 +39,25 @@ public class MenuScreen extends AbstractScreen {
         table = new Table();
         table.setFillParent(true);
 
+        if(QuickSave.isThereAValidQuickSave()){
+            TextButton textBtn1 = new TextButton("Continue", uiSkin);
+            textBtn1.addListener(new ClickListener() {
+
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    game.getScreen().dispose();
+                    QuickSave.SavedData savedData = QuickSave.savedData;
+                    GameMap gameMap = savedData.getGameMap();
+                    gameMap.setUpLoadedMap();
+                    PartyDetails partyDetails = savedData.getPartyDetails();
+                    game.setScreen(new MapScreen(game, gameMap, partyDetails));
+                }
+            });
+
+            table.add(textBtn1).width(Measure.units(20f)).padBottom(Padding.SMALL);
+            table.row();
+        }
+
 
         TextButton textBtn1 = new TextButton("New Game", uiSkin);
         textBtn1.addListener(new ClickListener() {
@@ -41,18 +65,6 @@ public class MenuScreen extends AbstractScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.getScreen().dispose();
-
-
-                //MapGenerator mapGenerator = new MapGenerator();
-                //mapGenerator.generateGameMap();
-//
-                //PartyDetails partyDetails = new PartyDetails();
-                //partyDetails.addPartyMember(new CharacterGenerator().createMage(), 1);
-//
-                //game.setScreen(new MapScreen(game, partyDetails));
-
-
-
                 game.setScreen(new ExpeditionScreen(game));
             }
         });

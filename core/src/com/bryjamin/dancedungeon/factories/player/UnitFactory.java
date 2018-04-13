@@ -6,10 +6,14 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
+import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
+import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
+import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.BuffComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.DeploymentComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
@@ -18,11 +22,14 @@ import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.AffectMoraleComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.FriendlyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.SolidComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
+import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
@@ -43,11 +50,12 @@ public class UnitFactory {
                 .add(new SolidComponent())
                 .add(new UnPushableComponent())
                 .add(new CoordinateComponent(c))
+                .add(new MoveToComponent())
                 .add(new VelocityComponent())
                 .add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE, new TextureDescription.Builder(TextureStrings.BLOCK)
                         //.offsetX()
                         .size(Measure.units(5f)).build()))
-                .add(new CenteringBoundaryComponent(new Rectangle(0, 0, Measure.units(3f), Measure.units(3f))));
+                .add(new CenteringBoundaryComponent(new Rectangle(0, 0, Measure.units(5f), Measure.units(5f))));
 
         return e;
 
@@ -56,11 +64,44 @@ public class UnitFactory {
 
     public Entity baseAlliedTileBag(World world, Coordinates c){
         Entity e = baseTileBag(world, c);
-        e.edit().remove(UnPushableComponent.class);
+       // e.edit().remove(UnPushableComponent.class);
         e.edit().add(new HealthComponent(2));
+        e.edit().add(new AffectMoraleComponent());
         e.edit().add(new FriendlyComponent());
         e.edit().add(new StatComponent(new StatComponent.StatBuilder().healthAndMax(1)));
         e.getComponent(DrawableComponent.class).drawables.getColor().set(new Color(Color.ORANGE));
+        return e;
+    }
+
+
+
+    public Entity baseDeploymentZone(World world, Rectangle r, Coordinates c){
+
+        Entity e = world.createEntity();
+
+        e.edit().add(new PositionComponent(r.x, r.y))
+                .add(new CoordinateComponent(c))
+                .add(new HitBoxComponent(r))
+                .add(new DeploymentComponent())
+                .add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE, new TextureDescription.Builder(TextureStrings.BLOCK)
+                        .color(new Color(Color.BLUE))
+                        .alpha(0.2f)
+                        .width(r.width)
+                        .height(r.height)
+                        .build()))
+/*                .add(new FadeComponent(new FadeComponent.FadeBuilder()
+                        .fadeIn(true)
+                        .alpha(0.17f)
+                        .minAlpha(0.15f)
+                        .maxAlpha(0.55f)
+                        .maximumTime(1.5f)));*/
+                .add(new FadeComponent(
+                        new FadeComponent.FadeBuilder()
+                                .fadeIn(true)
+                                .minAlpha(0.15f)
+                                .maxAlpha(0.85f)
+                               // .endless(true)
+                                .maximumTime(1.5f)));
         return e;
     }
 

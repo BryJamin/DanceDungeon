@@ -14,6 +14,8 @@ import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 
 public class UnitData {
 
+    public static int MAXIMUM_SKILLS = 2;
+
     public String id = UnitMap.UNIT_WARRIOR;
 
     public String icon = TextureStrings.CLASS_CYRONAUT;
@@ -21,7 +23,9 @@ public class UnitData {
     public String name = "Jeff";
 
     public StatComponent statComponent = new StatComponent();
-    public SkillsComponent skillsComponent = new SkillsComponent();
+    private SkillsComponent skillsComponent = new SkillsComponent();
+
+    public UnitData(){}
 
     public UnitData(String id){
         this.id = id;

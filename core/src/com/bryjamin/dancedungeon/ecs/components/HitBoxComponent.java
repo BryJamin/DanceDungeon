@@ -23,6 +23,10 @@ public class HitBoxComponent extends Component {
         this.hitBoxes.addAll(hitBoxes);
     }
 
+    public HitBoxComponent(Rectangle r){
+        this.hitBoxes.add(new HitBox(r));
+    }
+
 
     /**
      * For when you need a singular hit box

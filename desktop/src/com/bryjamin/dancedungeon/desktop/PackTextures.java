@@ -17,6 +17,14 @@ public class PackTextures {
 
     public static void main (String args[]){
 
+        packSpriteAtlas();
+        packMapTileAtlas();
+
+
+    }
+
+    public static void packSpriteAtlas(){
+
         String projectPath = System.getProperty("user.dir");
         String inputDir = projectPath + "/images/tobepacked";
         String outputDir = projectPath;
@@ -34,7 +42,25 @@ public class PackTextures {
 
         TexturePacker.process(settings, inputDir,outputDir,packFileName);
 
+    }
 
+    public static void packMapTileAtlas(){
+
+        String projectPath = System.getProperty("user.dir");
+        String inputDir = projectPath + "/images/maptiles";
+        String outputDir = projectPath;
+        String packFileName = "map";
+
+        TexturePacker.Settings settings = new TexturePacker.Settings();
+        settings.maxWidth = 2048;
+        settings.maxHeight = 2048;
+        settings.filterMin = Texture.TextureFilter.Nearest;
+        settings.filterMag = Texture.TextureFilter.Nearest;
+        settings.paddingX = 0;
+        settings.paddingY = 0;
+        settings.combineSubdirectories = true;
+
+        TexturePacker.process(settings, inputDir,outputDir,packFileName);
 
 
     }

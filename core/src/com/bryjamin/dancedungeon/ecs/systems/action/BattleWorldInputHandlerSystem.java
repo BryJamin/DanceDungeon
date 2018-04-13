@@ -6,7 +6,8 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.bryjamin.dancedungeon.ecs.systems.BattleStageUISystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.BattleDeploymentSystem;
+import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.SelectedTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
@@ -28,6 +29,11 @@ public class BattleWorldInputHandlerSystem extends BaseSystem {
     private StageUIRenderingSystem stageUIRenderingSystem;
     private InputMultiplexer multiplexer;
 
+    public enum State {
+        DEPLOYMENT, BATTLING, VICTORY
+    }
+
+    private State state = State.DEPLOYMENT;
 
     GestureDetector gestureDetector;
     private Viewport gameport;
@@ -42,7 +48,10 @@ public class BattleWorldInputHandlerSystem extends BaseSystem {
     @Override
     protected void initialize() {
         multiplexer.addProcessor(stageUIRenderingSystem.stage);
-        multiplexer.addProcessor(gestureDetector);
+
+        if(state != State.VICTORY) {
+            multiplexer.addProcessor(gestureDetector);
+        }
     }
 
     @Override
@@ -60,21 +69,37 @@ public class BattleWorldInputHandlerSystem extends BaseSystem {
 
             if (world.getSystem(ActionCameraSystem.class).isProcessing()) return false;
 
-            if (world.getSystem(TurnSystem.class).getTurn() == TurnSystem.TURN.ALLY) {
+            //TODO It may be beter to have the input system of 'Battle' have states. So within certain states,
+            //TODO you are unabelt o interact with other objects. Such as during deployment you cna't activate movment
 
-                if (world.getSystem(ActionOnTapSystem.class).touch(input.x, input.y))
+            //TODO this currently does this but is not clean.
+
+            if (world.getSystem(BattleDeploymentSystem.class).isProcessing()) {
+
+                if(world.getSystem(ActionOnTapSystem.class).touch(input.x, input.y))
+                    return true;
+
+            } else if (world.getSystem(TurnSystem.class).getTurn() == TurnSystem.TURN.ALLY) {
+
+                if(world.getSystem(ActionOnTapSystem.class).touch(input.x, input.y))
                     return true;
 
                 if (world.getSystem(SelectedTargetSystem.class).selectCharacter(input.x, input.y))
                     return true;
 
-                world.getSystem(BattleStageUISystem.class).reset();
+                world.getSystem(BattleScreenUISystem.class).reset();
 
             }
+
+
             return false;
         }
     }
 
 
-
+    public void setState(State state) {
+        this.state = state;
+        multiplexer.clear();
+        initialize();
+    }
 }

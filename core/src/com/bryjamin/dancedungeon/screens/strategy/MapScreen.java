@@ -12,6 +12,7 @@ import com.bryjamin.dancedungeon.ecs.systems.FixedToCameraPanAndFlingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MoveToTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ParentChildSystem;
+import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.ActionOnTapSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.ConditionalActionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.DeathSystem;
@@ -23,7 +24,8 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.ScaleTransformationSystem
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.input.MapInputSystem;
 import com.bryjamin.dancedungeon.ecs.systems.strategy.EventGenerationSystem;
-import com.bryjamin.dancedungeon.ecs.systems.strategy.StrategyMapSystem;
+import com.bryjamin.dancedungeon.ecs.systems.strategy.MapNodeSystem;
+import com.bryjamin.dancedungeon.ecs.systems.ui.InformationBannerSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.MapStageUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
@@ -35,6 +37,9 @@ import com.bryjamin.dancedungeon.utils.Measure;
 
 /**
  * Created by BB on 17/12/2017.
+ *
+ * Screen used during the game. For navigating between battles
+ *
  */
 
 public class MapScreen extends AbstractScreen {
@@ -43,16 +48,15 @@ public class MapScreen extends AbstractScreen {
     private GameMap gameMap;
     private PartyDetails partyDetails;
 
-    public MapScreen(MainGame game, PartyDetails partyDetails) {
+    public MapScreen(MainGame game, GameMap gameMap, PartyDetails partyDetails) {
         super(game);
         this.partyDetails = partyDetails;
+        this.gameMap = gameMap;
         createWorld();
     }
 
 
     private void createWorld() {
-
-        gameMap = new MapGenerator().generateGameMap();
 
         WorldConfiguration config = new WorldConfigurationBuilder()
                 .with(WorldConfigurationBuilder.Priority.HIGHEST,
@@ -60,11 +64,14 @@ public class MapScreen extends AbstractScreen {
                         //Initialization Systems
 
                         new EventGenerationSystem(),
-                        new StrategyMapSystem(game, gameMap, partyDetails),
+                        new MapNodeSystem(game, gameMap, partyDetails),
+
+                        new PlayerPartyManagementSystem(partyDetails),
 
                         new MapInputSystem(game, gameport, 0, gameMap.getWidth() + Measure.units(20f)),
                         new FixedToCameraPanAndFlingSystem(gameport.getCamera(), 0, 0, gameMap.getWidth() + Measure.units(20f), 0),
-                        new MapStageUISystem(game, partyDetails, gameport), //Updates and is fixed to camera, so need to be below fling system
+                        new MapStageUISystem(game, gameMap, partyDetails, gameport), //Updates and is fixed to camera, so need to be below fling system
+                        new InformationBannerSystem(game, gameport),
 
 
                         //Positional Systems
@@ -103,8 +110,9 @@ public class MapScreen extends AbstractScreen {
     }
 
     public void battleVictory(){
-        world.getSystem(StrategyMapSystem.class).onVictory();
+        world.getSystem(MapNodeSystem.class).onVictory();
         world.getSystem(MapStageUISystem.class).updateInformation();
+        world.getSystem(InformationBannerSystem.class).updateInformation();
     }
 
 }

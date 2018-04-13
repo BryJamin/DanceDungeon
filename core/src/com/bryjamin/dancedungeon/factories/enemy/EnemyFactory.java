@@ -12,6 +12,7 @@ public class EnemyFactory {
     public static final String BLOB = "blob";
     public static final String FAST_BLOB = "fast_blob";
     public static final String MAGE_BLOB = "mage_blob";
+    public static final String SPITTER_BLOB = "spitter_blob";
 
 
     public interface Command {
@@ -40,6 +41,13 @@ public class EnemyFactory {
             @Override
             public ComponentBag getEnemy() {
                 return new RangedDummyFactory().rangedDummy();
+            }
+        });
+
+        enemyUnits.put(SPITTER_BLOB, new Command() {
+            @Override
+            public ComponentBag getEnemy() {
+                return new SpitterFactory().rangedDummy();
             }
         });
 

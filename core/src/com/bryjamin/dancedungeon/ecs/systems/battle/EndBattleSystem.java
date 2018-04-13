@@ -5,25 +5,35 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.artemis.utils.Bag;
+import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.MainGame;
+import com.bryjamin.dancedungeon.Observer;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
+import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
+import com.bryjamin.dancedungeon.ecs.systems.action.BattleWorldInputHandlerSystem;
+import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
-import com.bryjamin.dancedungeon.factories.map.event.MapEvent;
-import com.bryjamin.dancedungeon.factories.player.UnitData;
-import com.bryjamin.dancedungeon.factories.player.UnitMap;
+import com.bryjamin.dancedungeon.factories.map.MapNode;
+import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
+import com.bryjamin.dancedungeon.factories.map.event.objectives.AbstractObjective;
 import com.bryjamin.dancedungeon.screens.battle.BattleScreen;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
-import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
-import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
+
 
 /**
  * Created by BB on 28/11/2017.
  */
 
-public class EndBattleSystem extends EntitySystem {
+public class EndBattleSystem extends EntitySystem implements Observer {
+
+    private PlayerPartyManagementSystem playerPartyManagementSystem;
+    private BattleScreenUISystem battleScreenUISystem;
+    private BattleWorldInputHandlerSystem battleWorldInputHandlerSystem;
+    private TurnSystem turnSystem;
+    private ActionCameraSystem actionCameraSystem;
 
     private ComponentMapper<EnemyComponent> enemyMapper;
     private ComponentMapper<PlayerControlledComponent> pcMapper;
@@ -39,105 +49,52 @@ public class EndBattleSystem extends EntitySystem {
 
     private boolean processingFlag = true;
 
-    private MapEvent currentEvent;
+    private BattleEvent currentEvent;
 
-    private enum State {
-        CLEAN_UP, START_UP, DURING, END
-    }
 
-    private State state = State.START_UP;
-
-    public Bag<Entity> getPlayerBag() {
-        return playerBag;
-    }
-
-    public EndBattleSystem(MainGame game, GameMap gameMap, PartyDetails partyDetails) {
+    public EndBattleSystem(MainGame game, BattleEvent battleEvent, PartyDetails partyDetails) {
         super(Aspect.one(EnemyComponent.class, PlayerControlledComponent.class));
         this.partyDetails = partyDetails;
         this.game = game;
         this.gameMap = gameMap;
         //partyDetails.getPlayerParty().
-        this.currentEvent = gameMap.getCurrentMapNode().getMapEvent();
+        this.currentEvent = battleEvent;
 
     }
 
     @Override
     protected void initialize() {
+        actionCameraSystem.observerArray.add(this);
 
-        UnitMap unitMap = new UnitMap();
 
-        for (int i = 0; i < partyDetails.getParty().length; i++) {
+        Array<AbstractObjective> abstractObjectives = new Array<AbstractObjective>();
+        abstractObjectives.add(currentEvent.getPrimaryObjective());
+        abstractObjectives.addAll(currentEvent.getBonusObjective());
 
-            if (partyDetails.getParty()[i] != null) {
-                UnitData unitData = partyDetails.getParty()[i];
-                ComponentBag player = unitMap.getUnit(unitData);
-                Entity e = BagToEntity.bagToEntity(world.createEntity(), player);
+
+        for(int i = 0; i < abstractObjectives.size; i++) {
+            for(int j = 0; j < abstractObjectives.get(i).getUpdateOnArray().length; j++){
+                switch (abstractObjectives.get(i).getUpdateOnArray()[j]){
+                    case END_TURN:
+                        turnSystem.addNextTurnObserver(abstractObjectives.get(i));
+                        break;
+                }
             }
-
+            abstractObjectives.get(i).addObserver(this);
         }
 
-    }
+        battleScreenUISystem.updateObjectiveTable(currentEvent);
 
+    }
 
     @Override
     protected void processSystem() {
 
-        //TODO I convert to state end after there has been a defeat,
-        //TODO it might be better to have some kind of method that, then turns off this system
-        //TODO once the battle is over
-        if (playerBag.isEmpty()) {
-            ((BattleScreen) game.getScreen()).defeat();
-            state = State.END;
-            processingFlag = false;
-        }
-
-        switch (state){
-            case START_UP:
-                currentEvent.setUpEvent(world);
-                state = State.DURING;
-                break;
-
-            case DURING:
-                if (currentEvent.isComplete(world)) {
-                    state = State.CLEAN_UP;
-                    currentEvent.cleanUpEvent(world);
-                }
-                break;
-
-            case CLEAN_UP:
-
-                if(currentEvent.cleanUpComplete(world)){
-
-                    for(Entity e : playerBag){
-                        HealthComponent hc = e.getComponent(HealthComponent.class);
-                        StatComponent statComponent = e.getComponent(StatComponent.class);
-
-                        statComponent.health = (int) hc.health;
-                        statComponent.maxHealth = (int) hc.maxHealth;
-                    }
-
-
-                    ((BattleScreen) game.getScreen()).victory(partyDetails);
-
-                    processingFlag = false;
-
-                    state = State.END;
-                }
-
-                break;
-        }
-
     }
-
-
-    private void setupEvent(MapEvent mapEvent) {
-        mapEvent.setUpEvent(world);
-    }
-
 
     @Override
     protected boolean checkProcessing() {
-        return processingFlag;
+        return false;
     }
 
 
@@ -154,10 +111,48 @@ public class EndBattleSystem extends EntitySystem {
     }
 
 
-    public void endBattle() {
-
+    public BattleEvent getCurrentEvent() {
+        return currentEvent;
     }
 
 
+    @Override
+    public void onNotify() {
+        //TODO, decide if notify is appropriate. Also, there is not really a reason for the state change,
+
+        //UNTIL I CAN FIX TEH ACTION CAMERA SYSTEM IN REGARDS TO THE SIMULTANEOUS ATTACKS HAPPENS
+        //ON DIFFERENT PARTS OF THE MAP I NEED TO ADD A CHECK FOR IF THE FLAG IS FALSE
+        //OTHERWISE THIS WILL CRASH
+
+        if(!processingFlag) return;
+
+
+        if(playerPartyManagementSystem.getPartyDetails().morale == 0) {
+            ((BattleScreen) game.getScreen()).defeat();
+
+            actionCameraSystem.observerArray.removeValue(this, true);
+        }
+
+        if (currentEvent.isComplete(world)) {
+
+            for(Entity e : playerBag){
+                HealthComponent hc = e.getComponent(HealthComponent.class);
+                StatComponent statComponent = e.getComponent(StatComponent.class);
+
+                statComponent.health = (int) hc.health;
+                statComponent.maxHealth = (int) hc.maxHealth;
+            }
+
+            actionCameraSystem.observerArray.removeValue(this, true);
+
+            battleScreenUISystem.createVictoryRewards(currentEvent, partyDetails);
+            battleWorldInputHandlerSystem.setState(BattleWorldInputHandlerSystem.State.VICTORY);
+
+        }
+
+        battleScreenUISystem.updateObjectiveTable(currentEvent);
+
+
+    }
 
 }

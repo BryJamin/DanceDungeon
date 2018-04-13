@@ -8,7 +8,11 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.bryjamin.dancedungeon.MainGame;
-import com.bryjamin.dancedungeon.ecs.systems.BattleStageUISystem;
+import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.BattleDeploymentSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.StunnedSystem;
+import com.bryjamin.dancedungeon.ecs.systems.graphical.ArchingTextureSystem;
+import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MoveToTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
@@ -42,10 +46,11 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.PlayerGraphicalTargetingS
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.ScaleTransformationSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
+import com.bryjamin.dancedungeon.ecs.systems.ui.InformationBannerSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
+import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
 import com.bryjamin.dancedungeon.screens.AbstractScreen;
-import com.bryjamin.dancedungeon.screens.VictoryScreen;
 import com.bryjamin.dancedungeon.screens.menu.DefeatScreen;
 import com.bryjamin.dancedungeon.utils.GameDelta;
 
@@ -57,16 +62,16 @@ import com.bryjamin.dancedungeon.utils.GameDelta;
 public class BattleScreen extends AbstractScreen {
 
     private PartyDetails partyDetails;
-    private GameMap gameMap;
+    private BattleEvent battleEvent;
 
     private Screen previousScreen;
     private World world;
 
-    public BattleScreen(MainGame game, Screen previousScreen, GameMap gameMap, PartyDetails partyDetails) {
+    public BattleScreen(MainGame game, Screen previousScreen, BattleEvent battleEvent, PartyDetails partyDetails) {
         super(game);
         this.previousScreen = previousScreen;
         this.partyDetails = partyDetails;
-        this.gameMap = gameMap;
+        this.battleEvent = battleEvent;
         createWorld();
     }
 
@@ -77,7 +82,15 @@ public class BattleScreen extends AbstractScreen {
         WorldConfiguration config = new WorldConfigurationBuilder()
                 .with(WorldConfigurationBuilder.Priority.HIGHEST,
 
+                        //Initialize Tiles
+                        new TileSystem(battleEvent),
+                        new BattleDeploymentSystem(game, battleEvent),
+
                         new BattleWorldInputHandlerSystem(gameport),
+                        new BattleScreenUISystem(UIStage, game),
+
+                        new PlayerPartyManagementSystem(partyDetails),
+                        new InformationBannerSystem(game, gameport),
 
                         new MovementSystem(),
                         new FollowPositionSystem(),
@@ -85,8 +98,6 @@ public class BattleScreen extends AbstractScreen {
 
                         new BuffSystem(),
 
-                        //Initialize Tiles
-                        new TileSystem(),
                         new MoveToTargetSystem()
                 )
                 .with(WorldConfigurationBuilder.Priority.HIGH,
@@ -99,21 +110,22 @@ public class BattleScreen extends AbstractScreen {
                         new BlinkOnHitSystem(),
                         new ExpireSystem(),
                         new PlayerControlledSystem(game),
-                        new EndBattleSystem(game, gameMap, partyDetails)
+                        new EndBattleSystem(game, battleEvent, partyDetails)
                 )
                 .with(WorldConfigurationBuilder.Priority.LOWEST,
                         new ActionOnTapSystem(),
-                        new BattleStageUISystem(UIStage, game),
                         new ActionCameraSystem(),
 
-                        //Rendering     Effects
+                        //Rendering Effects
                         new FadeSystem(),
                         new ScaleTransformationSystem(),
+                        new ArchingTextureSystem(),
 
                         new NoMoreActionsSystem(),
                         new PlayerGraphicalTargetingSystem(),
                         new BattleMessageSystem(gameport),
                         new EnemyIntentSystem(),
+                        new StunnedSystem(),
                         new AnimationSystem(game),
                         new RenderingSystem(game, gameport),
                         new HealthBarSystem(game, gameport),
@@ -142,11 +154,6 @@ public class BattleScreen extends AbstractScreen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         GameDelta.delta(world, delta);
     }
-
-    public void victory(PartyDetails partyDetails){
-        game.setScreen(new VictoryScreen(game, this, partyDetails));
-    }
-
 
     public void defeat(){
         game.setScreen(new DefeatScreen(game, this));

@@ -53,7 +53,7 @@ public class ExpeditionScreen extends AbstractScreen {
         WorldConfiguration config = new WorldConfigurationBuilder()
                 .with(WorldConfigurationBuilder.Priority.HIGHEST,
 
-                        new ExpeditionScreenCreationSystem(game, gameport, availiable, new Array<UnitData>()),
+                        new ExpeditionScreenCreationSystem(game, gameport, availiable),
                         new BasicInputSystemWithStage(gameport),
 
                         new MovementSystem(),

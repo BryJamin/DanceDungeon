@@ -28,6 +28,7 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PartyUiComponent;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.factories.CharacterGenerator;
+import com.bryjamin.dancedungeon.factories.map.MapGenerator;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
 import com.bryjamin.dancedungeon.screens.strategy.MapScreen;
@@ -46,10 +47,12 @@ public class ExpeditionScreenCreationSystem extends BaseSystem {
 
     private StageUIRenderingSystem stageUIRenderingSystem;
     private RenderingSystem renderingSystem;
+
     private Skin uiSkin;
     private Table container;
     private Table characterPane;
     private Table partyTable;
+    private TextButton startExpedition;
 
 
     private Viewport gameport;
@@ -64,7 +67,7 @@ public class ExpeditionScreenCreationSystem extends BaseSystem {
     UnitData[] support;
 
 
-    public ExpeditionScreenCreationSystem(MainGame game, Viewport gameport, Array<UnitData> availableMembers, Array<UnitData> partyMembers) {
+    public ExpeditionScreenCreationSystem(MainGame game, Viewport gameport, Array<UnitData> availableMembers) {
         this.gameport = gameport;
         this.game = game;
         this.availableMembers = availableMembers;
@@ -102,6 +105,11 @@ public class ExpeditionScreenCreationSystem extends BaseSystem {
     @Override
     protected void processSystem() {
 
+        if(partyMembers.contains(null, true)) {
+            startExpedition.setDisabled(true);
+        } else {
+            startExpedition.setDisabled(false);
+        }
     }
 
     @Override
@@ -142,10 +150,12 @@ public class ExpeditionScreenCreationSystem extends BaseSystem {
 
         float size = Measure.units(7.5f);
 
-        TextButton startExpedition = new TextButton("Start Expedition", uiSkin);
+        startExpedition = new TextButton("Start Expedition", uiSkin);
+
         startExpedition.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+
                 game.getScreen().dispose();
 
                 PartyDetails partyDetails = new PartyDetails();
@@ -158,7 +168,7 @@ public class ExpeditionScreenCreationSystem extends BaseSystem {
                     }
                 }
 
-                game.setScreen(new MapScreen(game, partyDetails));
+                game.setScreen(new MapScreen(game, new MapGenerator().generateGameMap(), partyDetails));
             }
         });
 

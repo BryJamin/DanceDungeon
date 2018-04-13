@@ -5,6 +5,7 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.badlogic.gdx.utils.Array;
+import com.bryjamin.dancedungeon.Observer;
 import com.bryjamin.dancedungeon.ecs.components.actions.UtilityAiComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.BuffComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
@@ -35,6 +36,8 @@ public class TurnSystem extends EntitySystem {
     private ComponentMapper<StatComponent> statMapper;
 
 
+    private Array<Observer> nextTurnObservers = new Array<Observer>();
+
     private ComponentMapper<UtilityAiComponent> utilityAiMapper;
 
     private ComponentMapper<CoordinateComponent> coordinateMapper;
@@ -46,7 +49,7 @@ public class TurnSystem extends EntitySystem {
     private Array<Entity> enemyTurnEntities = new Array<Entity>();
     private Array<Entity> allyTurnEntities = new Array<Entity>();
 
-    private boolean processingFlag = true;
+    private boolean processingFlag = false;
 
 
     private enum STATE {
@@ -105,6 +108,11 @@ public class TurnSystem extends EntitySystem {
     public void endAllyTurn(){
         turn = INTENT;
         battleState = STATE.NEXT_TURN;
+
+        for(Observer o : nextTurnObservers){ //Notifies observers the player has ended their turn.
+            o.onNotify();
+        }
+
     }
 
 
@@ -116,6 +124,7 @@ public class TurnSystem extends EntitySystem {
         if (turn == ENEMY) {
             currentTurnEntities.addAll(enemyTurnEntities);
         } else if (turn == ALLY) {
+
             currentTurnEntities.addAll(allyTurnEntities);
            // world.getSystem(SelectedTargetSystem.class).reselectEntityAfterActionComplete();
         }
@@ -208,6 +217,9 @@ public class TurnSystem extends EntitySystem {
 
     }
 
+    public boolean isTurn(TURN turn){
+        return this.turn == turn;
+    }
 
     /**
      * Runs a entity's turn if it is not being controlled by the player
@@ -255,7 +267,13 @@ public class TurnSystem extends EntitySystem {
 
     }
 
+    public void setProcessingFlag(boolean processingFlag) {
+        this.processingFlag = processingFlag;
+    }
 
 
+    public void addNextTurnObserver(Observer o){
+        this.nextTurnObservers.add(o);
+    }
 }
 

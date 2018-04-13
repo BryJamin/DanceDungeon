@@ -6,8 +6,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.player.UnitMap;
-import com.bryjamin.dancedungeon.factories.spells.basic.HeavyStrike;
-import com.bryjamin.dancedungeon.factories.spells.basic.StraightShot;
+import com.bryjamin.dancedungeon.factories.spells.SkillLibrary;
 import com.bryjamin.dancedungeon.utils.BaseStatStatics;
 
 /**
@@ -25,7 +24,7 @@ public class CharacterGenerator {
         UnitData warrior = new UnitData(UnitMap.UNIT_WARRIOR);
 
         warrior.name = genName();
-        warrior.icon = TextureStrings.CLASS_WARRIOR;
+        warrior.icon = TextureStrings.WARRIOR;
         warrior.setStatComponent(new StatComponent.StatBuilder()
                 .movementRange(BaseStatStatics.BASE_MOVEMENT)
                 .attackRange(3)
@@ -33,8 +32,8 @@ public class CharacterGenerator {
                 .healthAndMax(health).build());
 
         warrior.setSkillsComponent(new SkillsComponent(
-                new HeavyStrike()
-                //new Foresight()
+                SkillLibrary.getSkill(SkillLibrary.SKILL_HEAVY_STRIKE),
+                SkillLibrary.getSkill(SkillLibrary.SKILL_CLOBBER)
                 ));
 
         return warrior;
@@ -42,7 +41,8 @@ public class CharacterGenerator {
 
     public UnitData createMage(){
         UnitData mage = new UnitData(UnitMap.UNIT_MAGE);
-        mage.icon = TextureStrings.CLASS_MAGE;
+
+        mage.icon = TextureStrings.PLAYER;
         mage.setStatComponent(
                 new StatComponent.StatBuilder()
                         .movementRange(BaseStatStatics.BASE_MOVEMENT )
@@ -52,10 +52,7 @@ public class CharacterGenerator {
 
         mage.setSkillsComponent(
                 new SkillsComponent(
-                        new StraightShot()
-                        //new FireWeapon(),
-                        //new Heal()
-                ));
+                        SkillLibrary.getSkill(SkillLibrary.SKILL_THROW_BOMB)));
 
         mage.name = genName();
 
@@ -65,7 +62,7 @@ public class CharacterGenerator {
 
     public UnitData createArcher(){
         UnitData mage = new UnitData(UnitMap.UNIT_ARCHER);
-        mage.icon = TextureStrings.CLASS_BOW_SPEICALIST;
+        mage.icon = TextureStrings.ARCHER;
         mage.setStatComponent(
                 new StatComponent.StatBuilder()
                         .movementRange(BaseStatStatics.BASE_MOVEMENT)
@@ -75,8 +72,7 @@ public class CharacterGenerator {
 
         mage.setSkillsComponent(
                 new SkillsComponent(
-                        //new FireWeapon(),
-                        new StraightShot()
+                        SkillLibrary.getSkill(SkillLibrary.SKILL_STRAIGHT_SHOT)
                 ));
 
         mage.name = genName();

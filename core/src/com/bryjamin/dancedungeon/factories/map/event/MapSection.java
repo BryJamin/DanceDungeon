@@ -7,6 +7,11 @@ import java.util.Random;
 
 /**
  * Created by BB on 16/01/2018.
+ *
+ * This class is used to split the Map into different 'sections'
+ *
+ * It stores a set of different MapNodes and tries to space them out evenly based on the information given
+ *
  */
 
 public class MapSection {
@@ -23,6 +28,20 @@ public class MapSection {
 
     private float minimumSpacing;
 
+    /**
+     * No Arg Constructor for Json
+     */
+    public MapSection(){}
+
+    /**
+     * Constructor for MapSection
+     * @param startX - The x starting position of the sections
+     * @param startY - The y starting position of the section
+     * @param width - The width of the section
+     * @param height - The height of the section
+     * @param minimumSpacing - The minmum amount of the space that should be between each node in the section
+     * @param nodeNumber - The number of nodes that needs to be put into the section
+     */
     public MapSection(float startX, float startY, float width, float height, float minimumSpacing, int nodeNumber) {
         this.startX = startX;
         this.startY = startY;
@@ -34,7 +53,7 @@ public class MapSection {
     }
 
     /**
-     * Generates and randomly places 'nodes' within the given section based on nodeNumber
+     * Generates and randomly places 'nodes' within the given section based on the number of nodes
      */
     public void generateNodePositionsWithinSection() {
 

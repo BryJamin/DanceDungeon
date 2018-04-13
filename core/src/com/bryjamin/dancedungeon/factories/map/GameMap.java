@@ -1,6 +1,7 @@
 package com.bryjamin.dancedungeon.factories.map;
 
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.OrderedMap;
 import com.bryjamin.dancedungeon.factories.map.event.MapSection;
 
 /**
@@ -11,14 +12,25 @@ public class GameMap {
 
     private MapNode currentMapNode;
 
-    private Array<MapSection> mapNodeSections = new Array<MapSection>();
-    private Array<MapNode> allNodes = new Array<MapNode>();
+    private Array<MapSection> mapNodeSections = new Array<>();
+    private Array<MapNode> allNodes = new Array<>();
+    private Array<MapNode> visited = new Array<>();
+
+    public GameMap(){}
 
     public GameMap(Array<MapSection> mapSections){
         this.mapNodeSections = mapSections;
         for(MapSection mapSection : mapNodeSections){
             allNodes.addAll(mapSection.getMapNodes());
         }
+    }
+
+    public MapNode getById(String id){
+        for(MapNode node : allNodes){
+            if(node.getId().equals(id)) return node;
+        }
+
+        return null;
     }
 
     public MapNode getCurrentMapNode() {
@@ -45,4 +57,38 @@ public class GameMap {
 
         return (last.getStartX() + last.getWidth()) - first.getStartX();
     }
+
+    /**
+     * Sets up the connections of loaded maps.
+     */
+    public void setUpLoadedMap(){
+
+        OrderedMap<String, MapNode> mapOfNodes = new OrderedMap<>();
+
+
+
+        for(MapNode mapNode : allNodes){
+            mapOfNodes.put(mapNode.getId(), mapNode);
+            if(currentMapNode != null){
+                if(mapNode.getId().equals(currentMapNode.getId()))
+                currentMapNode = mapNode;
+            }
+        }
+
+        for(MapNode mapNode : allNodes){
+            for(String s : mapNode.getSuccessorsIds()){
+                mapNode.addSuccessors(mapOfNodes.get(s));
+            }
+        }
+
+    }
+
+
+    public void addToVisited(MapNode mapNode){
+        if(!visited.contains(mapNode, false))
+            visited.add(mapNode);
+    }
+
+
+
 }

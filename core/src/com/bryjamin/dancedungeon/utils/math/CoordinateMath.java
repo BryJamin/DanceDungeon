@@ -2,6 +2,7 @@ package com.bryjamin.dancedungeon.utils.math;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.OrderedSet;
+import com.bryjamin.dancedungeon.utils.enums.Direction;
 
 /**
  * Created by BB on 28/10/2017.
@@ -114,6 +115,45 @@ public class CoordinateMath {
         }
 
         return coordinatesArray.orderedItems();
+
+    }
+
+    public static Array<Coordinates> getCoordinatesInLine(Coordinates coordinates, int minRange, int maxRange){
+
+        OrderedSet<Coordinates> coordinatesArray = new OrderedSet<Coordinates>();
+        if(minRange <= 0) return coordinatesArray.orderedItems();
+
+        for(int i = minRange; i <= maxRange; i++){
+
+            coordinatesArray.add(new Coordinates(coordinates.getX() + i, coordinates.getY()));
+            coordinatesArray.add(new Coordinates(coordinates.getX() - i, coordinates.getY()));
+            coordinatesArray.add(new Coordinates(coordinates.getX(), coordinates.getY() + i));
+            coordinatesArray.add(new Coordinates(coordinates.getX(), coordinates.getY() - i));
+
+        }
+
+        return coordinatesArray.orderedItems();
+
+    }
+
+
+
+    public static void increaseCoordinatesByOneUsingDirection(Direction d, Coordinates c1, Coordinates c2){
+
+        switch (d) {
+            case DOWN:
+                c1.set(c2.getX(), c2.getY() - 1);
+                break;
+            case UP:
+                c1.set(c2.getX(), c2.getY() + 1);
+                break;
+            case LEFT:
+                c1.set(c2.getX() - 1, c2.getY());
+                break;
+            case RIGHT:
+                c1.set(c2.getX() + 1, c2.getY());
+                break;
+        }
 
     }
 

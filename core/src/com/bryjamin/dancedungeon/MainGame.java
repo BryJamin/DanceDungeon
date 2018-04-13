@@ -68,7 +68,7 @@ public class MainGame extends Game {
 
         FreetypeFontLoader.FreeTypeFontLoaderParameter small = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
         small.fontFileName = FileStrings.SMALL_FONT_FILE;
-        small.fontParameters.size = (int) Measure.units(1.5f);
+        small.fontParameters.size = (int) Measure.units(2.25f);
         small.fontParameters.borderColor = new Color(Color.BLACK);
         small.fontParameters.borderWidth = 0;
         small.fontParameters.minFilter = Texture.TextureFilter.Linear;

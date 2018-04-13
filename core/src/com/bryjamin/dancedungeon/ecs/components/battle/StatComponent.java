@@ -26,6 +26,21 @@ public class StatComponent extends Component {
         return dodge + buffedDodge;
     }
 
+
+    public void changeHealth(int healthChange){
+
+        health += healthChange;
+
+        if(health < 0){
+            health = 0;
+        } else if(health > maxHealth){
+            health = maxHealth;
+        }
+
+
+    }
+
+
     public StatComponent(){}
 
     public StatComponent (StatBuilder sb){

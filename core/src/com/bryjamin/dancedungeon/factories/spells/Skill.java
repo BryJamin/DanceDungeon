@@ -6,24 +6,24 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
-import com.bryjamin.dancedungeon.assets.Colors;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.BuffComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.UnPushableComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.StunnedComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.UnPushableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationMapComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationStateComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.KillOnAnimationEndComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.SolidComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.factories.spells.animations.BasicProjectile;
-import com.bryjamin.dancedungeon.utils.Measure;
+import com.bryjamin.dancedungeon.factories.spells.animations.BasicSlashAnimation;
 import com.bryjamin.dancedungeon.utils.enums.Direction;
 import com.bryjamin.dancedungeon.utils.math.CoordinateMath;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
@@ -39,15 +39,11 @@ public class Skill {
 
     public enum Targeting {Ally, Melee, Self, FreeAim, StraightShot}
 
-    public enum Attack {Melee, Ranged, Transformative}
-
     public enum ActionType {UsesMoveAndAttackAction, UsesAttackAction, UsesMoveAction, Free}
-
-    public enum SpellDamageApplication {Instant, AfterSpellAnimation}
 
     public enum SpellAnimation {Projectile, Slash, Glitter}
 
-    public enum SpellType {Heal, HealOverTime, Attack, Burn}
+    public enum AttackType {Heal, HealOverTime, Damage, Burn}
 
     public enum SpellEffect {
         Stun, OnFire, Dodge, Armor;
@@ -72,41 +68,79 @@ public class Skill {
 
     private String name = "N/A";
     private String description = "N/A1";
-    private String icon;
-
+    private String icon = TextureStrings.BLOCK;
     private int uses = 2;
     private int coolDown = 2;
     private int coolDownTracker = 0;
     private int push = 0;
+    private int stun = 0;
+
+    private int storePrice = 1;
+
+    private boolean purchasable = true;
 
     private int baseDamage = 1;
 
+    //Min and Max Range only affects certain skills
+    private int minRange = 1;
+    private int maxRange = 1;
+
+    public Skill affectedAreaSkill;
+    public Coordinates[] affectedAreas = new Coordinates[]{};
+
+    public static final int MAX_MAX_RANGE = 10; //Maximum range possible for a skill. To avoid counting
+
     private Targeting targeting = Targeting.Melee;
-    private Attack attack = Attack.Ranged;
     private ActionType actionType = ActionType.UsesMoveAndAttackAction;
     private SpellAnimation spellAnimation = SpellAnimation.Projectile;
-    private SpellType spellType = SpellType.Attack;
-    private SpellDamageApplication spellDamageApplication = SpellDamageApplication.Instant;
+    private AttackType attackType = AttackType.Damage;
     private SpellCoolDown spellCoolDown = SpellCoolDown.NoCoolDown;
     private SpellEffect[] spellEffects;
 
+    public Skill(){
 
-    public Skill(Builder b) {
-        this.name = b.name;
-        this.description = b.description;
-        this.icon = b.icon;
-        this.targeting = b.targeting;
-        this.attack = b.attack;
-        this.actionType = b.actionType;
-        this.spellAnimation = b.spellAnimation;
-        this.spellType = b.spellType;
-        this.spellDamageApplication = b.spellDamageApplication;
-        this.spellEffects = b.spellEffects;
-        this.spellCoolDown = b.spellCoolDown;
-        this.coolDown = b.cooldown;
-        this.push = b.push;
+        name = "N/A";
+        description = "N/A";
+        icon = TextureStrings.BLOCK;
+        targeting = Targeting.StraightShot;
+        actionType = ActionType.UsesMoveAndAttackAction;
+        spellAnimation = SpellAnimation.Projectile;
+        attackType = AttackType.Burn;
+        spellEffects = new SpellEffect[]{};
+        spellCoolDown = SpellCoolDown.NoCoolDown;
+        this.coolDown = 1;
+        push = 0;
+        baseDamage = 1;
+        minRange = 1;
+        maxRange = 1;
     }
 
+    public Skill (Skill s){
+        this.name = s.name;
+        this.description = s.description;
+        this.icon = s.icon;
+
+        this.uses = s.uses;
+        this.coolDown = s.coolDown;
+        this.coolDownTracker = s.coolDownTracker;
+        this.push = s.push;
+        this.stun = s.stun;
+        this.storePrice = s.storePrice;
+        this.purchasable = s.purchasable;
+        this.baseDamage = s.baseDamage;
+        this.minRange = s.minRange;
+        this.maxRange = s.maxRange;
+        if(s.affectedAreaSkill != null) {
+            this.affectedAreaSkill = new Skill(s.affectedAreaSkill);
+        }
+        this.affectedAreas = s.affectedAreas;
+        this.targeting = s.targeting;
+        this.actionType = s.actionType;
+        this.spellAnimation = s.spellAnimation;
+        this.attackType = s.attackType;
+        this.spellCoolDown = s.spellCoolDown;
+        this.spellEffects = s.spellEffects;
+    }
 
     public Array<Coordinates> getAffectedCoordinates(World world, Coordinates coordinates) {
 
@@ -114,7 +148,7 @@ public class Skill {
 
         switch (targeting) {
             case Melee:
-                coordinatesArray = CoordinateMath.getCoordinatesInLine(coordinates, 1);
+                coordinatesArray = CoordinateMath.getCoordinatesInLine(coordinates, minRange, maxRange);
                 break;
             case StraightShot:
                 Direction[] directions = {Direction.DOWN, Direction.LEFT, Direction.RIGHT, Direction.UP};
@@ -133,15 +167,7 @@ public class Skill {
 
         Array<Entity> entityArray = new Array<Entity>();
 
-        int range = attack == Attack.Melee ? 1 : player.getComponent(StatComponent.class).attackRange;
-
         switch (targeting) {
-            case Ally:
-                entityArray = new TargetingFactory().createAllyTargetTiles(world, player, this, range);
-                break;
-            case FreeAim:
-                entityArray = new TargetingFactory().createFreeAimTargetTiles(world, player, this, range);
-                break;
             case Melee:
             case StraightShot:
                 for (Coordinates c : getAffectedCoordinates(world, player.getComponent(CoordinateComponent.class).coordinates)) {
@@ -156,29 +182,13 @@ public class Skill {
 
                 break;
             case Self:
-                entityArray = new TargetingFactory().createSelfTargetTiles(world, player, this, range);
+                entityArray = new TargetingFactory().createSelfTargetTiles(world, player, this, 1);
                 break;
         }
 
         return entityArray;
     }
 
-
-/*
-    public Array<Entity> createEnemyIntent(World world, ){
-
-
-
-
-
-
-
-
-
-
-
-    }
-*/;
 
     public boolean canCast(World world, Entity entity) {
 
@@ -206,8 +216,8 @@ public class Skill {
         return true;
     }
 
-    public void cast(World world, Entity entity, Coordinates target) {
-        TurnComponent turnComponent = entity.getComponent(TurnComponent.class);
+    public void cast(World world, Entity caster, Coordinates target) {
+        TurnComponent turnComponent = caster.getComponent(TurnComponent.class);
         setTurnComponentActionBoolean(actionType, turnComponent);
 
 
@@ -220,6 +230,25 @@ public class Skill {
                 break;
         }
 
+
+        createSpellEffects(world, caster, caster.getComponent(CoordinateComponent.class).coordinates, target);
+
+        if(spellAnimation != SpellAnimation.Projectile) {
+            castSpellOnTargetLocation(world, caster, caster.getComponent(CoordinateComponent.class).coordinates, target);
+        }
+
+    }
+
+
+    /**
+     * Method for creating the Skill Animations. These animations usually store the skill information
+     * and then use them after their animation has been played
+     * @param world
+     * @param entity - The owner of the skill.
+     * @param castCoordinates - The Coordinates from which the the skill used.
+     * @param target - The Target coordinate for the skill.
+     */
+    public void createSpellEffects(World world, Entity entity, Coordinates castCoordinates, Coordinates target){
 
         Rectangle rectangle = world.getSystem(TileSystem.class).createRectangleUsingCoordinates(target);
 
@@ -238,95 +267,45 @@ public class Skill {
                         .add(new KillOnAnimationEndComponent(GLITTER_ANIMATION_ID));
                 world.getSystem(ActionCameraSystem.class).createDeathWaitAction(heal);
 
+
                 break;
 
             case Slash:
-
-                final int SLASH_DRAWABLE_ID = 25;
-                final int SLASH_ANIMATION = 0;
-
-                Entity slash = world.createEntity();
-                slash.edit().add(new PositionComponent(rectangle.x, rectangle.y))
-                        .add(new DrawableComponent(Layer.FOREGROUND_LAYER_FAR, new TextureDescription.Builder(TextureStrings.SKILLS_SLASH)
-                                .identifier(SLASH_DRAWABLE_ID)
-                                .width(rectangle.getWidth())
-                                //.color(new Color(Colors.AMOEBA_FAST_PURPLE))
-                                .height(rectangle.getHeight())
-                                //.scaleX(-1)
-                                .build()))
-                        .add(new AnimationStateComponent(SLASH_ANIMATION))
-                        .add(new AnimationMapComponent().put(SLASH_ANIMATION, TextureStrings.SKILLS_SLASH, 0.3f, Animation.PlayMode.NORMAL))
-                        .add(new KillOnAnimationEndComponent(SLASH_ANIMATION));
-
-                //world.getSystem(ActionCameraSystem.class).createDeathWaitAction(slash);
-                //TODO Commented out due to push. Need to figure out how to do simultaneous actions.
-
+                new BasicSlashAnimation().cast(world, entity, this, castCoordinates, target);
                 break;
 
             case Projectile:
-
-                float width = Measure.units(5f);
-                float height = Measure.units(5f);
-
-                new BasicProjectile.BasicProjectileBuilder()
-                        .drawableComponent(new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE,
-                                new TextureDescription.Builder(TextureStrings.BLOCK)
-                                        .color(new Color(Colors.BOMB_ORANGE))
-                                        .width(width)
-                                        .height(height)
-                                        .build()))
-                        .width(width)
-                        .height(height)
-                        .speed(Measure.units(85f))
-                        .damage(entity.getComponent(StatComponent.class).attack)
-                        .skill(this)
-                        .build()
-                        .cast(world, entity, target);
-
-                return;
-        }
-
-
-        switch (spellDamageApplication) {
-
-            case Instant:
-                castSpellOnTargetLocation(world, entity, target);
+                new BasicProjectile().cast(world, entity, this, castCoordinates, target);
                 break;
-
-
         }
-
-
     }
 
 
-    public void castSpellOnTargetLocation(World world, Entity casterEntity, Coordinates target) {
+
+
+
+    public void castSpellOnTargetLocation(World world, Entity caster, Coordinates casterCoords, Coordinates target) {
+
+        Array<Entity> entityArray = world.getSystem(TileSystem.class).getCoordinateMap().get(target);
+        //If a coordinate is selected outside of map coordinates
+        if(entityArray == null) return;
 
         for (Entity e : world.getSystem(TileSystem.class).getCoordinateMap().get(target)) {
 
-
-            for (SpellEffect spellEffect : spellEffects) {
-                switch (spellEffect) {
-                    case Stun:
-                        e.getComponent(StatComponent.class).stun = (int) spellEffect.number;
-                        //break;
-                    case Dodge:
-                        e.getComponent(BuffComponent.class).spellEffectArray.add(spellEffect);
-                }
+            if(stun > 0){
+                e.getComponent(StatComponent.class).stun = stun;
+                e.edit().add(new StunnedComponent());
             }
-
 
             if (world.getMapper(HealthComponent.class).has(e)) {
 
-                StatComponent sc = casterEntity.getComponent(StatComponent.class);
+                switch (attackType) {
 
-                switch (spellType) {
-
-                    case Attack:
+                    case Damage:
                         e.getComponent(HealthComponent.class).applyDamage(baseDamage);
                         break;
                     case Heal:
-                        e.getComponent(HealthComponent.class).applyHealing(sc.attack);
+                        e.getComponent(HealthComponent.class).applyHealing(baseDamage);
                         break;
                 }
             }
@@ -335,38 +314,35 @@ public class Skill {
             /**
              * USED FOR CALCUALTING THE PUSH MOVEMENT OF AN ENEMY
              */
-
-            if (push != 0 && e.getComponent(UnPushableComponent.class) == null) { //If the entity can be pushed
+            if (push != 0 && e.getComponent(UnPushableComponent.class) == null && e.getComponent(SolidComponent.class) != null) { //If the entity can be pushed
 
                 TileSystem tileSystem = world.getSystem(TileSystem.class);
+                //Coordinates casterCoords = casterEntity.getComponent(CoordinateComponent.class).coordinates;
 
-                Coordinates castCoords = casterEntity.getComponent(CoordinateComponent.class).coordinates;
-
-                if (push > 0) {
+                if (push != 0) {
 
                     //PUSH MECHANIC.
 
-                    Coordinates[] pushCoordinateArray = new Coordinates[push + 1];
+                    Coordinates[] pushCoordinateArray = new Coordinates[Math.abs(push) + 1];
 
 
-                    for (int i = 0; i <= push; i++) { //Decides the direction used to shove a target
+                    for (int i = 0; i <= Math.abs(push); i++) { //Decides the direction used to shove a target
 
-                        if (castCoords.getX() < target.getX() && castCoords.getY() == target.getY()) {
-                            pushCoordinateArray[i] = new Coordinates(target.getX() + i, target.getY());
-                        } else if (castCoords.getX() > target.getX() && castCoords.getY() == target.getY()) {
-                            pushCoordinateArray[i] = new Coordinates(target.getX() - i, target.getY());
-                        } else if (castCoords.getX() == target.getX() && castCoords.getY() < target.getY()) {
-                            pushCoordinateArray[i] = new Coordinates(target.getX(), target.getY() + i);
-                        } else if (castCoords.getX() == target.getX() && castCoords.getY() > target.getY()) {
-                            pushCoordinateArray[i] = new Coordinates(target.getX(), target.getY() - i);
-                        } else {
-                            System.out.println("ERROR");
-                            return;
+                        int x = casterCoords.getY() == target.getY() ? casterCoords.getX() < target.getX() ? i : -i : 0;
+                        int y = casterCoords.getX() == target.getX() ? casterCoords.getY() < target.getY() ? i : -i : 0;
+
+                        if(push < 0){
+                            x *= -1;
+                            y *= -1;
+                        }
+
+                        if((x == 0 && y != 0) || (x != 0 && y == 0) || (x == 0 && y == 0)) {
+                            pushCoordinateArray[i] = new Coordinates(target.getX() + x, target.getY() + y);
                         }
                     }
 
 
-                    for (int i = 1; i < pushCoordinateArray.length; i++) {
+                    for (int i = 1; i < pushCoordinateArray.length; i++) { //Starts at one incase you are knocked back to the previous coordinate
 
                         Coordinates pushCoords = pushCoordinateArray[i];
                         Coordinates prev = pushCoordinateArray[i - 1];
@@ -381,9 +357,17 @@ public class Skill {
 
                         if (tileSystem.getOccupiedMap().containsValue(pushCoords, false)) { //Pretend move but bounce back
                             world.getSystem(ActionCameraSystem.class).createMovementAction(e,
-                                    tileSystem.getPositionUsingCoordinates(pushCoords, e.getComponent(CenteringBoundaryComponent.class).bound),
+                                    tileSystem.getPositionUsingCoordinates(pushCoords, e.getComponent(CenteringBoundaryComponent.class).bound)
+                            );
+
+                            world.getSystem(ActionCameraSystem.class).createMovementAction(e,
                                     tileSystem.getPositionUsingCoordinates(prev, e.getComponent(CenteringBoundaryComponent.class).bound)
                             );
+
+                            world.getSystem(ActionCameraSystem.class).createDamageApplicationAction(e, 1); //Push damage is one.
+                            System.out.println("Push coords is: " + pushCoords);
+                            world.getSystem(ActionCameraSystem.class).createDamageApplicationAction(tileSystem.getOccupiedMap().findKey(pushCoords, false), 1);
+
                             world.getSystem(ActionCameraSystem.class).createIntentAction(e);
                             break;
                         }
@@ -401,7 +385,23 @@ public class Skill {
 
                 }
             }
+
         }
+
+
+        if(affectedAreas.length > 0){
+
+            for(Coordinates c : affectedAreas){
+                Coordinates affected = new Coordinates(target.getX() + c.getX(), target.getY() + c.getY());
+
+                if(affectedAreaSkill.spellAnimation != SpellAnimation.Projectile) {
+                    affectedAreaSkill.castSpellOnTargetLocation(world, caster, target, affected);
+                }
+                affectedAreaSkill.createSpellEffects(world, caster, target, affected);
+            }
+
+        }
+
     }
 
 
@@ -424,7 +424,15 @@ public class Skill {
         return name;
     }
 
+    //TODO Based on the description, one may need to change the description due to player stats.
+    //TODO however, in future it may be better to have two different descirptionf or the store and for
+    //TODO the player.
+
     public String getDescription(World world, Entity entity) {
+        return description;
+    }
+
+    public String getDescription() {
         return description;
     }
 
@@ -437,20 +445,12 @@ public class Skill {
         return spellAnimation;
     }
 
-    public SpellType getSpellType() {
-        return spellType;
+    public AttackType getAttackType() {
+        return attackType;
     }
 
     public Targeting getTargeting() {
         return targeting;
-    }
-
-    public Attack getAttack() {
-        return attack;
-    }
-
-    public SpellDamageApplication getSpellDamageApplication() {
-        return spellDamageApplication;
     }
 
     public SpellCoolDown getSpellCoolDown() {
@@ -463,6 +463,10 @@ public class Skill {
 
     public SpellEffect[] getSpellEffects() {
         return spellEffects;
+    }
+
+    public int getStorePrice() {
+        return storePrice;
     }
 
     private void setTurnComponentActionBoolean(ActionType actionType, TurnComponent turnComponent) {
@@ -481,95 +485,6 @@ public class Skill {
         }
 
     }
-
-
-    public static class Builder {
-
-        private String name = "N/A";
-        private String description = "N/A";
-        private String icon;
-        private Targeting targeting = Targeting.StraightShot;
-        private Attack attack = Attack.Ranged;
-        private ActionType actionType = ActionType.UsesMoveAndAttackAction;
-        private SpellAnimation spellAnimation = SpellAnimation.Projectile;
-        private SpellType spellType = SpellType.Burn;
-        private SpellDamageApplication spellDamageApplication = SpellDamageApplication.Instant;
-        private SpellEffect[] spellEffects = new SpellEffect[]{};
-        private SpellCoolDown spellCoolDown = SpellCoolDown.NoCoolDown;
-        private int cooldown = 1;
-        private int push = 0;
-
-        public Builder name(String val) {
-            this.name = val;
-            return this;
-        }
-
-        public Builder description(String val) {
-            this.description = val;
-            return this;
-        }
-
-        public Builder icon(String val) {
-            this.icon = val;
-            return this;
-        }
-
-        public Builder targeting(Targeting val) {
-            this.targeting = val;
-            return this;
-        }
-
-        public Builder attack(Attack val) {
-            this.attack = val;
-            return this;
-        }
-
-        public Builder actionType(ActionType val) {
-            this.actionType = val;
-            return this;
-        }
-
-        public Builder spellAnimation(SpellAnimation val) {
-            this.spellAnimation = val;
-            return this;
-        }
-
-        public Builder spellType(SpellType val) {
-            this.spellType = val;
-            return this;
-        }
-
-        public Builder spellApplication(SpellDamageApplication val) {
-            this.spellDamageApplication = val;
-            return this;
-        }
-
-        public Builder spellCoolDown(int coolDown) {
-            this.spellCoolDown = SpellCoolDown.OverTime;
-            this.cooldown = coolDown;
-            return this;
-        }
-
-
-        public Builder spellEffects(SpellEffect... val) {
-            this.spellEffects = val;
-            return this;
-        }
-
-        public Builder push(int val) {
-            this.push = val;
-            return this;
-        }
-
-        public Skill build() {
-            return new Skill(this);
-        }
-
-    }
-
-
-    //public
-
 
 }
 

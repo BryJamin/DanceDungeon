@@ -12,6 +12,14 @@ import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComp
 
 /**
  * Created by BB on 04/01/2018.
+ *
+ * System used to set up the Aspect builders for units in the battle System.
+ *
+ * This is based on whether the unit is an enemy or an ally.
+ *
+ * //TODO maybe move the target Component to instead just hold, enums of what the characters
+ * //TODO can attack and move the methods for generation to a different place?
+ *
  */
 
 public class GenerateTargetsSystem extends EntitySystem {

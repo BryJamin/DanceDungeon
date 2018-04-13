@@ -26,7 +26,7 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.UITargetingComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyIntentComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.ReselectEntityComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.SelectedEntityComponent;
-import com.bryjamin.dancedungeon.ecs.systems.BattleStageUISystem;
+import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.utils.HitBox;
@@ -144,7 +144,7 @@ public class TargetingFactory {
             @Override
             public void performAction(World world, final Entity e) {
                 skill.cast(world, player, coordinates);
-                world.getSystem(BattleStageUISystem.class).reset();
+                world.getSystem(BattleScreenUISystem.class).reset();
             }
         }));
 
@@ -367,7 +367,7 @@ public class TargetingFactory {
             box.edit().add(new ActionOnTapComponent(new WorldAction() {
                 @Override
                 public void performAction(World world, Entity entity) {
-                    world.getSystem(BattleStageUISystem.class).reset();
+                    world.getSystem(BattleScreenUISystem.class).reset();
                     player.edit().add(new ReselectEntityComponent());
                     player.edit().remove(SelectedEntityComponent.class);
                     world.getSystem(ActionCameraSystem.class).pushLastAction(player, createMovementAction(player, coordinatesWithPathMap.get(c)));
@@ -470,24 +470,6 @@ public class TargetingFactory {
         bag.add(new HitBoxComponent(new HitBox(r)));
         bag.add(new CenteringBoundaryComponent());
         bag.add(new UITargetingComponent());
-
-        return bag;
-    }
-
-
-    public ComponentBag highlightBox(Rectangle r) {
-        ComponentBag bag = new ComponentBag();
-
-        bag.add(new PositionComponent(r.x, r.y));
-        bag.add(new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE,
-                new TextureDescription.Builder(TextureStrings.BLOCK)
-                        .color(new Color(Color.RED.r, Color.RED.g, Color.RED.b, 0.6f))
-                        .width(r.getWidth())
-                        .height(r.getHeight())
-                        .build()));
-        bag.add(new HitBoxComponent(new HitBox(r)));
-        bag.add(new CenteringBoundaryComponent());
-        bag.add(new EnemyIntentComponent());
 
         return bag;
     }

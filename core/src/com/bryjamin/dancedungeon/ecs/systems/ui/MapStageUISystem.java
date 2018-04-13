@@ -7,7 +7,6 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -16,23 +15,27 @@ import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
+
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.assets.Colors;
+import com.bryjamin.dancedungeon.assets.Padding;
 import com.bryjamin.dancedungeon.assets.Skins;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.systems.FixedToCameraPanAndFlingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.input.MapInputSystem;
+import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CameraMath;
+import com.bryjamin.dancedungeon.utils.save.QuickSave;
 
 import java.util.Locale;
 
@@ -43,23 +46,48 @@ import java.util.Locale;
 public class MapStageUISystem extends BaseSystem {
 
     private StageUIRenderingSystem stageUIRenderingSystem;
+    private InformationBannerSystem informationBannerSystem;
     private RenderingSystem renderingSystem;
     private FixedToCameraPanAndFlingSystem camSys;
     private MainGame game;
+    private GameMap gameMap;
     private PartyDetails partyDetails;
     private Viewport gameport;
     private Skin uiSkin;
 
     private Table container;
     private Table characterWindowContainer;
-    private Table tooltipTable;
+    private Table characterWindow;
+
+    private Table viewInventoryAndQuickSaveTab;
+
+    private DragAndDrop dragAndDrop;
+
+
+    private Table leftSideCharacterTable;
+    private Table equippedSkillsTable;
+
+
+    private Table inventoryTable;
+
+    private Table skillInformationTable;
+
+    private Label test;
 
     private Array<Button> buttonArray = new Array<Button>();
 
 
-    public MapStageUISystem(MainGame game, PartyDetails partyDetails, Viewport gameport) {
+    private UnitData selectedCharacter;
+
+
+    private Array<Actor> equippedSkills = new Array<Actor>();
+    private Array<Actor> inventorySkills = new Array<Actor>();
+
+
+    public MapStageUISystem(MainGame game, GameMap gameMap, PartyDetails partyDetails, Viewport gameport) {
         this.game = game;
         this.partyDetails = partyDetails;
+        this.gameMap = gameMap;
         this.gameport = gameport;
         this.uiSkin = Skins.DEFAULT_SKIN(game.assetManager);
     }
@@ -72,51 +100,41 @@ public class MapStageUISystem extends BaseSystem {
 
 
         container = new Table(uiSkin);
+        stage.addActor(container);
+
+
         container.setDebug(true);
         container.setWidth(stage.getWidth());
         container.setHeight(stage.getHeight());
-        container.align(Align.top);
+        container.align(Align.bottom);
 
         characterWindowContainer = new Table();
         characterWindowContainer.setVisible(false);
 
-        tooltipTable = new Table();
-        tooltipTable.setVisible(false);
-
-        Label label = new Label("Select Your Next Destination", uiSkin);
-        container.add(label);
-        container.row();
-
-        float width = container.getWidth() / 3;
-
-        Table infoTable = new Table(uiSkin);
-        infoTable.align(Align.center);
-        container.add(infoTable).height(Measure.units(5f));
-
-        label = new Label("Money: $" + partyDetails.money, uiSkin);
-        label.setAlignment(Align.center);
-        infoTable.add(label).width(width).align(Align.center);
-
-        label = new Label("Reputation: $" + partyDetails.money, uiSkin);
-        label.setAlignment(Align.center);
-        infoTable.add(label).width(width).align(Align.center);
-
-        label = new Label("Something Else: $" + partyDetails.money, uiSkin);
-        label.setAlignment(Align.center);
-        infoTable.add(label).width(width).align(Align.center);
-
-
-        stage.addActor(container);
-
 
         container.row();
 
-        Table testbottom = new Table(uiSkin);
-        testbottom.align(Align.center);
-        testbottom.setWidth(stage.getWidth());
-        //testbottom.setDebug(true);
-        container.add(testbottom).height(Measure.units(5f)).padTop(stage.getHeight() - Measure.units(15f));
-        buttonArray.clear();
+        //VIEW INVENTORY AND BOTTOM BUTTONS
+
+        float BOTTOM_BUTTON_WIDTH = Measure.units(10f);
+
+        viewInventoryAndQuickSaveTab = new Table(uiSkin);
+        viewInventoryAndQuickSaveTab.setDebug(true);
+        viewInventoryAndQuickSaveTab.align(Align.center);
+        container.add(viewInventoryAndQuickSaveTab).height(Measure.units(7.5f)).width(stage.getWidth());
+
+
+        TextButton quickSave = new TextButton("Quick Save", uiSkin);
+
+        quickSave.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                QuickSave.quickSave(gameMap, partyDetails);
+            }
+        });
+
+        viewInventoryAndQuickSaveTab.add(quickSave).expandX().fill();
+
 
 
         for (final UnitData unitData : partyDetails.getParty()) {
@@ -126,12 +144,21 @@ public class MapStageUISystem extends BaseSystem {
 
             Stack stack = new Stack();
 
+            Table overlay = new Table();
+            overlay.add(new Image(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.BLOCK)).tint(Color.GRAY))).expand().height(Measure.units(3.5f)).width(Measure.units(10f)).fillX().center();
+
+
             TextureRegionDrawable drawable = new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(unitData.icon));
 
-            //stack.add(new Button(uiSkin));
             Button btn = new Button(drawable, drawable.tint(new Color(0.1f, 0.1f, 0.1f, 1)));
-            stack.add(btn);
-            testbottom.add(stack).size(Measure.units(10f), Measure.units(10f)).padRight(Measure.units(2.5f));
+
+            Table buttonOverlay = new Table();
+            buttonOverlay.add(btn).size(Measure.units(7.5f)).center();
+
+
+            stack.add(overlay);
+            stack.add(buttonOverlay);
+            viewInventoryAndQuickSaveTab.add(stack).size(Measure.units(10f), Measure.units(5f)).padRight(Measure.units(2.5f)).expandX();
             buttonArray.add(btn);
 
 
@@ -155,6 +182,7 @@ public class MapStageUISystem extends BaseSystem {
 
     @Override
     protected void processSystem() {
+
         container.setPosition(CameraMath.getBtmLftX(gameport), CameraMath.getBtmY(gameport.getCamera()));
 
         if (characterWindowContainer.isVisible()) {
@@ -170,40 +198,38 @@ public class MapStageUISystem extends BaseSystem {
     }
 
 
-    private void openCharacterWindow(UnitData unitData) {
+    private void openCharacterWindow(final UnitData unitData) {
+
+        this.selectedCharacter = unitData;
 
         final Stage stage = stageUIRenderingSystem.stage;
+
+        dragAndDrop = new DragAndDrop();
 
         characterWindowContainer.remove();
         characterWindowContainer.clear();
         characterWindowContainer = new Table();
+
+
         characterWindowContainer.setWidth(stage.getWidth());
         characterWindowContainer.setHeight(stage.getHeight());
         characterWindowContainer.setVisible(true);
         stage.addActor(characterWindowContainer);
 
-        final Table characterWindow = new Table(uiSkin);
+        float WINDOW_WIDTH = Measure.units(85f);
+        float WINDOW_HEIGHT = Measure.units(40f);
+
+
+        //CHARACTER WINDOW TABLE
+
+        characterWindow = new Table(uiSkin);
+        characterWindowContainer.add(characterWindow).size(WINDOW_WIDTH, WINDOW_HEIGHT);
         characterWindow.setDebug(true);
         characterWindow.setBackground(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.BLOCK)).tint(Colors.RGBtoColor(34, 49, 63, 1)));
         characterWindow.align(Align.top);
-        characterWindowContainer.add(characterWindow).size(Measure.units(60f), Measure.units(40f));
 
-        Label label = new Label(unitData.name, uiSkin);
-        characterWindow.add(label).expandX().colspan(5);
-
-        characterWindow.row();
-
-        Image portrait = new Image(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(unitData.icon)));
-        characterWindow.add(portrait).size(Measure.units(10f), Measure.units(10f)).expandX();
-
-        int max = unitData.getStatComponent().maxHealth;
-
-        characterWindow.add(new Label(String.format(Locale.ENGLISH, "HP %s/%s", max, max), uiSkin)).expandX();
-
-
-        container.setTouchable(Touchable.enabled);
-        container.addListener(new InputListener() { //Tracks taps outside of the character Window in order to close window
-
+        //Adds A listenerer to the container to monitor if the player taps outside the window, in order to close it
+        stage.addListener(new InputListener() { //Tracks taps outside of the character Window in order to close window
 
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -222,7 +248,6 @@ public class MapStageUISystem extends BaseSystem {
                     }
 
                     if (close) {
-                        container.setTouchable(Touchable.childrenOnly);
                         closeCharacterWindow();
                         stage.removeListener(this);
                     }
@@ -234,95 +259,195 @@ public class MapStageUISystem extends BaseSystem {
         });
 
 
+        leftSideCharacterTable = new Table(uiSkin);
+        float leftSideWidth = Measure.units(30f);
+        characterWindow.add(leftSideCharacterTable).width(leftSideWidth);
+
+        //LEFT SIDE
+
+
+        //CHARACTER PANE
+
+        Label label = new Label(unitData.name, uiSkin);
+        leftSideCharacterTable.add(label).expandX().colspan(5);
+        leftSideCharacterTable.row();
+
+        Image portrait = new Image(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(unitData.icon)));
+        leftSideCharacterTable.add(portrait).size(Measure.units(10f), Measure.units(10f)).expandX();
+
+        int max = unitData.getStatComponent().maxHealth;
+        int current = unitData.getStatComponent().health;
+
+        leftSideCharacterTable.row();
+        leftSideCharacterTable.add(new Label(String.format(Locale.ENGLISH, "HP %s/%s", current, max), uiSkin)).expandX();
+
+
+
         //Skills Table Row / Upgrades
-        characterWindow.row();
-        Table skillsTable = new Table(uiSkin);
-        characterWindow.add(skillsTable).height(Measure.units(25f)).colspan(5).expandX();
-        skillsTable.setDebug(true);
-        skillsTable.align(Align.left);
+        leftSideCharacterTable.row();
+        leftSideCharacterTable.add(new Label("Skills", uiSkin)).colspan(5).expandX();
+        leftSideCharacterTable.row();
 
-        Label skillsLabel = new Label("Skills", uiSkin);
-        skillsTable.add(skillsLabel).padRight(Measure.units(10f));
+        equippedSkillsTable = new Table(uiSkin);
+        leftSideCharacterTable.add(equippedSkillsTable).colspan(5).width(leftSideWidth).height(Measure.units(20f));
 
-
-        for (final Skill s : unitData.getSkillsComponent().skills) {
-
-
-            Table upgradeTable = new Table(uiSkin);
-
-            skillsTable.add(upgradeTable).height(Measure.units(20f)).padRight(Measure.units(2.5f));
-
-            final Button skillButton = new Button(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(s.getIcon())));
-
-            upgradeTable.add(skillButton)
-                    .width(Measure.units(7.5f))
-                    .height(Measure.units(7.5f))
-                    .expandY();
-
-
-            upgradeTable.row();
-            upgradeTable.add(new TextButton("Upgrade", uiSkin));
-
-
-            skillButton.addListener(new ChangeListener() {
-                @Override
-                public void changed(ChangeEvent event, Actor actor) {
-
-
-          /*          if(tooltipTable.isVisible()){
-                        tooltipTable.clear();
-                    }*/
-
-                    tooltipTable.remove();
-                    tooltipTable.clear();
-
-                    Drawable background = new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.BLOCK)).tint(new Color(Color.BLACK));
-
-                    Vector2 pos = actor.localToStageCoordinates(new Vector2());
-                    tooltipTable = new Table(uiSkin);
-                    tooltipTable.setBackground(background);
-                    tooltipTable.setDebug(true);
-                    tooltipTable.setWidth(Measure.units(25f));
-                    tooltipTable.setHeight(Measure.units(30f));
-                    tooltipTable.add(new Label(s.getName(), uiSkin));
-
-                    tooltipTable.setPosition(pos.x - tooltipTable.getWidth(), pos.y - tooltipTable.getHeight() / 2);
-                    tooltipTable.row();
-
-                    Label description = new Label(s.getDescription(world, world.createEntity()), uiSkin);
-                    description.setWrap(true);
-                    description.setAlignment(Align.center);
-                    tooltipTable.add(description).pad(Measure.units(2.5f)).width(Measure.units(20f)).expand();
-
-                    stage.addActor(tooltipTable);
+        equippedSkillsTable.setDebug(true);
+        updateEquippedSkillTable(equippedSkillsTable, unitData);
 
 
 
-                    stage.addListener(new InputListener() { //Tracks taps outside of the character Window in order to close window
-
-                        @Override
-                        public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-
-                            //Checks if the touch is outside the Character Window
-                            tooltipTable.remove();
-                            stage.removeListener(this);
-
-                            //Checks if touch is within any buttons on the screen
-                            Vector2 pos = tooltipTable.localToStageCoordinates(new Vector2());
-                            if (x < pos.x || x > pos.x + tooltipTable.getWidth() || y < pos.y || y > pos.y + tooltipTable.getHeight()) {
-                                tooltipTable.remove();
-                                stage.removeListener(this);
-                            }
-
-                            return false;
-                        }
-                    });
+        //CHARACTER PANE END
 
 
+        //INVENTORY PANE
+
+        inventoryTable = new Table(uiSkin);
+        inventoryTable.align(Align.top);
+
+        characterWindow.add(inventoryTable).width(Measure.units(25f)).height(WINDOW_HEIGHT).expandY();
+
+        inventoryTable.add(new Label("Inventory", uiSkin)).expandX().padBottom(Padding.SMALL);
+
+        updateInventoryTable(inventoryTable);
+
+
+        //--------------------- INVENTORY PANE END ----------------------------//
+
+
+        //RIGHT SIDE - SKILL INFORMATION, WHEN PLAYER CLICKS A SKILL ICON.
+        skillInformationTable = new Table(uiSkin);
+        characterWindow.add(skillInformationTable).width(Measure.units(30f));
+        updateSkillInformationTable(skillInformationTable, null);
+
+
+    }
+
+
+    /**
+     * Clears and updates the inventory Table.
+     *
+     * This is usually triggers when a skill is dragged into either the inventory table or an inventory slot.
+     *
+     * @param inventoryTable
+     */
+    private void updateInventoryTable(Table inventoryTable){
+
+        if(inventoryTable.hasChildren()){
+            inventoryTable.clear();
+        }
+
+        final float BUTTON_SIZE = Measure.units(7.5f);
+
+        Label title = new Label("Inventory", uiSkin);
+
+        inventoryTable.add(title).expandX().padBottom(Padding.SMALL);
+
+        for(int i = 0; i < PartyDetails.MAX_INVENTORY; i++){
+
+            inventoryTable.row();
+
+            try {
+
+                Skill s = partyDetails.getSkillInventory().get(i);
+
+                final Button skillButton = new Button(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(s.getIcon())));
+                inventoryTable.add(skillButton).height(BUTTON_SIZE).width(BUTTON_SIZE).padRight(Measure.units(1.5f)).expandX().padBottom(Padding.SMALL);;
+                skillButton.addListener(new SelectedActorListener(s));
+                inventorySkills.add(skillButton);
+                dragAndDrop.addSource(new InventorySource(skillButton, s, i));
+                dragAndDrop.addTarget(new InventoryTarget(skillButton, s, i));
+
+            } catch (IndexOutOfBoundsException e){
+                Image image = new Image(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.BLOCK)).tint(Color.GRAY));
+                inventoryTable.add(image).size(BUTTON_SIZE).padBottom(Padding.SMALL);
+                inventorySkills.add(image);
+                dragAndDrop.addTarget(new InventoryTarget(image, null, i));
+            }
+        }
+
+
+    }
+
+
+    private void updateEquippedSkillTable(Table equippedSkillsTable, UnitData unitData){
+
+        float BUTTON_SIZE = Measure.units(7.5f);
+
+        if(equippedSkillsTable.hasChildren()){
+            equippedSkillsTable.clear();
+        }
+
+        for(int i = 0; i < UnitData.MAXIMUM_SKILLS; i++){
+
+            try {
+                final Skill s = unitData.getSkillsComponent().skills.get(i);
+
+                if (s != null) {
+
+
+                    final Button skillButton = new Button(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(s.getIcon())));
+                    equippedSkillsTable.add(skillButton).height(BUTTON_SIZE).width(BUTTON_SIZE).padRight(Padding.SMALL).expandX();
+                    skillButton.addListener(new SelectedActorListener(s));
+
+                    equippedSkills.add(skillButton);
+                    dragAndDrop.addSource(new SkillSource(skillButton, s, i));
+                    dragAndDrop.addTarget(new EquippedTarget(skillButton, s, i));
                 }
-            });
+
+            } catch (IndexOutOfBoundsException e){
+
+                Image image = new Image(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.BLOCK)).tint(Color.GRAY));
+                equippedSkillsTable.add(image).size(BUTTON_SIZE).padRight(Padding.SMALL).expandX();
+                dragAndDrop.addTarget(new EquippedTarget(image, null, i));
+            }
+
 
         }
+
+    }
+
+
+
+    /**
+     * Sets up the skill information table with the new skill supplied to it.
+     *
+     * This table displays both the skill'skill title and it'skill description.
+     *
+     * @param skillInformationTable
+     * @param s
+     * @return
+     */
+    private Table updateSkillInformationTable(Table skillInformationTable, Skill s){
+
+        if(skillInformationTable.hasChildren()){
+            skillInformationTable.clear();
+        }
+
+        if(s == null){
+
+            Label message = new Label("You can view skill information here by tapping on the icons", uiSkin);
+            message.setWrap(true);
+            message.setAlignment(Align.center);
+
+
+            skillInformationTable.add(message).expandY().expandX().fill();
+
+
+        } else {
+
+            Label title = new Label(s.getName(), uiSkin);
+            skillInformationTable.add(title).padBottom(Padding.SMALL);
+            skillInformationTable.row();
+
+            Label decription = new Label(s.getDescription(), uiSkin);
+            decription.setWrap(true);
+            decription.setAlignment(Align.center);
+
+            skillInformationTable.add(decription).expandY().expandX().fill();
+
+        }
+
+        return skillInformationTable;
 
 
     }
@@ -337,6 +462,184 @@ public class MapStageUISystem extends BaseSystem {
 
         world.getSystem(MapInputSystem.class).closedMenu();
 
+    }
+
+
+    /**
+     * Listener for when a skill is tapped.
+     *
+     * It triggers and updates the table used for displaying skill descriptions
+     *
+     */
+    private class SelectedActorListener extends ChangeListener {
+
+        private Skill s;
+
+        private SelectedActorListener(Skill s){
+            this.s = s;
+        }
+
+        @Override
+        public void changed(ChangeEvent event, Actor actor) {
+            updateSkillInformationTable(skillInformationTable, s);
+        }
+    }
+
+
+
+
+    private class SkillSource extends DragAndDrop.Source {
+
+        private Skill skill;
+        private int index;
+        private Actor actor;
+        public boolean isEquipped = true;
+
+        public SkillSource(Actor actor, Skill skill, int index) {
+            super(actor);
+            this.skill = skill;
+            this.actor = actor;
+            this.index = index;
+        }
+
+        DragAndDrop.Payload payload = new DragAndDrop.Payload();
+
+        @Override
+        public DragAndDrop.Payload dragStart(InputEvent event, float x, float y, int pointer) {
+
+            Image i = new Image(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(skill.getIcon())));
+            i.setHeight(Measure.units(10f));
+            i.setWidth(Measure.units(10f));
+
+            payload.setDragActor(i);
+            payload.setObject(this);
+
+            Actor s = equippedSkills.get(index);
+            s = new Button();
+
+            return payload;
+        }
+
+
+        @Override
+        public void dragStop(InputEvent event, float x, float y, int pointer, DragAndDrop.Payload payload, DragAndDrop.Target target) {
+            super.dragStop(event, x, y, pointer, payload, target);
+        }
+    }
+
+    private class InventorySource extends SkillSource {
+
+        private Skill skill;
+        private int index;
+
+        public InventorySource(Actor actor, Skill s, int index) {
+            super(actor, s, index);
+            this.isEquipped = false;
+        }
+    }
+
+
+
+
+    private class EquippedTarget extends DragAndDrop.Target {
+
+        private Skill skill;
+        private int index;
+
+        public EquippedTarget(Actor actor, Skill s, int index) {
+            super(actor);
+
+            this.skill = s;
+            this.index = index;
+
+        }
+
+        @Override
+        public boolean drag(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
+            return true;
+        }
+
+        @Override
+        public void drop(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
+
+            SkillSource es =  (SkillSource) source;
+
+            if(es.isEquipped){
+
+            } else {
+
+                Skill inventorySkill = es.skill;
+                ; //selectedCharacter.getSkillsComponent().skills.get(es.index);
+
+                if(skill != null) { //If the Equipped slot is Empty, add the New Skill into the Slot.
+
+                    selectedCharacter.getSkillsComponent().skills.set(index, inventorySkill);
+                    partyDetails.getSkillInventory().set(es.index, skill);
+                } else { //If Equipped slot is null add into the player'skill equipped.
+                    selectedCharacter.getSkillsComponent().skills.add(inventorySkill);
+                    partyDetails.getSkillInventory().removeValue(inventorySkill, true);
+                }
+
+                updateInventoryTable(inventoryTable);
+                updateEquippedSkillTable(equippedSkillsTable, selectedCharacter);
+
+            }
+
+
+        }
+    }
+
+
+
+
+    /**
+     * Used for Drag And Drop. This class is for when an Inventory item is the target.
+     */
+    private class InventoryTarget extends DragAndDrop.Target {
+
+
+        private Skill skill;
+        private int index;
+
+        public InventoryTarget(Actor actor, Skill s, int index) {
+            super(actor);
+            this.skill = s;
+            this.index = index;
+        }
+
+        @Override
+        public boolean drag(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
+            return true;
+        }
+
+        @Override
+        public void drop(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
+
+            SkillSource es =  (SkillSource) source;
+
+            if(es.isEquipped){
+
+                Skill old = es.skill; //selectedCharacter.getSkillsComponent().skills.get(es.index);
+
+
+                if(skill != null) {
+                    selectedCharacter.getSkillsComponent().skills.set(es.index, skill);
+                    partyDetails.getSkillInventory().set(index, old);
+                } else {
+                    selectedCharacter.getSkillsComponent().skills.removeIndex(es.index);
+                    partyDetails.getSkillInventory().add(old);
+                }
+
+                updateInventoryTable(inventoryTable);
+                updateEquippedSkillTable(equippedSkillsTable, selectedCharacter);
+
+            } else {
+
+
+
+
+            }
+        }
     }
 
 
