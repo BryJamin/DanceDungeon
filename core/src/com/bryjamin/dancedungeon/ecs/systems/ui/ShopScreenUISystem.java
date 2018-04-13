@@ -16,6 +16,8 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
+import com.bryjamin.dancedungeon.assets.Fonts;
+import com.bryjamin.dancedungeon.assets.Padding;
 import com.bryjamin.dancedungeon.assets.Skins;
 import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
@@ -120,10 +122,6 @@ public class ShopScreenUISystem extends BaseSystem {
             }
         });
 
-        System.out.println(state);
-
-
-
         stage.addActor(container);
 
         Table tabTable = new Table(uiSkin);
@@ -156,18 +154,7 @@ public class ShopScreenUISystem extends BaseSystem {
     public ScrollPane createBuyScrollPane(){
 
         Table shopTable = new Table(uiSkin);
-        ScrollPane shopItemPane = new ScrollPane(shopTable);
-
-/*        Label skillLabel = new Label("Skill", uiSkin);
-        Label nameLabel = new Label("Name", uiSkin);
-        Label descriptionLabel = new Label("Description", uiSkin);
-        Label priceLabel = new Label("Price", uiSkin);
-
-        shopTable.add(skillLabel).expandX();
-        shopTable.add(nameLabel).expandX();
-        shopTable.add(descriptionLabel).expandX();
-        shopTable.add(priceLabel).expandX();*/
-
+        ScrollPane shopItemPane = new ScrollPane(shopTable); //Adds the Table to the ScrollPane
 
         if(skillToBuyArray.size == 0){
             Label youHaveNothingToSell = new Label("There is Nothing Left To Buy", uiSkin);
@@ -178,16 +165,22 @@ public class ShopScreenUISystem extends BaseSystem {
 
         for(final Skill s : skillToBuyArray){
             shopTable.row();
-            shopTable.add(new Image(renderingSystem.getAtlas().findRegion(s.getIcon()))).height(Measure.units(5f)).width(Measure.units(5f)).padRight(Measure.units(1.5f));
-            shopTable.add(new Label(s.getName(), uiSkin)).padRight(Measure.units(1.5f));
 
-            Label skillDescription = new Label(s.getDescription(), uiSkin);
+            Table t = new Table(uiSkin);
+            t.setDebug(true);
+            t.align(Align.left);
+            shopTable.add(t).width(stageUIRenderingSystem.stage.getWidth()).height(Measure.units(7.5f)).padBottom(Padding.MEDIUM);
+
+            t.add(new Image(renderingSystem.getAtlas().findRegion(s.getIcon()))).height(Measure.units(5f)).width(Measure.units(5f)).padRight(Measure.units(1.5f));
+            t.add(new Label(s.getName(), uiSkin)).expandX().padRight(Measure.units(1.5f));
+
+            Label skillDescription = new Label(s.getDescription(), uiSkin, Fonts.SMALL_FONT_NAME);
             skillDescription.setWrap(true);
             skillDescription.setAlignment(Align.center);
 
-            shopTable.add(skillDescription).width(Measure.units(60f)).padRight(Measure.units(1.5f));
+            t.add(skillDescription).width(Measure.units(55f)).padRight(Measure.units(1.5f)).expandX();
             BuyButton buyButton = new BuyButton("Buy ($" + s.getStorePrice() + ")", uiSkin, s, s.getStorePrice());
-            shopTable.add(buyButton).expandX().fillY();
+            t.add(buyButton).expandX();
         }
 
         return shopItemPane;

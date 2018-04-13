@@ -104,9 +104,6 @@ public class ActionCameraSystem extends EntitySystem {
 
             case PERFORM_ACTION:
 
-                System.out.println(actionQueue.size);
-                System.out.println(isActionEntityDead());
-
                 if (actionQueue.size == 0) return;
 
                 if(isActionEntityDead()) {
@@ -264,8 +261,6 @@ public class ActionCameraSystem extends EntitySystem {
     public void createASyncMovementAction(Entity entity, final Vector3... positions){
 
         if(!mtcMapper.has(entity)) return;
-
-        System.out.println("CREATING ASYNC");
 
         pushLastAction(entity, new WorldConditionalAction() {
             @Override

@@ -31,8 +31,6 @@ public class BattleEvent extends MapEvent {
         this.primaryObjective = b.primaryObjective;
         this.bonusObjectives = b.bonusObjectives;
         this.enemies = b.enemyPool;
-
-        System.out.println(enemies.size);
     }
 
 

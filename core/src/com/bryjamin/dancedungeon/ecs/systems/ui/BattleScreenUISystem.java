@@ -172,7 +172,7 @@ public class BattleScreenUISystem extends EntitySystem {
 
         for(AbstractObjective o : battleEvent.getBonusObjective()){
             objectivesTable.row();
-            objectivesTable.add(new Label(o.getDescription(), uiSkin, Fonts.SMALL_FONT,
+            objectivesTable.add(new Label(o.getDescription(), uiSkin, Fonts.SMALL_FONT_STYLE_NAME,
                     o.isFailed(world) ? new Color(Color.GRAY) : new Color(Color.WHITE)
             )).padBottom(Padding.SMALL);;
         }

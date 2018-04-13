@@ -7,8 +7,6 @@ import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.player.UnitMap;
 import com.bryjamin.dancedungeon.factories.spells.SkillLibrary;
-import com.bryjamin.dancedungeon.factories.spells.basic.StraightShot;
-import com.bryjamin.dancedungeon.factories.spells.basic.WarpBomb;
 import com.bryjamin.dancedungeon.utils.BaseStatStatics;
 
 /**
@@ -35,7 +33,7 @@ public class CharacterGenerator {
 
         warrior.setSkillsComponent(new SkillsComponent(
                 SkillLibrary.getSkill(SkillLibrary.SKILL_HEAVY_STRIKE),
-                SkillLibrary.getSkill(SkillLibrary.SKILL_HOOK_SHOT)
+                SkillLibrary.getSkill(SkillLibrary.SKILL_CLOBBER)
                 ));
 
         return warrior;
@@ -54,8 +52,7 @@ public class CharacterGenerator {
 
         mage.setSkillsComponent(
                 new SkillsComponent(
-                        new WarpBomb()
-                ));
+                        SkillLibrary.getSkill(SkillLibrary.SKILL_THROW_BOMB)));
 
         mage.name = genName();
 
@@ -75,7 +72,7 @@ public class CharacterGenerator {
 
         mage.setSkillsComponent(
                 new SkillsComponent(
-                        skillLibrary.getSkill(SkillLibrary.SKILL_STRAIGHT_SHOT)
+                        SkillLibrary.getSkill(SkillLibrary.SKILL_STRAIGHT_SHOT)
                 ));
 
         mage.name = genName();

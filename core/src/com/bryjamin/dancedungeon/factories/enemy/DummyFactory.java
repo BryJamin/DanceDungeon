@@ -21,6 +21,7 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.player.UnitFactory;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
+import com.bryjamin.dancedungeon.factories.spells.SkillLibrary;
 import com.bryjamin.dancedungeon.factories.spells.basic.MeleeAttack;
 import com.bryjamin.dancedungeon.factories.spells.enemy.EnemyWarpStrike;
 import com.bryjamin.dancedungeon.factories.spells.enemy.Strike;
@@ -64,7 +65,7 @@ public class DummyFactory {
         bag.add(new MoveToComponent(Measure.units(80f)));
         bag.add(new CenteringBoundaryComponent(width, height));
         bag.add(new HitBoxComponent(new HitBox(width, height)));
-        bag.add(new SkillsComponent(new MeleeAttack()));
+        bag.add(new SkillsComponent(SkillLibrary.getEnemySkill(SkillLibrary.ENEMY_SKILL_SWIPE)));
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, blob.color(Color.WHITE).build()));
         bag.add(new UtilityAiComponent(dummyAi(slash)));
 
@@ -90,32 +91,7 @@ public class DummyFactory {
 
     }
 
-
-    public ComponentBag targetDummySpitter() {
-
-        UnitData unitData = new UnitData("Eugh");
-        unitData.setStatComponent(new StatComponent.StatBuilder()
-                .healthAndMax(2)
-                .movementRange(3)
-                .build());
-
-        ComponentBag bag = targetDummy(unitData);
-        bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, blob.color(Color.GOLD).build()));
-        bag.add(new StatComponent.StatBuilder().movementRange(4)
-                .build());
-
-
-        bag.getComponent(SkillsComponent.class).skills.clear();
-        bag.getComponent(SkillsComponent.class).skills.add(new EnemyWarpStrike());
-
-
-        return bag;
-
-    }
-
-
     //TODO fix AI
-
     public UtilityAiCalculator dummyAi(Skill slash) {
         return new UtilityAiCalculator(
                 new ActionScoreCalculator(new EndTurnAction()),

@@ -74,9 +74,11 @@ public class Skill {
     private int coolDown = 2;
     private int coolDownTracker = 0;
     private int push = 0;
-    private final int stun = 0;
+    private int stun = 0;
 
     private int storePrice = 1;
+
+    private boolean purchasable = true;
 
     private int baseDamage = 1;
 
@@ -309,6 +311,7 @@ public class Skill {
 
         for (Entity e : world.getSystem(TileSystem.class).getCoordinateMap().get(target)) {
 
+            System.out.println(stun);
             if(stun > 0){
                 e.getComponent(StatComponent.class).stun = stun;
             }
@@ -418,13 +421,8 @@ public class Skill {
 
         if(affectedAreas.length > 0){
 
-            TileSystem tileSystem = world.getSystem(TileSystem.class);
-
-            System.out.println("case coords is " + casterCoords);
-
             for(Coordinates c : affectedAreas){
                 Coordinates affected = new Coordinates(target.getX() + c.getX(), target.getY() + c.getY());
-                Entity e = world.createEntity();
 
                 if(affectedAreaSkill.spellAnimation != SpellAnimation.Projectile) {
                     affectedAreaSkill.castSpellOnTargetLocation(world, target, affected);

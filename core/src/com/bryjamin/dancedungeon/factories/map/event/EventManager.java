@@ -34,7 +34,6 @@ public class EventManager {
 
 
     public EventCommand getLevel1Event(String id){
-        System.out.println(id);
         return level1BattleEvents.get(id);
     }
 

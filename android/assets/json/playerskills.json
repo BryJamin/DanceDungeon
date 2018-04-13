@@ -10,7 +10,6 @@
     "spellAnimation": "Slash",
     "attackType": "Damage"
   },
-
   "d92aa63f-1f4d-40bf-9dca-344cebd78d31": {
     "class": "com.bryjamin.dancedungeon.factories.spells.Skill",
     "name": "Heavier Strike",
@@ -22,8 +21,6 @@
     "spellAnimation": "Slash",
     "attackType": "Damage"
   },
-
-
   "cd8ced23-790b-41cd-99dd-f884abccc003": {
     "class": "com.bryjamin.dancedungeon.factories.spells.Skill",
     "name": "Hook Shot",
@@ -36,7 +33,6 @@
     "attackType": "Damage"
   },
 
-
   "0ccac808-557a-4956-b77b-e696d849da68": {
     "class": "com.bryjamin.dancedungeon.factories.spells.Skill",
     "name": "Straight Shot",
@@ -47,12 +43,49 @@
     "targeting": "StraightShot",
     "spellAnimation": "Projectile",
     "attackType": "Damage"
+  },
+
+
+  "3fdb6885-00b3-453a-aefc-532384332329": {
+    "class": "com.bryjamin.dancedungeon.factories.spells.Skill",
+    "name": "Clobber",
+    "description": "Deals 1 Damage, Stuns for 1 turn",
+    "icon": "skills/LaserScope",
+    "stun": 1,
+    "baseDamage": 1,
+    "targeting": "Melee",
+    "spellAnimation": "Projectile",
+    "attackType": "Damage"
+  },
+
+  "1e3e7778-14e1-4466-b1fb-b24a01723155": {
+    "class": "com.bryjamin.dancedungeon.factories.spells.Skill",
+    "name": "Throw Bomb",
+    "description": "Throws a Bomb That Deals 1 Damage and Pushes all Adjacent Tiles by 1",
+    "icon": "skills/Fire",
+    "baseDamage": 1,
+    "targeting": "Melee",
+    "spellAnimation": "Projectile",
+    "minRange": 2,
+    "maxRange": 5,
+    "attackType": "Damage",
+    "affectedAreaSkill": {
+      "push": 1,
+      "spellAnimation": "Projectile"
+    },
+    "affectedAreas": [
+      {
+        "y": 1
+      },
+      {
+        "x": 1
+      },
+      {
+        "y": -1
+      },
+      {
+        "x": -1
+      }
+    ]
   }
-
-
-
-
-
-
-
 }

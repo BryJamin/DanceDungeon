@@ -2,7 +2,7 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.factories.spells.SkillLibrary;
-import com.bryjamin.dancedungeon.factories.spells.basic.Foresight;
+import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
 import org.junit.Test;
 
@@ -21,11 +21,20 @@ public class JsonSkillTest  extends GameTest {
                 .targeting(Skill.Targeting.Self)
                 .actionType(Skill.ActionType.UsesMoveAndAttackAction)
                 .spellAnimation(Skill.SpellAnimation.Glitter)
-                .spellEffects(Skill.SpellEffect.Dodge.value(0.2f).duration(3))
-                .attack(Skill.Attack.Ranged)));
-        map.put("dadawfesfesfdw", new Foresight());
+                .spellEffects(Skill.SpellEffect.Dodge.value(0.2f).duration(3))));
 
-        Json json = new Json();
+        Skill s = new Skill();
+        s.affectedAreas = new Coordinates[]{new Coordinates(0, 1), new Coordinates(1, 0), new Coordinates(0, -1), new Coordinates(-1, 0)};
+        s.affectedAreaSkill = new Skill(new Skill.Builder()
+                .name("Foresight")
+                .icon("skills/Fire")
+                .description("Increase the Dodge chance of an self by 20% for three turns")
+                .targeting(Skill.Targeting.Self)
+                .actionType(Skill.ActionType.UsesMoveAndAttackAction));
+
+        map.put("ODOADOAWDAWDAW", s);
+
+                Json json = new Json();
 
         System.out.println(json.prettyPrint(map));
 

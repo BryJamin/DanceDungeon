@@ -67,13 +67,10 @@ public class FindBestMovementAreaToAttackFromAction implements WorldAction {
             for(Entity e : entity.getComponent(TargetComponent.class).getTargets(world)) {
                 if(mainSkill.getAffectedCoordinates(world, c).contains(e.getComponent(CoordinateComponent.class).coordinates, false)){
 
-                   // System.out.println(mainSkill.getAffectedCoordinates(world, c));
-                   // System.out.println(" ");
-
                     score += 10; //Good Coordinate
 
                     if(e.getComponent(FriendlyComponent.class) != null){
-                        score += 10; //Focus on objectives
+                        score += 20; //Focus on objectives
                     }
 
                     //TODO GET ALL 'ENEMY INTENT' AND THEIR CORRESPONDING COORDINATES. IF THEY ARE OVER A TILE, REDUCE THE SCORE TO AVOID BLOCKING EACH OTHER
@@ -83,7 +80,7 @@ public class FindBestMovementAreaToAttackFromAction implements WorldAction {
                     if(tileSystem.findShortestPath(entity, path, c,  statComponent.movementRange)){
                         possiblePaths.put(c, path);
                         if(path.size > statComponent.movementRange)
-                            score -= 5; //Can't be reached in one movement
+                            score -= 20; //Can't be reached in one movement
                     } else {
                         score = 0;
                     }
