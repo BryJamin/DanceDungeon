@@ -23,6 +23,7 @@ import com.bryjamin.dancedungeon.ecs.components.identifiers.SolidComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.factories.spells.animations.BasicProjectile;
+import com.bryjamin.dancedungeon.factories.spells.animations.BasicSlashAnimation;
 import com.bryjamin.dancedungeon.utils.enums.Direction;
 import com.bryjamin.dancedungeon.utils.math.CoordinateMath;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
@@ -140,24 +141,6 @@ public class Skill {
         this.spellCoolDown = s.spellCoolDown;
         this.spellEffects = s.spellEffects;
     }
-
-    public Skill(Builder b) {
-        this.name = b.name;
-        this.description = b.description;
-        this.icon = b.icon;
-        this.targeting = b.targeting;
-        this.actionType = b.actionType;
-        this.spellAnimation = b.spellAnimation;
-        this.attackType = b.attackType;
-        this.spellEffects = b.spellEffects;
-        this.spellCoolDown = b.spellCoolDown;
-        this.coolDown = b.cooldown;
-        this.push = b.push;
-        this.baseDamage = b.baseDamage;
-        this.minRange = b.minRange;
-        this.maxRange = b.maxRange;
-    }
-
 
     public Array<Coordinates> getAffectedCoordinates(World world, Coordinates coordinates) {
 
@@ -288,34 +271,13 @@ public class Skill {
                 break;
 
             case Slash:
-
-                final int SLASH_DRAWABLE_ID = 25;
-                final int SLASH_ANIMATION = 0;
-
-                Entity slash = world.createEntity();
-                slash.edit().add(new PositionComponent(rectangle.x, rectangle.y))
-                        .add(new DrawableComponent(Layer.FOREGROUND_LAYER_FAR, new TextureDescription.Builder(TextureStrings.SKILLS_SLASH)
-                                .identifier(SLASH_DRAWABLE_ID)
-                                .width(rectangle.getWidth())
-                                //.color(new Color(Colors.AMOEBA_FAST_PURPLE))
-                                .height(rectangle.getHeight())
-                                //.scaleX(-1)
-                                .build()))
-                        .add(new AnimationStateComponent(SLASH_ANIMATION))
-                        .add(new AnimationMapComponent().put(SLASH_ANIMATION, TextureStrings.SKILLS_SLASH, 0.3f, Animation.PlayMode.NORMAL))
-                        .add(new KillOnAnimationEndComponent(SLASH_ANIMATION));
-
-                //world.getSystem(ActionCameraSystem.class).createDeathWaitAction(slash);
-                //TODO Commented out due to push. Need to figure out how to do simultaneous actions.
-
+                new BasicSlashAnimation().cast(world, entity, this, castCoordinates, target);
                 break;
 
             case Projectile:
                 new BasicProjectile().cast(world, entity, this, castCoordinates, target);
-
+                break;
         }
-
-
     }
 
 
@@ -523,102 +485,6 @@ public class Skill {
         }
 
     }
-
-
-    public static class Builder {
-
-        private String name = "N/A";
-        private String description = "N/A";
-        private String icon;
-        private Targeting targeting = Targeting.StraightShot;
-        private ActionType actionType = ActionType.UsesMoveAndAttackAction;
-        private SpellAnimation spellAnimation = SpellAnimation.Projectile;
-        private AttackType attackType = AttackType.Burn;
-        private SpellEffect[] spellEffects = new SpellEffect[]{};
-        private SpellCoolDown spellCoolDown = SpellCoolDown.NoCoolDown;
-        private int cooldown = 1;
-        private int push = 0;
-        private int baseDamage = 1;
-        private int minRange = 1;
-        private int maxRange = 1;
-
-        public Builder name(String val) {
-            this.name = val;
-            return this;
-        }
-
-        public Builder description(String val) {
-            this.description = val;
-            return this;
-        }
-
-        public Builder icon(String val) {
-            this.icon = val;
-            return this;
-        }
-
-        public Builder targeting(Targeting val) {
-            this.targeting = val;
-            return this;
-        }
-
-        public Builder actionType(ActionType val) {
-            this.actionType = val;
-            return this;
-        }
-
-        public Builder spellAnimation(SpellAnimation val) {
-            this.spellAnimation = val;
-            return this;
-        }
-
-        public Builder attackType(AttackType val) {
-            this.attackType = val;
-            return this;
-        }
-
-        public Builder spellCoolDown(int coolDown) {
-            this.spellCoolDown = SpellCoolDown.OverTime;
-            this.cooldown = coolDown;
-            return this;
-        }
-
-
-        public Builder spellEffects(SpellEffect... val) {
-            this.spellEffects = val;
-            return this;
-        }
-
-        public Builder push(int val) {
-            this.push = val;
-            return this;
-        }
-
-        public Builder baseDamage(int val) {
-            this.baseDamage = val;
-            return this;
-        }
-
-        public Builder minRange(int val) {
-            this.minRange = val;
-            return this;
-        }
-
-        public Builder maxRange(int val) {
-            this.maxRange = val;
-            return this;
-        }
-
-
-        public Skill build() {
-            return new Skill(this);
-        }
-
-    }
-
-
-    //public
-
 
 }
 
