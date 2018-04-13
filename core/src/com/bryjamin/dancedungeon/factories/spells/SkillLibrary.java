@@ -26,10 +26,12 @@ public class SkillLibrary {
 
     //Return a new Skill object to avoid any potential over-writes of the skills within the static array
     public static Skill getSkill(String key){
+        System.out.println(key);
         return new Skill(items.get(key));
     }
 
     public static Skill getEnemySkill(String key){
+        System.out.println(key);
         return new Skill(enemySkills.get(key));
     }
 
@@ -42,7 +44,9 @@ public class SkillLibrary {
     public static final String SKILL_CLOBBER = "3fdb6885-00b3-453a-aefc-532384332329";
 
 
+    public static final String ENEMY_SKILL_BLAST = "e682fd39-6f06-47f8-aa60-175065ea12cf";
     public static final String ENEMY_SKILL_SWIPE = "d3059e1f-41f5-48a1-8ff5-5cc67cea1927";
+    public static final String ENEMY_SKILL_THROW_ROCK = "509d0cd7-ad54-4794-b53e-2f97bc87d8b8";
 
 
 }

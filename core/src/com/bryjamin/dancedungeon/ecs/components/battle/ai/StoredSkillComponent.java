@@ -2,7 +2,7 @@ package com.bryjamin.dancedungeon.ecs.components.battle.ai;
 
 import com.artemis.Component;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
-import com.bryjamin.dancedungeon.factories.spells.basic.Foresight;
+import com.bryjamin.dancedungeon.factories.spells.SkillLibrary;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
 /**
@@ -20,7 +20,7 @@ public class StoredSkillComponent extends Component {
     public StoredSkillComponent(){
         storedCoordinates = new Coordinates();
         storedTargetCoordinates = new Coordinates();
-        skill = new Foresight();
+        skill = SkillLibrary.getSkill(SkillLibrary.SKILL_HEAVY_STRIKE);
     }
 
 

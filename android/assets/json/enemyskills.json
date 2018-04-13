@@ -10,16 +10,32 @@
     "spellAnimation": "Slash",
     "attackType": "Damage",
     "purchasable": false
-  }
+  },
 
-  "d3059e1f-41f5-48a1-8ff5-5cc67cea1927": { //ENEMY SKILL
+  "e682fd39-6f06-47f8-aa60-175065ea12cf": {
     "class": "com.bryjamin.dancedungeon.factories.spells.Skill",
-    "name": "Swipe",
-    "description": "Deals 1 damage",
+    "name": "Blast",
+    "description": "Ranged Attack, Deals 1 damage",
     "icon": "skills/LaserScope",
     "baseDamage": 1,
     "targeting": "Melee",
-    "spellAnimation": "Slash",
+    "spellAnimation": "Projectile",
+    "attackType": "Damage",
+    "purchasable": false
+  },
+
+
+
+  "509d0cd7-ad54-4794-b53e-2f97bc87d8b8": {
+    "class": "com.bryjamin.dancedungeon.factories.spells.Skill",
+    "name": "Throw Rock",
+      "description": "Thrown Attack, Deals 1 damage",
+    "icon": "skills/LaserScope",
+    "baseDamage": 1,
+    "targeting": "Melee",
+    "minRange": 1,
+    "maxRange": 3,
+    "spellAnimation": "Projectile",
     "attackType": "Damage",
     "purchasable": false
   }

@@ -54,7 +54,7 @@
     "stun": 1,
     "baseDamage": 1,
     "targeting": "Melee",
-    "spellAnimation": "Projectile",
+    "spellAnimation": "Slash",
     "attackType": "Damage"
   },
 

@@ -2,9 +2,11 @@ package com.bryjamin.dancedungeon.factories.spells.animations;
 
 import com.artemis.Entity;
 import com.artemis.World;
-import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.bryjamin.dancedungeon.assets.Colors;
+import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
@@ -13,7 +15,6 @@ import com.bryjamin.dancedungeon.ecs.components.actions.OnDeathActionsComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
-import com.bryjamin.dancedungeon.ecs.components.graphics.ArchingTextureComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
@@ -22,6 +23,8 @@ import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
+import com.bryjamin.dancedungeon.utils.texture.Layer;
+import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 /**
  * Created by BB on 24/12/2017.
@@ -32,79 +35,41 @@ import com.bryjamin.dancedungeon.utils.math.Coordinates;
  *
  */
 
-public class BasicProjectile {
+public class BasicProjectile implements SpellAnimation {
 
-
-    private float width;
-    private float height;
-
-    private float speed;
-
-    private DrawableComponent drawableComponent;
-    private Skill skill;
-
-
-    public BasicProjectile(BasicProjectileBuilder b){
-        this.width = b.width;
-        this.height = b.height;
-        this.drawableComponent = b.drawableComponent;
-        this.speed = b.speed;
-        this.skill = b.skill;
+    private enum Drawable {
+        DEFAULT, MISSLE, TRAIN
     }
 
+    private float width = Measure.units(5f);
+    private float height = Measure.units(5f);
+    private float speed = Measure.units(80f);
 
-    public static class BasicProjectileBuilder {
+    private Drawable drawable = Drawable.DEFAULT;
 
-        private float width;
-        private float height;
+    public BasicProjectile(){}
 
-        private float speed = Measure.units(60f);
+   public void cast(World world, final Entity caster, final Skill skill, final Coordinates casterCoordinates, final Coordinates target){
 
-        private DrawableComponent drawableComponent = new DrawableComponent();
-        private Skill skill = new Skill(new Skill.Builder());
+       Vector2 casterCenter = world.getSystem(TileSystem.class).createRectangleUsingCoordinates(casterCoordinates).getCenter(new Vector2());
 
-        public BasicProjectileBuilder width(float val)
-        { width = val; return this; }
+       float x = CenterMath.centerOnPositionX(width, casterCenter.x);
+       float y = CenterMath.centerOnPositionY(height, casterCenter.y);
 
-        public BasicProjectileBuilder height(float val)
-        { height = val; return this; }
-
-        public BasicProjectileBuilder speed(float val)
-        { speed = val; return this; }
-
-        public BasicProjectileBuilder drawableComponent(DrawableComponent val)
-        { drawableComponent = val; return this; }
-
-        public BasicProjectileBuilder skill(Skill val){
-            skill = val; return this;
-        }
-
-        public BasicProjectile build()
-        { return new BasicProjectile(this); }
-
-    }
-
-
-   public void cast(World world, final Coordinates casterCoordinates, final Coordinates target){
-
-       Rectangle cr = world.getSystem(TileSystem.class).createRectangleUsingCoordinates(casterCoordinates);
-
-       float x = CenterMath.centerOnPositionX(width, cr.getX() + cr.getWidth() / 2);
-       float y = CenterMath.centerOnPositionY(height, cr.getY() + cr.getHeight() / 2);
-
-
-       Rectangle r = world.getSystem(TileSystem.class).createRectangleUsingCoordinates(target);
+       Vector2 targetCenter = world.getSystem(TileSystem.class).createRectangleUsingCoordinates(target).getCenter(new Vector2());
 
        Entity projectile = world.createEntity();
        projectile.edit().add(new PositionComponent(x, y));
+
+       //TODO move this into the new Action Camera System
        world.getSystem(ActionCameraSystem.class).createDeathWaitAction(projectile); //Wait for the projectile to die. To remove the action
 
        projectile.edit().add(new MoveToComponent(speed, new Vector3(
-               CenterMath.centerOnPositionX(width, r.getCenter(new Vector2()).x),
-               CenterMath.centerOnPositionY(height, r.getCenter(new Vector2()).y),
+               CenterMath.centerOnPositionX(width, targetCenter.x),
+               CenterMath.centerOnPositionY(height, targetCenter.y),
                0)));
 
-       projectile.edit().add(drawableComponent);
+       projectile.edit().add(createDrawableComponent());
 
 
        projectile.edit().add(new VelocityComponent());
@@ -127,14 +92,26 @@ public class BasicProjectile {
        projectile.edit().add(new OnDeathActionsComponent(new WorldAction() {
            @Override
            public void performAction(World world, Entity entity) {
-               skill.castSpellOnTargetLocation(world, casterCoordinates, target);
+               skill.castSpellOnTargetLocation(world, caster, casterCoordinates, target);
            }
        }));
 
 
+   }
 
 
+   private DrawableComponent createDrawableComponent(){
 
+        switch (drawable){
+            default:
+            case DEFAULT:
+                return new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE,
+                        new TextureDescription.Builder(TextureStrings.BLOCK)
+                                .color(new Color(Colors.BOMB_ORANGE))
+                                .width(width)
+                                .height(height)
+                                .build());
+        }
 
 
    }

@@ -15,7 +15,7 @@ public class JsonSkillTest  extends GameTest {
         ObjectMap<String, Skill> map = new ObjectMap<String, Skill>();
 
         map.put("dadawdw", new Skill(new Skill.Builder()
-                .name("Foresight")
+                .name("Foredsdssight")
                 .icon("skills/Fire")
                 .description("Increase the Dodge chance of an self by 20% for three turns")
                 .targeting(Skill.Targeting.Self)
@@ -26,7 +26,7 @@ public class JsonSkillTest  extends GameTest {
         Skill s = new Skill();
         s.affectedAreas = new Coordinates[]{new Coordinates(0, 1), new Coordinates(1, 0), new Coordinates(0, -1), new Coordinates(-1, 0)};
         s.affectedAreaSkill = new Skill(new Skill.Builder()
-                .name("Foresight")
+                .name("Fodsdsresight")
                 .icon("skills/Fire")
                 .description("Increase the Dodge chance of an self by 20% for three turns")
                 .targeting(Skill.Targeting.Self)

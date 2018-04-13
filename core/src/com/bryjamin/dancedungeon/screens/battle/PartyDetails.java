@@ -3,7 +3,6 @@ package com.bryjamin.dancedungeon.screens.battle;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
-import com.bryjamin.dancedungeon.factories.spells.basic.StunStrike;
 
 
 /**
@@ -28,7 +27,7 @@ public class PartyDetails {
     private Array<Skill> skillInventory = new Array<Skill>();
 
     public PartyDetails(){
-        skillInventory.add(new StunStrike());
+       // skillInventory.add(new StunStrike());
     }
 
     public void addPartyMember(UnitData unitData, int position){

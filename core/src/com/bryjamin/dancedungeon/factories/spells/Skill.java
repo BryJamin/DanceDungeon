@@ -6,11 +6,9 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
-import com.bryjamin.dancedungeon.assets.Colors;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.BuffComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
@@ -25,7 +23,6 @@ import com.bryjamin.dancedungeon.ecs.components.identifiers.SolidComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.factories.spells.animations.BasicProjectile;
-import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.enums.Direction;
 import com.bryjamin.dancedungeon.utils.math.CoordinateMath;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
@@ -236,8 +233,8 @@ public class Skill {
         return true;
     }
 
-    public void cast(World world, Entity entity, Coordinates target) {
-        TurnComponent turnComponent = entity.getComponent(TurnComponent.class);
+    public void cast(World world, Entity caster, Coordinates target) {
+        TurnComponent turnComponent = caster.getComponent(TurnComponent.class);
         setTurnComponentActionBoolean(actionType, turnComponent);
 
 
@@ -250,17 +247,25 @@ public class Skill {
                 break;
         }
 
-        createSpellEffects(world, entity.getComponent(CoordinateComponent.class).coordinates, target);
+
+        createSpellEffects(world, caster, caster.getComponent(CoordinateComponent.class).coordinates, target);
 
         if(spellAnimation != SpellAnimation.Projectile) {
-            castSpellOnTargetLocation(world, entity.getComponent(CoordinateComponent.class).coordinates, target);
+            castSpellOnTargetLocation(world, caster, caster.getComponent(CoordinateComponent.class).coordinates, target);
         }
 
     }
 
 
-
-    public void createSpellEffects(World world, Coordinates casterCoordinates, Coordinates target){
+    /**
+     * Method for creating the Skill Animations. These animations usually store the skill information
+     * and then use them after their animation has been played
+     * @param world
+     * @param entity - The owner of the skill.
+     * @param castCoordinates - The Coordinates from which the the skill used.
+     * @param target - The Target coordinate for the skill.
+     */
+    public void createSpellEffects(World world, Entity entity, Coordinates castCoordinates, Coordinates target){
 
         Rectangle rectangle = world.getSystem(TileSystem.class).createRectangleUsingCoordinates(target);
 
@@ -278,6 +283,7 @@ public class Skill {
                         .add(new AnimationMapComponent().put(GLITTER_ANIMATION_ID, TextureStrings.SKILLS_HEAL, 0.2f, Animation.PlayMode.NORMAL))
                         .add(new KillOnAnimationEndComponent(GLITTER_ANIMATION_ID));
                 world.getSystem(ActionCameraSystem.class).createDeathWaitAction(heal);
+
 
                 break;
 
@@ -305,23 +311,7 @@ public class Skill {
                 break;
 
             case Projectile:
-
-                float width = Measure.units(5f);
-                float height = Measure.units(5f);
-
-                new BasicProjectile.BasicProjectileBuilder()
-                        .drawableComponent(new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE,
-                                new TextureDescription.Builder(TextureStrings.BLOCK)
-                                        .color(new Color(Colors.BOMB_ORANGE))
-                                        .width(width)
-                                        .height(height)
-                                        .build()))
-                        .width(width)
-                        .height(height)
-                        .speed(Measure.units(85f))
-                        .skill(this)
-                        .build()
-                        .cast(world, casterCoordinates, target);
+                new BasicProjectile().cast(world, entity, this, castCoordinates, target);
 
         }
 
@@ -332,7 +322,7 @@ public class Skill {
 
 
 
-    public void castSpellOnTargetLocation(World world, Coordinates casterCoords, Coordinates target) {
+    public void castSpellOnTargetLocation(World world, Entity caster, Coordinates casterCoords, Coordinates target) {
 
         Array<Entity> entityArray = world.getSystem(TileSystem.class).getCoordinateMap().get(target);
         //If a coordinate is selected outside of map coordinates
@@ -340,22 +330,10 @@ public class Skill {
 
         for (Entity e : world.getSystem(TileSystem.class).getCoordinateMap().get(target)) {
 
-            System.out.println(stun);
             if(stun > 0){
                 e.getComponent(StatComponent.class).stun = stun;
                 e.edit().add(new StunnedComponent());
             }
-
-            for (SpellEffect spellEffect : spellEffects) {
-                switch (spellEffect) {
-                    case Stun:
-                        e.getComponent(StatComponent.class).stun = (int) spellEffect.number;
-                        //break;
-                    case Dodge:
-                        e.getComponent(BuffComponent.class).spellEffectArray.add(spellEffect);
-                }
-            }
-
 
             if (world.getMapper(HealthComponent.class).has(e)) {
 
@@ -455,9 +433,9 @@ public class Skill {
                 Coordinates affected = new Coordinates(target.getX() + c.getX(), target.getY() + c.getY());
 
                 if(affectedAreaSkill.spellAnimation != SpellAnimation.Projectile) {
-                    affectedAreaSkill.castSpellOnTargetLocation(world, target, affected);
+                    affectedAreaSkill.castSpellOnTargetLocation(world, caster, target, affected);
                 }
-                affectedAreaSkill.createSpellEffects(world, target, affected);
+                affectedAreaSkill.createSpellEffects(world, caster, target, affected);
             }
 
         }

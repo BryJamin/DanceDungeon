@@ -20,7 +20,7 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.player.UnitFactory;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
-import com.bryjamin.dancedungeon.factories.spells.enemy.Fireball;
+import com.bryjamin.dancedungeon.factories.spells.SkillLibrary;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
@@ -52,7 +52,7 @@ public class RangedDummyFactory {
 
     public ComponentBag rangedDummy() {
 
-        Skill fireball = new Fireball();
+        Skill fireball = SkillLibrary.getEnemySkill(SkillLibrary.ENEMY_SKILL_BLAST);
 
         StatComponent statComponent = new StatComponent.StatBuilder()
                 .healthAndMax(health)

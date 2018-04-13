@@ -22,9 +22,6 @@ import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.player.UnitFactory;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.factories.spells.SkillLibrary;
-import com.bryjamin.dancedungeon.factories.spells.basic.MeleeAttack;
-import com.bryjamin.dancedungeon.factories.spells.enemy.EnemyWarpStrike;
-import com.bryjamin.dancedungeon.factories.spells.enemy.Strike;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
@@ -58,14 +55,14 @@ public class DummyFactory {
 
     private ComponentBag targetDummy(UnitData unitData) {
 
-        Skill slash = new Strike();
+        Skill slash = SkillLibrary.getEnemySkill(SkillLibrary.ENEMY_SKILL_SWIPE);
 
         ComponentBag bag = unitFactory.baseEnemyUnitBag(unitData); //new ComponentBag();
 
         bag.add(new MoveToComponent(Measure.units(80f)));
         bag.add(new CenteringBoundaryComponent(width, height));
         bag.add(new HitBoxComponent(new HitBox(width, height)));
-        bag.add(new SkillsComponent(SkillLibrary.getEnemySkill(SkillLibrary.ENEMY_SKILL_SWIPE)));
+        bag.add(new SkillsComponent(slash));
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, blob.color(Color.WHITE).build()));
         bag.add(new UtilityAiComponent(dummyAi(slash)));
 
