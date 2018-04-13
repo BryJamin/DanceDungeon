@@ -104,7 +104,25 @@ public class Skill {
     private SpellCoolDown spellCoolDown = SpellCoolDown.NoCoolDown;
     private SpellEffect[] spellEffects;
 
-    public Skill(){}
+    public Skill(){
+
+        name = "N/A";
+        description = "N/A";
+        icon = TextureStrings.BLOCK;
+        targeting = Targeting.StraightShot;
+        attack = Attack.Ranged;
+        actionType = ActionType.UsesMoveAndAttackAction;
+        spellAnimation = SpellAnimation.Projectile;
+        attackType = AttackType.Burn;
+        spellDamageApplication = SpellDamageApplication.Instant;
+        spellEffects = new SpellEffect[]{};
+        spellCoolDown = SpellCoolDown.NoCoolDown;
+        this.coolDown = 1;
+        push = 0;
+        baseDamage = 1;
+        minRange = 1;
+        maxRange = 1;
+    }
 
 
     public Skill(Builder b) {

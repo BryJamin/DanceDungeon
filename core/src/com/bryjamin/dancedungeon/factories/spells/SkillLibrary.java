@@ -25,4 +25,14 @@ public class SkillLibrary {
     public ObjectMap<String, Skill> getItems() {
         return items;
     }
+
+    public Skill getSkill(String key){
+        return items.get(key);
+    }
+
+
+    public static String SKILL_HEAVY_STRIKE = "a5f2cd73-7ade-4577-8d7b-862299baf774";
+    public static String SKILL_HEAVIER_STRIKE = "d92aa63f-1f4d-40bf-9dca-344cebd78d31";
+
+
 }
