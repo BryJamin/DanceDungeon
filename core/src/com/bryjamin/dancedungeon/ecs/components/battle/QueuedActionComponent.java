@@ -13,14 +13,14 @@ import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditio
  *
  */
 
-public class WaitActionComponent extends Component{
+public class QueuedActionComponent extends Component{
 
-    public WaitActionComponent(){}
+    public QueuedActionComponent(){}
 
 
     public Array<WorldConditionalAction> queuedActions = new Array<WorldConditionalAction>();
 
-    public WaitActionComponent(WorldConditionalAction... queuedActions){
+    public QueuedActionComponent(WorldConditionalAction... queuedActions){
         this.queuedActions.addAll(queuedActions);
     }
 

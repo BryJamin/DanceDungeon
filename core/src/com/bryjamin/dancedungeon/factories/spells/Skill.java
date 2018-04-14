@@ -272,6 +272,7 @@ public class Skill {
 
             case Slash:
                 new BasicSlashAnimation().cast(world, entity, this, castCoordinates, target);
+
                 break;
 
             case Projectile:
@@ -351,11 +352,12 @@ public class Skill {
                         if (!tileSystem.getCoordinateMap().containsKey(pushCoords)) {
                             world.getSystem(ActionCameraSystem.class).createMovementAction(e,
                                     tileSystem.getPositionUsingCoordinates(prev, e.getComponent(CenteringBoundaryComponent.class).bound));
-                            world.getSystem(ActionCameraSystem.class).createIntentAction(e);
+
                             break;
                         }
 
                         if (tileSystem.getOccupiedMap().containsValue(pushCoords, false)) { //Pretend move but bounce back
+
                             world.getSystem(ActionCameraSystem.class).createMovementAction(e,
                                     tileSystem.getPositionUsingCoordinates(pushCoords, e.getComponent(CenteringBoundaryComponent.class).bound)
                             );
@@ -368,7 +370,6 @@ public class Skill {
                             System.out.println("Push coords is: " + pushCoords);
                             world.getSystem(ActionCameraSystem.class).createDamageApplicationAction(tileSystem.getOccupiedMap().findKey(pushCoords, false), 1);
 
-                            world.getSystem(ActionCameraSystem.class).createIntentAction(e);
                             break;
                         }
                         ;
@@ -376,7 +377,7 @@ public class Skill {
                         if (i == pushCoordinateArray.length - 1) { //Final loop
                             world.getSystem(ActionCameraSystem.class).createMovementAction(e,
                                     tileSystem.getPositionUsingCoordinates(pushCoords, e.getComponent(CenteringBoundaryComponent.class).bound));
-                            world.getSystem(ActionCameraSystem.class).createIntentAction(e);
+
                         }
 
                         //Check if end of coordinate array
@@ -394,10 +395,11 @@ public class Skill {
             for(Coordinates c : affectedAreas){
                 Coordinates affected = new Coordinates(target.getX() + c.getX(), target.getY() + c.getY());
 
+                affectedAreaSkill.createSpellEffects(world, caster, target, affected);
+
                 if(affectedAreaSkill.spellAnimation != SpellAnimation.Projectile) {
                     affectedAreaSkill.castSpellOnTargetLocation(world, caster, target, affected);
                 }
-                affectedAreaSkill.createSpellEffects(world, caster, target, affected);
             }
 
         }

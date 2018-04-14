@@ -157,11 +157,17 @@ public class EnemyIntentSystem extends EntitySystem implements Observer{
 
     public boolean releaseAttack(){
 
-        for(Entity e : this.getEntities()){
+        System.out.println(this.getEntities().size());
+
+        if(this.getEntities().size() != 0){
+
+            Entity e = this.getEntities().get(0);
             StoredSkillComponent storedSkillComponent = storedMapper.get(e);
             storedSkillComponent.skill.cast(world, e, storedSkillComponent.storedTargetCoordinates);
             e.edit().remove(StoredSkillComponent.class);
+
             return true;
+
         }
 
         return false;

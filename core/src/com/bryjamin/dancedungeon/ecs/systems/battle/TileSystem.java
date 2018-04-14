@@ -196,7 +196,6 @@ public class TileSystem extends EntitySystem {
         playerControlledMap.clear();
         enemyMap.clear();
 
-
         for(Coordinates c : coordinateMap.keys()){
             coordinateMap.get(c).clear();
         }

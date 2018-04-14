@@ -14,7 +14,7 @@ import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.WaitActionComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.QueuedActionComponent;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
 /**
@@ -25,26 +25,25 @@ import com.bryjamin.dancedungeon.utils.math.Coordinates;
  * <p>
  * The way this currently works, is your queue up a set of actions using and assign it to an entity.
  * <p>
- * You also use the WaitActionComponent to see if the entity still exists, if not their actions are removed
+ * You also use the QueuedActionComponent to see if the entity still exists, if not their actions are removed
  * from the queue
  */
 
 public class ActionCameraSystem extends EntitySystem {
 
 
-    private OrderedMap<WorldConditionalAction, Entity> queuedActionMap = new OrderedMap<WorldConditionalAction, Entity>();
+   // private OrderedMap<WorldConditionalAction, Entity> queuedActionMap = new OrderedMap<WorldConditionalAction, Entity>();
 
-    private Queue<WorldConditionalAction> actionQueue = new Queue<WorldConditionalAction>();
-
-    private ComponentMapper<WaitActionComponent> waitActionMapper;
+    private OrderedMap<Entity, Array<WorldConditionalAction>> queuedActionMap = new OrderedMap<>();
 
     private ComponentMapper<MoveToComponent> mtcMapper;
 
-    private WorldConditionalAction currentConditionalAction;
+    public Array<Observer> observerArray = new Array<>();
+    private Queue<Array<PushedAction>> actionQueue = new Queue<>();
 
-    private boolean hasBegun = false;
+    private Array<PushedAction> asyncActionArray = new Array<>();
 
-    public Array<Observer> observerArray = new Array<Observer>();
+    private boolean asynchronous = false;
 
     private boolean processingFlag = true;
 
@@ -59,32 +58,57 @@ public class ActionCameraSystem extends EntitySystem {
      * against entities.
      */
     public ActionCameraSystem() {
-        super(Aspect.all(WaitActionComponent.class));
+        super(Aspect.all(QueuedActionComponent.class));
     }
 
 
-    private boolean isActionEntityDead(){
+    /**
+     * Removes entities that are no longer apart of the system from the queue.
+     *
+     * Sometimes an entity can be deleted or die, mid-action. This avoids null pointers from occuring.
+     */
+    private void removeDeadEntityActionsFromQueue(){
 
-        boolean isEntityDead = true;
+        Array<PushedAction> copy = new Array<>(actionQueue.first());
 
-        for(Entity e : this.getEntities()){
+        System.out.println("Before " + actionQueue.size);
 
-            if(queuedActionMap.get(actionQueue.first()).equals(e)){
-                isEntityDead = false;
-                break;
+        for(PushedAction p : copy){
+
+            boolean remove = true;
+            for(Entity e : this.getEntities()){
+                if(p.entity.equals(e)){
+                    remove = false;
+                    System.out.println("Break");
+                    break;
+                }
             }
+
+            if(remove) {
+                actionQueue.first().removeValue(p, true);
+            }
+
         }
 
-        return isEntityDead;
+        System.out.println("After " + actionQueue.size);
+
     }
 
 
     @Override
     protected void processSystem() {
 
-        if(this.getEntities().size() == 0){
-            actionQueue.clear();
-            state = State.PERFORM_ACTION;
+        if(asyncActionArray.size > 0){
+            actionQueue.addLast(asyncActionArray);
+            asyncActionArray.clear();
+        }
+
+        if(actionQueue.size == 0){
+
+            //If the system has no more actions in the queue, it turns it self off
+            //and notifies all observers
+
+            state = State.PERFORM_ACTION; //Resets the state
 
             if(processingFlag){
                 for(Observer o : observerArray){
@@ -94,14 +118,9 @@ public class ActionCameraSystem extends EntitySystem {
 
             processingFlag = false;
 
-
-
         } else {
             processingFlag = true;
         }
-
-
-//        System.out.println(state);
 
 
         switch (state) {
@@ -110,64 +129,91 @@ public class ActionCameraSystem extends EntitySystem {
 
                 if (actionQueue.size == 0) return;
 
-                if(isActionEntityDead()) {
-                    actionQueue.removeFirst();
-                    return;
+                removeDeadEntityActionsFromQueue();
+
+                for(PushedAction p : actionQueue.first()){
+                    p.worldConditionalAction.performAction(world, p.entity);
+                    System.out.println("Action Qeue size " + actionQueue.size);
+                    p.entity.edit().add(new QueuedActionComponent());
                 }
 
-                actionQueue.first().performAction(world,
-                        queuedActionMap.get(actionQueue.first()));
-
-                queuedActionMap.get(actionQueue.first()).edit().add(new WaitActionComponent());
                 state = State.WAIT_ACTION;
                 break;
 
             case WAIT_ACTION:
 
-                if(isActionEntityDead()) {
-                    if(actionQueue.size == 0) return;
-                    actionQueue.removeFirst();
+                removeDeadEntityActionsFromQueue(); //Checks for entites that may have died during the wait.
+
+                if(actionQueue.first().size == 0){ //If all entities are dead return and go to the next in the queue
                     state = State.PERFORM_ACTION;
+                    actionQueue.removeFirst();
                     return;
                 }
 
+                boolean finished = true;
 
-                if (actionQueue.first().condition(world, queuedActionMap.get(actionQueue.first()))) {
+                for(PushedAction p : actionQueue.first()){
+                    if(!p.worldConditionalAction.condition(world, p.entity)){
 
-                    Entity current = queuedActionMap.get(actionQueue.first());
+                        finished = false;
+                    }
+                }
 
-                    actionQueue.removeFirst();
-                    state = State.PERFORM_ACTION;
+                //TODO Pushing into enemy animatios n have stopped for some reason. Not sure how to fix it.
+                //TODO probably due to the actions being deleted from the Array, Use debug toll to solve it.
 
-                    boolean noMoreActions = true;
+                if(finished){
 
-                    for(WorldConditionalAction wca : actionQueue){
-                        if(queuedActionMap.get(wca).equals(current)){
-                            noMoreActions = false;
-                            break;
+
+                    System.out.println("Moving onto the next size is" + actionQueue.size);
+
+                    for(PushedAction p : actionQueue.first()){
+
+                        //Check if the entity is featured in any other actions before removing the Component
+                        queuedActionMap.get(p.entity).removeValue(p.worldConditionalAction, true);
+
+                        if(queuedActionMap.get(p.entity).size == 0){
+                            p.entity.edit().remove(QueuedActionComponent.class);
+                            queuedActionMap.remove(p.entity);
                         }
                     }
 
-                    if(noMoreActions){
-
-
-
-                        current.edit().remove(WaitActionComponent.class);
-                    }
-
-
+                    actionQueue.removeFirst();
+                    state = State.PERFORM_ACTION;
                 }
 
         }
 
     }
 
-
     public void pushLastAction(Entity e, WorldConditionalAction wca) {
-        actionQueue.addLast(wca);
-        queuedActionMap.put(wca, e);
-        e.edit().add(new WaitActionComponent());
-        processingFlag = true;
+
+        actionQueue.addLast(new Array<>(new PushedAction[]{new PushedAction(e, wca)}));
+
+        if(queuedActionMap.containsKey(e)){ //Checks if the entity already have queued actions.
+            queuedActionMap.get(e).add(wca); //Adds the given action to the entity's action list.
+        } else {//Adds an identifier component to new entity's to the system
+            e.edit().add(new QueuedActionComponent());
+            queuedActionMap.put(e, new Array<WorldConditionalAction>());
+        }
+
+        processingFlag = true; //Turns on the system
+    }
+
+    private void pushAsyncAction(Entity e, WorldConditionalAction wca){
+
+        asyncActionArray.add(new PushedAction(e, wca));
+
+        if(queuedActionMap.containsKey(e)){ //Checks if the entity already have queued actions.
+            queuedActionMap.get(e).add(wca); //Adds the given action to the entity's action list.
+        } else {//Adds an identifier component to new entity's to the system
+            e.edit().add(new QueuedActionComponent());
+            queuedActionMap.put(e, new Array<WorldConditionalAction>());
+        }
+
+        processingFlag = true; //Turns on the system
+
+
     }
 
     public boolean isProcessing() {
@@ -182,11 +228,15 @@ public class ActionCameraSystem extends EntitySystem {
         pushLastAction(entity, new WorldConditionalAction() {
             @Override
             public boolean condition(World world, Entity entity) {
+
                 return entity.getComponent(MoveToComponent.class).isEmpty();
             }
 
             @Override
             public void performAction(World world, Entity entity) {
+
+                System.out.println("MOVEMENT ACTION ");
+
                 for (Coordinates c : coordinatesSequence) {
                     entity.getComponent(MoveToComponent.class).movementPositions.add(
                             world.getSystem(TileSystem.class).getPositionUsingCoordinates(
@@ -203,6 +253,23 @@ public class ActionCameraSystem extends EntitySystem {
         pushLastAction(entity, new WorldConditionalAction() {
             @Override
             public boolean condition(World world, Entity entity) {
+                System.out.println("Death wait");
+                return false;
+            }
+
+            @Override
+            public void performAction(World world, Entity entity) {
+            }
+        });
+
+    }
+
+    public void createDeathWaitAction(Entity entity, boolean asynchronous) {
+
+        pushAsyncAction(entity, new WorldConditionalAction() {
+            @Override
+            public boolean condition(World world, Entity entity) {
+                System.out.println("Death wait");
                 return false;
             }
 
@@ -230,12 +297,26 @@ public class ActionCameraSystem extends EntitySystem {
                     return;
                 }
 
+                System.out.println("MOVEMENT ACTION ");
 
                 for (Vector3 p : positions) {
                     entity.getComponent(MoveToComponent.class).movementPositions.add(p);
                 }
             }
         });
+    }
+
+
+    private class PushedAction {
+
+        private Entity entity;
+        private WorldConditionalAction worldConditionalAction;
+
+        public PushedAction(Entity entity, WorldConditionalAction worldConditionalAction){
+            this.entity = entity;
+            this.worldConditionalAction = worldConditionalAction;
+        }
+
     }
 
 

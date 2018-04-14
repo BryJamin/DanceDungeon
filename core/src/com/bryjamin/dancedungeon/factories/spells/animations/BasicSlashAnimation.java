@@ -10,6 +10,7 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationMapComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationStateComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.KillOnAnimationEndComponent;
+import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
@@ -38,6 +39,8 @@ public class BasicSlashAnimation implements SpellAnimation {
                 .add(new AnimationStateComponent(SLASH_ANIMATION))
                 .add(new AnimationMapComponent().put(SLASH_ANIMATION, TextureStrings.SKILLS_SLASH, 0.3f, Animation.PlayMode.NORMAL))
                 .add(new KillOnAnimationEndComponent(SLASH_ANIMATION));
+
+        world.getSystem(ActionCameraSystem.class).createDeathWaitAction(slash, true);
 
 
     }
