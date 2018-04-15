@@ -31,6 +31,8 @@ import com.bryjamin.dancedungeon.utils.texture.HighlightedText;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
+import java.util.UUID;
+
 /**
  * Created by BB on 18/11/2017.
  */
@@ -74,6 +76,9 @@ public class Skill {
     private int coolDownTracker = 0;
     private int push = 0;
     private int stun = 0;
+
+    private transient String skillId = UUID.randomUUID().toString();
+
 
     private int storePrice = 1;
 
@@ -233,9 +238,9 @@ public class Skill {
 
         createSpellEffects(world, caster, caster.getComponent(CoordinateComponent.class).coordinates, target);
 
-        if(spellAnimation != SpellAnimation.Projectile) {
+/*        if(spellAnimation != SpellAnimation.Projectile) {
             castSpellOnTargetLocation(world, caster, caster.getComponent(CoordinateComponent.class).coordinates, target);
-        }
+        }*/
 
     }
 
@@ -282,10 +287,11 @@ public class Skill {
     }
 
 
+    public String getSkillId() {
+        return skillId;
+    }
 
-
-
-    public void castSpellOnTargetLocation(World world, Entity caster, Coordinates casterCoords, Coordinates target) {
+    public void castSpellOnTargetLocation(String id, World world, Entity caster, Coordinates casterCoords, Coordinates target) {
 
         Array<Entity> entityArray = world.getSystem(TileSystem.class).getCoordinateMap().get(target);
         //If a coordinate is selected outside of map coordinates
@@ -350,7 +356,7 @@ public class Skill {
 
                         //Check if coordinate is off the side of the map. If it is, look back to the previous coordinate.
                         if (!tileSystem.getCoordinateMap().containsKey(pushCoords)) {
-                            world.getSystem(ActionCameraSystem.class).createMovementAction(e,
+                            world.getSystem(ActionCameraSystem.class).createMovementAction(e, skillId,
                                     tileSystem.getPositionUsingCoordinates(prev, e.getComponent(CenteringBoundaryComponent.class).bound));
 
                             break;
@@ -358,16 +364,14 @@ public class Skill {
 
                         if (tileSystem.getOccupiedMap().containsValue(pushCoords, false)) { //Pretend move but bounce back
 
-                            world.getSystem(ActionCameraSystem.class).createMovementAction(e,
-                                    tileSystem.getPositionUsingCoordinates(pushCoords, e.getComponent(CenteringBoundaryComponent.class).bound)
-                            );
-
-                            world.getSystem(ActionCameraSystem.class).createMovementAction(e,
+                            world.getSystem(ActionCameraSystem.class).createMovementAction(e, skillId,
+                                    tileSystem.getPositionUsingCoordinates(pushCoords, e.getComponent(CenteringBoundaryComponent.class).bound),
                                     tileSystem.getPositionUsingCoordinates(prev, e.getComponent(CenteringBoundaryComponent.class).bound)
                             );
 
+                            //System.out.println(skillId);
+
                             world.getSystem(ActionCameraSystem.class).createDamageApplicationAction(e, 1); //Push damage is one.
-                            System.out.println("Push coords is: " + pushCoords);
                             world.getSystem(ActionCameraSystem.class).createDamageApplicationAction(tileSystem.getOccupiedMap().findKey(pushCoords, false), 1);
 
                             break;
@@ -375,7 +379,7 @@ public class Skill {
                         ;
 
                         if (i == pushCoordinateArray.length - 1) { //Final loop
-                            world.getSystem(ActionCameraSystem.class).createMovementAction(e,
+                            world.getSystem(ActionCameraSystem.class).createMovementAction(e, skillId,
                                     tileSystem.getPositionUsingCoordinates(pushCoords, e.getComponent(CenteringBoundaryComponent.class).bound));
 
                         }
@@ -392,13 +396,16 @@ public class Skill {
 
         if(affectedAreas.length > 0){
 
+            affectedAreaSkill.setSkillId(getSkillId());
+
             for(Coordinates c : affectedAreas){
                 Coordinates affected = new Coordinates(target.getX() + c.getX(), target.getY() + c.getY());
+
 
                 affectedAreaSkill.createSpellEffects(world, caster, target, affected);
 
                 if(affectedAreaSkill.spellAnimation != SpellAnimation.Projectile) {
-                    affectedAreaSkill.castSpellOnTargetLocation(world, caster, target, affected);
+                    affectedAreaSkill.castSpellOnTargetLocation(id, world, caster, target, affected);
                 }
             }
 
@@ -408,6 +415,10 @@ public class Skill {
 
 
     ;
+
+    public void setSkillId(String skillId) {
+        this.skillId = skillId;
+    }
 
     public void endTurnUpdate() {
         switch (spellCoolDown) {

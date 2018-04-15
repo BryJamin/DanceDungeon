@@ -92,7 +92,7 @@ public class BasicProjectile implements SpellAnimation {
        projectile.edit().add(new OnDeathActionsComponent(new WorldAction() {
            @Override
            public void performAction(World world, Entity entity) {
-               skill.castSpellOnTargetLocation(world, caster, casterCoordinates, target);
+               skill.castSpellOnTargetLocation(skill.getSkillId(), world, caster, casterCoordinates, target);
            }
        }));
 
