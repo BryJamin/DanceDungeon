@@ -54,6 +54,8 @@ public class MapSection {
 
     /**
      * Generates and randomly places 'nodes' within the given section based on the number of nodes
+     *
+     * Throws a runtime error if the generation is incorrect
      */
     public void generateNodePositionsWithinSection() {
 

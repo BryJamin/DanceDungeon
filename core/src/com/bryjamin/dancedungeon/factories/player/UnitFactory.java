@@ -117,7 +117,7 @@ public class UnitFactory {
 
         bag.add(new HealthComponent(unitData.statComponent.health, unitData.statComponent.maxHealth));
         bag.add(new CoordinateComponent());
-        bag.add(new MoveToComponent(Measure.units(60f))); //TODO speed should be based on the class
+        bag.add(new MoveToComponent(Measure.units(60f)));
         bag.add(new VelocityComponent());
         bag.add(new TargetComponent());
         bag.add(new BuffComponent());

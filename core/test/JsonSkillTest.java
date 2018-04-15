@@ -13,6 +13,7 @@ public class JsonSkillTest  extends GameTest {
     public void testEventCount() throws Exception {
 
         ObjectMap<String, Skill> map = new ObjectMap<String, Skill>();
+/*
 
         map.put("dadawdw", new Skill(new Skill.Builder()
                 .name("Foredsdssight")
@@ -31,8 +32,9 @@ public class JsonSkillTest  extends GameTest {
                 .description("Increase the Dodge chance of an self by 20% for three turns")
                 .targeting(Skill.Targeting.Self)
                 .actionType(Skill.ActionType.UsesMoveAndAttackAction));
+*/
 
-        map.put("ODOADOAWDAWDAW", s);
+        //map.put("ODOADOAWDAWDAW", s);
 
                 Json json = new Json();
 

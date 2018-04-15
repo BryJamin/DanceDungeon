@@ -68,6 +68,7 @@ public class EventManager {
     }
 
 
+
     private EventCommand battleEvent2(){
         return new EventCommand() {
             @Override

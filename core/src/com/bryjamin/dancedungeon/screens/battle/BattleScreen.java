@@ -24,7 +24,6 @@ import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BattleMessageSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BlinkOnHitSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BuffSystem;
-import com.bryjamin.dancedungeon.ecs.systems.battle.BulletSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.DeathSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.EndBattleSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.EnemyIntentSystem;
@@ -48,7 +47,6 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.ScaleTransformationSystem
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.InformationBannerSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
-import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
 import com.bryjamin.dancedungeon.screens.AbstractScreen;
 import com.bryjamin.dancedungeon.screens.menu.DefeatScreen;
@@ -103,7 +101,6 @@ public class BattleScreen extends AbstractScreen {
                 .with(WorldConfigurationBuilder.Priority.HIGH,
                         new ConditionalActionSystem(),
                         new ExplosionSystem(),
-                        new BulletSystem(),
                         new TurnSystem(),
                         new HealthSystem(),
                         new ParentChildSystem(),

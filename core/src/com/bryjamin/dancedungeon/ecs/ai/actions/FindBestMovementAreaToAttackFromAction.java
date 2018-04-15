@@ -61,20 +61,14 @@ public class FindBestMovementAreaToAttackFromAction implements WorldAction {
         allCoords.shuffle(); //Avoids just picking the next coordinate in line
 
         for(Coordinates c : allCoords){
-
             float score = 0;
-
             for(Entity e : entity.getComponent(TargetComponent.class).getTargets(world)) {
                 if(mainSkill.getAffectedCoordinates(world, c).contains(e.getComponent(CoordinateComponent.class).coordinates, false)){
-
                     score += 10; //Good Coordinate
-
                     if(e.getComponent(FriendlyComponent.class) != null){
                         score += 20; //Focus on objectives
                     }
-
                     //TODO GET ALL 'ENEMY INTENT' AND THEIR CORRESPONDING COORDINATES. IF THEY ARE OVER A TILE, REDUCE THE SCORE TO AVOID BLOCKING EACH OTHER
-
 
                     Queue<Coordinates> path = new Queue<Coordinates>();
                     if(tileSystem.findShortestPath(entity, path, c,  statComponent.movementRange)){
@@ -87,11 +81,7 @@ public class FindBestMovementAreaToAttackFromAction implements WorldAction {
 
 
                 } else {
-
-
-
                     //TODO WHAT HAPPENS IF YOU CAN'T ATTACK? DO YOU JUST TRY TO FIND COORDINATES CLOSEST?
-
                 }
             }
 

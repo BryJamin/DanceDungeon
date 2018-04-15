@@ -16,9 +16,7 @@ public class AStarPathCalculator {
 
 
     public OrderedMap<CoordinateComponent, Node> componentNodeOrderedMap = new OrderedMap<CoordinateComponent, Node>();
-
     public Array<Coordinates> unavailableCoordinates = new Array<Coordinates>();
-
     public Array<Coordinates> availableCoordinates = new Array<Coordinates>();
 
     //Coordinates occupied by allies
@@ -114,7 +112,7 @@ public class AStarPathCalculator {
         closedList.add(allNodeMap.get(start));
 
         //Could place this inside the Node set up.
-        for(Node n: allNodeMap.values().toArray()) n.setHeuristic(n.coordinates, end);
+        for(Node n: allNodeMap.values().toArray()) n.setHeuristic(end);
 
         //If the final coordinate is occupied by either an ally or enemy return false
         if(unavailableCoordinates.contains(end, false) || alliedCoordinates.contains(end, false)) {
@@ -305,14 +303,14 @@ public class AStarPathCalculator {
             fValue = gValue + hValue;
         }
 
-        private void setHeuristic(Coordinates start, Coordinates goal) {
+        private void setHeuristic(Coordinates goal) {
 
-            int dx = Math.abs(start.getX() - goal.getX());
-            int dy = Math.abs(start.getY() - goal.getY());
+            int distX = Math.abs(coordinates.getX() - goal.getX());
+            int distY = Math.abs(coordinates.getY() - goal.getY());
 
             int D = 1;
 
-            this.hValue = D * (dx + dy);
+            this.hValue = D * (distX + distY);
 
         }
 
