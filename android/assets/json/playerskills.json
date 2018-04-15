@@ -16,6 +16,7 @@
     "description": "Deals 2 damage. Pushes a target 2 tiles",
     "icon": "icons/units/warrior",
     "push": 2,
+    "storePrice": 3,
     "baseDamage": 2,
     "targeting": "Melee",
     "spellAnimation": "Slash",

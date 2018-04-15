@@ -15,6 +15,7 @@ public class PositionComponent extends Component {
 
     public Vector3 position;
 
+
     public PositionComponent(float x, float y){
         position = new Vector3(x,y,0);
     }

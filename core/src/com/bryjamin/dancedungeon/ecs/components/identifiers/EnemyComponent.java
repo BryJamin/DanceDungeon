@@ -8,10 +8,5 @@ import com.artemis.Component;
  * Also takes an identifier.
  */
 
-public class EnemyComponent extends Component{
+public class EnemyComponent extends Component{}
 
-
-
-
-
-}

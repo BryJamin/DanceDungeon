@@ -76,7 +76,7 @@ public class InformationBannerSystem extends BaseSystem implements Observer {
         label.setAlignment(Align.center);
         infoTable.add(label).width(width).align(Align.center);
 
-        label = new Label("Something Else: $" + partyDetails.money, uiSkin);
+        label = new Label("Reputation: " + partyDetails.skillPoints, uiSkin);
         label.setAlignment(Align.center);
         infoTable.add(label).width(width).align(Align.center);
 
