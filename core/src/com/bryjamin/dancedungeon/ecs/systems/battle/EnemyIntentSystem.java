@@ -78,7 +78,7 @@ public class EnemyIntentSystem extends EntitySystem implements Observer{
 
                 case StraightShot:
 
-                    //if(!storedSkillComponent.storedCoordinates.equals(coordinates)){
+                   // if(!storedSkillComponent.storedCoordinates.equals(coordinates)){
 
                         Coordinates stored = storedSkillComponent.storedCoordinates;
                         Coordinates storedTarget = storedSkillComponent.storedTargetCoordinates;
@@ -111,8 +111,6 @@ public class EnemyIntentSystem extends EntitySystem implements Observer{
 
 
                     break;
-
-
 
                 default:
                     if(!storedSkillComponent.storedCoordinates.equals(coordinates)){

@@ -17,6 +17,8 @@ public class TextureStrings {
     public static final String TARGETING = "player/targeting";
     public static final String END_TURN_BUTTON = "player/end_turn";
     public static final String FLOOR_TEXTURE_BRICK = "backgrounds/brick_floor";
+    public static final String WALL = "decor/wall";
+    public static final String GRASS_TILE = "decor/rock_tile";
 
     public static final String WORLD_MAP = "map";
 

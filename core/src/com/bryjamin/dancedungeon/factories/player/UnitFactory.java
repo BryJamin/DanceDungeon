@@ -52,7 +52,7 @@ public class UnitFactory {
                 .add(new CoordinateComponent(c))
                 .add(new MoveToComponent())
                 .add(new VelocityComponent())
-                .add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE, new TextureDescription.Builder(TextureStrings.BLOCK)
+                .add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE, new TextureDescription.Builder(TextureStrings.WALL)
                         //.offsetX()
                         .size(Measure.units(5f)).build()))
                 .add(new CenteringBoundaryComponent(new Rectangle(0, 0, Measure.units(5f), Measure.units(5f))));
@@ -68,6 +68,7 @@ public class UnitFactory {
         e.edit().add(new HealthComponent(2));
         e.edit().add(new AffectMoraleComponent());
         e.edit().add(new FriendlyComponent());
+        e.edit().add(new BlinkOnHitComponent());
         e.edit().add(new StatComponent(new StatComponent.StatBuilder().healthAndMax(1)));
         e.getComponent(DrawableComponent.class).drawables.getColor().set(new Color(Color.ORANGE));
         return e;
