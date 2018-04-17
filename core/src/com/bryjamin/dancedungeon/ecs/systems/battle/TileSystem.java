@@ -55,14 +55,14 @@ public class TileSystem extends EntitySystem {
     private BattleEvent battleEvent;
 
 
-    private float width = Measure.units(60f);
-    private float height = Measure.units(35f);
-
     private float originX = Measure.units(7.5f);
     private float originY = Measure.units(15f);
 
     private int rows = 6;
     private int columns = 8;
+
+    private float width = columns * Measure.units(6f);
+    private float height = rows * Measure.units(6f);
 
     private int maxX;
     private int maxY;

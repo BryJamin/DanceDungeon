@@ -154,7 +154,7 @@ public class ShopScreenUISystem extends BaseSystem {
     public ScrollPane createBuyScrollPane(){
 
         Table shopTable = new Table(uiSkin);
-        ScrollPane shopItemPane = new ScrollPane(shopTable); //Adds the Table to the ScrollPane
+        ScrollPane shopItemPane = new ScrollPane(shopTable, uiSkin, "default"); //Adds the Table to the ScrollPane
 
         if(skillToBuyArray.size == 0){
             Label youHaveNothingToSell = new Label("There is Nothing Left To Buy", uiSkin);

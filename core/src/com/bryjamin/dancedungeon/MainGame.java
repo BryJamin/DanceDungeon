@@ -59,7 +59,7 @@ public class MainGame extends Game {
         size1Params.fontFileName = FileStrings.DEFAULT_FONT_FILE;
         size1Params.fontParameters.size = (int) Measure.units(3f);
         size1Params.fontParameters.borderColor = new Color(Color.BLACK);
-        size1Params.fontParameters.borderWidth = 0;
+        size1Params.fontParameters.borderWidth = Measure.units(0.25f);
         size1Params.fontParameters.minFilter = Texture.TextureFilter.Linear;
         size1Params.fontParameters.magFilter = Texture.TextureFilter.Linear;
         assetManager.load(Fonts.MEDIUM, BitmapFont.class, size1Params);

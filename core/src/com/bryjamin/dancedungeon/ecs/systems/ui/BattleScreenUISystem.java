@@ -164,7 +164,7 @@ public class BattleScreenUISystem extends EntitySystem {
             objectivesTable.clear();
         }
 
-        objectivesTable.add(new Label("Objectives", uiSkin)).padBottom(Padding.SMALL);
+        objectivesTable.add(new Label("Objectives", uiSkin)).expandX().padBottom(Padding.SMALL);
         objectivesTable.row();
         objectivesTable.add(new Label(battleEvent.getPrimaryObjective().getDescription(), uiSkin)).padBottom(Padding.SMALL);;
         objectivesTable.row();

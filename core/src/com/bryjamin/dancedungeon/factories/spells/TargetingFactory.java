@@ -362,7 +362,7 @@ public class TargetingFactory {
 
             Rectangle r = tileSystem.createRectangleUsingCoordinates(c);
 
-            Entity box = BagToEntity.bagToEntity(world.createEntity(), highlightBox(r, new Color(Color.WHITE)));
+            Entity box = BagToEntity.bagToEntity(world.createEntity(), highlightBox(r, new Color(Color.CYAN)));
             entityArray.add(box);
             box.edit().add(new ActionOnTapComponent(new WorldAction() {
                 @Override

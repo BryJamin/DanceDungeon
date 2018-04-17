@@ -5,16 +5,22 @@ import com.artemis.BaseSystem;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.artemis.World;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.Observer;
 import com.bryjamin.dancedungeon.assets.Padding;
 import com.bryjamin.dancedungeon.assets.Skins;
+import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
@@ -110,6 +116,7 @@ public class BattleDeploymentSystem extends EntitySystem {
         deploymentLocations = new Array<>(tileSystem.getAllySpawningLocations());
 
         deploymentTable = new Table(uiSkin);
+
         stageUIRenderingSystem.stage.addActor(deploymentTable);
 
         createDeploymentLocations();
@@ -183,9 +190,13 @@ public class BattleDeploymentSystem extends EntitySystem {
             deploymentTable.clear();
         }
 
-        deploymentTable.setDebug(true);
+       // deploymentTable.setDebug(true);
         deploymentTable.setWidth(stageUIRenderingSystem.stage.getWidth());
         deploymentTable.setHeight(Measure.units(15f));
+
+        NinePatch patch = new NinePatch(renderingSystem.getAtlas().findRegion(TextureStrings.BORDER), 4, 4, 4, 4);
+        deploymentTable.setBackground(new NinePatchDrawable(patch));
+
         deploymentTable.setPosition(0, 0);
 
         Label deployingLabel = new Label("Please Select Where To Deploy: ", uiSkin);

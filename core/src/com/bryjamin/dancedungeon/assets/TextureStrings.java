@@ -20,6 +20,8 @@ public class TextureStrings {
     public static final String WALL = "decor/wall";
     public static final String GRASS_TILE = "decor/rock_tile";
 
+    public static final String BORDER = "border";
+
     public static final String WORLD_MAP = "map";
 
 

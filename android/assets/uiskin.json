@@ -44,7 +44,8 @@ com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {
 },
 "com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle": {
 	"default": { "font": "myFont12", "fontColor": "white" },
-	"small": {"font": "myfont36", "fontColor": "white" }
+	"small": {"font": "myfont36", "fontColor": "white" },
+	"default-dark": {"font": "myFont12", "fontColor": "black"}
 },
 com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 	default: { selection: selection, background: textfield, font: myFont12, fontColor: white, cursor: cursor }
@@ -61,5 +62,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Touchpad$TouchpadStyle: {
 com.badlogic.gdx.scenes.scene2d.ui.Tree$TreeStyle: {
 	default: { minus: tree-minus, plus: tree-plus, selection: default-select-selection }
 },
+
+
 }
 
