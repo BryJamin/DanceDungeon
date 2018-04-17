@@ -37,6 +37,8 @@ import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
+import static com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem.DEBUG;
+
 /**
  * Created by BB on 10/02/2018.
  */
@@ -145,7 +147,7 @@ public class ExpeditionScreenCreationSystem extends BaseSystem {
         partyTable.setBackground(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.BLOCK)).tint(new Color(0,0,0,0.6f)));
         partyTable.setWidth(stageUIRenderingSystem.stage.getWidth());
         partyTable.setHeight(Measure.units(12.5f));
-        partyTable.setDebug(true);
+        partyTable.setDebug(StageUIRenderingSystem.DEBUG);
 
 
         float size = Measure.units(7.5f);
@@ -218,7 +220,7 @@ public class ExpeditionScreenCreationSystem extends BaseSystem {
 
         container = new Table();
         stage.addActor(container);
-        container.setDebug(true);
+        container.setDebug(StageUIRenderingSystem.DEBUG);
         container.setBackground(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.BLOCK)).tint(new Color(0,0,0,0.6f)));
         container.setWidth(stage.getWidth());
         container.setHeight(stage.getHeight());

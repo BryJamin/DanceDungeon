@@ -11,9 +11,10 @@ com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 	default: { down: default-round-down, up: default-round },
 	toggle: { down: default-round-down, checked: default-round-down, up: default-round }
+	inventory: { down: default-round-down, checked: default-round-down, up: border},
 },
 com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
-	default: { down: default-round-down, up: default-round, font: myFont12, fontColor: white },
+	default: { down: default-round-down, up: border, font: myFont12, fontColor: white },
 	toggle: { down: default-round-down, up: default-round, checked: default-round-down, font: myFont12, fontColor: white, downFontColor: red }
 },
 com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {

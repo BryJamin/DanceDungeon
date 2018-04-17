@@ -103,7 +103,7 @@ public class MapStageUISystem extends BaseSystem {
         stage.addActor(container);
 
 
-        container.setDebug(true);
+        container.setDebug(StageUIRenderingSystem.DEBUG);
         container.setWidth(stage.getWidth());
         container.setHeight(stage.getHeight());
         container.align(Align.bottom);
@@ -119,7 +119,7 @@ public class MapStageUISystem extends BaseSystem {
         float BOTTOM_BUTTON_WIDTH = Measure.units(10f);
 
         viewInventoryAndQuickSaveTab = new Table(uiSkin);
-        viewInventoryAndQuickSaveTab.setDebug(true);
+        viewInventoryAndQuickSaveTab.setDebug(StageUIRenderingSystem.DEBUG);
         viewInventoryAndQuickSaveTab.align(Align.center);
         container.add(viewInventoryAndQuickSaveTab).height(Measure.units(7.5f)).width(stage.getWidth());
 
@@ -224,7 +224,7 @@ public class MapStageUISystem extends BaseSystem {
 
         characterWindow = new Table(uiSkin);
         characterWindowContainer.add(characterWindow).size(WINDOW_WIDTH, WINDOW_HEIGHT);
-        characterWindow.setDebug(true);
+        characterWindow.setDebug(StageUIRenderingSystem.DEBUG);
         characterWindow.setBackground(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.BLOCK)).tint(Colors.RGBtoColor(34, 49, 63, 1)));
         characterWindow.align(Align.top);
 
@@ -291,7 +291,7 @@ public class MapStageUISystem extends BaseSystem {
         equippedSkillsTable = new Table(uiSkin);
         leftSideCharacterTable.add(equippedSkillsTable).colspan(5).width(leftSideWidth).height(Measure.units(20f));
 
-        equippedSkillsTable.setDebug(true);
+        equippedSkillsTable.setDebug(StageUIRenderingSystem.DEBUG);
         updateEquippedSkillTable(equippedSkillsTable, unitData);
 
 

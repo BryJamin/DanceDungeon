@@ -54,7 +54,7 @@ public class InformationBannerSystem extends BaseSystem implements Observer {
         Stage stage = stageUIRenderingSystem.stage;
 
         container = new Table(uiSkin);
-        container.setDebug(true);
+        container.setDebug(StageUIRenderingSystem.DEBUG);
         container.setWidth(stage.getWidth());
         container.setHeight(stage.getHeight());
         container.align(Align.top);

@@ -2,6 +2,7 @@ package com.bryjamin.dancedungeon.assets;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -12,15 +13,19 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class Skins {
 
+    static {
+    }
+
 
     public static Skin DEFAULT_SKIN(AssetManager assetManager){
         Skin uiSkin = new Skin();
+
         uiSkin.add("myFont12", assetManager.get(Fonts.MEDIUM));
         uiSkin.add(Fonts.SMALL_FONT_STYLE_NAME, assetManager.get(Fonts.SMALL));
-
         uiSkin.addRegions(assetManager.get(FileStrings.SPRITE_ATLAS_FILE, TextureAtlas.class));
 
-        uiSkin.add("hmm", assetManager.get(FileStrings.SPRITE_ATLAS_FILE, TextureAtlas.class).findRegion(TextureStrings.BLOCK, 0), TextureRegion.class);
+        TextureRegion tr = assetManager.get(FileStrings.SPRITE_ATLAS_FILE, TextureAtlas.class).findRegion(TextureStrings.BORDER, 0);
+        uiSkin.add("border", new NinePatch(tr, 4, 4, 4, 4));
         uiSkin.addRegions(new TextureAtlas(Gdx.files.internal("uiskin.atlas")));
         uiSkin.load(Gdx.files.internal("uiskin.json"));
 

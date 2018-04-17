@@ -80,7 +80,7 @@ public class ShopScreenUISystem extends BaseSystem {
         Stage stage = stageUIRenderingSystem.stage;
 
         container = new Table();
-        container.setDebug(true);
+        container.setDebug(StageUIRenderingSystem.DEBUG);
         container.setWidth(stage.getWidth());
         container.setHeight(stage.getHeight());
 
@@ -167,7 +167,7 @@ public class ShopScreenUISystem extends BaseSystem {
             shopTable.row();
 
             Table t = new Table(uiSkin);
-            t.setDebug(true);
+            t.setDebug(StageUIRenderingSystem.DEBUG);
             t.align(Align.left);
             shopTable.add(t).width(stageUIRenderingSystem.stage.getWidth()).height(Measure.units(7.5f)).padBottom(Padding.MEDIUM);
 

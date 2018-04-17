@@ -6,20 +6,25 @@ import com.artemis.EntitySystem;
 import com.artemis.utils.IntBag;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
@@ -31,6 +36,8 @@ import com.bryjamin.dancedungeon.assets.Skins;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.SkillButtonComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.UITargetingComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
@@ -43,6 +50,7 @@ import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
 import com.bryjamin.dancedungeon.factories.map.event.objectives.AbstractObjective;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
+import com.bryjamin.dancedungeon.factories.spells.TargetingFactory;
 import com.bryjamin.dancedungeon.screens.battle.BattleScreen;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
 import com.bryjamin.dancedungeon.screens.strategy.MapScreen;
@@ -68,11 +76,13 @@ public class BattleScreenUISystem extends EntitySystem {
     private Table container = new Table();
 
 
-    private Table skillButtonsTable = new Table();
-    private Table skillInformationTable = new Table();
-    private Table characterProfileAndHealthTable = new Table();
+    private Table skillButtonsTable;
+    private Table skillInformationTable;
+    private Table characterProfileTable;
 
     private Table objectivesTable;
+
+    private ButtonGroup<Button> buttonGroup = new ButtonGroup<>();
 
     private static final float BOTTOM_TABLE_HEIGHT = Measure.units(15f);
 
@@ -103,24 +113,42 @@ public class BattleScreenUISystem extends EntitySystem {
     protected void initialize() {
 
         container = new Table(uiSkin);
-        container.setDebug(true);
+        container.setDebug(StageUIRenderingSystem.DEBUG);
         container.setWidth(stage.getWidth());
         container.setHeight(BOTTOM_TABLE_HEIGHT);
         container.align(Align.bottomLeft);
         container.setTransform(false);
+        container.setVisible(false);
 
-        container.add(characterProfileAndHealthTable);
+        container.add(characterProfileTable);
+
+        characterProfileTable = new Table(uiSkin);
+        applyNinePathToTable(characterProfileTable);
+        container.add(characterProfileTable).width(Measure.units(20f)).height(BOTTOM_TABLE_HEIGHT).padRight(Padding.MEDIUM);
+
+        skillButtonsTable = new Table(uiSkin);
+        applyNinePathToTable(skillButtonsTable);
+        skillButtonsTable.setDebug(StageUIRenderingSystem.DEBUG);
+        container.add(skillButtonsTable).width(Measure.units(22.5f)).height(BOTTOM_TABLE_HEIGHT).padRight(Padding.MEDIUM);
 
         skillInformationTable = new Table(uiSkin);
-        skillButtonsTable = new Table(uiSkin);
-        skillButtonsTable.setDebug(true);
+        applyNinePathToTable(skillInformationTable);
+        skillInformationTable.setDebug(StageUIRenderingSystem.DEBUG);
+        skillInformationTable.setVisible(false);
+        container.add(skillInformationTable).width(Measure.units(45f)).height(BOTTOM_TABLE_HEIGHT).expandY();
+
 
         objectivesTable = new Table(uiSkin);
         objectivesTable.setWidth(Measure.units(30f));
         objectivesTable.setHeight(Measure.units(27.5f));
         objectivesTable.setPosition(stage.getWidth() - Measure.units(30f), Measure.units(25f));
-        objectivesTable.setDebug(true);
+        objectivesTable.setDebug(StageUIRenderingSystem.DEBUG);
         stage.addActor(objectivesTable);
+
+
+        buttonGroup.setMinCheckCount(0);
+        buttonGroup.setMaxCheckCount(1);
+        buttonGroup.setUncheckLast(true);
 
         endTurn = new TextButton("End Turn", uiSkin);
 
@@ -144,6 +172,14 @@ public class BattleScreenUISystem extends EntitySystem {
 
 
     }
+
+
+    public void applyNinePathToTable(Table table){
+        NinePatch patch = new NinePatch(renderingSystem.getAtlas().findRegion(TextureStrings.BORDER), 4, 4, 4, 4);
+        table.setBackground(new NinePatchDrawable(patch));
+    }
+
+
 
     @Override
     protected void processSystem() {
@@ -187,60 +223,49 @@ public class BattleScreenUISystem extends EntitySystem {
      */
     public void createCharacterSkillHUD(Entity e) {
 
-        container.clearChildren();
-        container.clear();
         container.setVisible(true);
-
 
         UnitData unitData = e.getComponent(UnitComponent.class).getUnitData();
 
         Label name = new Label(unitData.name, uiSkin);
-        characterProfileAndHealthTable = new Table(uiSkin);
-        characterProfileAndHealthTable.add(name).height(Measure.units(5f)).expandY();
-        characterProfileAndHealthTable.row();
-        characterProfileAndHealthTable.add(new Image(new TextureRegionDrawable(atlas.findRegion(unitData.icon)))).size(Measure.units(7.5f), Measure.units(7.5f)).expandY();
+
+        characterProfileTable.clear();
+        characterProfileTable.add(name).height(Measure.units(5f)).center().expandX();
+        characterProfileTable.row();
+        characterProfileTable.add(new Image(new TextureRegionDrawable(atlas.findRegion(unitData.icon)))).size(Measure.units(7.5f), Measure.units(7.5f)).expandY();
 
 
-
-        container.add(characterProfileAndHealthTable).width(Measure.units(20f));
-        container.add(skillButtonsTable).width(Measure.units(22.5f));
-
-        skillButtonsTable.clearChildren();
-
-        skillButtonsTable.add(new Label("Skills", uiSkin)).height(Measure.units(5f));
+        skillButtonsTable.clear();
+        skillButtonsTable.add(new Label("Skills", uiSkin)).height(Measure.units(5f)).center().expandX().colspan(3);
         skillButtonsTable.row();
 
+        buttonGroup.clear();
         SkillsComponent skillsComponent = e.getComponent(SkillsComponent.class);
         for (int i = 0; i < skillsComponent.skills.size; i++) {
             createSkillButton(e, Measure.units(15f) * (i + 1), 0, skillsComponent.skills.get(i));
         }
+
+
+        createMovementTiles(e);
+        //buttonGroup.uncheckAll();
     }
 
-    private void createCreateSkillText(Entity player, Skill skill) {
+    private void updateSkillText(Entity player, Skill skill) {
 
-        container.clearChildren();
-        createCharacterSkillHUD(player);
-
-        skillInformationTable.remove();
-        skillInformationTable.reset();
-
-        skillInformationTable = new Table();
-        skillInformationTable.reset();
+        skillInformationTable.setVisible(true);
         skillInformationTable.clear();
 
-        container.add(skillInformationTable).width(Measure.units(60f)).expandX().fill();
-
-        skillInformationTable.add(new Label(skill.getName(), uiSkin));
+        Label skillName = new Label(skill.getName(), uiSkin);
         skillInformationTable.align(Align.top);
+        skillInformationTable.add(skillName).height(Measure.units(5f)).center().expandX().colspan(3);;
         skillInformationTable.row();
 
-
-        description = new Label(skill.getDescription(world, player), uiSkin);
+        description = new Label(skill.getDescription(world, player), uiSkin, Fonts.SMALL_FONT_NAME);
         description.setWrap(true);
         description.setText(skill.getDescription(world, player));
         description.setAlignment(Align.center);
 
-        skillInformationTable.add(description).width(Measure.units(60f));
+        skillInformationTable.add(description).width(skillInformationTable.getWidth()).expandY();
 
     }
 
@@ -255,25 +280,63 @@ public class BattleScreenUISystem extends EntitySystem {
 
     }
 
+    /**
+     * Upon being selected creates UsesMoveAction and Attacking tiles for the player, based on
+     * the avaliablity of an entites attack and movement actions
+     *
+     * @param e
+     */
+    private void createMovementTiles(Entity e) {
+        TurnComponent turnComponent = e.getComponent(TurnComponent.class);
+        if (turnComponent.movementActionAvailable) {
+            new TargetingFactory().createMovementTiles(world, e, e.getComponent(StatComponent.class).movementRange);
+        }
+    }
+
 
     private void createSkillButton(final Entity player, float x, float y, final Skill skill) {
 
-        float size = Measure.units(7.5f);
+        float size = Measure.units(6.5f);
+
+        Stack stack = new Stack();
 
         Drawable drawable = new TextureRegionDrawable(atlas.findRegion(skill.getIcon()));
-        Button btn = new Button(drawable);
-        skillButtonsTable.add(btn).width(size).height(size).pad(Measure.units(1.5f));
+        final Button btn = new Button(uiSkin, "inventory");
+
         btn.addListener(new ClickListener(){
 
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                createCreateSkillText(player,
-                        skill);
 
-                createSkillTarget(player,
-                        skill);
+                if(btn.isChecked()) {
+                    updateSkillText(player,
+                            skill);
+
+                    createSkillTarget(player,
+                            skill);
+                } else {
+                    skillInformationTable.clear();
+                    skillInformationTable.setVisible(false);
+                    clearTargetingTiles();
+                    createMovementTiles(player);
+                }
+         //       btn.setChecked(true);
             }
         });
+
+
+       // btn.setChecked(true);
+
+        Table table = new Table();
+        Image image = new Image(drawable);
+        image.setTouchable(Touchable.disabled);
+        table.add(image).size(size - Measure.units(1f));
+
+
+        stack.add(btn);
+        buttonGroup.add(btn);
+        stack.add(table);
+        skillButtonsTable.add(stack).width(size).height(size).pad(Measure.units(1.5f)).center().expandX().expandY();
 
     }
 
@@ -380,8 +443,6 @@ public class BattleScreenUISystem extends EntitySystem {
 
         rewardTable.row();
 
-        return;
-
     }
 
 
@@ -398,8 +459,9 @@ public class BattleScreenUISystem extends EntitySystem {
 
     public void reset() {
         this.clearTargetingTiles();
-        container.clearChildren();
         container.setVisible(false);
+        skillInformationTable.setVisible(false);
+        skillInformationTable.clear();
     }
 
 }

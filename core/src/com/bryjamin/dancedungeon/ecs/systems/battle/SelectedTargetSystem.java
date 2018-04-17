@@ -34,6 +34,7 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 public class SelectedTargetSystem extends EntityProcessingSystem {
 
+    private BattleScreenUISystem battleScreenUISystem;
     private TileSystem tileSystem;
     private ComponentMapper<PlayerControlledComponent> playerControlledM;
     private ComponentMapper<TurnComponent> turnMapper;
@@ -130,31 +131,8 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
         //createUnitInformationEntity(world, playableCharacter);
 
         if (playerControlledM.has(playableCharacter)) {
-            createMovementAndAttackTiles(playableCharacter);
-            world.getSystem(BattleScreenUISystem.class).createCharacterSkillHUD(playableCharacter);
+            battleScreenUISystem.createCharacterSkillHUD(playableCharacter);
         }
-    }
-
-
-    /**
-     * Upon being selected creates UsesMoveAction and Attacking tiles for the player, based on
-     * the avaliablity of an entites attack and movement actions
-     *
-     * @param e
-     */
-    private void createMovementAndAttackTiles(Entity e) {
-
-        TurnComponent turnComponent = e.getComponent(TurnComponent.class);
-
-        if (turnComponent.attackActionAvailable && turnComponent.movementActionAvailable) {
-            new TargetingFactory().createMovementTiles(world, e, e.getComponent(StatComponent.class).movementRange);
-        } else if (turnComponent.attackActionAvailable) {
-            /*new TargetingFactory().createTargetTiles(world, e,
-                    e.getComponent(SkillsComponent.class).basicAttack,
-                    e.getComponent(StatComponent.class).attackRange);*/
-        }
-
-
     }
 
     private void createTargetReticle(World world, Entity entity) {
