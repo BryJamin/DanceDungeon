@@ -24,6 +24,7 @@ import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.factories.spells.animations.BasicProjectile;
 import com.bryjamin.dancedungeon.factories.spells.animations.BasicSlashAnimation;
+import com.bryjamin.dancedungeon.factories.spells.animations.BasicThrown;
 import com.bryjamin.dancedungeon.utils.enums.Direction;
 import com.bryjamin.dancedungeon.utils.math.CoordinateMath;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
@@ -43,7 +44,7 @@ public class Skill {
 
     public enum ActionType {UsesMoveAndAttackAction, UsesAttackAction, UsesMoveAction, Free}
 
-    public enum SpellAnimation {Projectile, Slash, Glitter}
+    public enum SpellAnimation {Projectile, Slash, Glitter, Thrown}
 
     public enum AttackType {Heal, HealOverTime, Damage, Burn}
 
@@ -277,11 +278,12 @@ public class Skill {
 
             case Slash:
                 new BasicSlashAnimation().cast(world, entity, this, castCoordinates, target);
-
                 break;
-
             case Projectile:
                 new BasicProjectile().cast(world, entity, this, castCoordinates, target);
+                break;
+            case Thrown:
+                new BasicThrown().cast(world, entity, this, castCoordinates, target);
                 break;
         }
     }

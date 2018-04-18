@@ -5,8 +5,6 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.systems.EntityProcessingSystem;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
-import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationMapComponent;
-import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationStateComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.ArchingTextureComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 
@@ -41,12 +39,12 @@ public class ArchingTextureSystem extends EntityProcessingSystem {
 
         if(currentDistance < midPoint){
             float ratio = (currentDistance / midPoint);
-            scaleX = atc.minWidth + ((atc.maxWidth - atc.minWidth) * ratio);
-            scaleY = atc.minHeight + ((atc.maxHeight - atc.minHeight) *ratio);
+            scaleX = atc.minScaleX + ((atc.maxScaleX - atc.minScaleX) * ratio);
+            scaleY = atc.mixScaleY + ((atc.maxScaleY - atc.mixScaleY) *ratio);
         } else {
             float ratio = 1 - ((currentDistance - midPoint) / midPoint);
-            scaleX = atc.minWidth + ((atc.maxWidth - atc.minWidth) * ratio);
-            scaleY = atc.minHeight + ((atc.maxHeight - atc.minHeight) * ratio);
+            scaleX = atc.minScaleX + ((atc.maxScaleX - atc.minScaleX) * ratio);
+            scaleY = atc.mixScaleY + ((atc.maxScaleY - atc.mixScaleY) * ratio);
         }
 
 

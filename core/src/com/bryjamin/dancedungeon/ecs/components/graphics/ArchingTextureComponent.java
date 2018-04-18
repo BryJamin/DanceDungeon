@@ -1,7 +1,6 @@
 package com.bryjamin.dancedungeon.ecs.components.graphics;
 
 import com.artemis.Component;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 /**
@@ -17,32 +16,32 @@ public class ArchingTextureComponent extends Component {
     public Vector3 startPos;
     public Vector3 endPos;
 
-    public float minHeight;
-    public float maxHeight;
+    public float mixScaleY;
+    public float maxScaleY;
 
-    public float minWidth;
-    public float maxWidth;
+    public float minScaleX;
+    public float maxScaleX;
 
     public ArchingTextureComponent(){}
 
 
-    public ArchingTextureComponent(Vector3 startPos, Vector3 endPos, float minHeight, float maxHeight, float minWidth, float maxWidth) {
+    public ArchingTextureComponent(Vector3 startPos, Vector3 endPos, float mixScaleY, float maxScaleY, float minScaleX, float maxScaleX) {
         this.startPos = startPos;
         this.endPos = endPos;
-        this.minHeight = minHeight;
-        this.maxHeight = maxHeight;
-        this.minWidth = minWidth;
-        this.maxWidth = maxWidth;
+        this.mixScaleY = mixScaleY;
+        this.maxScaleY = maxScaleY;
+        this.minScaleX = minScaleX;
+        this.maxScaleX = maxScaleX;
     }
 
 
-    public ArchingTextureComponent(Vector3 startPos, Vector3 endPos, float minSize, float maxSize) {
+    public ArchingTextureComponent(Vector3 startPos, Vector3 endPos, float minScale, float maxScale) {
         this.startPos = startPos;
         this.endPos = endPos;
-        this.minHeight = minSize;
-        this.maxHeight = maxSize;
-        this.minWidth = minSize;
-        this.maxWidth = maxSize;
+        this.mixScaleY = minScale;
+        this.maxScaleY = maxScale;
+        this.minScaleX = minScale;
+        this.maxScaleX = maxScale;
     }
 
 }

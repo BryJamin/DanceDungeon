@@ -2,12 +2,16 @@ package com.bryjamin.dancedungeon.ecs.systems.ui;
 
 import com.artemis.BaseSystem;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -15,14 +19,17 @@ import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.assets.Colors;
+import com.bryjamin.dancedungeon.assets.NinePatches;
 import com.bryjamin.dancedungeon.assets.Padding;
 import com.bryjamin.dancedungeon.assets.Skins;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
@@ -58,24 +65,21 @@ public class MapStageUISystem extends BaseSystem {
     private Table container;
     private Table characterWindowContainer;
     private Table characterWindow;
-
     private Table viewInventoryAndQuickSaveTab;
 
+    private ButtonGroup<Button> buttonButtonGroup;
+
     private DragAndDrop dragAndDrop;
+
+    private static final float WINDOW_WIDTH = Measure.units(100f);
+    private static final float WINDOW_HEIGHT = Measure.units(40f);
 
 
     private Table leftSideCharacterTable;
     private Table equippedSkillsTable;
 
-
     private Table inventoryTable;
-
     private Table skillInformationTable;
-
-    private Label test;
-
-    private Array<Button> buttonArray = new Array<Button>();
-
 
     private UnitData selectedCharacter;
 
@@ -102,22 +106,14 @@ public class MapStageUISystem extends BaseSystem {
         container = new Table(uiSkin);
         stage.addActor(container);
 
-
+        //Initialize Container for View Inventory and Quick Save Buttons
         container.setDebug(StageUIRenderingSystem.DEBUG);
         container.setWidth(stage.getWidth());
         container.setHeight(stage.getHeight());
         container.align(Align.bottom);
-
-        characterWindowContainer = new Table();
-        characterWindowContainer.setVisible(false);
-
-
         container.row();
 
         //VIEW INVENTORY AND BOTTOM BUTTONS
-
-        float BOTTOM_BUTTON_WIDTH = Measure.units(10f);
-
         viewInventoryAndQuickSaveTab = new Table(uiSkin);
         viewInventoryAndQuickSaveTab.setDebug(StageUIRenderingSystem.DEBUG);
         viewInventoryAndQuickSaveTab.align(Align.center);
@@ -133,51 +129,57 @@ public class MapStageUISystem extends BaseSystem {
             }
         });
 
-        viewInventoryAndQuickSaveTab.add(quickSave).expandX().fill();
+        final TextButton viewInventory = new TextButton("View Inventory", uiSkin);
 
+        viewInventory.addListener(new ClickListener() {
 
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (characterWindowContainer.isVisible()) {
+                    closeCharacterWindow();
+                    world.getSystem(MapInputSystem.class).closedMenu();
+                } else {
 
-        for (final UnitData unitData : partyDetails.getParty()) {
+                    System.out.println(selectedCharacter == null);
 
-            if (unitData == null) continue;
-
-
-            Stack stack = new Stack();
-
-            Table overlay = new Table();
-            overlay.add(new Image(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.BLOCK)).tint(Color.GRAY))).expand().height(Measure.units(3.5f)).width(Measure.units(10f)).fillX().center();
-
-
-            TextureRegionDrawable drawable = new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(unitData.icon));
-
-            Button btn = new Button(drawable, drawable.tint(new Color(0.1f, 0.1f, 0.1f, 1)));
-
-            Table buttonOverlay = new Table();
-            buttonOverlay.add(btn).size(Measure.units(7.5f)).center();
-
-
-            stack.add(overlay);
-            stack.add(buttonOverlay);
-            viewInventoryAndQuickSaveTab.add(stack).size(Measure.units(10f), Measure.units(5f)).padRight(Measure.units(2.5f)).expandX();
-            buttonArray.add(btn);
-
-
-            btn.addListener(new ChangeListener() {
-
-                @Override
-                public void changed(ChangeEvent event, Actor actor) {
-
-                    if (characterWindowContainer.isVisible()) {
-                        openCharacterWindow(unitData);
-                        world.getSystem(MapInputSystem.class).openMenu();
+                    if(selectedCharacter == null) { //Default the menu opens to the first character in the party.
+                        openCharacterWindow(partyDetails.getParty()[0]);
                     } else {
-                        openCharacterWindow(unitData);
-                        world.getSystem(MapInputSystem.class).openMenu();
+                        openCharacterWindow(selectedCharacter);
                     }
-
+                    world.getSystem(MapInputSystem.class).openMenu();
                 }
-            });
-        }
+            }
+        });
+
+        viewInventory.addAction(new Action() {
+            @Override
+            public boolean act(float delta) {
+                viewInventory.setText(characterWindowContainer.isVisible() ? "Close Inventory" : "View Inventory");
+                return false;
+            }
+        });
+
+        viewInventoryAndQuickSaveTab.add(quickSave).expandX().width(Measure.units(35f));
+        viewInventoryAndQuickSaveTab.add(viewInventory).expandX().width(Measure.units(35f));
+
+
+
+
+        characterWindowContainer = new Table();
+        characterWindowContainer.setVisible(false);
+        characterWindowContainer.setWidth(stage.getWidth());
+        characterWindowContainer.setHeight(stage.getHeight());
+
+        stage.addActor(characterWindowContainer);
+
+        characterWindow = new Table(uiSkin);
+        characterWindowContainer.add(characterWindow).size(WINDOW_WIDTH, WINDOW_HEIGHT);
+        characterWindow.setDebug(StageUIRenderingSystem.DEBUG);
+        characterWindow.setBackground(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.BLOCK)).tint(Colors.RGBtoColor(34, 49, 63, 1)));
+        characterWindow.align(Align.top);
+
+
     }
 
     @Override
@@ -198,116 +200,90 @@ public class MapStageUISystem extends BaseSystem {
     }
 
 
+
+    private Table createCharacterSelectionForInventoryWindow(){
+
+        //SELECT CHARACTER INVENTORY TABLE
+        Table characterButtonsTable = new Table(uiSkin);
+        characterButtonsTable.align(Align.center);
+
+        buttonButtonGroup = new ButtonGroup<>();
+        buttonButtonGroup.setMinCheckCount(1);
+        buttonButtonGroup.setMaxCheckCount(1);
+        buttonButtonGroup.setUncheckLast(true);
+
+        for(final UnitData unit : partyDetails.getParty()){
+
+            Stack stack = new Stack();
+            Table t = new Table();
+            t.setTouchable(Touchable.disabled);
+            t.add(new Image(renderingSystem.getAtlas().findRegion(unit.icon))).size(Measure.units(5f));
+
+            final Button button = new Button(uiSkin, "inventory");
+
+            stack.add(button);
+            stack.add(t);
+
+            characterButtonsTable.add(stack).size(Measure.units(8f)).padBottom(Padding.MEDIUM);
+
+            button.addListener(new ClickListener() {
+
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    updateSelectedCharacterTable(leftSideCharacterTable, unit);
+                    updateInventoryTable(inventoryTable);
+                    updateSkillInformationTable(skillInformationTable, null);
+                    selectedCharacter = unit;
+                }
+
+            });
+
+            if(selectedCharacter == unit){ //When re-opening the menu it opens the previously Selected Character
+                button.setChecked(true);
+            }
+
+            characterButtonsTable.row();
+
+            buttonButtonGroup.add(button);
+        }
+
+
+        return characterButtonsTable;
+
+    }
+
+
     private void openCharacterWindow(final UnitData unitData) {
 
         this.selectedCharacter = unitData;
 
+        System.out.println(selectedCharacter.name);
+
         final Stage stage = stageUIRenderingSystem.stage;
 
         dragAndDrop = new DragAndDrop();
-
-        characterWindowContainer.remove();
-        characterWindowContainer.clear();
-        characterWindowContainer = new Table();
-
-
-        characterWindowContainer.setWidth(stage.getWidth());
-        characterWindowContainer.setHeight(stage.getHeight());
         characterWindowContainer.setVisible(true);
-        stage.addActor(characterWindowContainer);
-
-        float WINDOW_WIDTH = Measure.units(85f);
-        float WINDOW_HEIGHT = Measure.units(40f);
-
-
         //CHARACTER WINDOW TABLE
 
-        characterWindow = new Table(uiSkin);
-        characterWindowContainer.add(characterWindow).size(WINDOW_WIDTH, WINDOW_HEIGHT);
-        characterWindow.setDebug(StageUIRenderingSystem.DEBUG);
-        characterWindow.setBackground(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.BLOCK)).tint(Colors.RGBtoColor(34, 49, 63, 1)));
-        characterWindow.align(Align.top);
-
-        //Adds A listenerer to the container to monitor if the player taps outside the window, in order to close it
-        stage.addListener(new InputListener() { //Tracks taps outside of the character Window in order to close window
-
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-
-                //Checks if the touch is outside the Character Window
-                if (x < characterWindow.getX() || x > characterWindow.getX() + characterWindow.getWidth()
-                        || y < characterWindow.getY() || y > characterWindow.getY() + characterWindow.getHeight()) {
-
-                    boolean close = true;
-                    for (Button btn : buttonArray) {
-                        //Checks if touch is within any buttons on the screen
-                        Vector2 pos = btn.localToStageCoordinates(new Vector2());
-                        if (x > pos.x && x < pos.x + btn.getWidth() && y > pos.y && y < pos.y + btn.getHeight()) {
-                            close = false;
-                        }
-                    }
-
-                    if (close) {
-                        closeCharacterWindow();
-                        stage.removeListener(this);
-                    }
-                    return true;
-                }
-
-                return false;
-            }
-        });
+        characterWindow.clear();
+        characterWindow.add(createCharacterSelectionForInventoryWindow()).width(Measure.units(20f)).height(characterWindow.getHeight());
 
 
         leftSideCharacterTable = new Table(uiSkin);
-        float leftSideWidth = Measure.units(30f);
-        characterWindow.add(leftSideCharacterTable).width(leftSideWidth);
-
+        leftSideCharacterTable.setWidth(Measure.units(30f));
+        characterWindow.add(leftSideCharacterTable).width( Measure.units(30f));
         //LEFT SIDE
 
-
         //CHARACTER PANE
-
-        Label label = new Label(unitData.name, uiSkin);
-        leftSideCharacterTable.add(label).expandX().colspan(5);
-        leftSideCharacterTable.row();
-
-        Image portrait = new Image(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(unitData.icon)));
-        leftSideCharacterTable.add(portrait).size(Measure.units(10f), Measure.units(10f)).expandX();
-
-        int max = unitData.getStatComponent().maxHealth;
-        int current = unitData.getStatComponent().health;
-
-        leftSideCharacterTable.row();
-        leftSideCharacterTable.add(new Label(String.format(Locale.ENGLISH, "HP %s/%s", current, max), uiSkin)).expandX();
-
-
-
-        //Skills Table Row / Upgrades
-        leftSideCharacterTable.row();
-        leftSideCharacterTable.add(new Label("Skills", uiSkin)).colspan(5).expandX();
-        leftSideCharacterTable.row();
-
-        equippedSkillsTable = new Table(uiSkin);
-        leftSideCharacterTable.add(equippedSkillsTable).colspan(5).width(leftSideWidth).height(Measure.units(20f));
-
-        equippedSkillsTable.setDebug(StageUIRenderingSystem.DEBUG);
-        updateEquippedSkillTable(equippedSkillsTable, unitData);
-
-
-
+        updateSelectedCharacterTable(leftSideCharacterTable, unitData);
         //CHARACTER PANE END
 
 
         //INVENTORY PANE
-
         inventoryTable = new Table(uiSkin);
         inventoryTable.align(Align.top);
-
         characterWindow.add(inventoryTable).width(Measure.units(25f)).height(WINDOW_HEIGHT).expandY();
-
         inventoryTable.add(new Label("Inventory", uiSkin)).expandX().padBottom(Padding.SMALL);
-
         updateInventoryTable(inventoryTable);
 
 
@@ -319,6 +295,66 @@ public class MapStageUISystem extends BaseSystem {
         characterWindow.add(skillInformationTable).width(Measure.units(30f));
         updateSkillInformationTable(skillInformationTable, null);
 
+
+
+
+
+
+        //Adds A listenerer to the container to monitor if the player taps outside the window, in order to close it
+        stage.addListener(new InputListener() { //Tracks taps outside of the character Window in order to close window
+
+
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                closeCharacterWindow();
+                stage.removeListener(this);
+            }
+
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+
+                //Checks if the touch is outside the Character Window
+                if (x < characterWindow.getX() || x > characterWindow.getX() + characterWindow.getWidth()
+                        || y < characterWindow.getY() || y > characterWindow.getY() + characterWindow.getHeight()) {
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
+
+    }
+
+
+    private void updateSelectedCharacterTable(Table selectedCharacterTable, UnitData unitData){
+
+        if(selectedCharacterTable.hasChildren()){
+            selectedCharacterTable.clear();
+        }
+
+        Label label = new Label(unitData.name, uiSkin);
+        selectedCharacterTable.add(label).expandX().colspan(5);
+        selectedCharacterTable.row();
+
+        Image portrait = new Image(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(unitData.icon)));
+        selectedCharacterTable.add(portrait).size(Measure.units(10f), Measure.units(10f)).expandX();
+
+        int max = unitData.getStatComponent().maxHealth;
+        int current = unitData.getStatComponent().health;
+
+        selectedCharacterTable.row();
+        selectedCharacterTable.add(new Label(String.format(Locale.ENGLISH, "HP %s/%s", current, max), uiSkin)).expandX();
+
+        //Skills Table Row / Upgrades
+        selectedCharacterTable.row();
+        selectedCharacterTable.add(new Label("Skills", uiSkin)).colspan(5).expandX();
+        selectedCharacterTable.row();
+
+        equippedSkillsTable = new Table(uiSkin);
+        selectedCharacterTable.add(equippedSkillsTable).colspan(5).width(selectedCharacterTable.getWidth()).height(Measure.units(20f));
+        equippedSkillsTable.setDebug(StageUIRenderingSystem.DEBUG);
+        updateEquippedSkillTable(equippedSkillsTable, unitData);
 
     }
 
@@ -396,7 +432,7 @@ public class MapStageUISystem extends BaseSystem {
 
             } catch (IndexOutOfBoundsException e){
 
-                Image image = new Image(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.BLOCK)).tint(Color.GRAY));
+                Image image = new Image(new NinePatchDrawable(NinePatches.getBorderPatch(renderingSystem.getAtlas())));
                 equippedSkillsTable.add(image).size(BUTTON_SIZE).padRight(Padding.SMALL).expandX();
                 dragAndDrop.addTarget(new EquippedTarget(image, null, i));
             }
@@ -453,15 +489,10 @@ public class MapStageUISystem extends BaseSystem {
     }
 
     private void closeCharacterWindow() {
-
         if (characterWindowContainer == null) return;
-
-        characterWindowContainer.remove();
-        characterWindowContainer.clear();
+        //characterWindowContainer.clear();
         characterWindowContainer.setVisible(false);
-
         world.getSystem(MapInputSystem.class).closedMenu();
-
     }
 
 
