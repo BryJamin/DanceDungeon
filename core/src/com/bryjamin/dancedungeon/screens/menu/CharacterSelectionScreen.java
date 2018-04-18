@@ -20,7 +20,7 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.FadeSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.input.BasicInputSystemWithStage;
-import com.bryjamin.dancedungeon.ecs.systems.ui.ExpeditionScreenCreationSystem;
+import com.bryjamin.dancedungeon.ecs.systems.ui.CharacterSelectionScreenInitilization;
 import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
 import com.bryjamin.dancedungeon.factories.CharacterGenerator;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
@@ -31,12 +31,12 @@ import com.bryjamin.dancedungeon.utils.GameDelta;
  * Created by BB on 10/02/2018.
  */
 
-public class ExpeditionScreen extends AbstractScreen {
+public class CharacterSelectionScreen extends AbstractScreen {
 
     private World world;
     private CharacterGenerator cg = new CharacterGenerator();
 
-    public ExpeditionScreen(MainGame game) {
+    public CharacterSelectionScreen(MainGame game) {
         super(game);
         createWorld();
     }
@@ -53,7 +53,7 @@ public class ExpeditionScreen extends AbstractScreen {
         WorldConfiguration config = new WorldConfigurationBuilder()
                 .with(WorldConfigurationBuilder.Priority.HIGHEST,
 
-                        new ExpeditionScreenCreationSystem(game, gameport, availiable),
+                        new CharacterSelectionScreenInitilization(game, gameport, availiable),
                         new BasicInputSystemWithStage(gameport),
 
                         new MovementSystem(),

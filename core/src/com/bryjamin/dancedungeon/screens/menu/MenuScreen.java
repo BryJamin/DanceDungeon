@@ -65,7 +65,7 @@ public class MenuScreen extends AbstractScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.getScreen().dispose();
-                game.setScreen(new ExpeditionScreen(game));
+                game.setScreen(new CharacterSelectionScreen(game));
             }
         });
 

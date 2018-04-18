@@ -84,7 +84,7 @@ public class BattleScreenUISystem extends EntitySystem {
 
     private ButtonGroup<Button> buttonGroup = new ButtonGroup<>();
 
-    private static final float BOTTOM_TABLE_HEIGHT = Measure.units(15f);
+    private static final float BOTTOM_TABLE_HEIGHT = Measure.units(15f) - Padding.SMALL;
 
 
     private Label title;
@@ -120,16 +120,16 @@ public class BattleScreenUISystem extends EntitySystem {
         container.setTransform(false);
         container.setVisible(false);
 
-        container.add(characterProfileTable);
+        container.add(characterProfileTable).padBottom(Padding.SMALL);
 
         characterProfileTable = new Table(uiSkin);
         applyNinePathToTable(characterProfileTable);
-        container.add(characterProfileTable).width(Measure.units(20f)).height(BOTTOM_TABLE_HEIGHT).padRight(Padding.MEDIUM);
+        container.add(characterProfileTable).width(Measure.units(20f)).height(BOTTOM_TABLE_HEIGHT).padRight(Padding.MEDIUM).expandX().fillX();
 
         skillButtonsTable = new Table(uiSkin);
         applyNinePathToTable(skillButtonsTable);
         skillButtonsTable.setDebug(StageUIRenderingSystem.DEBUG);
-        container.add(skillButtonsTable).width(Measure.units(22.5f)).height(BOTTOM_TABLE_HEIGHT).padRight(Padding.MEDIUM);
+        container.add(skillButtonsTable).width(Measure.units(22.5f)).height(BOTTOM_TABLE_HEIGHT).padRight(Padding.MEDIUM).expandX();
 
         skillInformationTable = new Table(uiSkin);
         applyNinePathToTable(skillInformationTable);
