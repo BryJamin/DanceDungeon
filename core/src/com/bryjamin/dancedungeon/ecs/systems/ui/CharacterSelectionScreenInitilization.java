@@ -6,20 +6,14 @@ import com.artemis.utils.IntBag;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -41,8 +35,6 @@ import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
-
-import static com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem.DEBUG;
 
 /**
  * Created by BB on 10/02/2018.
@@ -231,8 +223,6 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
             partyMemberContainer.row();
 
 
-
-
             Image border = new Image(new NinePatch(renderingSystem.getAtlas().findRegion(TextureStrings.BORDER), 4, 4, 4, 4));
             Table imgContainer = new Table();
             imgContainer.add(new Image(renderingSystem.getAtlas().findRegion(unitData.icon))).size(Measure.units(7.5f));
@@ -252,7 +242,7 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
             partyMemberContainer.add(imgContainer).width(Measure.units(5f));
             partyMemberContainer.add(new Label(unitData.getSkillsComponent().skills.first().getName(), uiSkin)).expandX();
 
-            Label description = new Label(unitData.getSkillsComponent().skills.first().getDescription(), uiSkin, Fonts.SMALL_FONT_NAME);
+            Label description = new Label(unitData.getSkillsComponent().skills.first().getDescription(), uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
             description.setWrap(true);
             description.setAlignment(Align.center);
             partyMemberContainer.add(description).width(Measure.units(50f));
@@ -262,24 +252,6 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
             container.row();
 
         }
-
-
-
- /*       container.add(createPartyTable(defenders, 0));
-        container.row();
-
-        Label selectAttacker = new Label("Attacker", uiSkin);
-        container.add(selectAttacker).padTop(padTop);;
-        container.row();
-
-        container.add(createPartyTable(attackers, 1));
-        container.row();
-
-        Label selectSupport = new Label("Support", uiSkin);
-        container.add(selectSupport).padTop(padTop);
-        container.row();
-
-        container.add(createPartyTable(support, 2));*/
 
     }
 

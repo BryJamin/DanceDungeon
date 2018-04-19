@@ -174,7 +174,7 @@ public class ShopScreenUISystem extends BaseSystem {
             t.add(new Image(renderingSystem.getAtlas().findRegion(s.getIcon()))).height(Measure.units(5f)).width(Measure.units(5f)).padRight(Measure.units(1.5f));
             t.add(new Label(s.getName(), uiSkin)).expandX().padRight(Measure.units(1.5f));
 
-            Label skillDescription = new Label(s.getDescription(), uiSkin, Fonts.SMALL_FONT_NAME);
+            Label skillDescription = new Label(s.getDescription(), uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
             skillDescription.setWrap(true);
             skillDescription.setAlignment(Align.center);
 

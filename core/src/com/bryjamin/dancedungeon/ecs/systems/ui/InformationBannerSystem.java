@@ -46,20 +46,15 @@ public class InformationBannerSystem extends BaseSystem implements Observer {
     protected void initialize() {
         partyManagementSystem.addObserver(this);
         createBanner();
+        updateBanner();
     }
 
 
-    public void createBanner(){
+    public void updateBanner(){
 
-        Stage stage = stageUIRenderingSystem.stage;
-
-        container = new Table(uiSkin);
-        container.setDebug(StageUIRenderingSystem.DEBUG);
-        container.setWidth(stage.getWidth());
-        container.setHeight(stage.getHeight());
-        container.align(Align.top);
-
-        stage.addActor(container);
+        if(container.hasChildren()){
+            container.clear();
+        }
 
         PartyDetails partyDetails = partyManagementSystem.getPartyDetails();
         float width = container.getWidth() / 3;
@@ -85,7 +80,7 @@ public class InformationBannerSystem extends BaseSystem implements Observer {
 
 
         Table table = new Table(uiSkin);
-        container.add(table).width(stage.getWidth());
+        container.add(table).width(stageUIRenderingSystem.stage.getWidth());
 
         for(UnitData unitData : partyDetails.getParty()){
 
@@ -102,18 +97,25 @@ public class InformationBannerSystem extends BaseSystem implements Observer {
 
             table.add(characterTable).expandX();
 
-
         }
 
+    }
 
+    public void createBanner(){
 
+        Stage stage = stageUIRenderingSystem.stage;
+
+        container = new Table(uiSkin);
+        container.setDebug(StageUIRenderingSystem.DEBUG);
+        container.setWidth(stage.getWidth());
+        container.setHeight(stage.getHeight());
+        container.align(Align.top);
+        stage.addActor(container);
 
     }
 
     public void updateInformation(){
-        container.clear();
-        container.remove();
-        createBanner();
+        updateBanner();
     }
 
     public Table getContainer() {

@@ -70,8 +70,8 @@ public class MapScreen extends AbstractScreen {
 
                         new MapInputSystem(game, gameport, 0, gameMap.getWidth() + Measure.units(20f)),
                         new FixedToCameraPanAndFlingSystem(gameport.getCamera(), 0, 0, gameMap.getWidth() + Measure.units(20f), 0),
-                        new MapStageUISystem(game, gameMap, partyDetails, gameport), //Updates and is fixed to camera, so need to be below fling system
                         new InformationBannerSystem(game, gameport),
+                        new MapStageUISystem(game, gameMap, partyDetails, gameport), //Updates and is fixed to camera, so need to be below fling system
 
 
                         //Positional Systems

@@ -260,7 +260,7 @@ public class BattleScreenUISystem extends EntitySystem {
         skillInformationTable.add(skillName).height(Measure.units(5f)).center().expandX().colspan(3);;
         skillInformationTable.row();
 
-        description = new Label(skill.getDescription(world, player), uiSkin, Fonts.SMALL_FONT_NAME);
+        description = new Label(skill.getDescription(world, player), uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
         description.setWrap(true);
         description.setText(skill.getDescription(world, player));
         description.setAlignment(Align.center);
