@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
-import com.bryjamin.dancedungeon.ecs.systems.FixedToCameraPanAndFlingSystem;
+import com.bryjamin.dancedungeon.ecs.systems.MapCameraSystemFlingAndPan;
 import com.bryjamin.dancedungeon.ecs.systems.MoveToTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ParentChildSystem;
@@ -29,7 +29,6 @@ import com.bryjamin.dancedungeon.ecs.systems.ui.InformationBannerSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.MapStageUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
-import com.bryjamin.dancedungeon.factories.map.MapGenerator;
 import com.bryjamin.dancedungeon.screens.AbstractScreen;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
 import com.bryjamin.dancedungeon.utils.GameDelta;
@@ -69,7 +68,7 @@ public class MapScreen extends AbstractScreen {
                         new PlayerPartyManagementSystem(partyDetails),
 
                         new MapInputSystem(game, gameport, 0, gameMap.getWidth() + Measure.units(20f)),
-                        new FixedToCameraPanAndFlingSystem(gameport.getCamera(), 0, 0, gameMap.getWidth() + Measure.units(20f), 0),
+                        new MapCameraSystemFlingAndPan(gameport.getCamera(), 0, 0, gameMap.getWidth() + Measure.units(20f), 0),
                         new InformationBannerSystem(game, gameport),
                         new MapStageUISystem(game, gameMap, partyDetails, gameport), //Updates and is fixed to camera, so need to be below fling system
 
@@ -97,6 +96,13 @@ public class MapScreen extends AbstractScreen {
 
         world = new World(config);
 
+        //TODO I want to place this within the world instead of in the screen
+
+        if(world.getSystem(MapNodeSystem.class).getCurrentMapNode() != null) {
+            gameport.getCamera().position.set(world.getSystem(MapNodeSystem.class).getCurrentMapNode().getPosition().x,
+                    gameport.getCamera().position.y, 0);
+        }
+
     }
 
 
@@ -113,7 +119,8 @@ public class MapScreen extends AbstractScreen {
         world.getSystem(MapNodeSystem.class).onVictory();
         world.getSystem(MapStageUISystem.class).updateInformation();
         world.getSystem(InformationBannerSystem.class).updateInformation();
-        gameport.getCamera().position.set(world.getSystem(MapNodeSystem.class).getCurrentMap().getPosition(), 0); //Center camera on the current node.
+        gameport.getCamera().position.set(world.getSystem(MapNodeSystem.class).getCurrentMapNode().getPosition().x,
+                gameport.getCamera().position.y, 0); //Center camera on the current node.
     }
 
 }

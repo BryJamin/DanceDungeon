@@ -30,7 +30,7 @@ import com.bryjamin.dancedungeon.assets.Fonts;
 import com.bryjamin.dancedungeon.assets.NinePatches;
 import com.bryjamin.dancedungeon.assets.Padding;
 import com.bryjamin.dancedungeon.assets.Skins;
-import com.bryjamin.dancedungeon.ecs.systems.FixedToCameraPanAndFlingSystem;
+import com.bryjamin.dancedungeon.ecs.systems.MapCameraSystemFlingAndPan;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.input.MapInputSystem;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
@@ -52,7 +52,7 @@ public class MapStageUISystem extends BaseSystem {
     private StageUIRenderingSystem stageUIRenderingSystem;
     private InformationBannerSystem informationBannerSystem;
     private RenderingSystem renderingSystem;
-    private FixedToCameraPanAndFlingSystem camSys;
+    private MapCameraSystemFlingAndPan camSys;
     private MainGame game;
     private GameMap gameMap;
     private PartyDetails partyDetails;

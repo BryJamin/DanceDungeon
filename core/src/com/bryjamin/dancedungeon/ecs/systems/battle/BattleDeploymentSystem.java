@@ -150,9 +150,13 @@ public class BattleDeploymentSystem extends EntitySystem {
                             UnitMap unitMap = new UnitMap();
                             PartyDetails partyDetails = playerPartyManagementSystem.getPartyDetails();
 
+
                             if (partyDetails.getParty()[i] != null) {
                                 deployedArray[i] = true;
                                 UnitData unitData = partyDetails.getParty()[i];
+
+                                if(unitData.getStatComponent().health <= 0) continue;
+
                                 ComponentBag player = unitMap.getUnit(unitData);
                                 Entity e = BagToEntity.bagToEntity(world.createEntity(), player);
                                 e.getComponent(CoordinateComponent.class).coordinates.set(c);

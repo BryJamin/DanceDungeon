@@ -265,7 +265,7 @@ public class MapNodeSystem extends EntitySystem {
 
     }
 
-    public MapNode getCurrentMap() {
+    public MapNode getCurrentMapNode() {
         return gameMap.getCurrentMapNode();
     }
 }

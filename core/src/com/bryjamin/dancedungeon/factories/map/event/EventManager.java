@@ -103,7 +103,7 @@ public class EventManager {
             @Override
             public BattleEvent getEvent() {
                 return new BattleEvent.Builder(MapData.MAP_3)
-                        .enemyPool()
+                        .enemyPool(EnemyFactory.FAST_BLOB, EnemyFactory.SPITTER_BLOB, EnemyFactory.MAGE_BLOB)
                         .primaryObjective(new DefeatAllEnemiesObjective())
                         .bonusObjective(new CompleteWithinObjective(AbstractObjective.Reward.MORALE, 99))
                         .build();

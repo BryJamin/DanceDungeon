@@ -14,7 +14,7 @@ import com.bryjamin.dancedungeon.utils.math.CameraMath;
  * Created by BB on 18/01/2018.
  */
 
-public class FixedToCameraPanAndFlingSystem extends EntitySystem {
+public class MapCameraSystemFlingAndPan extends EntitySystem {
 
     private ComponentMapper<PositionComponent> positionm;
     private ComponentMapper<FixedToCameraComponent> fixedm;
@@ -23,7 +23,7 @@ public class FixedToCameraPanAndFlingSystem extends EntitySystem {
 
     private float cameraVelocityX;
     private float cameraVelocityY;
-    private boolean flingActionFlag = false;
+    private boolean isFlung = false;
 
     private float minX;
     private float minY;
@@ -32,17 +32,21 @@ public class FixedToCameraPanAndFlingSystem extends EntitySystem {
 
     private float speedDecay = Measure.units(125f);
 
+    private static final float speedDecayX = Measure.units(2.5f);
+
     private float time = 0f;
 
     /**
      * In this context 'min' referes to the minimum point on the x and y axis a camera can show
      * 'max' references to the maximum point on the x and y axis a camera can show
      *
-     * The FixedToCameraPanAndFlingSystem is placed afer all renderable systems, so that way on the next loop,
-     * anything referencing the camera position is not incorrect
+     * This system handles 'flinging' the map and panning the map using touch controls.
+     *
+     * This system also handles keeping the camera within the correct X and Y bounds, regardless of placement by
+     * external systems.
      *
      */
-    public FixedToCameraPanAndFlingSystem(Camera camera, float minX, float minY, float maxX, float maxY){
+    public MapCameraSystemFlingAndPan(Camera camera, float minX, float minY, float maxX, float maxY){
         super(Aspect.all(PositionComponent.class, FixedToCameraComponent.class));
         this.minX = minX;
         this.minY = minY;
@@ -54,7 +58,6 @@ public class FixedToCameraPanAndFlingSystem extends EntitySystem {
 
     @Override
     public void inserted(Entity e) {
-        //super.inserted(e);
         updateEntityPosition(e);
     }
 
@@ -62,30 +65,33 @@ public class FixedToCameraPanAndFlingSystem extends EntitySystem {
     protected void processSystem() {
 
 
-        if(flingActionFlag) {
+        if(isFlung) {
             time += world.delta;
             flingDecelerate(time);
-
-            if (CameraMath.getBtmLftX(camera) < minX) {
-                stopFling();
-                CameraMath.setBtmLeftX(camera, minX);
-            }
-
-            if (CameraMath.getBtmRightX(camera) > maxX) {
-                stopFling();
-                CameraMath.setBtmRightX(camera, maxX);
-            }
-            camera.update();
         }
+
+        //Check bounds of camera, if out of bounds stop and set position.
+
+        if (CameraMath.getBtmLftX(camera) < minX) {
+            stopFling();
+            CameraMath.setBtmLeftX(camera, minX);
+        }
+
+        if (CameraMath.getBtmRightX(camera) > maxX) {
+            stopFling();
+            CameraMath.setBtmRightX(camera, maxX);
+        }
+
         camera.update();
-
         updateEntityPositions();
-
-        //pc.position.add(vc.velocity.x * world.delta, vc.velocity.y * world.delta, 0);
 
     }
 
 
+    /**
+     * Some entities follow the camera's position and as such are updated using this method.
+     * @param e
+     */
     private void updateEntityPosition(Entity e){
         PositionComponent pc = positionm.get(e);
         FixedToCameraComponent ftcc = fixedm.get(e);
@@ -94,34 +100,40 @@ public class FixedToCameraPanAndFlingSystem extends EntitySystem {
         pc.setY(CameraMath.getBtmY(camera) + ftcc.offsetY);
     }
 
+    /**
+     * Loops through all entities of the system and updates their position respective to the camera.
+     */
     private void updateEntityPositions(){
         for(Entity e : this.getEntities()){
             updateEntityPosition(e);
         }
     }
 
+    /**
+     * Deceelerates the camera after it has been flung.
+     * @param time - This variable references time that has passed since the camera was flung.
+     */
     public void flingDecelerate(float time) {
         if (this.cameraVelocityX != 0f || this.cameraVelocityY != 0f) {
-            float newFlingX = Math.max(0,  Math.abs(this.cameraVelocityX)-Math.abs(Measure.units(2.5f))*1f*time);
+            float newFlingX = Math.max(0,  Math.abs(this.cameraVelocityX)-Math.abs(speedDecayX)*1f*time);
             float newFlingY = Math.max(0,  Math.abs(this.cameraVelocityY)-Math.abs(this.cameraVelocityY)*1f*time);
-            if ( this.cameraVelocityX < 0 )
-                this.cameraVelocityX = newFlingX*-1;
-            else
-                this.cameraVelocityX = newFlingX;
-            if ( this.cameraVelocityY < 0 )
-                this.cameraVelocityY = newFlingY*-1;
-            else
-                this.cameraVelocityY = newFlingY;
 
-            float minStopSpeed = Measure.units(1f);
+            //Based on the direction of the camera's velocity decelerate in the appropriate direction.
+            this.cameraVelocityX = this.cameraVelocityX < 0 ? newFlingX*-1 : newFlingX;
+
+            this.cameraVelocityY = this.cameraVelocityY < 0 ? newFlingY*-1 : newFlingY;
+
+            float minStopSpeed = Measure.units(1f); //Minimum speed reached before forcing a complete stop
             if ( Math.abs(this.cameraVelocityX) < minStopSpeed ) this.cameraVelocityX = 0f;
             if ( Math.abs(this.cameraVelocityY) < minStopSpeed ) this.cameraVelocityY = 0f;
 
+
+            //Y not added, not as only left and right directions needed, but in future if a y-direction is needed for
+            //panning add in velocityY.
             camera.position.add(cameraVelocityX * world.delta, 0 * world.delta, 0);
 
-
             if (this.cameraVelocityX == 0 && this.cameraVelocityY == 0){
-                flingActionFlag = false;
+                isFlung = false;
                 this.time = 0;
             }
               //  Gdx.graphics.setContinuousRendering(false);
@@ -129,13 +141,14 @@ public class FixedToCameraPanAndFlingSystem extends EntitySystem {
     }
 
     public void flingCamera(float velocityX, float velocityY){
-        flingActionFlag = true;
+        isFlung = true;
         cameraVelocityX = velocityX * 1.5f;
     }
 
     public void stopFling(){
-        flingActionFlag = false;
+        isFlung = false;
         cameraVelocityX = 0;
+        cameraVelocityY = 0;
         time = 0;
     }
 

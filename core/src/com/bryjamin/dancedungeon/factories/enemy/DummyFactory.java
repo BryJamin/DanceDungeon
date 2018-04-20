@@ -1,6 +1,7 @@
 package com.bryjamin.dancedungeon.factories.enemy;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.bryjamin.dancedungeon.assets.Colors;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.ai.ActionScoreCalculator;
@@ -17,6 +18,8 @@ import com.bryjamin.dancedungeon.ecs.components.actions.UtilityAiComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationMapComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationStateComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.player.UnitFactory;
@@ -65,6 +68,12 @@ public class DummyFactory {
         bag.add(new SkillsComponent(slash));
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, blob.color(Color.WHITE).build()));
         bag.add(new UtilityAiComponent(dummyAi(slash)));
+
+        int STANDING_ANIMATION = 23;
+
+        bag.add(new AnimationStateComponent(STANDING_ANIMATION));
+        bag.add(new AnimationMapComponent()
+                .put(STANDING_ANIMATION, TextureStrings.BLOB, 0.6f, Animation.PlayMode.LOOP));
 
         return bag;
 

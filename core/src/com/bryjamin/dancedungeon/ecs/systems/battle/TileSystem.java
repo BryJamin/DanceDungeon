@@ -61,8 +61,8 @@ public class TileSystem extends EntitySystem {
     private int rows = 6;
     private int columns = 8;
 
-    private float width = columns * Measure.units(5.5f);
-    private float height = rows * Measure.units(5.5f);
+    private float width = columns * Measure.units(6f);
+    private float height = rows * Measure.units(6f);
 
     private int maxX;
     private int maxY;

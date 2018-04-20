@@ -19,8 +19,8 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 public class PlayerFactory {
 
-    public static final float width = Measure.units(3.5f);
-    public static final float height = Measure.units(3.5f);
+    public static final float width = Measure.units(4f);
+    public static final float height = Measure.units(4f);
 
     private static final float health = 20;
 

@@ -165,41 +165,48 @@ decor/grass_tile
   orig: 32, 32
   offset: 0, 0
   index: 4
-decor/rock_tile
+decor/rock
   rotate: false
   xy: 431, 259
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 0
-decor/rock_tile
+decor/rock
   rotate: false
   xy: 69, 1
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 1
-decor/rock_tile
+decor/rock
   rotate: false
   xy: 331, 125
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 2
-decor/rock_tile
+decor/rock
   rotate: false
   xy: 465, 259
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 3
-decor/rock_tile
+decor/rock
   rotate: false
   xy: 103, 1
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 4
+decor/rock
+  rotate: false
+  xy: 499, 259
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 5
 decor/turret
   rotate: false
   xy: 1645, 293
@@ -314,9 +321,16 @@ decor/turret
   index: 15
 decor/wall
   rotate: false
-  xy: 499, 259
+  xy: 137, 1
   size: 32, 32
   orig: 32, 32
+  offset: 0, 0
+  index: 0
+enemy/blob
+  rotate: false
+  xy: 523, 425
+  size: 64, 64
+  orig: 64, 64
   offset: 0, 0
   index: 0
 enemy/blob

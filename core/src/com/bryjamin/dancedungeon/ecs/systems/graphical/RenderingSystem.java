@@ -21,6 +21,7 @@ import com.bryjamin.dancedungeon.assets.FileStrings;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.GreyScaleComponent;
@@ -47,6 +48,7 @@ public class RenderingSystem extends EntitySystem {
     private ComponentMapper<DrawableComponent> drawablem;
     private ComponentMapper<BlinkOnHitComponent> blinkOnHitm;
     private ComponentMapper<HighLightTextComponent> highlightM;
+    private ComponentMapper<HealthComponent> healthM;
 
     private ComponentMapper<GreyScaleComponent> greyScaleMapper;
 
@@ -226,6 +228,11 @@ public class RenderingSystem extends EntitySystem {
 
         
         if (shaderOn) removeShader();
+
+
+        if(healthM.has(e)){
+            world.getSystem(HealthBarSystem.class).process(e);
+        }
 
 
         return true;

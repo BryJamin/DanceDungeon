@@ -72,6 +72,9 @@ public class BattleScreenUISystem extends EntitySystem {
     private RenderingSystem renderingSystem;
 
     private static final float SIZE = Measure.units(10f);
+
+    private static final float PROFILE_PICTURE_SIZE = Measure.units(5.5f);
+
     private TileSystem tileSystem;
     private Table container = new Table();
 
@@ -84,7 +87,7 @@ public class BattleScreenUISystem extends EntitySystem {
 
     private ButtonGroup<Button> buttonGroup = new ButtonGroup<>();
 
-    private static final float BOTTOM_TABLE_HEIGHT = Measure.units(15f) - Padding.SMALL;
+    private static final float BOTTOM_TABLE_HEIGHT = Measure.units(13.5f) - Padding.SMALL;
 
 
     private Label title;
@@ -232,7 +235,7 @@ public class BattleScreenUISystem extends EntitySystem {
         characterProfileTable.clear();
         characterProfileTable.add(name).height(Measure.units(5f)).center().expandX();
         characterProfileTable.row();
-        characterProfileTable.add(new Image(new TextureRegionDrawable(atlas.findRegion(unitData.icon)))).size(Measure.units(7.5f), Measure.units(7.5f)).expandY();
+        characterProfileTable.add(new Image(new TextureRegionDrawable(atlas.findRegion(unitData.icon)))).size(PROFILE_PICTURE_SIZE).expandY();
 
 
         skillButtonsTable.clear();
