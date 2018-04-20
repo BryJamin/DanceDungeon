@@ -23,9 +23,9 @@ import java.util.Random;
 
 public class MapGenerator {
 
-    private float mapSectionWidth = Measure.units(9f);
+    private float mapSectionWidth = Measure.units(10f);
     private float mapSectionHeight = Measure.units(32.5f);
-    private float mapSectionGap = Measure.units(22.5f);
+    private float mapSectionGap = Measure.units(25f);
 
     private float mapStartX = Measure.units(5f);
     private float mapStartY = Measure.units(12.5f);

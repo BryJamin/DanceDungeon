@@ -231,7 +231,6 @@ public class ActionCameraSystem extends EntitySystem {
         pushLastAction(entity, new WorldConditionalAction() {
             @Override
             public boolean condition(World world, Entity entity) {
-                System.out.println("Death wait");
                 return false;
             }
 
@@ -247,7 +246,6 @@ public class ActionCameraSystem extends EntitySystem {
         pushLastAction(entity, new WorldConditionalAction() {
             @Override
             public boolean condition(World world, Entity entity) {
-                System.out.println("Death wait");
                 return false;
             }
 

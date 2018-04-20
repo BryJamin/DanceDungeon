@@ -68,7 +68,6 @@ public class BasicThrown implements SpellAnimation{
         projectile.edit().add(new ArchingTextureComponent(new Vector3(startX, startY, 0), new Vector3(endX, endY, 0), 1, maxScale));
         projectile.edit().add(createDrawableComponent());
 
-
         projectile.edit().add(new VelocityComponent());
         projectile.edit().add(new CenteringBoundaryComponent(width, height));
 

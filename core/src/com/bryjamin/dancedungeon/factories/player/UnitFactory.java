@@ -42,6 +42,10 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 public class UnitFactory {
 
+
+
+    private static final float UNIT_BOUNDS_SIZE = Measure.units(4.5f);
+
     public Entity baseTileBag(World world, Coordinates c){
 
         Entity e = world.createEntity();
@@ -54,8 +58,8 @@ public class UnitFactory {
                 .add(new VelocityComponent())
                 .add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE, new TextureDescription.Builder(TextureStrings.WALL)
                         //.offsetX()
-                        .size(Measure.units(5f)).build()))
-                .add(new CenteringBoundaryComponent(new Rectangle(0, 0, Measure.units(5f), Measure.units(5f))));
+                        .size(Measure.units(4f)).build()))
+                .add(new CenteringBoundaryComponent(new Rectangle(0, 0, Measure.units(4f), Measure.units(4f))));
 
         return e;
 

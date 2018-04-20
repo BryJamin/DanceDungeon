@@ -113,6 +113,7 @@ public class MapScreen extends AbstractScreen {
         world.getSystem(MapNodeSystem.class).onVictory();
         world.getSystem(MapStageUISystem.class).updateInformation();
         world.getSystem(InformationBannerSystem.class).updateInformation();
+        gameport.getCamera().position.set(world.getSystem(MapNodeSystem.class).getCurrentMap().getPosition(), 0); //Center camera on the current node.
     }
 
 }

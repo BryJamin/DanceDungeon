@@ -36,7 +36,7 @@ public class TurnSystem extends EntitySystem {
     private ComponentMapper<StatComponent> statMapper;
 
 
-    private Array<Observer> nextTurnObservers = new Array<Observer>();
+    private Array<Observer> nextTurnObservers = new Array<>();
 
     private ComponentMapper<UtilityAiComponent> utilityAiMapper;
 
@@ -109,8 +109,8 @@ public class TurnSystem extends EntitySystem {
         turn = INTENT;
         battleState = STATE.NEXT_TURN;
 
-        for(Observer o : nextTurnObservers){ //Notifies observers the player has ended their turn.
-            o.onNotify();
+        for(int i = 0; i < nextTurnObservers.size; i++){
+            nextTurnObservers.get(i).onNotify();
         }
 
     }

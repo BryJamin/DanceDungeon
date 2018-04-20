@@ -478,7 +478,7 @@ public class TargetingFactory {
     public ComponentBag whiteMarkerBox(Rectangle r, Color c) {
         ComponentBag bag = new ComponentBag();
 
-        float size = Measure.units(2.5f);
+        float size = Measure.units(1.5f);
 
         Vector2 center = r.getCenter(new Vector2());
 
