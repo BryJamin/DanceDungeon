@@ -56,13 +56,13 @@ public class TileSystem extends EntitySystem {
 
 
     private float originX = Measure.units(7.5f);
-    private float originY = Measure.units(15f);
+    private float originY = Measure.units(14.5f);
 
     private int rows = 6;
     private int columns = 8;
 
-    private float width = columns * Measure.units(6f);
-    private float height = rows * Measure.units(6f);
+    private float width = columns * Measure.units(6.5f);
+    private float height = rows * Measure.units(6.5f);
 
     private int maxX;
     private int maxY;
@@ -490,6 +490,12 @@ public class TileSystem extends EntitySystem {
 
     public float getHeight() {
         return height;
+    }
+
+
+
+    public Rectangle getCellDimensions(){
+        return new Rectangle(0,0, tileWidthSize, tileHeightSize);
     }
 
 

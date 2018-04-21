@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -53,6 +54,8 @@ public class HealthBarSystem extends EntityProcessingSystem {
     private Color topBarColor = new Color(Color.RED);
 
     private Color healthTextColor = new Color(Color.WHITE);
+
+    private Vector2 v2 = new Vector2();
 
 
     private SpriteBatch batch;
@@ -118,7 +121,7 @@ public class HealthBarSystem extends EntityProcessingSystem {
     protected void process(Entity e) {
 
 
-        Rectangle rect = tileSystem.getRectangleUsingCoordinates(e.getComponent(CoordinateComponent.class).coordinates);
+        Rectangle rect = tileSystem.getCellDimensions();
 
         PositionComponent positionComponent = e.getComponent(PositionComponent.class);
         HealthComponent healthComponent = e.getComponent(HealthComponent.class);
@@ -165,8 +168,11 @@ public class HealthBarSystem extends EntityProcessingSystem {
 
         CenteringBoundaryComponent centeringBoundaryComponent = e.getComponent(CenteringBoundaryComponent.class);
 
-        float x = rect.getX() + offsetX; //positionComponent.getX() + CenterMath.offsetX(centeringBoundaryComponent.bound.getWidth(), rect.getWidth());
-        float y = rect.getY(); //positionComponent.getY() + initialHealthBarOffsetY;
+        Vector2 center = centeringBoundaryComponent.bound.getCenter(v2);
+
+
+        float x = CenterMath.centerOnPositionX(rect.getWidth(), center.x) + offsetX; //positionComponent.getX() + CenterMath.offsetX(centeringBoundaryComponent.bound.getWidth(), rect.getWidth());
+        float y = CenterMath.centerOnPositionY(rect.getHeight(), center.y); //positionComponent.getY() + initialHealthBarOffsetY;
 
         batch.setColor(bottomBarColor);
         batch.draw(atlas.findRegion(TextureStrings.BLOCK),
@@ -199,8 +205,8 @@ public class HealthBarSystem extends EntityProcessingSystem {
 
         BitmapFontCache bitmapFontCache = new BitmapFontCache(healthFont);
 
-        bitmapFontCache.addText(glyphLayout, rect.getX(),
-                rect.getY() + glyphLayout.height + CenterMath.offsetY(rect.getWidth() / 5, glyphLayout.height));
+        bitmapFontCache.addText(glyphLayout, x - offsetX,
+                y + glyphLayout.height + CenterMath.offsetY(rect.getWidth() / 5, glyphLayout.height));
 
         //applyHighlightToText(e, bitmapFontCache, textDescription.getText());
 

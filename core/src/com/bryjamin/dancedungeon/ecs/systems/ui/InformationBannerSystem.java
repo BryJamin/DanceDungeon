@@ -35,11 +35,26 @@ public class InformationBannerSystem extends BaseSystem implements Observer {
 
     public static float BANNER_HEIGHT;
 
+    public enum State {
+        BATTLE_SCREEN, DEFAULT;
+    }
+
+
+    private State state = State.DEFAULT;
+
     public InformationBannerSystem(MainGame game, Viewport gameport){
         this.game = game;
         this.gameport = gameport;
         this.uiSkin = Skins.DEFAULT_SKIN(game.assetManager);
     }
+
+    public InformationBannerSystem(MainGame game, Viewport gameport, State state){
+        this.game = game;
+        this.gameport = gameport;
+        this.uiSkin = Skins.DEFAULT_SKIN(game.assetManager);
+        this.state = state;
+    }
+
 
 
     @Override
@@ -79,23 +94,27 @@ public class InformationBannerSystem extends BaseSystem implements Observer {
         container.row();
 
 
-        Table table = new Table(uiSkin);
-        container.add(table).width(stageUIRenderingSystem.stage.getWidth());
+        if(state != State.BATTLE_SCREEN) {
 
-        for(UnitData unitData : partyDetails.getParty()){
+            Table table = new Table(uiSkin);
+            container.add(table).width(stageUIRenderingSystem.stage.getWidth());
 
-            Table characterTable = new Table(uiSkin);
-            characterTable.add(new Image(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(unitData.icon))))
-                    .width(Measure.units(3.5f))
-                    .height(Measure.units(3.5f))
-                    .padRight(Measure.units(1.5f));
+            for (UnitData unitData : partyDetails.getParty()) {
 
-            int current = unitData.getStatComponent().health;
-            int max = unitData.getStatComponent().maxHealth;
+                Table characterTable = new Table(uiSkin);
+                characterTable.add(new Image(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(unitData.icon))))
+                        .width(Measure.units(3.5f))
+                        .height(Measure.units(3.5f))
+                        .padRight(Measure.units(1.5f));
 
-            characterTable.add(new Label(String.format(Locale.ENGLISH, "HP %s/%s", current, max), uiSkin));
+                int current = unitData.getStatComponent().health;
+                int max = unitData.getStatComponent().maxHealth;
 
-            table.add(characterTable).expandX();
+                characterTable.add(new Label(String.format(Locale.ENGLISH, "HP %s/%s", current, max), uiSkin));
+
+                table.add(characterTable).expandX();
+
+            }
 
         }
 
