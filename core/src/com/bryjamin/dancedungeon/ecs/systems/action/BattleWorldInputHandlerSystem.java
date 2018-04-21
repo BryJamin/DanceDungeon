@@ -30,7 +30,7 @@ public class BattleWorldInputHandlerSystem extends BaseSystem {
     private InputMultiplexer multiplexer;
 
     public enum State {
-        DEPLOYMENT, BATTLING, VICTORY
+        DEPLOYMENT, BATTLING, ONLY_STAGE
     }
 
     private State state = State.DEPLOYMENT;
@@ -49,7 +49,7 @@ public class BattleWorldInputHandlerSystem extends BaseSystem {
     protected void initialize() {
         multiplexer.addProcessor(stageUIRenderingSystem.stage);
 
-        if(state != State.VICTORY) {
+        if(state != State.ONLY_STAGE) {
             multiplexer.addProcessor(gestureDetector);
         }
     }
@@ -87,10 +87,12 @@ public class BattleWorldInputHandlerSystem extends BaseSystem {
                 if (world.getSystem(SelectedTargetSystem.class).selectCharacter(input.x, input.y))
                     return true;
 
+
                 world.getSystem(BattleScreenUISystem.class).reset();
 
             }
 
+            System.out.println("Over here");
 
             return false;
         }

@@ -272,6 +272,20 @@ public class TurnSystem extends EntitySystem {
     }
 
 
+    public boolean isAllActionsComplete(){
+
+        for(Entity e : currentTurnEntities){
+            TurnComponent tc = turnMapper.get(e);
+            if(tc.attackActionAvailable || tc.movementActionAvailable)
+                return false;
+        }
+
+        return true;
+
+
+    }
+
+
     public void addNextTurnObserver(Observer o){
         this.nextTurnObservers.add(o);
     }

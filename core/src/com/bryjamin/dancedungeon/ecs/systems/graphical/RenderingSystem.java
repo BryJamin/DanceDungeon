@@ -74,6 +74,11 @@ public class RenderingSystem extends EntitySystem {
         return atlas;
     }
 
+
+    public TextureRegion getRegion(String region) {
+        return atlas.findRegion(region);
+    }
+
     /**
      * Used to draw Entities behind the UI
      */

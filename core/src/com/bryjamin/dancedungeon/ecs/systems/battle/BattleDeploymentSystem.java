@@ -45,14 +45,13 @@ import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
 /**
  * This System is to used to setup the initial deployment of player characters
- *
+ * <p>
  * It scans for deployment zones and cycles through all characters until every characrter has been deployed
- *
+ * <p>
  * It also deploys enemy characters initially so plays can see where they may want to best deploy their units
- *
+ * <p>
  * //TODO this system will either rely on the TileSystem selected map, Or the map inserted into the constructor
  * //TODO this means this system MUST be placed beneath the TileSystem when used,
- *
  */
 public class BattleDeploymentSystem extends EntitySystem {
 
@@ -75,7 +74,9 @@ public class BattleDeploymentSystem extends EntitySystem {
 
     private Table deploymentTable;
 
+    private UnitMap unitMap = new UnitMap();
     private UnitFactory unitFactory = new UnitFactory();
+    private UnitData unitToBeDeployed;
 
     public Array<Observer> observers = new Array<Observer>();
 
@@ -103,9 +104,10 @@ public class BattleDeploymentSystem extends EntitySystem {
 
         //TODO Should events determine whetehr they spawn something or should a system be a deicider?
 
-        for(int i = 0; i < 3; i++){
+        for (int i = 0; i < 3; i++) {
 
-            if(battleEvent.getEnemies().size == 0) continue; //TODO this could be cleaner, if I fail to include enemies, an error should be printed.
+            if (battleEvent.getEnemies().size == 0)
+                continue; //TODO this could be cleaner, if I fail to include enemies, an error should be printed.
 
             Entity e = BagToEntity.bagToEntity(world.createEntity(), enemyFactory.get(battleEvent.getEnemies().random()));
             Coordinates selected = tileSystem.getEnemySpawningLocations().random();
@@ -125,57 +127,53 @@ public class BattleDeploymentSystem extends EntitySystem {
     }
 
 
-    public void createDeploymentLocations(){
+    public void createDeploymentLocations() {
+
+        final PartyDetails partyDetails = playerPartyManagementSystem.getPartyDetails();
 
 
-        for(int i = 0; i < deployedArray.length; i++) {
-            if(!deployedArray[i]) {
-                updateDeploymentTable(playerPartyManagementSystem.getPartyDetails().getParty()[i]);
+        //Get PartyDetails
+
+        for (int i = 0; i < deployedArray.length; i++) {
+            //Checks if the unit has already been deployed, or has the health to be deployed.
+            if (!deployedArray[i]) {
+                if (partyDetails.getParty()[i].getStatComponent().health <= 0) {
+                    deployedArray[i] = true;
+                    continue;
+                }
+
+                unitToBeDeployed = partyDetails.getParty()[i];
+                count = i;
                 break;
             }
         }
 
-        for(final Coordinates c : deploymentLocations){
+        if(unitToBeDeployed != null) {
+            updateDeploymentTable(unitToBeDeployed);
+        }
+
+        for (final Coordinates c : deploymentLocations) {
             Entity e = unitFactory.baseDeploymentZone(world, tileSystem.createRectangleUsingCoordinates(c), c);
 
             e.edit().add(new ActionOnTapComponent(new WorldAction() {
                 @Override
                 public void performAction(World world, Entity entity) {
 
-                    for(int i = 0; i < deployedArray.length; i++){
+                    if (unitToBeDeployed != null) {
+                        deployedArray[count] = true;
 
-                        count = i + 1;
+                        Entity e = BagToEntity.bagToEntity(world.createEntity(), unitMap.getUnit(unitToBeDeployed));
+                        e.getComponent(CoordinateComponent.class).coordinates.set(c);
+                        deploymentLocations.removeValue(c, false);
 
-                        if(!deployedArray[i]){
-                            UnitMap unitMap = new UnitMap();
-                            PartyDetails partyDetails = playerPartyManagementSystem.getPartyDetails();
-
-
-                            if (partyDetails.getParty()[i] != null) {
-                                deployedArray[i] = true;
-                                UnitData unitData = partyDetails.getParty()[i];
-
-                                if(unitData.getStatComponent().health <= 0) continue;
-
-                                ComponentBag player = unitMap.getUnit(unitData);
-                                Entity e = BagToEntity.bagToEntity(world.createEntity(), player);
-                                e.getComponent(CoordinateComponent.class).coordinates.set(c);
-                                deploymentLocations.removeValue(c, false);
-
-                                if(!deployedArray[deployedArray.length - 1]) {
-                                    createDeploymentLocations();
-                                } else {
-                                    processingFlag = false;
-                                    turnSystem.setProcessingFlag(true);
-                                    deploymentTable.remove();
-                                }
-                                clear();
-
-                                break;
-                            }
-
+                        if (!deployedArray[deployedArray.length - 1]) { //If all units have been deployed, exit this system
+                            createDeploymentLocations();
+                        } else {
+                            processingFlag = false;
+                            turnSystem.setProcessingFlag(true);
+                            deploymentTable.remove();
                         }
-
+                        clear();
                     }
 
 
@@ -187,14 +185,13 @@ public class BattleDeploymentSystem extends EntitySystem {
     }
 
 
+    public void updateDeploymentTable(UnitData unitData) {
 
-    public void updateDeploymentTable(UnitData unitData){
-
-        if(deploymentTable.hasChildren()){
+        if (deploymentTable.hasChildren()) {
             deploymentTable.clear();
         }
 
-       // deploymentTable.setDebug(true);
+        // deploymentTable.setDebug(true);
         deploymentTable.setWidth(stageUIRenderingSystem.stage.getWidth());
         deploymentTable.setHeight(Measure.units(15f));
 
@@ -212,8 +209,8 @@ public class BattleDeploymentSystem extends EntitySystem {
     }
 
 
-    private void clear(){
-        for(Entity e : this.getEntities()){
+    private void clear() {
+        for (Entity e : this.getEntities()) {
             e.deleteFromWorld();
         }
     }
@@ -223,11 +220,11 @@ public class BattleDeploymentSystem extends EntitySystem {
 
     }
 
-    public boolean isProcessing(){
+    public boolean isProcessing() {
         return processingFlag;
     }
 
-    public UnitData getDeployingUnit(){
+    public UnitData getDeployingUnit() {
         return playerPartyManagementSystem.getPartyDetails().getParty()[count];
     }
 

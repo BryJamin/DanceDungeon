@@ -8,6 +8,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -41,6 +42,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.UITargetingComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
+import com.bryjamin.dancedungeon.ecs.systems.action.BattleWorldInputHandlerSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BattleMessageSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
@@ -68,6 +70,7 @@ public class BattleScreenUISystem extends EntitySystem {
 
     private TurnSystem turnSystem;
     private ActionCameraSystem actionCameraSystem;
+    private BattleWorldInputHandlerSystem battleWorldInputHandlerSystem;
     private StageUIRenderingSystem stageUIRenderingSystem;
     private RenderingSystem renderingSystem;
 
@@ -77,15 +80,16 @@ public class BattleScreenUISystem extends EntitySystem {
 
     private TileSystem tileSystem;
     private Table container = new Table();
+    private Table areYouSureContainer = new Table();
 
 
-    private Table skillButtonsTable;
+    private Table tableForSkillButtons;
     private Table skillInformationTable;
     private Table characterProfileTable;
 
     private Table objectivesTable;
 
-    private ButtonGroup<Button> buttonGroup = new ButtonGroup<>();
+    private ButtonGroup<Button> skillButtonButtonGroup = new ButtonGroup<>();
 
     private static final float BOTTOM_TABLE_HEIGHT = Measure.units(13.5f) - Padding.SMALL;
 
@@ -112,8 +116,71 @@ public class BattleScreenUISystem extends EntitySystem {
     }
 
 
+    public void populateAreYouSureContainer(){
+
+        if(areYouSureContainer.hasChildren()){
+            areYouSureContainer.reset();
+        }
+
+        areYouSureContainer.setVisible(true);
+        areYouSureContainer.addAction(new Action() { //Ensures, units can not be interacted with when this Container is visible
+            @Override
+            public boolean act(float delta) {
+                if(areYouSureContainer.isVisible()){
+                    battleWorldInputHandlerSystem.setState(BattleWorldInputHandlerSystem.State.ONLY_STAGE);
+                } else {
+                    battleWorldInputHandlerSystem.setState(BattleWorldInputHandlerSystem.State.DEPLOYMENT);
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        areYouSureContainer.add(new Label("Some Units Still Have Actions Remaining", uiSkin)).colspan(2).padBottom(Padding.MEDIUM);
+        areYouSureContainer.row();
+        areYouSureContainer.add(new Label("Are You Sure You Want To End Your Turn?", uiSkin)).colspan(2).padBottom(Padding.MEDIUM);;
+        areYouSureContainer.row();
+
+        TextButton yes = new TextButton("Yes", uiSkin);
+        yes.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                areYouSureContainer.setVisible(false);
+                turnSystem.endAllyTurn();
+                reset();
+            }
+        });
+
+
+
+        TextButton no = new TextButton("No", uiSkin);
+        no.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                areYouSureContainer.setVisible(false);
+            }
+        });
+
+
+        areYouSureContainer.add(yes).width(Measure.units(20f)).height(Measure.units(5f)).expandX();
+        areYouSureContainer.add(no).width(Measure.units(20f)).height(Measure.units(5f)).expandX();
+
+    }
+
+
     @Override
     protected void initialize() {
+
+
+        areYouSureContainer = new Table(uiSkin);
+        areYouSureContainer.setDebug(StageUIRenderingSystem.DEBUG);
+        areYouSureContainer.setWidth(stage.getWidth());
+        areYouSureContainer.setHeight(stage.getHeight());
+        areYouSureContainer.align(Align.center);
+        areYouSureContainer.setVisible(false);
+        areYouSureContainer.setTouchable(Touchable.enabled);
+        areYouSureContainer.setBackground(new TextureRegionDrawable(atlas.findRegion(TextureStrings.BLOCK)).tint(new Color(0, 0, 0, 0.8f)));
+
 
         container = new Table(uiSkin);
         container.setDebug(StageUIRenderingSystem.DEBUG);
@@ -123,16 +190,17 @@ public class BattleScreenUISystem extends EntitySystem {
         container.setTransform(false);
         container.setVisible(false);
 
+
         container.add(characterProfileTable).padBottom(Padding.SMALL);
 
         characterProfileTable = new Table(uiSkin);
         applyNinePathToTable(characterProfileTable);
         container.add(characterProfileTable).width(Measure.units(20f)).height(BOTTOM_TABLE_HEIGHT).padRight(Padding.MEDIUM).expandX().fillX();
 
-        skillButtonsTable = new Table(uiSkin);
-        applyNinePathToTable(skillButtonsTable);
-        skillButtonsTable.setDebug(StageUIRenderingSystem.DEBUG);
-        container.add(skillButtonsTable).width(Measure.units(22.5f)).height(BOTTOM_TABLE_HEIGHT).padRight(Padding.MEDIUM).expandX();
+        tableForSkillButtons = new Table(uiSkin);
+        applyNinePathToTable(tableForSkillButtons);
+        tableForSkillButtons.setDebug(StageUIRenderingSystem.DEBUG);
+        container.add(tableForSkillButtons).width(Measure.units(22.5f)).height(BOTTOM_TABLE_HEIGHT).padRight(Padding.MEDIUM).expandX();
 
         skillInformationTable = new Table(uiSkin);
         applyNinePathToTable(skillInformationTable);
@@ -149,9 +217,9 @@ public class BattleScreenUISystem extends EntitySystem {
         stage.addActor(objectivesTable);
 
 
-        buttonGroup.setMinCheckCount(0);
-        buttonGroup.setMaxCheckCount(1);
-        buttonGroup.setUncheckLast(true);
+        skillButtonButtonGroup.setMinCheckCount(0);
+        skillButtonButtonGroup.setMaxCheckCount(1);
+        skillButtonButtonGroup.setUncheckLast(true);
 
         endTurn = new TextButton("End Turn", uiSkin);
 
@@ -159,8 +227,13 @@ public class BattleScreenUISystem extends EntitySystem {
         endTurn.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                world.getSystem(TurnSystem.class).endAllyTurn();
-                world.getSystem(BattleScreenUISystem.class).reset();
+
+                if(turnSystem.isAllActionsComplete()){
+                    turnSystem.endAllyTurn();
+                    reset();
+                } else {
+                    populateAreYouSureContainer();
+                }
             }
         });
 
@@ -172,6 +245,8 @@ public class BattleScreenUISystem extends EntitySystem {
         stage.addActor(endTurn);
 
         stage.addActor(container);
+
+        stage.addActor(areYouSureContainer);
 
 
     }
@@ -238,19 +313,21 @@ public class BattleScreenUISystem extends EntitySystem {
         characterProfileTable.add(new Image(new TextureRegionDrawable(atlas.findRegion(unitData.icon)))).size(PROFILE_PICTURE_SIZE).expandY();
 
 
-        skillButtonsTable.clear();
-        skillButtonsTable.add(new Label("Skills", uiSkin)).height(Measure.units(5f)).center().expandX().colspan(3);
-        skillButtonsTable.row();
+        tableForSkillButtons.clear();
+        tableForSkillButtons.setTouchable(Touchable.enabled);
+        tableForSkillButtons.addListener(new ClickListener(){}); //Empty click listener to avoid menu closing, if a player misses tapping a skill
+        tableForSkillButtons.add(new Label("Skills", uiSkin)).height(Measure.units(5f)).center().expandX().colspan(3);
+        tableForSkillButtons.row();
 
-        buttonGroup.clear();
+        skillButtonButtonGroup.clear();
         SkillsComponent skillsComponent = e.getComponent(SkillsComponent.class);
         for (int i = 0; i < skillsComponent.skills.size; i++) {
-            createSkillButton(e, Measure.units(15f) * (i + 1), 0, skillsComponent.skills.get(i));
+            createSkillButton(e, skillsComponent.skills.get(i));
         }
 
 
         createMovementTiles(e);
-        //buttonGroup.uncheckAll();
+        //skillButtonButtonGroup.uncheckAll();
     }
 
     private void updateSkillText(Entity player, Skill skill) {
@@ -297,9 +374,18 @@ public class BattleScreenUISystem extends EntitySystem {
     }
 
 
-    private void createSkillButton(final Entity player, float x, float y, final Skill skill) {
+    /**
+     * Creates a 'Skill' button within the table for skill buttons
+     *
+     * This buttons when tapped will show which areas of the map is can be casted on, as well as
+     * let the 'description' table become visible and detail what the skill does.
+     *
+     * @param player - The entity
+     * @param skill - The skill in use.
+     */
+    private void createSkillButton(final Entity player, final Skill skill) {
 
-        float size = Measure.units(6.5f);
+        float size = Measure.units(6.25f);
 
         Stack stack = new Stack();
 
@@ -327,9 +413,6 @@ public class BattleScreenUISystem extends EntitySystem {
             }
         });
 
-
-       // btn.setChecked(true);
-
         Table table = new Table();
         Image image = new Image(drawable);
         image.setTouchable(Touchable.disabled);
@@ -337,9 +420,9 @@ public class BattleScreenUISystem extends EntitySystem {
 
 
         stack.add(btn);
-        buttonGroup.add(btn);
+        skillButtonButtonGroup.add(btn);
         stack.add(table);
-        skillButtonsTable.add(stack).width(size).height(size).pad(Measure.units(1.5f)).center().expandX().expandY();
+        tableForSkillButtons.add(stack).width(size).height(size).pad(Measure.units(1.5f)).center().expandX().expandY();
 
     }
 

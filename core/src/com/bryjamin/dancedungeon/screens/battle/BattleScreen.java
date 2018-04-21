@@ -85,10 +85,11 @@ public class BattleScreen extends AbstractScreen {
                         new BattleDeploymentSystem(game, battleEvent),
 
                         new BattleWorldInputHandlerSystem(gameport),
+
+                        new InformationBannerSystem(game, gameport, InformationBannerSystem.State.BATTLE_SCREEN),
                         new BattleScreenUISystem(UIStage, game),
 
                         new PlayerPartyManagementSystem(partyDetails),
-                        new InformationBannerSystem(game, gameport, InformationBannerSystem.State.BATTLE_SCREEN),
 
                         new MovementSystem(),
                         new FollowPositionSystem(),
