@@ -9,7 +9,7 @@ public class TextureStrings {
 
     public static final String BLOCK = "blocktiny";
     public static final String PLAYER = "player/block_walk";
-    public static final String WARRIOR = "player/xi_firing";
+    public static final String WARRIOR = "player/sgt_sword";
     public static final String ARCHER = "player/phi_walk";
     public static final String BLOB = "enemy/blob";
     public static final String BIGGABLOBBA = "enemy/boss/biggablobba";
