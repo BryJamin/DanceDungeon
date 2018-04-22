@@ -1,8 +1,8 @@
 package com.bryjamin.dancedungeon.ecs.systems.ui;
 
 import com.artemis.Aspect;
+import com.artemis.BaseSystem;
 import com.artemis.Entity;
-import com.artemis.EntitySystem;
 import com.artemis.utils.IntBag;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -35,8 +35,6 @@ import com.bryjamin.dancedungeon.assets.Fonts;
 import com.bryjamin.dancedungeon.assets.Padding;
 import com.bryjamin.dancedungeon.assets.Skins;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
-import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
-import com.bryjamin.dancedungeon.ecs.components.actions.SkillButtonComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
@@ -66,7 +64,7 @@ import com.bryjamin.dancedungeon.utils.Measure;
  * It can also be called to update and remove certain parts of the skill UI.
  */
 
-public class BattleScreenUISystem extends EntitySystem {
+public class BattleScreenUISystem extends BaseSystem {
 
     private TurnSystem turnSystem;
     private ActionCameraSystem actionCameraSystem;
@@ -108,7 +106,6 @@ public class BattleScreenUISystem extends EntitySystem {
     private Skin uiSkin;
 
     public BattleScreenUISystem(Stage stage, MainGame game) {
-        super(Aspect.all(SkillButtonComponent.class, CenteringBoundaryComponent.class));
         this.game = game;
         this.stage = stage;
         this.atlas = game.assetManager.get(FileStrings.SPRITE_ATLAS_FILE, TextureAtlas.class);
@@ -179,11 +176,10 @@ public class BattleScreenUISystem extends EntitySystem {
         areYouSureContainer.align(Align.center);
         areYouSureContainer.setVisible(false);
         areYouSureContainer.setTouchable(Touchable.enabled);
-        areYouSureContainer.setBackground(new TextureRegionDrawable(atlas.findRegion(TextureStrings.BLOCK)).tint(new Color(0, 0, 0, 0.8f)));
+        areYouSureContainer.setBackground(new TextureRegionDrawable(atlas.findRegion(TextureStrings.BLOCK)).tint(new Color(0, 0, 0, 0.95f)));
 
 
         container = new Table(uiSkin);
-        container.setDebug(StageUIRenderingSystem.DEBUG);
         container.setWidth(stage.getWidth());
         container.setHeight(BOTTOM_TABLE_HEIGHT);
         container.align(Align.bottomLeft);

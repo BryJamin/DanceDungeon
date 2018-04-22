@@ -129,7 +129,8 @@ public class UnitFactory {
 
         //Graphical
         bag.add(new BlinkOnHitComponent());
-        bag.add(unitData.statComponent);
+        bag.add(unitData.getSkillsComponent());
+        bag.add(unitData.getStatComponent());
         bag.add(new TurnComponent());
 
         return bag;
