@@ -17,7 +17,7 @@ import com.bryjamin.dancedungeon.ecs.components.identifiers.SelectedEntityCompon
 
 public class ReselectTargetSystem extends EntitySystem {
 
-    ActionCameraSystem actionCameraSystem;
+    ActionQueueSystem actionQueueSystem;
 
     private ComponentMapper<TurnComponent> tm;
     private ComponentMapper<ReselectEntityComponent> rem;
@@ -38,7 +38,7 @@ public class ReselectTargetSystem extends EntitySystem {
 
         Entity e = this.getEntities().get(0);
 
-        if(!actionCameraSystem.isProcessing()){
+        if(!actionQueueSystem.isProcessing()){
             if(tm.get(e).hasActions()){
                 e.edit().add(new SelectedEntityComponent());
             };

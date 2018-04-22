@@ -9,7 +9,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
-import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.ActionQueueSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.utils.math.CoordinateMath;
 import com.bryjamin.dancedungeon.utils.math.CoordinateSorter;
@@ -39,7 +39,7 @@ public class MeleeMoveToAction implements WorldAction {
         tileSystem.findShortestPath(entity, coordinatesQueue, CoordinateMath.getCoordinatesInLine(playerCoordinates, 1),
                 entity.getComponent(StatComponent.class).movementRange);
 
-        world.getSystem(ActionCameraSystem.class).createMovementAction(entity, coordinatesQueue);
+        world.getSystem(ActionQueueSystem.class).createMovementAction(entity, coordinatesQueue);
         entity.getComponent(TurnComponent.class).movementActionAvailable = false;
 
     }

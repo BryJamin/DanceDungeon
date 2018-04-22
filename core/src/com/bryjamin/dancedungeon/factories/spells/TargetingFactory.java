@@ -26,8 +26,8 @@ import com.bryjamin.dancedungeon.ecs.components.identifiers.UITargetingComponent
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyIntentComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.ReselectEntityComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.SelectedEntityComponent;
+import com.bryjamin.dancedungeon.ecs.systems.battle.ActionQueueSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
-import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
@@ -370,8 +370,8 @@ public class TargetingFactory {
                     world.getSystem(BattleScreenUISystem.class).reset();
                     player.edit().add(new ReselectEntityComponent());
                     player.edit().remove(SelectedEntityComponent.class);
-                    world.getSystem(ActionCameraSystem.class).pushLastAction(player, createMovementAction(player, coordinatesWithPathMap.get(c)));
-                    world.getSystem(ActionCameraSystem.class).createIntentAction(world.createEntity());
+                    world.getSystem(ActionQueueSystem.class).pushLastAction(player, createMovementAction(player, coordinatesWithPathMap.get(c)));
+                    world.getSystem(ActionQueueSystem.class).createIntentAction(world.createEntity());
                 }
             }));
         }

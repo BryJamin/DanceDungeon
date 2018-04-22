@@ -28,7 +28,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.assets.FileStrings;
 import com.bryjamin.dancedungeon.assets.Fonts;
@@ -41,8 +40,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UITargetingComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
 import com.bryjamin.dancedungeon.ecs.systems.action.BattleWorldInputHandlerSystem;
-import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
-import com.bryjamin.dancedungeon.ecs.systems.battle.BattleMessageSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.ActionQueueSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
@@ -67,7 +65,7 @@ import com.bryjamin.dancedungeon.utils.Measure;
 public class BattleScreenUISystem extends BaseSystem {
 
     private TurnSystem turnSystem;
-    private ActionCameraSystem actionCameraSystem;
+    private ActionQueueSystem actionQueueSystem;
     private BattleWorldInputHandlerSystem battleWorldInputHandlerSystem;
     private StageUIRenderingSystem stageUIRenderingSystem;
     private RenderingSystem renderingSystem;
@@ -258,7 +256,7 @@ public class BattleScreenUISystem extends BaseSystem {
     @Override
     protected void processSystem() {
 
-        if (actionCameraSystem.isProcessing() || !turnSystem.isTurn(TurnSystem.TURN.ALLY)) {
+        if (actionQueueSystem.isProcessing() || !turnSystem.isTurn(TurnSystem.TURN.ALLY)) {
             endTurn.setVisible(false);
         } else {
             endTurn.setVisible(true);
@@ -346,14 +344,14 @@ public class BattleScreenUISystem extends BaseSystem {
     }
 
 
-    private void createSkillTarget(Entity unit, Skill skill) {
-        this.clearTargetingTiles(); //TODO maybe just move to a new layer?
-        Array<Entity> entityArray = skill.createTargeting(world, unit);
-
-        if (entityArray.size <= 0) {
-            world.getSystem(BattleMessageSystem.class).createWarningMessage();
-        }
-
+    /**
+     * Creates the targeting of a give skill and displays it to the player.
+     * @param unit
+     * @param skill
+     */
+    private void createSkillTargeting(Entity unit, Skill skill) {
+        this.clearTargetingTiles();
+        skill.createTargeting(world, unit);
     }
 
     /**
@@ -397,7 +395,7 @@ public class BattleScreenUISystem extends BaseSystem {
                     updateSkillText(player,
                             skill);
 
-                    createSkillTarget(player,
+                    createSkillTargeting(player,
                             skill);
                 } else {
                     skillInformationTable.clear();

@@ -6,9 +6,9 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.bryjamin.dancedungeon.ecs.systems.battle.ActionQueueSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BattleDeploymentSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
-import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.SelectedTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
@@ -67,7 +67,7 @@ public class BattleWorldInputHandlerSystem extends BaseSystem {
 
             Vector3 input = gameport.unproject(new Vector3(x, y, 0));
 
-            if (world.getSystem(ActionCameraSystem.class).isProcessing()) return false;
+            if (world.getSystem(ActionQueueSystem.class).isProcessing()) return false;
 
             //TODO It may be beter to have the input system of 'Battle' have states. So within certain states,
             //TODO you are unabelt o interact with other objects. Such as during deployment you cna't activate movment

@@ -20,7 +20,7 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationStateComponent
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.KillOnAnimationEndComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.SolidComponent;
-import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.ActionQueueSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.factories.spells.animations.BasicProjectile;
 import com.bryjamin.dancedungeon.factories.spells.animations.BasicSlashAnimation;
@@ -271,7 +271,7 @@ public class Skill {
                         .add(new AnimationStateComponent(GLITTER_ANIMATION_ID))
                         .add(new AnimationMapComponent().put(GLITTER_ANIMATION_ID, TextureStrings.SKILLS_HEAL, 0.2f, Animation.PlayMode.NORMAL))
                         .add(new KillOnAnimationEndComponent(GLITTER_ANIMATION_ID));
-                world.getSystem(ActionCameraSystem.class).createDeathWaitAction(heal);
+                world.getSystem(ActionQueueSystem.class).createDeathWaitAction(heal);
 
 
                 break;
@@ -358,7 +358,7 @@ public class Skill {
 
                         //Check if coordinate is off the side of the map. If it is, look back to the previous coordinate.
                         if (!tileSystem.getCoordinateMap().containsKey(pushCoords)) {
-                            world.getSystem(ActionCameraSystem.class).createMovementAction(e, skillId,
+                            world.getSystem(ActionQueueSystem.class).createMovementAction(e, skillId,
                                     tileSystem.getPositionUsingCoordinates(prev, e.getComponent(CenteringBoundComponent.class).bound));
 
                             break;
@@ -366,22 +366,22 @@ public class Skill {
 
                         if (tileSystem.getOccupiedMap().containsValue(pushCoords, false)) { //Pretend move but bounce back
 
-                            world.getSystem(ActionCameraSystem.class).createMovementAction(e, skillId,
+                            world.getSystem(ActionQueueSystem.class).createMovementAction(e, skillId,
                                     tileSystem.getPositionUsingCoordinates(pushCoords, e.getComponent(CenteringBoundComponent.class).bound),
                                     tileSystem.getPositionUsingCoordinates(prev, e.getComponent(CenteringBoundComponent.class).bound)
                             );
 
                             //System.out.println(skillId);
 
-                            world.getSystem(ActionCameraSystem.class).createDamageApplicationAction(e, 1); //Push damage is one.
-                            world.getSystem(ActionCameraSystem.class).createDamageApplicationAction(tileSystem.getOccupiedMap().findKey(pushCoords, false), 1);
+                            world.getSystem(ActionQueueSystem.class).createDamageApplicationAction(e, 1); //Push damage is one.
+                            world.getSystem(ActionQueueSystem.class).createDamageApplicationAction(tileSystem.getOccupiedMap().findKey(pushCoords, false), 1);
 
                             break;
                         }
                         ;
 
                         if (i == pushCoordinateArray.length - 1) { //Final loop
-                            world.getSystem(ActionCameraSystem.class).createMovementAction(e, skillId,
+                            world.getSystem(ActionQueueSystem.class).createMovementAction(e, skillId,
                                     tileSystem.getPositionUsingCoordinates(pushCoords, e.getComponent(CenteringBoundComponent.class).bound));
 
                         }

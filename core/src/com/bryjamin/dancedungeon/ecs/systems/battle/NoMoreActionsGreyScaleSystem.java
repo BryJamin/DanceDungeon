@@ -14,7 +14,9 @@ import com.bryjamin.dancedungeon.ecs.components.identifiers.SelectedEntityCompon
  * Created by BB on 23/12/2017.
  */
 
-public class NoMoreActionsSystem extends EntityProcessingSystem {
+
+//TODO should be turned into an Observer. To listen to the actionQueueSystem
+public class NoMoreActionsGreyScaleSystem extends EntityProcessingSystem {
 
     private ComponentMapper<AnimationMapComponent> amc;
     private ComponentMapper<GreyScaleComponent> greyScaleMapper;
@@ -28,7 +30,7 @@ public class NoMoreActionsSystem extends EntityProcessingSystem {
      * System used to give a greyscale to units that no longer have actions
      *
      */
-    public NoMoreActionsSystem() {
+    public NoMoreActionsGreyScaleSystem() {
         super(Aspect.all(PlayerControlledComponent.class, TurnComponent.class));
     }
 

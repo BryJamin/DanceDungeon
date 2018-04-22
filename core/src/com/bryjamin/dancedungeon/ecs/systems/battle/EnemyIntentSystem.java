@@ -41,7 +41,7 @@ public class EnemyIntentSystem extends EntitySystem implements Observer{
     ComponentMapper<StoredSkillComponent> storedMapper;
     ComponentMapper<CoordinateComponent> coordinateMapper;
 
-    private ActionCameraSystem actionCameraSystem;
+    private ActionQueueSystem actionQueueSystem;
 
     TargetingFactory targetingFactory = new TargetingFactory();
 
@@ -53,7 +53,7 @@ public class EnemyIntentSystem extends EntitySystem implements Observer{
 
     @Override
     protected void initialize() {
-        actionCameraSystem.observerArray.add(this);
+        actionQueueSystem.observerArray.add(this);
     }
 
     @Override

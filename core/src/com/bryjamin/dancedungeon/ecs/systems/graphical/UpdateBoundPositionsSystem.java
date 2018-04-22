@@ -12,14 +12,14 @@ import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
  * Created by BB on 15/10/2017.
  */
 
-public class UpdatePositionSystem extends EntityProcessingSystem {
+public class UpdateBoundPositionsSystem extends EntityProcessingSystem {
 
     ComponentMapper<PositionComponent> pm;
     ComponentMapper<HitBoxComponent> hitboxComponentM;
     ComponentMapper<CenteringBoundComponent> boundComponentM;
 
     @SuppressWarnings("unchecked")
-    public UpdatePositionSystem() {
+    public UpdateBoundPositionsSystem() {
         super(Aspect.all(PositionComponent.class));
     }
 

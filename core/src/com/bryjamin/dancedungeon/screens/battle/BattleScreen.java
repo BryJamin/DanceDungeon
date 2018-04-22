@@ -20,8 +20,7 @@ import com.bryjamin.dancedungeon.ecs.systems.ParentChildSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.ActionOnTapSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.BattleWorldInputHandlerSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.ConditionalActionSystem;
-import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
-import com.bryjamin.dancedungeon.ecs.systems.battle.BattleMessageSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.ActionQueueSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BlinkOnHitSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BuffSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.DeathSystem;
@@ -29,8 +28,7 @@ import com.bryjamin.dancedungeon.ecs.systems.battle.EndBattleSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.EnemyIntentSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.GenerateTargetsSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.HealthSystem;
-import com.bryjamin.dancedungeon.ecs.systems.battle.NoMoreActionsSystem;
-import com.bryjamin.dancedungeon.ecs.systems.battle.PlayerControlledSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.NoMoreActionsGreyScaleSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ReselectTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.SelectedTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
@@ -40,10 +38,9 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.BoundsDrawingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.FadeSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.FollowPositionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.HealthBarSystem;
-import com.bryjamin.dancedungeon.ecs.systems.graphical.PlayerGraphicalTargetingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.ScaleTransformationSystem;
-import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
+import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdateBoundPositionsSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.InformationBannerSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
 import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
@@ -92,7 +89,7 @@ public class BattleScreen extends AbstractScreen {
 
                         new MovementSystem(),
                         new FollowPositionSystem(),
-                        new UpdatePositionSystem(),
+                        new UpdateBoundPositionsSystem(),
 
                         new BuffSystem(),
 
@@ -105,21 +102,18 @@ public class BattleScreen extends AbstractScreen {
                         new ParentChildSystem(),
                         new BlinkOnHitSystem(),
                         new ExpireSystem(),
-                        new PlayerControlledSystem(game),
                         new EndBattleSystem(game, battleEvent, partyDetails)
                 )
                 .with(WorldConfigurationBuilder.Priority.LOWEST,
                         new ActionOnTapSystem(),
-                        new ActionCameraSystem(),
+                        new ActionQueueSystem(),
 
                         //Rendering Effects
                         new FadeSystem(),
                         new ScaleTransformationSystem(),
                         new ArchingTextureSystem(),
 
-                        new NoMoreActionsSystem(),
-                        new PlayerGraphicalTargetingSystem(),
-                        new BattleMessageSystem(gameport),
+                        new NoMoreActionsGreyScaleSystem(),
                         new EnemyIntentSystem(),
                         new StunnedSystem(),
                         new AnimationSystem(game),

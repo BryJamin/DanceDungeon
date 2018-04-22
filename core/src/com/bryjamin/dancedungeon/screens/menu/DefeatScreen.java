@@ -15,7 +15,7 @@ import com.bryjamin.dancedungeon.ecs.systems.battle.DeathSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.BoundsDrawingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.FadeSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
-import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
+import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdateBoundPositionsSystem;
 import com.bryjamin.dancedungeon.ecs.systems.input.BasicInputSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.DefeatScreenCreationSystem;
 import com.bryjamin.dancedungeon.screens.AbstractScreen;
@@ -45,7 +45,7 @@ public class DefeatScreen extends AbstractScreen {
                         new BasicInputSystem(gameport),
 
                         new MovementSystem(),
-                        new UpdatePositionSystem(),
+                        new UpdateBoundPositionsSystem(),
                         new MoveToTargetSystem()
                 )
                 .with(WorldConfigurationBuilder.Priority.HIGH,

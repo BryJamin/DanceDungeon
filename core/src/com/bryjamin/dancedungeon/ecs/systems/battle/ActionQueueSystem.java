@@ -31,7 +31,7 @@ import java.util.UUID;
  * from the queue
  */
 
-public class ActionCameraSystem extends EntitySystem {
+public class ActionQueueSystem extends EntitySystem {
 
 
    // private OrderedMap<WorldConditionalAction, Entity> queuedActionMap = new OrderedMap<WorldConditionalAction, Entity>();
@@ -63,7 +63,7 @@ public class ActionCameraSystem extends EntitySystem {
      * Creates an entity system that uses the specified aspect as a matcher
      * against entities.
      */
-    public ActionCameraSystem() {
+    public ActionQueueSystem() {
         super(Aspect.all(QueuedActionComponent.class));
     }
 

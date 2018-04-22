@@ -21,7 +21,7 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.FadeSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.FollowPositionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.ScaleTransformationSystem;
-import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
+import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdateBoundPositionsSystem;
 import com.bryjamin.dancedungeon.ecs.systems.input.MapInputSystem;
 import com.bryjamin.dancedungeon.ecs.systems.strategy.EventGenerationSystem;
 import com.bryjamin.dancedungeon.ecs.systems.strategy.MapNodeSystem;
@@ -76,7 +76,7 @@ public class MapScreen extends AbstractScreen {
                         //Positional Systems
                         new MovementSystem(),
                         new FollowPositionSystem(),
-                        new UpdatePositionSystem(),
+                        new UpdateBoundPositionsSystem(),
                         new MoveToTargetSystem()
                 )
                 .with(WorldConfigurationBuilder.Priority.HIGH,

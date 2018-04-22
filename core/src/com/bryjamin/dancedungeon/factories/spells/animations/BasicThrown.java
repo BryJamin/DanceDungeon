@@ -18,7 +18,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.ChangeScaleUsingDistanceComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
-import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.ActionQueueSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.utils.Measure;
@@ -60,7 +60,7 @@ public class BasicThrown implements SpellAnimation{
         projectile.edit().add(new PositionComponent(startX, startY));
 
         //TODO move this into the new Action Camera System
-        world.getSystem(ActionCameraSystem.class).createDeathWaitAction(projectile); //Wait for the projectile to die. To remove the action
+        world.getSystem(ActionQueueSystem.class).createDeathWaitAction(projectile); //Wait for the projectile to die. To remove the action
 
         projectile.edit().add(new MoveToComponent(speed, new Vector3(endX, endY,0)));
 

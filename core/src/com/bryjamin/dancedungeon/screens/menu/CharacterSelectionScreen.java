@@ -18,7 +18,7 @@ import com.bryjamin.dancedungeon.ecs.systems.battle.DeathSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.BoundsDrawingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.FadeSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
-import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
+import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdateBoundPositionsSystem;
 import com.bryjamin.dancedungeon.ecs.systems.input.BasicInputSystemWithStage;
 import com.bryjamin.dancedungeon.ecs.systems.ui.CharacterSelectionScreenInitilization;
 import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
@@ -57,7 +57,7 @@ public class CharacterSelectionScreen extends AbstractScreen {
                         new BasicInputSystemWithStage(gameport),
 
                         new MovementSystem(),
-                        new UpdatePositionSystem(),
+                        new UpdateBoundPositionsSystem(),
                         new MoveToTargetSystem()
                 )
                 .with(WorldConfigurationBuilder.Priority.HIGH,

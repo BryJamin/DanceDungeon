@@ -12,7 +12,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.FriendlyComponent;
-import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.ActionQueueSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.factories.spells.TargetingFactory;
@@ -104,7 +104,7 @@ public class FindBestMovementAreaToAttackFromAction implements WorldAction {
             break;
         }
 
-        world.getSystem(ActionCameraSystem.class).createMovementAction(entity, path);
+        world.getSystem(ActionQueueSystem.class).createMovementAction(entity, path);
         entity.getComponent(TurnComponent.class).movementActionAvailable = false;
 
 

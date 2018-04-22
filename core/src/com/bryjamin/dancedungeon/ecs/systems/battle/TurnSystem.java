@@ -165,7 +165,7 @@ public class TurnSystem extends EntitySystem {
                     }
                     break;
                 case WAITING:
-                    if (!world.getSystem(ActionCameraSystem.class).isProcessing()) {
+                    if (!world.getSystem(ActionQueueSystem.class).isProcessing()) {
                         battleState = STATE.NEXT_TURN;
                     }
                     break;
@@ -175,7 +175,7 @@ public class TurnSystem extends EntitySystem {
         }
 
 
-        //if (world.getSystem(ActionCameraSystem.class).isProcessing()) return;
+        //if (world.getSystem(ActionQueueSystem.class).isProcessing()) return;
 
 
         switch (battleState) {
@@ -254,7 +254,7 @@ public class TurnSystem extends EntitySystem {
             case WAITING:
 
                 //Before making a decision check it see if an action is currently playing
-                if (!world.getSystem(ActionCameraSystem.class).isProcessing()) {
+                if (!world.getSystem(ActionQueueSystem.class).isProcessing()) {
                     turnComponent.state = TurnComponent.State.DECIDING;
                 }
 

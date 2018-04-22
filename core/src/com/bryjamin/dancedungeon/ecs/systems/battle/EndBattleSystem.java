@@ -32,7 +32,7 @@ public class EndBattleSystem extends EntitySystem implements Observer {
     private BattleScreenUISystem battleScreenUISystem;
     private BattleWorldInputHandlerSystem battleWorldInputHandlerSystem;
     private TurnSystem turnSystem;
-    private ActionCameraSystem actionCameraSystem;
+    private ActionQueueSystem actionQueueSystem;
 
     private ComponentMapper<EnemyComponent> enemyMapper;
     private ComponentMapper<PlayerControlledComponent> pcMapper;
@@ -63,7 +63,7 @@ public class EndBattleSystem extends EntitySystem implements Observer {
 
     @Override
     protected void initialize() {
-        actionCameraSystem.observerArray.add(this);
+        actionQueueSystem.observerArray.add(this);
 
 
         Array<AbstractObjective> abstractObjectives = new Array<AbstractObjective>();
@@ -129,7 +129,7 @@ public class EndBattleSystem extends EntitySystem implements Observer {
         if(playerPartyManagementSystem.getPartyDetails().morale == 0) {
             ((BattleScreen) game.getScreen()).defeat();
 
-            actionCameraSystem.observerArray.removeValue(this, true);
+            actionQueueSystem.observerArray.removeValue(this, true);
         }
 
         if (currentEvent.isComplete(world)) {
@@ -142,7 +142,7 @@ public class EndBattleSystem extends EntitySystem implements Observer {
                 statComponent.maxHealth = (int) hc.maxHealth;
             }
 
-            actionCameraSystem.observerArray.removeValue(this, true);
+            actionQueueSystem.observerArray.removeValue(this, true);
 
             battleScreenUISystem.createVictoryRewards(currentEvent, partyDetails);
             battleWorldInputHandlerSystem.setState(BattleWorldInputHandlerSystem.State.ONLY_STAGE);
