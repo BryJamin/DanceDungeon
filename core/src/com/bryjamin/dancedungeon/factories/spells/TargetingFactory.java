@@ -9,7 +9,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.Queue;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
-import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
@@ -22,7 +22,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
-import com.bryjamin.dancedungeon.ecs.components.graphics.UITargetingComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.UITargetingComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyIntentComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.ReselectEntityComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.SelectedEntityComponent;
@@ -394,7 +394,7 @@ public class TargetingFactory {
                 for (Coordinates c : coordinatesQueue) {
                     entity.getComponent(MoveToComponent.class).movementPositions.add(
                             world.getSystem(TileSystem.class).getPositionUsingCoordinates(
-                                    c, entity.getComponent(CenteringBoundaryComponent.class).bound));
+                                    c, entity.getComponent(CenteringBoundComponent.class).bound));
                 }
 
 
@@ -468,7 +468,7 @@ public class TargetingFactory {
                 .maxAlpha(0.55f)
                 .maximumTime(1.5f)));
         bag.add(new HitBoxComponent(new HitBox(r)));
-        bag.add(new CenteringBoundaryComponent());
+        bag.add(new CenteringBoundComponent());
         bag.add(new UITargetingComponent());
 
         return bag;
@@ -496,7 +496,7 @@ public class TargetingFactory {
                 .minAlpha(0.15f)
                 .maxAlpha(0.55f)
                 .maximumTime(2.0f)));*/
-        bag.add(new CenteringBoundaryComponent());
+        bag.add(new CenteringBoundComponent());
         bag.add(new UITargetingComponent());
 
         return bag;

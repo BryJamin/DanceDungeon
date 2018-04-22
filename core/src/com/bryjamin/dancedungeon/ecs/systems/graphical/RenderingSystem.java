@@ -19,7 +19,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.assets.FileStrings;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
-import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
@@ -44,7 +44,7 @@ import java.util.Comparator;
 public class RenderingSystem extends EntitySystem {
 
     private ComponentMapper<PositionComponent> positionm;
-    private ComponentMapper<CenteringBoundaryComponent> boundm;
+    private ComponentMapper<CenteringBoundComponent> boundm;
     private ComponentMapper<DrawableComponent> drawablem;
     private ComponentMapper<BlinkOnHitComponent> blinkOnHitm;
     private ComponentMapper<HighLightTextComponent> highlightM;
@@ -199,7 +199,7 @@ public class RenderingSystem extends EntitySystem {
 
 
             if (boundm.has(e)) {
-                CenteringBoundaryComponent bc = boundm.get(e);
+                CenteringBoundComponent bc = boundm.get(e);
                 glyphLayout.setText(bmf, textDescription.getText(), drawableDescription.getColor(), bc.bound.width, textDescription.getAlign(), false);
 
                 BitmapFontCache bitmapFontCache = new BitmapFontCache(bmf);

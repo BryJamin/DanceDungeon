@@ -18,7 +18,7 @@ import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.assets.FileStrings;
 import com.bryjamin.dancedungeon.assets.Fonts;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
-import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
@@ -69,7 +69,7 @@ public class HealthBarSystem extends EntityProcessingSystem {
     private ObjectMap<Entity, HealthBar> entityHealthBarObjectMap = new ObjectMap<Entity, HealthBar>();
 
     public HealthBarSystem(MainGame game, Viewport gameport) {
-        super(Aspect.all(HealthComponent.class, PositionComponent.class, CenteringBoundaryComponent.class, CoordinateComponent.class));
+        super(Aspect.all(HealthComponent.class, PositionComponent.class, CenteringBoundComponent.class, CoordinateComponent.class));
         this.batch = game.batch;
         this.atlas = game.assetManager.get(FileStrings.SPRITE_ATLAS_FILE, TextureAtlas.class);
         healthFont = game.assetManager.get(Fonts.SMALL, BitmapFont.class);
@@ -166,12 +166,12 @@ public class HealthBarSystem extends EntityProcessingSystem {
 
         }
 
-        CenteringBoundaryComponent centeringBoundaryComponent = e.getComponent(CenteringBoundaryComponent.class);
+        CenteringBoundComponent centeringBoundComponent = e.getComponent(CenteringBoundComponent.class);
 
-        Vector2 center = centeringBoundaryComponent.bound.getCenter(v2);
+        Vector2 center = centeringBoundComponent.bound.getCenter(v2);
 
 
-        float x = CenterMath.centerOnPositionX(rect.getWidth(), center.x) + offsetX; //positionComponent.getX() + CenterMath.offsetX(centeringBoundaryComponent.bound.getWidth(), rect.getWidth());
+        float x = CenterMath.centerOnPositionX(rect.getWidth(), center.x) + offsetX; //positionComponent.getX() + CenterMath.offsetX(centeringBoundComponent.bound.getWidth(), rect.getWidth());
         float y = CenterMath.centerOnPositionY(rect.getHeight(), center.y); //positionComponent.getY() + initialHealthBarOffsetY;
 
         batch.setColor(bottomBarColor);

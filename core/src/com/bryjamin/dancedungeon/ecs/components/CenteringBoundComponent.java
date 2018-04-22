@@ -11,21 +11,21 @@ import com.badlogic.gdx.math.Rectangle;
  * E.G if you give a entity this boundary text can be centered ontop of the entity.
  */
 
-public class CenteringBoundaryComponent extends Component {
+public class CenteringBoundComponent extends Component {
 
     public Rectangle bound = new Rectangle();
 
-    public CenteringBoundaryComponent(){}
+    public CenteringBoundComponent(){}
 
-    public CenteringBoundaryComponent(Rectangle bound){
+    public CenteringBoundComponent(Rectangle bound){
         this.bound = bound;
     }
 
-    public CenteringBoundaryComponent(CenteringBoundaryComponent cbc){
+    public CenteringBoundComponent(CenteringBoundComponent cbc){
         this(new Rectangle(cbc.bound));
     }
 
-    public CenteringBoundaryComponent(float width, float height){
+    public CenteringBoundComponent(float width, float height){
         this.bound = new Rectangle(0, 0, width, height);
     }
 

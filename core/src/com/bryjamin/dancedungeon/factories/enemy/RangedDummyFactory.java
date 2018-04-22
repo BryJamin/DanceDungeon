@@ -9,7 +9,7 @@ import com.bryjamin.dancedungeon.ecs.ai.actions.EndTurnAction;
 import com.bryjamin.dancedungeon.ecs.ai.actions.FindBestMovementAreaToAttackFromAction;
 import com.bryjamin.dancedungeon.ecs.ai.calculations.CanMoveCalculator;
 import com.bryjamin.dancedungeon.ecs.ai.calculations.CanUseSkillCalculator;
-import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.UtilityAiComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
@@ -66,7 +66,7 @@ public class RangedDummyFactory {
 
         ComponentBag bag = unitFactory.baseEnemyUnitBag(unitData);
         bag.add(new SkillsComponent(fireball));
-        bag.add(new CenteringBoundaryComponent(width, height));
+        bag.add(new CenteringBoundComponent(width, height));
         bag.add(new HitBoxComponent(new HitBox(width, height)));
 
         bag.add(new UtilityAiComponent(

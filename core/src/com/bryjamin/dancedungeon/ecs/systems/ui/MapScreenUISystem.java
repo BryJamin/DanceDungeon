@@ -47,7 +47,7 @@ import java.util.Locale;
  * Created by BB on 02/03/2018.
  */
 
-public class MapStageUISystem extends BaseSystem {
+public class MapScreenUISystem extends BaseSystem {
 
     private StageUIRenderingSystem stageUIRenderingSystem;
     private InformationBannerSystem informationBannerSystem;
@@ -87,7 +87,7 @@ public class MapStageUISystem extends BaseSystem {
     private Array<Actor> equippedSkills = new Array<Actor>();
 
 
-    public MapStageUISystem(MainGame game, GameMap gameMap, PartyDetails partyDetails, Viewport gameport) {
+    public MapScreenUISystem(MainGame game, GameMap gameMap, PartyDetails partyDetails, Viewport gameport) {
         this.game = game;
         this.partyDetails = partyDetails;
         this.gameMap = gameMap;

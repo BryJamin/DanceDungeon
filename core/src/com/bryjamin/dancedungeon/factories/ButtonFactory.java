@@ -5,7 +5,7 @@ import com.artemis.World;
 import com.badlogic.gdx.graphics.Color;
 import com.bryjamin.dancedungeon.assets.Fonts;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
-import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
@@ -79,7 +79,7 @@ public class ButtonFactory {
             Entity background = world.createEntity().edit()
                     .add(new PositionComponent(x, y))
                     .add(new HitBoxComponent(width, height))
-                    .add(new CenteringBoundaryComponent(width, height))
+                    .add(new CenteringBoundComponent(width, height))
                     .add(new DrawableComponent(layer,
 
                             new TextureDescription.Builder(TextureStrings.BLOCK)
@@ -95,7 +95,7 @@ public class ButtonFactory {
             world.createEntity().edit()
                     .add(new PositionComponent(x, y))
                     .add(new HitBoxComponent(width, height))
-                    .add(new CenteringBoundaryComponent(width, height))
+                    .add(new CenteringBoundComponent(width, height))
                     .add(new DrawableComponent(layer,
                             new TextDescription.Builder(Fonts.MEDIUM)
                                     .text(text)

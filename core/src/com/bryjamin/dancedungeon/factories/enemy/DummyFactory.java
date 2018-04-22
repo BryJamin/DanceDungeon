@@ -12,7 +12,7 @@ import com.bryjamin.dancedungeon.ecs.ai.actions.FindBestMovementAreaToAttackFrom
 import com.bryjamin.dancedungeon.ecs.ai.calculations.CanMoveCalculator;
 import com.bryjamin.dancedungeon.ecs.ai.calculations.CanUseSkillCalculator;
 import com.bryjamin.dancedungeon.ecs.ai.calculations.IsNextToCalculator;
-import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.UtilityAiComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
@@ -63,7 +63,7 @@ public class DummyFactory {
         ComponentBag bag = unitFactory.baseEnemyUnitBag(unitData); //new ComponentBag();
 
         bag.add(new MoveToComponent(Measure.units(80f)));
-        bag.add(new CenteringBoundaryComponent(width, height));
+        bag.add(new CenteringBoundComponent(width, height));
         bag.add(new HitBoxComponent(new HitBox(width, height)));
         bag.add(new SkillsComponent(slash));
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, blob.color(Color.WHITE).build()));

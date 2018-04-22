@@ -1,8 +1,6 @@
 package com.bryjamin.dancedungeon.ecs.systems.ui;
 
-import com.artemis.Aspect;
 import com.artemis.BaseSystem;
-import com.artemis.utils.IntBag;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -24,7 +22,6 @@ import com.bryjamin.dancedungeon.assets.Skins;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.PartyUiComponent;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.factories.CharacterGenerator;
 import com.bryjamin.dancedungeon.factories.map.MapGenerator;
@@ -256,16 +253,5 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
     }
 
 
-    private void updateUi() {
-
-        IntBag unitEntities = world.getAspectSubscriptionManager().get(Aspect.all(PartyUiComponent.class)).getEntities();
-
-        for (int i = 0; i < unitEntities.size(); i++)
-            world.delete(unitEntities.get(i));
-
-        container.remove();
-        initialize();
-
-    }
 
 }

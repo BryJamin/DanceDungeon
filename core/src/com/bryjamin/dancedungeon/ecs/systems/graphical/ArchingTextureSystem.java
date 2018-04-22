@@ -5,7 +5,7 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.systems.EntityProcessingSystem;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
-import com.bryjamin.dancedungeon.ecs.components.graphics.ArchingTextureComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.ChangeScaleUsingDistanceComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 
 /**
@@ -16,17 +16,17 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 public class ArchingTextureSystem extends EntityProcessingSystem {
 
     ComponentMapper<PositionComponent> pm;
-    ComponentMapper<ArchingTextureComponent> archMapper;
+    ComponentMapper<ChangeScaleUsingDistanceComponent> archMapper;
     ComponentMapper<DrawableComponent> drawm;
 
     public ArchingTextureSystem() {
-        super(Aspect.all(PositionComponent.class, ArchingTextureComponent.class, DrawableComponent.class));
+        super(Aspect.all(PositionComponent.class, ChangeScaleUsingDistanceComponent.class, DrawableComponent.class));
     }
 
     @Override
     protected void process(Entity e) {
 
-        ArchingTextureComponent atc = archMapper.get(e);
+        ChangeScaleUsingDistanceComponent atc = archMapper.get(e);
         PositionComponent pc = pm.get(e);
 
         float fullDistance = atc.startPos.dst(atc.endPos);

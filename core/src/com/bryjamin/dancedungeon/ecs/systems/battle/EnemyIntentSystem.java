@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.Observer;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
-import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
@@ -184,7 +184,7 @@ public class EnemyIntentSystem extends EntitySystem implements Observer{
                                 .height(r.getHeight())
                                 .build()))
                 .add(new HitBoxComponent(new HitBox(r)))
-                .add(new CenteringBoundaryComponent())
+                .add(new CenteringBoundComponent())
                 .add(new FadeComponent(new FadeComponent.FadeBuilder().endless(true).minAlpha(0.5f).maximumTime(2f)))
                 .add(new EnemyIntentComponent());
 

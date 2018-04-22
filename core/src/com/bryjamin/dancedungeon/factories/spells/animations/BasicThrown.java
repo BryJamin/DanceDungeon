@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.bryjamin.dancedungeon.assets.Colors;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
-import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.ConditionalActionsComponent;
@@ -15,9 +15,8 @@ import com.bryjamin.dancedungeon.ecs.components.actions.OnDeathActionsComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
-import com.bryjamin.dancedungeon.ecs.components.graphics.ArchingTextureComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.ChangeScaleUsingDistanceComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
-import com.bryjamin.dancedungeon.ecs.components.graphics.ScaleTransformationComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
@@ -65,11 +64,11 @@ public class BasicThrown implements SpellAnimation{
 
         projectile.edit().add(new MoveToComponent(speed, new Vector3(endX, endY,0)));
 
-        projectile.edit().add(new ArchingTextureComponent(new Vector3(startX, startY, 0), new Vector3(endX, endY, 0), 1, maxScale));
+        projectile.edit().add(new ChangeScaleUsingDistanceComponent(new Vector3(startX, startY, 0), new Vector3(endX, endY, 0), 1, maxScale));
         projectile.edit().add(createDrawableComponent());
 
         projectile.edit().add(new VelocityComponent());
-        projectile.edit().add(new CenteringBoundaryComponent(width, height));
+        projectile.edit().add(new CenteringBoundComponent(width, height));
 
         projectile.edit().add(new ConditionalActionsComponent(new WorldConditionalAction() {
             @Override

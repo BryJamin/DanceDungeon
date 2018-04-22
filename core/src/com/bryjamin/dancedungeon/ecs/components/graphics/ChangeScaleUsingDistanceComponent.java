@@ -11,7 +11,7 @@ import com.badlogic.gdx.math.Vector3;
  * to change the Texture
  *
  */
-public class ArchingTextureComponent extends Component {
+public class ChangeScaleUsingDistanceComponent extends Component {
 
     public Vector3 startPos;
     public Vector3 endPos;
@@ -22,10 +22,10 @@ public class ArchingTextureComponent extends Component {
     public float minScaleX;
     public float maxScaleX;
 
-    public ArchingTextureComponent(){}
+    public ChangeScaleUsingDistanceComponent(){}
 
 
-    public ArchingTextureComponent(Vector3 startPos, Vector3 endPos, float mixScaleY, float maxScaleY, float minScaleX, float maxScaleX) {
+    public ChangeScaleUsingDistanceComponent(Vector3 startPos, Vector3 endPos, float mixScaleY, float maxScaleY, float minScaleX, float maxScaleX) {
         this.startPos = startPos;
         this.endPos = endPos;
         this.mixScaleY = mixScaleY;
@@ -35,7 +35,7 @@ public class ArchingTextureComponent extends Component {
     }
 
 
-    public ArchingTextureComponent(Vector3 startPos, Vector3 endPos, float minScale, float maxScale) {
+    public ChangeScaleUsingDistanceComponent(Vector3 startPos, Vector3 endPos, float minScale, float maxScale) {
         this.startPos = startPos;
         this.endPos = endPos;
         this.mixScaleY = minScale;

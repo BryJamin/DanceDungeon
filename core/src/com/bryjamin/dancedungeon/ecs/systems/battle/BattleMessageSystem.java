@@ -8,10 +8,10 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.assets.Fonts;
 import com.bryjamin.dancedungeon.assets.TextResource;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
-import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
-import com.bryjamin.dancedungeon.ecs.components.graphics.UITargetingComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.UITargetingComponent;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
@@ -45,7 +45,7 @@ public class BattleMessageSystem extends BaseSystem {
         Entity e = world.createEntity().edit()
                 .add(new PositionComponent(CenterMath.centerOnPositionX(width, gameport.getWorldWidth() / 2),
                         CenterMath.centerOnPositionY(height, gameport.getWorldHeight() / 2) + Measure.units(25f)))
-                .add(new CenteringBoundaryComponent(new Rectangle(0, 0, width, height)))
+                .add(new CenteringBoundComponent(new Rectangle(0, 0, width, height)))
                 .add(new UITargetingComponent())
                 .add(new DrawableComponent(
                         Layer.FOREGROUND_LAYER_NEAR,
@@ -59,7 +59,7 @@ public class BattleMessageSystem extends BaseSystem {
         Entity e2 = world.createEntity().edit()
                 .add(new PositionComponent(CenterMath.centerOnPositionX(width, gameport.getWorldWidth() / 2),
                         CenterMath.centerOnPositionY(height, gameport.getWorldHeight() / 2) + Measure.units(25f)))
-                .add(new CenteringBoundaryComponent(new Rectangle(0, 0, width, height)))
+                .add(new CenteringBoundComponent(new Rectangle(0, 0, width, height)))
                 .add(new UITargetingComponent())
                 .add(new DrawableComponent(
                         Layer.FOREGROUND_LAYER_NEAR,

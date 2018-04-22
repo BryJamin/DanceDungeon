@@ -8,7 +8,7 @@ import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.bryjamin.dancedungeon.assets.Fonts;
-import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.ExpireComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
@@ -111,7 +111,7 @@ public class HealthSystem extends EntityProcessingSystem {
         Entity floatingTextEntity = world.createEntity();
 
         floatingTextEntity.edit().add(new PositionComponent(entity.getComponent(PositionComponent.class)));
-        floatingTextEntity.edit().add(new CenteringBoundaryComponent(entity.getComponent(CenteringBoundaryComponent.class)));
+        floatingTextEntity.edit().add(new CenteringBoundComponent(entity.getComponent(CenteringBoundComponent.class)));
         floatingTextEntity.edit().add(new FadeComponent.FadeBuilder()
                 .maximumTime(0.75f)
                 .endless(false)

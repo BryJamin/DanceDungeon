@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
-import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
@@ -359,7 +359,7 @@ public class Skill {
                         //Check if coordinate is off the side of the map. If it is, look back to the previous coordinate.
                         if (!tileSystem.getCoordinateMap().containsKey(pushCoords)) {
                             world.getSystem(ActionCameraSystem.class).createMovementAction(e, skillId,
-                                    tileSystem.getPositionUsingCoordinates(prev, e.getComponent(CenteringBoundaryComponent.class).bound));
+                                    tileSystem.getPositionUsingCoordinates(prev, e.getComponent(CenteringBoundComponent.class).bound));
 
                             break;
                         }
@@ -367,8 +367,8 @@ public class Skill {
                         if (tileSystem.getOccupiedMap().containsValue(pushCoords, false)) { //Pretend move but bounce back
 
                             world.getSystem(ActionCameraSystem.class).createMovementAction(e, skillId,
-                                    tileSystem.getPositionUsingCoordinates(pushCoords, e.getComponent(CenteringBoundaryComponent.class).bound),
-                                    tileSystem.getPositionUsingCoordinates(prev, e.getComponent(CenteringBoundaryComponent.class).bound)
+                                    tileSystem.getPositionUsingCoordinates(pushCoords, e.getComponent(CenteringBoundComponent.class).bound),
+                                    tileSystem.getPositionUsingCoordinates(prev, e.getComponent(CenteringBoundComponent.class).bound)
                             );
 
                             //System.out.println(skillId);
@@ -382,7 +382,7 @@ public class Skill {
 
                         if (i == pushCoordinateArray.length - 1) { //Final loop
                             world.getSystem(ActionCameraSystem.class).createMovementAction(e, skillId,
-                                    tileSystem.getPositionUsingCoordinates(pushCoords, e.getComponent(CenteringBoundaryComponent.class).bound));
+                                    tileSystem.getPositionUsingCoordinates(pushCoords, e.getComponent(CenteringBoundComponent.class).bound));
 
                         }
 

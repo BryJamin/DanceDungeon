@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.bryjamin.dancedungeon.assets.Colors;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
-import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.ConditionalActionsComponent;
@@ -73,7 +73,7 @@ public class BasicProjectile implements SpellAnimation {
 
 
        projectile.edit().add(new VelocityComponent());
-       projectile.edit().add(new CenteringBoundaryComponent(width, height));
+       projectile.edit().add(new CenteringBoundComponent(width, height));
 
        projectile.edit().add(new ConditionalActionsComponent(new WorldConditionalAction() {
            @Override

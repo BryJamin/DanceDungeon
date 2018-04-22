@@ -6,7 +6,7 @@ import com.artemis.utils.Bag;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
-import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
@@ -85,7 +85,7 @@ public class PlayerGraphicalTargetingSystem extends BaseSystem {
                         .build()));
         bag.add(new FadeComponent(true, 1.0f, true));
         bag.add(new HitBoxComponent(new HitBox(r)));
-        bag.add(new CenteringBoundaryComponent());
+        bag.add(new CenteringBoundComponent());
 
         return bag;
     }

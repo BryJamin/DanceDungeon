@@ -3,7 +3,7 @@ package com.bryjamin.dancedungeon.factories.player;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Rectangle;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
-import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationMapComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationStateComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
@@ -40,7 +40,7 @@ public class PlayerFactory {
         ComponentBag bag = unitFactory.basePlayerUnitBag(unitData);
 
         bag.add(unitData.getSkillsComponent());
-        bag.add(new CenteringBoundaryComponent(new Rectangle(0, 0, width, height)));
+        bag.add(new CenteringBoundComponent(new Rectangle(0, 0, width, height)));
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, createPlayerTexture(TextureStrings.WARRIOR).build()));
 
         int STANDING_ANIMATION = 23;
@@ -59,7 +59,7 @@ public class PlayerFactory {
         ComponentBag bag = unitFactory.basePlayerUnitBag(unitData);
 
         bag.add(unitData.getSkillsComponent());
-        bag.add(new CenteringBoundaryComponent(new Rectangle(0, 0, width, height)));
+        bag.add(new CenteringBoundComponent(new Rectangle(0, 0, width, height)));
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, createPlayerTexture(TextureStrings.ARCHER).build()));
 
         int STANDING_ANIMATION = 23;
@@ -78,7 +78,7 @@ public class PlayerFactory {
         ComponentBag bag = unitFactory.basePlayerUnitBag(unitData);
 
         bag.add(unitData.getSkillsComponent());
-        bag.add(new CenteringBoundaryComponent(new Rectangle(0, 0, width, height)));
+        bag.add(new CenteringBoundComponent(new Rectangle(0, 0, width, height)));
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, createPlayerTexture(TextureStrings.PLAYER).build()));
 
         int STANDING_ANIMATION = 23;

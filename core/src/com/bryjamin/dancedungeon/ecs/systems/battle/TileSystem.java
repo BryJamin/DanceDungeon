@@ -9,15 +9,13 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.Queue;
-import com.bryjamin.dancedungeon.assets.MapData;
-import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
@@ -93,7 +91,7 @@ public class TileSystem extends EntitySystem {
 
     @SuppressWarnings("unchecked")
     public TileSystem(BattleEvent battleEvent) {
-        super(Aspect.all(CoordinateComponent.class, CenteringBoundaryComponent.class, PositionComponent.class));
+        super(Aspect.all(CoordinateComponent.class, CenteringBoundComponent.class, PositionComponent.class));
         this.battleEvent = battleEvent;
     }
 
@@ -259,7 +257,7 @@ public class TileSystem extends EntitySystem {
         }
 
         if (!coordinateComponent.freePlacement) {
-            placeUsingCoordinates(e.getComponent(CoordinateComponent.class).coordinates, e.getComponent(PositionComponent.class), e.getComponent(CenteringBoundaryComponent.class));
+            placeUsingCoordinates(e.getComponent(CoordinateComponent.class).coordinates, e.getComponent(PositionComponent.class), e.getComponent(CenteringBoundComponent.class));
         }
     }
 
@@ -275,13 +273,13 @@ public class TileSystem extends EntitySystem {
         if (pcm.has(e)) playerControlledMap.remove(coordinateComponent.coordinates);
         if(enemym.has(e)) enemyMap.remove(coordinateComponent.coordinates);*/
 
-        CenteringBoundaryComponent centeringBoundaryComponent = e.getComponent(CenteringBoundaryComponent.class);
+        CenteringBoundComponent centeringBoundComponent = e.getComponent(CenteringBoundComponent.class);
 
-        //coordinateComponent.coordinates = getCoordinatesUsingPosition(centeringBoundaryComponent.bound);
+        //coordinateComponent.coordinates = getCoordinatesUsingPosition(centeringBoundComponent.bound);
 
         coordinateComponent.coordinates = getCoordinatesUsingPosition(
-                centeringBoundaryComponent.bound.getCenter(new Vector2()).x,
-                centeringBoundaryComponent.bound.getCenter(new Vector2()).y);
+                centeringBoundComponent.bound.getCenter(new Vector2()).x,
+                centeringBoundComponent.bound.getCenter(new Vector2()).y);
 
         addEntityToMaps(e, coordinateComponent.coordinates);
     }
@@ -294,7 +292,7 @@ public class TileSystem extends EntitySystem {
      * @param pc          - Position Component of Entity
      * @param bc          - Bound Component
      */
-    public void placeUsingCoordinates(Coordinates coordinates, PositionComponent pc, CenteringBoundaryComponent bc) {
+    public void placeUsingCoordinates(Coordinates coordinates, PositionComponent pc, CenteringBoundComponent bc) {
 
         float x = originX + ((coordinates.getX()) * tileWidthSize);
         float y = originY + ((coordinates.getY()) * tileHeightSize);

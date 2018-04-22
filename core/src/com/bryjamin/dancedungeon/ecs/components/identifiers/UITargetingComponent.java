@@ -3,8 +3,15 @@ package com.bryjamin.dancedungeon.ecs.components.identifiers;
 import com.artemis.Component;
 
 /**
- * Created by BB on 12/02/2018.
+ * Created by BB on 19/11/2017.
  */
 
-public class PartyUiComponent extends Component {
+public class UITargetingComponent extends Component {
+
+
+
+
+
+
+
 }

@@ -7,18 +7,16 @@ import com.artemis.World;
 import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.graphics.Color;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
-import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.FollowPositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.ScaleTransformationComponent;
-import com.bryjamin.dancedungeon.ecs.components.graphics.UITargetingComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.UITargetingComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.SelectedEntityComponent;
 import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
-import com.bryjamin.dancedungeon.factories.spells.TargetingFactory;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
@@ -137,16 +135,16 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
 
     private void createTargetReticle(World world, Entity entity) {
 
-        float width = entity.getComponent(CenteringBoundaryComponent.class).bound.width * 2.5f;
-        float height = entity.getComponent(CenteringBoundaryComponent.class).bound.height * 2.5f;
+        float width = entity.getComponent(CenteringBoundComponent.class).bound.width * 2.5f;
+        float height = entity.getComponent(CenteringBoundComponent.class).bound.height * 2.5f;
 
         Entity recticle = world.createEntity();
         recticle.edit().add(new PositionComponent())
                 .add(new ScaleTransformationComponent(1.1f))
                 .add(new UITargetingComponent())
                 .add(new FollowPositionComponent(entity.getComponent(PositionComponent.class).position,
-                        CenterMath.offsetX(entity.getComponent(CenteringBoundaryComponent.class).bound.width, width),
-                        CenterMath.offsetY(entity.getComponent(CenteringBoundaryComponent.class).bound.height, height)))
+                        CenterMath.offsetX(entity.getComponent(CenteringBoundComponent.class).bound.width, width),
+                        CenterMath.offsetY(entity.getComponent(CenteringBoundComponent.class).bound.height, height)))
                 .add(new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE, new TextureDescription.Builder(TextureStrings.TARGETING)
                         .width(width)
                         .height(height)
