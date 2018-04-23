@@ -14,8 +14,6 @@ import java.util.Comparator;
 
 public class AStarPathCalculator {
 
-
-    public OrderedMap<CoordinateComponent, Node> componentNodeOrderedMap = new OrderedMap<CoordinateComponent, Node>();
     public Array<Coordinates> unavailableCoordinates = new Array<Coordinates>();
     public Array<Coordinates> availableCoordinates = new Array<Coordinates>();
 

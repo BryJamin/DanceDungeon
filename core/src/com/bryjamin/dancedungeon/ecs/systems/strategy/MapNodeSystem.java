@@ -38,7 +38,6 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 public class MapNodeSystem extends EntitySystem {
 
     private ComponentMapper<ActionOnTapComponent> actionOnTapMapper;
-    private EventGenerationSystem eventGenerationSystem;
 
     private EventManager eventManager = new EventManager(); //TODO how does one determine the level?
 

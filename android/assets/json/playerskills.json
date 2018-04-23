@@ -10,6 +10,7 @@
     "spellAnimation": "Slash",
     "attackType": "Damage"
   },
+
   "d92aa63f-1f4d-40bf-9dca-344cebd78d31": {
     "class": "com.bryjamin.dancedungeon.factories.spells.Skill",
     "name": "Heavier Strike",

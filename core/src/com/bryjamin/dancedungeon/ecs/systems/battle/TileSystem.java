@@ -113,21 +113,18 @@ public class TileSystem extends EntitySystem {
         UnitFactory unitFactory = new UnitFactory();
 
         for(int i = 0; i < objects.getWidth(); i++){
-
             for(int j = 0; j < objects.getHeight(); j++){
-
                 if(objects.getCell(i, j) != null) {
-
                     TiledMapTile tile = objects.getCell(i, j).getTile();
                     if (tile.getProperties().containsKey("Type")) {
                         String property = (String) tile.getProperties().get("Type");
-                        if (property.equals("Wall")) {
-                            unitFactory.baseTileBag(world, new Coordinates(i, j));
-                        } else if (property.equals("Ally")) {
-                            unitFactory.baseAlliedTileBag(world, new Coordinates(i, j));
+                        switch (property){
+                            case "Wall":
+                                unitFactory.baseTileBag(world, new Coordinates(i, j));
+                            case "Ally":
+                                unitFactory.baseAlliedTileBag(world, new Coordinates(i, j));
                         }
                     }
-
                 } else { //Create a deployment zone depending on
 
                     if(i < 3) {

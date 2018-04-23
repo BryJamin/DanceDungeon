@@ -10,11 +10,11 @@ import com.badlogic.gdx.utils.ObjectMap;
 
 public class SkillLibrary {
 
-    // Hashmap where we store our items as "item name"-"item" pairs
+    // Map where we store our items as "item id"-"item" pairs
     private static final ObjectMap<String, Skill> items;
     private static final ObjectMap<String, Skill> enemySkills;
 
-    static { //TODO Is this safe? Research it.
+    static {
         Json json = new Json();
         items = json.fromJson(ObjectMap.class, Gdx.files.internal("json/playerskills.json"));
         enemySkills = json.fromJson(ObjectMap.class, Gdx.files.internal("json/enemyskills.json"));

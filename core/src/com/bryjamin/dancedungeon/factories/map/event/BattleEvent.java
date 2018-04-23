@@ -95,7 +95,6 @@ public class BattleEvent extends MapEvent {
             return new BattleEvent(this);
         }
 
-
     }
 
 

@@ -4,6 +4,7 @@ import com.artemis.BaseSystem;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -16,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
@@ -43,6 +45,7 @@ public class ShopScreenUISystem extends BaseSystem {
 
 
     private Table container;
+    private Table buyTable;
     private ButtonGroup<Button> skillButtons = new ButtonGroup<>();
 
 
@@ -146,6 +149,12 @@ public class ShopScreenUISystem extends BaseSystem {
             case BUY:
                 ScrollPane shopItemPane = createBuyScrollPane();
                 container.add(shopItemPane).expandY();
+                container.row();
+                buyTable = new Table(uiSkin);
+                buyTable.align(Align.bottom);
+              //  buyTable.setBackground(new NinePatchDrawable(NinePatches.getBorderPatch(renderingSystem.getAtlas())));
+                container.add(buyTable).width(stage.getWidth()).height(Measure.units(25f));
+                updateBuyButtonTable(buyTable, skillToBuyArray.get(skillButtons.getCheckedIndex()));
 
                 break;
             case SELL:
@@ -178,7 +187,7 @@ public class ShopScreenUISystem extends BaseSystem {
 
         skillButtons.clear();
 
-        for(Skill s : skillToBuyArray){
+        for(final Skill s : skillToBuyArray){
 
 
             Stack itemButtonStack = new Stack();
@@ -194,7 +203,16 @@ public class ShopScreenUISystem extends BaseSystem {
             inventoryInformation.add(new Label(s.getName(), uiSkin, Fonts.LABEL_STYLE_SMALL_FONT)).expandX();
 
             //Button for selecting which item is in focus
-            Button button = new Button(uiSkin, "inventory");
+            final Button button = new Button(uiSkin, "inventory");
+            button.addListener(new ClickListener() {
+
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    if(button.isChecked()){
+                        updateBuyButtonTable(buyTable, s);
+                    }
+                }
+            });
 
             skillButtons.add(button);
 
@@ -213,8 +231,15 @@ public class ShopScreenUISystem extends BaseSystem {
         shopTable.row();
 
 
+        return shopItemPane;
 
-        Skill s = skillToBuyArray.get(skillButtons.getCheckedIndex());
+    }
+
+
+    public void updateBuyButtonTable(Table buyTable, Skill s){
+
+        buyTable.clear();
+
 
         Stack buyButtonStack = new Stack();
 
@@ -223,46 +248,18 @@ public class ShopScreenUISystem extends BaseSystem {
 
         Table priceDisplay = new Table(uiSkin);
         priceDisplay.setTouchable(Touchable.disabled);
-        priceDisplay.add(new Label("Buy " + s.getStorePrice(), uiSkin));
-        priceDisplay.add(new Image(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.ICON_MONEY))));
+        priceDisplay.add(new Label("Buy ", uiSkin));
+        priceDisplay.add(new Image(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.ICON_MONEY)))).size(Measure.units(5f));
         priceDisplay.add(new Label("" + s.getStorePrice(), uiSkin));
         buyButtonStack.add(priceDisplay);
 
-        shopTable.add(buyButtonStack).colspan(4);
+        Label description = new Label(s.getDescription(), uiSkin);
+        description.setWrap(true);
+        description.setAlignment(Align.center);
 
-
-
-
- /*       for(final Skill s : skillToBuyArray){
-            shopTable.row();
-
-            Table t = new Table(uiSkin);
-            t.setDebug(StageUIRenderingSystem.DEBUG);
-            t.align(Align.left);
-            shopTable.add(t).width(stageUIRenderingSystem.stage.getWidth()).height(Measure.units(7.5f)).padBottom(Padding.MEDIUM);
-
-            //Skill Icon
-            t.add(new Image(renderingSystem.getAtlas().findRegion(s.getIcon()))).height(Measure.units(5f)).width(Measure.units(5f)).padRight(Measure.units(1.5f));
-
-
-            t.add(new Label(s.getName(), uiSkin)).width(Measure.units(15f)).padRight(Measure.units(1.5f));
-
-            Label skillDescription = new Label(s.getDescription(), uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
-            skillDescription.setWrap(true);
-            skillDescription.setAlignment(Align.center);
-
-            t.add(skillDescription).width(Measure.units(55f)).padRight(Measure.units(1.5f));
-            BuyButton buyButton = new BuyButton("Buy ($" + s.getStorePrice() + ")", uiSkin, s, s.getStorePrice());
-            t.add(buyButton).expandX();
-        }*/
-
-        return shopItemPane;
-
-    }
-
-
-    public void updateBuyTable(){
-
+        buyTable.add(description).height(Measure.units(5f)).width(stageUIRenderingSystem.stage.getWidth()).align(Align.center).expandY();
+        buyTable.row();
+        buyTable.add(buyButtonStack).height(Measure.units(7.5f)).width(Measure.units(15f));
 
 
 

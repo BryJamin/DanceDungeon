@@ -41,12 +41,38 @@ import java.util.UUID;
 public class Skill {
 
     public enum Targeting {Ally, Melee, Self, FreeAim, StraightShot}
-
     public enum ActionType {UsesMoveAndAttackAction, UsesAttackAction, UsesMoveAction, Free}
-
     public enum SpellAnimation {Projectile, Slash, Glitter, Thrown}
-
     public enum AttackType {Heal, HealOverTime, Damage, Burn}
+    public enum SpellCoolDown {NoCoolDown, OverTime, Limited}
+    private transient String skillId = UUID.randomUUID().toString();
+    private String name = "N/A";
+    private String description = "N/A";
+    private String icon = TextureStrings.BLOCK;
+    private int uses = 2;
+    private int coolDown = 2;
+    private int coolDownTracker = 0;
+    private int push = 0;
+    private int stun = 0;
+    private int storePrice = 1;
+    private boolean purchasable = true;
+    private int baseDamage = 1;
+    //Min and Max Range only affects certain skills
+    private int minRange = 1;
+    private int maxRange = 1;
+    public Skill affectedAreaSkill;
+    public Coordinates[] affectedAreas = new Coordinates[]{};
+
+
+
+    public static final int MAX_MAX_RANGE = 10; //Maximum range possible for a skill. To avoid counting
+
+    private Targeting targeting = Targeting.Melee;
+    private ActionType actionType = ActionType.UsesMoveAndAttackAction;
+    private SpellAnimation spellAnimation = SpellAnimation.Projectile;
+    private AttackType attackType = AttackType.Damage;
+    private SpellCoolDown spellCoolDown = SpellCoolDown.NoCoolDown;
+    private SpellEffect[] spellEffects;
 
     public enum SpellEffect {
         Stun, OnFire, Dodge, Armor;
@@ -66,60 +92,7 @@ public class Skill {
 
     }
 
-    public enum SpellCoolDown {NoCoolDown, OverTime, Limited}
-
-
-    private String name = "N/A";
-    private String description = "N/A1";
-    private String icon = TextureStrings.BLOCK;
-    private int uses = 2;
-    private int coolDown = 2;
-    private int coolDownTracker = 0;
-    private int push = 0;
-    private int stun = 0;
-
-    private transient String skillId = UUID.randomUUID().toString();
-
-
-    private int storePrice = 1;
-
-    private boolean purchasable = true;
-
-    private int baseDamage = 1;
-
-    //Min and Max Range only affects certain skills
-    private int minRange = 1;
-    private int maxRange = 1;
-
-    public Skill affectedAreaSkill;
-    public Coordinates[] affectedAreas = new Coordinates[]{};
-
-    public static final int MAX_MAX_RANGE = 10; //Maximum range possible for a skill. To avoid counting
-
-    private Targeting targeting = Targeting.Melee;
-    private ActionType actionType = ActionType.UsesMoveAndAttackAction;
-    private SpellAnimation spellAnimation = SpellAnimation.Projectile;
-    private AttackType attackType = AttackType.Damage;
-    private SpellCoolDown spellCoolDown = SpellCoolDown.NoCoolDown;
-    private SpellEffect[] spellEffects;
-
-    public Skill(){
-
-        name = "N/A";
-        description = "N/A";
-        icon = TextureStrings.BLOCK;
-        targeting = Targeting.StraightShot;
-        actionType = ActionType.UsesMoveAndAttackAction;
-        spellAnimation = SpellAnimation.Projectile;
-        attackType = AttackType.Burn;
-        spellEffects = new SpellEffect[]{};
-        spellCoolDown = SpellCoolDown.NoCoolDown;
-        this.coolDown = 1;
-        push = 0;
-        baseDamage = 1;
-        minRange = 1;
-        maxRange = 1;
-    }
+    public Skill(){ }
 
     public Skill (Skill s){
         this.name = s.name;

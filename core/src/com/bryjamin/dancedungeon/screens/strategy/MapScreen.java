@@ -23,7 +23,6 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.ScaleTransformationSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdateBoundPositionsSystem;
 import com.bryjamin.dancedungeon.ecs.systems.input.MapInputSystem;
-import com.bryjamin.dancedungeon.ecs.systems.strategy.EventGenerationSystem;
 import com.bryjamin.dancedungeon.ecs.systems.strategy.MapNodeSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.InformationBannerSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.MapScreenUISystem;
@@ -61,8 +60,6 @@ public class MapScreen extends AbstractScreen {
                 .with(WorldConfigurationBuilder.Priority.HIGHEST,
 
                         //Initialization Systems
-
-                        new EventGenerationSystem(),
                         new MapNodeSystem(game, gameMap, partyDetails),
 
                         new PlayerPartyManagementSystem(partyDetails),
