@@ -35,7 +35,7 @@
     "targeting": "Melee",
     "minRange": 1,
     "maxRange": 3,
-    "spellAnimation": "Projectile",
+    "spellAnimation": "Thrown",
     "attackType": "Damage",
     "purchasable": false
   }

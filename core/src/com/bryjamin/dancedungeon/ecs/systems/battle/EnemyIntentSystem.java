@@ -190,7 +190,9 @@ public class EnemyIntentSystem extends EntitySystem implements Observer{
                                 .build()))
                 .add(new HitBoxComponent(new HitBox(r)))
                 .add(new CenteringBoundComponent())
-                .add(new FadeComponent(new FadeComponent.FadeBuilder().endless(true).minAlpha(0.5f).maximumTime(2f)))
+                .add(new FadeComponent(new FadeComponent.FadeBuilder()
+                        .minAlpha(0.5f)
+                        .maximumTime(2f)))
                 .add(new EnemyIntentComponent());
 
         return e;

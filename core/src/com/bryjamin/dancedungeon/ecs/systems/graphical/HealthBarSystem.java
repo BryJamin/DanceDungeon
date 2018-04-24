@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
+import com.bryjamin.dancedungeon.assets.Colors;
 import com.bryjamin.dancedungeon.assets.FileStrings;
 import com.bryjamin.dancedungeon.assets.Fonts;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
@@ -50,8 +51,8 @@ public class HealthBarSystem extends EntityProcessingSystem {
     private final float redHealthBarSpeed = Measure.units(80f);
 
     private Color bottomBarColor = new Color(Color.BLACK);
-    private Color middleBarColor = new Color(Color.WHITE);
-    private Color topBarColor = new Color(Color.RED);
+    private Color middleBarColor = new Color(Color.RED);
+    private Color topBarColor = new Color(Colors.HEATH_BAR_COLOR);
 
     private Color healthTextColor = new Color(Color.WHITE);
 
@@ -246,8 +247,8 @@ public class HealthBarSystem extends EntityProcessingSystem {
         public float redHealthBarLength;
         public float whiteHealthBarLength;
 
-        public float whiteHealthBarTimer = 0.5f;
-        public final float whiteHealthBarResetTimer = 0.5f;
+        public float whiteHealthBarTimer = 0.35f;
+        public final float whiteHealthBarResetTimer = 0.35f;
 
         public float fadeTimer;
         public final float fadeTimerResetTime = 1.5f;
