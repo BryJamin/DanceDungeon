@@ -121,8 +121,10 @@ public class TileSystem extends EntitySystem {
                         switch (property){
                             case "Wall":
                                 unitFactory.baseTileBag(world, new Coordinates(i, j));
+                                break;
                             case "Ally":
                                 unitFactory.baseAlliedTileBag(world, new Coordinates(i, j));
+                                break;
                         }
                     }
                 } else { //Create a deployment zone depending on
@@ -491,6 +493,10 @@ public class TileSystem extends EntitySystem {
 
     public Rectangle getCellDimensions(){
         return new Rectangle(0,0, tileWidthSize, tileHeightSize);
+    }
+
+    public float getMinimumCellSize(){
+        return tileHeightSize > tileWidthSize ? tileWidthSize : tileHeightSize;
     }
 
 

@@ -36,6 +36,10 @@ public class Colors {
     public static final Color BLOB_RED = RGBtoColor(241f, 53f, 53f, 1);
 
 
+    public static final Color ENEMY_INTENT_ARROW_COLOR = RGBtoColor(255f, 0f, 0f, 1);;
+    public static final Color ENEMY_INTENT_HIGHLIGHT_BOX_COLOR = RGBtoColor(139, 0f, 0f, 1); //RGBtoColor(255f, 0f, 0f, 1);
+
+
     public static Color RGBtoColor(float r, float g, float b, float a){
         return new Color(r / 255f, g / 255f, b / 255f, a);
     }

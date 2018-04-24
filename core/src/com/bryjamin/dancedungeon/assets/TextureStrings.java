@@ -33,6 +33,7 @@ public class TextureStrings {
     public static final String ICON_COMBAT = "icons/icon_combat";
     public static final String ICON_REST = "icons/icon_rest";
     public static final String ICON_MONEY = "icons/icon_money";
+    public static final String ICON_ARROW = "icons/arrow";
 
 
     public static final String ICON_WARNING = "icons/warning";

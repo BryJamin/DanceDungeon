@@ -7,8 +7,10 @@ import com.artemis.EntitySystem;
 import com.artemis.utils.IntBag;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.Observer;
+import com.bryjamin.dancedungeon.assets.Colors;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
@@ -17,10 +19,13 @@ import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.StoredSkillComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.ScaleTransformationComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyIntentComponent;
 import com.bryjamin.dancedungeon.factories.spells.TargetingFactory;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.enums.Direction;
+import com.bryjamin.dancedungeon.utils.math.CenterMath;
+import com.bryjamin.dancedungeon.utils.math.CoordinateMath;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
@@ -86,8 +91,6 @@ public class EnemyIntentSystem extends EntitySystem implements Observer{
                         Array<Coordinates> coordinatesArray = new Array<Coordinates>();
 
 
-
-
                         if(stored.getX() < storedTarget.getX() && stored.getY() == storedTarget.getY()){
                             coordinatesArray = tileSystem.getFreeCoordinateInAGivenDirection(coordinates, new Direction[]{Direction.RIGHT});
                         } else if(stored.getX() > storedTarget.getX() && stored.getY() == storedTarget.getY()){
@@ -122,10 +125,12 @@ public class EnemyIntentSystem extends EntitySystem implements Observer{
                     }
 
                     Rectangle r = tileSystem.getRectangleUsingCoordinates(storedSkillComponent.storedTargetCoordinates);
+                    Rectangle currentR = tileSystem.getRectangleUsingCoordinates(storedSkillComponent.storedCoordinates);
 
-                    if(r != null){ //This exists incase an enemies intent is pushed outside the bounds of the maps
+                    if(r != null && currentR != null){ //This exists incase an enemies intent is pushed outside the bounds of the maps
                         //TODO decide what to do in this situation.
                         Entity highlight = enemyIntentBox(r);
+                        entityUIArrow(currentR, CoordinateMath.getDirectionOfCoordinate(storedSkillComponent.storedCoordinates, storedSkillComponent.storedTargetCoordinates));
                     }
             }
 
@@ -179,7 +184,7 @@ public class EnemyIntentSystem extends EntitySystem implements Observer{
         e.edit().add(new PositionComponent(r.x, r.y))
                 .add(new DrawableComponent(Layer.BACKGROUND_LAYER_MIDDLE,
                         new TextureDescription.Builder(TextureStrings.ICON_WARNING)
-                                .color(new Color(Color.RED.r, Color.RED.g, Color.RED.b, 1f))
+                                .color(new Color(Colors.ENEMY_INTENT_HIGHLIGHT_BOX_COLOR))
                                 .width(r.getWidth())
                                 .height(r.getHeight())
                                 .build()))
@@ -189,6 +194,47 @@ public class EnemyIntentSystem extends EntitySystem implements Observer{
                 .add(new EnemyIntentComponent());
 
         return e;
+    }
+
+
+    private Entity entityUIArrow(Rectangle r, Direction d){
+
+        float arrowSize = tileSystem.getMinimumCellSize() * 0.25f;
+
+        Vector2 center = r.getCenter(new Vector2());
+
+        Entity e = world.createEntity();
+
+        float x = CenterMath.centerOnPositionX(arrowSize, center.x);
+        float y = CenterMath.centerOnPositionY(arrowSize, center.y);
+
+        float ratio = 0.45f;
+
+        float offsetX = (d == Direction.RIGHT || d == Direction.LEFT) ?
+                ((d == Direction.RIGHT) ? r.getWidth() * ratio : r.getWidth() * -ratio) : 0;
+        float offsetY = (d == Direction.UP || d == Direction.DOWN) ?
+                ((d == Direction.UP) ? r.getHeight() * ratio : r.getHeight() * -ratio) : 0;
+
+
+        double rotation = (d == Direction.RIGHT || d == Direction.LEFT) ?
+                (d == Direction.RIGHT ? 270 : 90) :
+                (d == Direction.UP ? 0 : 180);
+
+        e.edit().add(new PositionComponent(x + offsetX, y + offsetY))
+                .add(new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE,
+                        new TextureDescription.Builder(TextureStrings.ICON_ARROW)
+                                .color(new Color(Colors.ENEMY_INTENT_ARROW_COLOR))
+                                .rotation(rotation)
+                                .size(arrowSize)
+                                .build()))
+                .add(new HitBoxComponent(new HitBox(r)))
+                .add(new CenteringBoundComponent())
+                .add(new ScaleTransformationComponent(1f, 1.3f, 1.3f))
+                .add(new EnemyIntentComponent());
+
+
+        return e;
+
     }
 
 

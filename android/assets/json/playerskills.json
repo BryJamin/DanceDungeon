@@ -73,6 +73,7 @@
     "attackType": "Damage",
     "affectedAreaSkill": {
       "push": 1,
+      "baseDamage": 0,
       "spellAnimation": "Projectile"
     },
     "affectedAreas": [

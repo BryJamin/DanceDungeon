@@ -157,4 +157,17 @@ public class CoordinateMath {
 
     }
 
+
+    /**
+     * Finds in what direction Coordinate two lies in regards to Coordinate one.
+     * @return
+     */
+    public static Direction getDirectionOfCoordinate(Coordinates c1, Coordinates c2){
+        if(c1.getX() == c2.getX()){
+            return c1.getY() > c2.getY() ? Direction.DOWN : Direction.UP;
+        } else {
+            return c1.getX() > c2.getX() ? Direction.LEFT : Direction.RIGHT;
+        }
+    }
+
 }
