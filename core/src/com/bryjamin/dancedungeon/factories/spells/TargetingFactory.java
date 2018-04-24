@@ -152,64 +152,6 @@ public class TargetingFactory {
 
     }
 
-    public Array<Entity> createStraightShotTargetTiles(World world, Entity player, Skill skill) {
-
-        Array<Entity> entityArray = new Array<Entity>();
-
-        Coordinates current = player.getComponent(CoordinateComponent.class).coordinates;
-
-        OrderedMap<Coordinates, Array<Entity>> om = world.getSystem(TileSystem.class).getCoordinateMap();
-
-        //Most Left
-        Direction[] d = {Direction.DOWN, Direction.UP, Direction.LEFT, Direction.RIGHT};
-
-
-        for(int i = 0; i < d.length; i++) {
-
-            Coordinates shotCoords = new Coordinates(current);
-            increaseCoordinatesByOneUsingDirection(d[i], shotCoords, current);
-
-            Coordinates future = new Coordinates();
-
-
-            while (true) {
-
-                if(om.get(shotCoords) == null){
-                    break;
-                } else if (om.get(shotCoords).size > 0) {
-                    entityArray.add(createTargetingBox(world, player, shotCoords, skill, true));
-                    break;
-                } else {
-
-                    increaseCoordinatesByOneUsingDirection(d[i], future, shotCoords);
-
-                    if (!om.containsKey(future)) {
-
-                        boolean b = (d[i] == Direction.DOWN || d[i] == Direction.UP) ? Math.abs(future.getY() - current.getY()) > 1 : Math.abs(future.getX() - current.getX()) > 1;
-
-                        if (b) {
-                            entityArray.add(createTargetingBox(world, player, shotCoords, skill, true));
-                        }
-                        break;
-                    } else {
-                        entityArray.add(whiteSquareMarker(world, shotCoords));
-                        shotCoords.set(future);
-                    }
-
-                }
-
-            }
-
-        }
-
-
-        return entityArray;
-
-
-
-    }
-
-
 
     public Array<Entity> createWhiteTargetingMarkers(World world, Coordinates unitCoords, Coordinates target){
 

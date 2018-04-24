@@ -37,7 +37,7 @@ public class Colors {
 
 
     public static final Color ENEMY_INTENT_ARROW_COLOR = RGBtoColor(255f, 0f, 0f, 1);;
-    public static final Color ENEMY_INTENT_HIGHLIGHT_BOX_COLOR = RGBtoColor(139, 0f, 0f, 1); //RGBtoColor(255f, 0f, 0f, 1);
+    public static final Color ENEMY_INTENT_HIGHLIGHT_BOX_COLOR = RGBtoColor(255, 69, 0f, 1); //RGBtoColor(255f, 0f, 0f, 1);
 
 
     public static final Color HEATH_BAR_COLOR = RGBtoColor(50,205,50, 1); //RGBtoColor(255f, 0f, 0f, 1);

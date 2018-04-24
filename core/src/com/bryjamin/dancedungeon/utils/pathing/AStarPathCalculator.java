@@ -15,7 +15,7 @@ import java.util.Comparator;
 public class AStarPathCalculator {
 
     public Array<Coordinates> unavailableCoordinates = new Array<Coordinates>();
-    public Array<Coordinates> availableCoordinates = new Array<Coordinates>();
+    public Array<Coordinates> availableCoordinates = new Array<>();
 
     //Coordinates occupied by allies
     public Array<Coordinates> alliedCoordinates = new Array<Coordinates>();
@@ -44,6 +44,8 @@ public class AStarPathCalculator {
         this.availableCoordinates = availableCoordinates;
         this.unavailableCoordinates = unavailableCoordinates;
     }
+
+
 
     public AStarPathCalculator(Array<Coordinates> availableCoordinates, Array<Coordinates> unavailableCoordinates, Array<Coordinates> alliedCoordinates){
         this.availableCoordinates = availableCoordinates;
@@ -83,7 +85,7 @@ public class AStarPathCalculator {
         queueArray.sort(new Comparator<Queue<Coordinates>>() {
             @Override
             public int compare(Queue<Coordinates> q1, Queue<Coordinates> q2) {
-                return q1.size < q2.size ? -1 : q1.size == q2.size ? 0 : 1;
+                return Integer.compare(q1.size, q2.size);
             }
         });
 

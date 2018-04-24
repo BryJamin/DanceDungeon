@@ -95,12 +95,12 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
 
         if (world.getSystem(TileSystem.class).getOccupiedMap().containsValue(c, false)) {
 
-            Entity selected = world.getSystem(TileSystem.class).getOccupiedMap().findKey(c, false);
+            Entity selected = world.getSystem(TileSystem.class).getOccupiedMap().getKey(c, false);
 
             if(turnMapper.has(selected)) {
 
                 if (selected.getComponent(TurnComponent.class).hasActions()) {//TODO you can't select a character if it has no actions left
-                    world.getSystem(TileSystem.class).getOccupiedMap().findKey(c, false).edit().add(new SelectedEntityComponent());
+                    world.getSystem(TileSystem.class).getOccupiedMap().getKey(c, false).edit().add(new SelectedEntityComponent());
                 }
                 return true;
             }

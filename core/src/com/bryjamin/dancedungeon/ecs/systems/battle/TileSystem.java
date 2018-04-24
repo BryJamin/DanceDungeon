@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.Queue;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
@@ -46,6 +47,7 @@ public class TileSystem extends EntitySystem {
 
 
     private ComponentMapper<PlayerControlledComponent> pcm;
+    private ComponentMapper<CoordinateComponent> cm;
     private ComponentMapper<SolidComponent> sm;
     private ComponentMapper<EnemyComponent> enemym;
 
@@ -68,20 +70,17 @@ public class TileSystem extends EntitySystem {
     private float tileWidthSize;
     private float tileHeightSize;
 
-
-    private Array<Rectangle> movementRectangles = new Array<Rectangle>();
-
     private Array<Coordinates> enemySpawningLocations = new Array<Coordinates>();
     private Array<Coordinates> allySpawningLocations = new Array<Coordinates>();
 
     //Map for all spaces
-    private OrderedMap<Coordinates, Array<Entity>> coordinateMap = new OrderedMap<Coordinates, Array<Entity>>();
+    private OrderedMap<Coordinates, Array<Entity>> coordinateMap = new OrderedMap<>();
 
     private OrderedMap<Entity, Coordinates> playerControlledMap = new OrderedMap<Entity, Coordinates>();
     private OrderedMap<Entity, Coordinates> enemyMap = new OrderedMap<Entity, Coordinates>();
 
     //Map used to show if a space is occupied
-    private OrderedMap<Entity, Coordinates> occupiedMap = new OrderedMap<Entity, Coordinates>();
+    private ArrayMap<Entity, Coordinates> occupiedMap = new ArrayMap<>();
 
     private OrderedMap<Coordinates, Rectangle> rectangleMap = new OrderedMap<Coordinates, Rectangle>();
 
@@ -176,7 +175,7 @@ public class TileSystem extends EntitySystem {
 
 
 
-    public OrderedMap<Entity, Coordinates> getOccupiedMap() {
+    public ArrayMap<Entity, Coordinates> getOccupiedMap() {
         return occupiedMap;
     }
 
@@ -227,17 +226,20 @@ public class TileSystem extends EntitySystem {
     }
 
 
+    /**
+     * Adds a given entity to the relevant maps.
+     */
     private void addEntityToMaps(Entity e, Coordinates coordinates) {
 
-        if(sm.has(e)) {
+        if(sm.has(e)) { //'Solid' entities are tracked in the occupied map
             occupiedMap.put(e, coordinates);
         }
 
-        if(coordinateMap.get(coordinates) != null) {
+        if(coordinateMap.get(coordinates) != null) {//Coordinate map tracks all entities in the coordinate
             coordinateMap.get(coordinates).add(e);
         }
 
-        if (pcm.has(e)) playerControlledMap.put(e, coordinates);
+        if (pcm.has(e)) playerControlledMap.put(e, coordinates); //Player and Enemy maps
         if (enemym.has(e)) enemyMap.put(e, coordinates);
 
     }
@@ -248,9 +250,14 @@ public class TileSystem extends EntitySystem {
 
         CoordinateComponent coordinateComponent = e.getComponent(CoordinateComponent.class);
 
-        if (occupiedMap.containsValue(e.getComponent(CoordinateComponent.class).coordinates, false) || !coordinateMap.containsKey(coordinateComponent.coordinates)) {
-            if (!relocateEntity(e))
-                e.deleteFromWorld(); //TODO decide what to do if a there is no space to place something
+
+        if(sm.has(e)){ //If the entity is 'solid' it can not be placed on top up another entity.
+            if (occupiedMap.containsValue(e.getComponent(CoordinateComponent.class).coordinates, false) || !coordinateMap.containsKey(coordinateComponent.coordinates)) {
+                if (!relocateEntity(e))
+                    e.deleteFromWorld(); //TODO decide what to do if a there is no space to place something
+            } else {
+                addEntityToMaps(e, coordinateComponent.coordinates);
+            }
         } else {
             addEntityToMaps(e, coordinateComponent.coordinates);
         }
@@ -261,24 +268,20 @@ public class TileSystem extends EntitySystem {
     }
 
 
-    public void updateCoordinates(Entity e) {
+    /**
+     * Uses the bounds of an entity to update their co-ordinates
+     * @param e
+     */
+    private void updateCoordinates(Entity e) {
 
-        CoordinateComponent coordinateComponent = e.getComponent(CoordinateComponent.class);
-
-/*
-        occupiedMap.remove(coordinateComponent.coordinates);
-        coordinateMap.get(coordinateComponent.coordinates).removeValue(e, true);
-
-        if (pcm.has(e)) playerControlledMap.remove(coordinateComponent.coordinates);
-        if(enemym.has(e)) enemyMap.remove(coordinateComponent.coordinates);*/
-
+        CoordinateComponent coordinateComponent = cm.get(e);
         CenteringBoundComponent centeringBoundComponent = e.getComponent(CenteringBoundComponent.class);
 
-        //coordinateComponent.coordinates = getCoordinatesUsingPosition(centeringBoundComponent.bound);
+        Vector2 center = centeringBoundComponent.bound.getCenter(new Vector2());
 
         coordinateComponent.coordinates = getCoordinatesUsingPosition(
-                centeringBoundComponent.bound.getCenter(new Vector2()).x,
-                centeringBoundComponent.bound.getCenter(new Vector2()).y);
+                center.x,
+                center.y);
 
         addEntityToMaps(e, coordinateComponent.coordinates);
     }
@@ -315,7 +318,7 @@ public class TileSystem extends EntitySystem {
 
     }
 
-    public Vector3 getPositionUsingCoordinates(int cX, int cY, Rectangle rectangle) {
+    private Vector3 getPositionUsingCoordinates(int cX, int cY, Rectangle rectangle) {
 
         float x = originX + (cX * tileWidthSize);
         float y = originY + (cY * tileHeightSize);
@@ -384,10 +387,14 @@ public class TileSystem extends EntitySystem {
 
         } else { //TODO what to with walls and etc? If there even are walls.
 
+            Array<Coordinates> c = new Array<>();
+            c.addAll(occupiedMap.values);
+
+
 
             aStarPathCalculator = new AStarPathCalculator(
                     coordinateMap.keys().toArray(),
-                    occupiedMap.values().toArray(),
+                    new Array<>(occupiedMap.values),
                     enemyMap.values().toArray());
         }
         return aStarPathCalculator.findShortestPathMultipleChoice(fillQueue,

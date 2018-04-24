@@ -348,7 +348,7 @@ public class Skill {
                             //System.out.println(skillId);
 
                             world.getSystem(ActionQueueSystem.class).createDamageApplicationAction(e, 1); //Push damage is one.
-                            world.getSystem(ActionQueueSystem.class).createDamageApplicationAction(tileSystem.getOccupiedMap().findKey(pushCoords, false), 1);
+                            world.getSystem(ActionQueueSystem.class).createDamageApplicationAction(tileSystem.getOccupiedMap().getKey(pushCoords, false), 1);
 
                             break;
                         }
