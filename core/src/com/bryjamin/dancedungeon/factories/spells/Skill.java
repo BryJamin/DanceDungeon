@@ -55,6 +55,7 @@ public class Skill {
     private int push = 0;
     private int stun = 0;
     private int storePrice = 1;
+    private int sellPrice = 1;
     private boolean purchasable = true;
     private int baseDamage = 1;
     //Min and Max Range only affects certain skills
@@ -455,6 +456,10 @@ public class Skill {
 
     public int getStorePrice() {
         return storePrice;
+    }
+
+    public int getSellPrice() {
+        return sellPrice;
     }
 
     private void setTurnComponentActionBoolean(ActionType actionType, TurnComponent turnComponent) {

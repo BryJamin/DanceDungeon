@@ -3,6 +3,7 @@ package com.bryjamin.dancedungeon.screens.battle;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
+import com.bryjamin.dancedungeon.factories.spells.SkillLibrary;
 
 
 /**
@@ -27,6 +28,12 @@ public class PartyDetails {
     private Array<Skill> skillInventory = new Array<Skill>();
 
     public PartyDetails(){
+
+        skillInventory.add(SkillLibrary.getSkill(SkillLibrary.SKILL_HEAVY_STRIKE));
+        skillInventory.add(SkillLibrary.getSkill(SkillLibrary.SKILL_HEAVY_STRIKE));
+        skillInventory.add(SkillLibrary.getSkill(SkillLibrary.SKILL_HEAVY_STRIKE));
+        skillInventory.add(SkillLibrary.getSkill(SkillLibrary.SKILL_HEAVY_STRIKE));
+
        // skillInventory.add(new StunStrike());
     }
 
