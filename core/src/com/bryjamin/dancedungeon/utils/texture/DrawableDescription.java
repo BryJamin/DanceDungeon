@@ -118,6 +118,7 @@ public abstract class DrawableDescription {
         public T color(Color val) {
             color = val;
             resetColor = val;
+            alpha = color.a;
             return getThis();
         }
 

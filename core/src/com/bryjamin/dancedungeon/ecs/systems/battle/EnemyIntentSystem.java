@@ -149,7 +149,6 @@ public class EnemyIntentSystem extends EntitySystem implements Observer{
 
     public void updateIntent(){
         processingFlag = true;
-        System.out.println("Update Intent called");
     }
 
 
@@ -242,7 +241,6 @@ public class EnemyIntentSystem extends EntitySystem implements Observer{
 
     @Override
     public void update(Object o) {//The Intent system watches both the turn and action camera system to decide when to update itself
-        System.out.println("Notify");
         updateIntent();
     }
 }

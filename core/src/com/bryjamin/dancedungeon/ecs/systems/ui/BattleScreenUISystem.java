@@ -6,7 +6,6 @@ import com.artemis.Entity;
 import com.artemis.utils.IntBag;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -100,6 +99,9 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
     private Table skillInformationTable;
     private Table characterProfileTable;
     private Table objectivesTable;
+    private Table objectivesAndButtonContainer;
+
+
     private ButtonGroup<Button> skillButtonButtonGroup = new ButtonGroup<>();
 
     private static final float BOTTOM_TABLE_HEIGHT = Measure.units(13.5f) - Padding.SMALL;
@@ -172,7 +174,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
             public void changed(ChangeEvent event, Actor actor) {
                 areYouSureContainer.setVisible(false);
                 turnSystem.endAllyTurn();
-                reset();
+                resetBottomContainer();
             }
         });
 
@@ -216,41 +218,52 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
         bottomContainer.setVisible(false);
         applyNinePathToTable(bottomContainer);
         bottomContainer.add(characterProfileTable).padBottom(Padding.SMALL);
-
         populateBottomContainer();
 
 
-        objectivesTable = new Table(uiSkin);
-        objectivesTable.setWidth(Measure.units(35f));
-        objectivesTable.setHeight(Measure.units(27.5f));
-        objectivesTable.setPosition(stage.getWidth() - Measure.units(37.5f), Measure.units(25f));
-        objectivesTable.setBackground(new NinePatchDrawable(NinePatches.getBorderPatch(renderingSystem.getAtlas())));
-        objectivesTable.setDebug(StageUIRenderingSystem.DEBUG);
-
+        objectivesAndButtonContainer = new Table();
+        objectivesAndButtonContainer.setWidth(Measure.units(35f));
+        objectivesAndButtonContainer.setHeight(Measure.units(27.5f));
+        objectivesAndButtonContainer.setPosition(stage.getWidth() - Measure.units(37.5f), Measure.units(22.5f));
+        populateObjectivesAndButtons();
 
         skillButtonButtonGroup.setMinCheckCount(0);
         skillButtonButtonGroup.setMaxCheckCount(1);
         skillButtonButtonGroup.setUncheckLast(true);
 
-        endTurn = new TextButton("End Turn", uiSkin);
+
+        stage.addActor(objectivesAndButtonContainer);
+        stage.addActor(bottomContainer);
+        stage.addActor(areYouSureContainer);
 
 
+    }
+
+
+    private void populateObjectivesAndButtons(){
+
+        objectivesAndButtonContainer.clear();
+
+        objectivesTable = new Table(uiSkin);
+        //objectivesTable.setHeight(Measure.units(27.5f));
+        objectivesTable.setBackground(new NinePatchDrawable(NinePatches.getBorderPatch(renderingSystem.getAtlas())));
+        objectivesTable.setDebug(StageUIRenderingSystem.DEBUG);
+
+        objectivesAndButtonContainer.add(objectivesTable).width(Measure.units(35f)).padBottom(Padding.MEDIUM);
+        objectivesAndButtonContainer.row();
+
+        endTurn = new TextButton(TextResource.BATTLE_END_TURN, uiSkin);
         endTurn.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-
                 if(turnSystem.isAllActionsComplete()){
                     turnSystem.endAllyTurn();
-                    reset();
+                    resetBottomContainer();
                 } else {
                     populateAreYouSureContainer();
                 }
             }
         });
-
-        endTurn.setPosition(stage.getWidth() - Measure.units(20f), Measure.units(15f));
-        endTurn.setWidth(Measure.units(20f));
-        endTurn.setHeight(Measure.units(7.5f));
 
         endTurn.addAction(new Action() {
             @Override
@@ -264,15 +277,8 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
             }
         });
 
-
-        stage.addActor(objectivesTable);
-        stage.addActor(endTurn);
-        stage.addActor(bottomContainer);
-        stage.addActor(areYouSureContainer);
-
-
+        objectivesAndButtonContainer.add(endTurn).width(Measure.units(20f)).height(Measure.units(7.5f)).expandX();
     }
-
 
     private void populateBottomContainer(){
 
@@ -469,8 +475,6 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
      */
     private void createSkillButton(final Entity player, final Skill skill) {
 
-        float size = Measure.units(7.5f);
-
         Stack stack = new Stack();
 
         Drawable drawable = new TextureRegionDrawable(atlas.findRegion(skill.getIcon()));
@@ -627,11 +631,10 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
         }
     }
 
-    public void reset() {
+    public void resetBottomContainer() {
         this.clearTargetingTiles();
         bottomContainer.setVisible(false);
-        skillInformationTable.setVisible(false);
-        skillInformationTable.clear();
+        populateBottomContainer();
     }
 
 }

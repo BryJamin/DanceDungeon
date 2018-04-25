@@ -88,7 +88,7 @@ public class BattleWorldInputHandlerSystem extends BaseSystem {
                     return true;
 
 
-                world.getSystem(BattleScreenUISystem.class).reset();
+                world.getSystem(BattleScreenUISystem.class).resetBottomContainer();
 
             }
 

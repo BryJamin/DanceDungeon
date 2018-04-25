@@ -45,7 +45,7 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
     @Override
     protected void process(Entity e) {
         if (!e.getComponent(TurnComponent.class).hasActions()) {
-            world.getSystem(BattleScreenUISystem.class).reset();
+            world.getSystem(BattleScreenUISystem.class).resetBottomContainer();
             e.edit().remove(SelectedEntityComponent.class);
         }
     }
@@ -58,7 +58,7 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
             for (Entity entity : this.getEntities()) {
                 entity.edit().remove(SelectedEntityComponent.class);
             }
-            world.getSystem(BattleScreenUISystem.class).reset();
+            world.getSystem(BattleScreenUISystem.class).resetBottomContainer();
         }
 
         setUpCharacter(e);
@@ -67,7 +67,7 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
     @Override
     public void removed(Entity e) {
         if (this.getEntities().size() <= 0) {
-            //world.getSystem(BattleScreenUISystem.class).reset();
+            //world.getSystem(BattleScreenUISystem.class).resetBottomContainer();
         }
     }
 

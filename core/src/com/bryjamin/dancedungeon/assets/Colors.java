@@ -36,6 +36,10 @@ public class Colors {
     public static final Color BLOB_RED = RGBtoColor(241f, 53f, 53f, 1);
 
 
+    public static final Color UI_MOVEMENT_TILE_COLOR = RGBtoColor(64, 224, 208, 0.1f); //RGBtoColor(255f, 0f, 0f, 1);
+    public static final Color UI_MOVEMENT_TILE_BORDER_COLOR = RGBtoColor(0, 255, 255, 1); //RGBtoColor(255f, 0f, 0f, 1);
+
+
     public static final Color ENEMY_INTENT_ARROW_COLOR = RGBtoColor(255f, 0f, 0f, 1);;
     public static final Color ENEMY_INTENT_HIGHLIGHT_BOX_COLOR = RGBtoColor(255, 69, 0f, 1); //RGBtoColor(255f, 0f, 0f, 1);
 

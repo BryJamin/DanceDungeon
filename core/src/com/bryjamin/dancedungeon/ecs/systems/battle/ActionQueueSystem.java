@@ -394,7 +394,7 @@ public class ActionQueueSystem extends EntitySystem {
 
 
 
-    public void createIntentAction(Entity entity){
+    public void createUpdateIntentAction(Entity entity){
 
         pushLastAction(entity, new WorldConditionalAction() {
             @Override
