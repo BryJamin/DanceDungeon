@@ -126,7 +126,7 @@ public class TargetingFactory {
 
         TileSystem tileSystem = world.getSystem(TileSystem.class);
 
-        Entity redBox = BagToEntity.bagToEntity(world.createEntity(), highlightBox(tileSystem.createRectangleUsingCoordinates(coordinates), isRed ? new Color(Color.RED) : new Color(Color.CYAN)));
+        Entity redBox = BagToEntity.bagToEntity(world.createEntity(), highlightBox(tileSystem.createRectangleUsingCoordinates(coordinates), isRed ? new Color(Colors.UI_ATTACK_TILE_COLOR) : new Color(Color.CYAN)));
 
         redBox.edit().add(new ActionOnTapComponent(new WorldAction() {
             @Override
