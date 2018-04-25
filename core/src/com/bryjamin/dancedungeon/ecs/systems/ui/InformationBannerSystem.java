@@ -1,7 +1,6 @@
 package com.bryjamin.dancedungeon.ecs.systems.ui;
 
 import com.artemis.BaseSystem;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -11,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
-import com.bryjamin.dancedungeon.Observer;
+import com.bryjamin.dancedungeon.utils.observer.Observer;
 import com.bryjamin.dancedungeon.assets.Skins;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
@@ -154,7 +153,7 @@ public class InformationBannerSystem extends BaseSystem implements Observer {
     }
 
     @Override
-    public void onNotify() {
+    public void update(Object o) {
         updateInformation();
     }
 }

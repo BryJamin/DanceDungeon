@@ -7,7 +7,7 @@ import com.artemis.EntitySystem;
 import com.artemis.utils.Bag;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.MainGame;
-import com.bryjamin.dancedungeon.Observer;
+import com.bryjamin.dancedungeon.utils.observer.Observer;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
@@ -116,7 +116,7 @@ public class EndBattleSystem extends EntitySystem implements Observer {
 
 
     @Override
-    public void onNotify() {
+    public void update(Object o) {
         //TODO, decide if notify is appropriate. Also, there is not really a reason for the state change,
 
         //UNTIL I CAN FIX TEH ACTION CAMERA SYSTEM IN REGARDS TO THE SIMULTANEOUS ATTACKS HAPPENS

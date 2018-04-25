@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.bryjamin.dancedungeon.Observer;
+import com.bryjamin.dancedungeon.utils.observer.Observer;
 import com.bryjamin.dancedungeon.assets.Colors;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
@@ -241,7 +241,7 @@ public class EnemyIntentSystem extends EntitySystem implements Observer{
 
 
     @Override
-    public void onNotify() {//The Intent system watches both the turn and action camera system to decide when to update itself
+    public void update(Object o) {//The Intent system watches both the turn and action camera system to decide when to update itself
         System.out.println("Notify");
         updateIntent();
     }

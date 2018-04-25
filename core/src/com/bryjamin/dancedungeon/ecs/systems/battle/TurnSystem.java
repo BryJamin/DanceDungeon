@@ -5,7 +5,7 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.badlogic.gdx.utils.Array;
-import com.bryjamin.dancedungeon.Observer;
+import com.bryjamin.dancedungeon.utils.observer.Observer;
 import com.bryjamin.dancedungeon.ecs.components.actions.UtilityAiComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.BuffComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
@@ -110,7 +110,7 @@ public class TurnSystem extends EntitySystem {
         battleState = STATE.NEXT_TURN;
 
         for(int i = 0; i < nextTurnObservers.size; i++){
-            nextTurnObservers.get(i).onNotify();
+            nextTurnObservers.get(i).update(this);
         }
 
     }

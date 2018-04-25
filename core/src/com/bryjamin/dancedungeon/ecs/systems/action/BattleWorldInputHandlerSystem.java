@@ -92,8 +92,6 @@ public class BattleWorldInputHandlerSystem extends BaseSystem {
 
             }
 
-            System.out.println("Over here");
-
             return false;
         }
     }

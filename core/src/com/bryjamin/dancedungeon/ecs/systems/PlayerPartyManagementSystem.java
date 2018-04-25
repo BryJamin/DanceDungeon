@@ -2,8 +2,7 @@ package com.bryjamin.dancedungeon.ecs.systems;
 
 import com.artemis.BaseSystem;
 import com.badlogic.gdx.utils.Array;
-import com.bryjamin.dancedungeon.Observer;
-import com.bryjamin.dancedungeon.ecs.systems.ui.InformationBannerSystem;
+import com.bryjamin.dancedungeon.utils.observer.Observer;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
 
 
@@ -43,7 +42,7 @@ public class PlayerPartyManagementSystem extends BaseSystem {
 
     public void notifyObservers(){
         for(Observer o : observerArray){
-            o.onNotify();
+            o.update(this);
         }
     }
 

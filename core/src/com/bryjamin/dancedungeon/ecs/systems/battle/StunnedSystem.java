@@ -4,14 +4,10 @@ import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
-import com.bryjamin.dancedungeon.Observer;
+import com.bryjamin.dancedungeon.utils.observer.Observer;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StunnedComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.StoredSkillComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyIntentComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 
 /**
  * System used to track when a unit gets stunned.
@@ -67,16 +63,9 @@ public class StunnedSystem extends EntitySystem implements Observer{
         return super.checkProcessing();
     }
 
+
     @Override
-    public void onNotify() {
-
-/*
-        if(this.getEntities().size() == 0) {
-            processingFlag = false;
-            return;
-        }
-*/
-
+    public void update(Object o) {
         for(Entity e : this.getEntities()){
             StatComponent statComponent = e.getComponent(StatComponent.class);
             statComponent.stun--;
@@ -88,8 +77,6 @@ public class StunnedSystem extends EntitySystem implements Observer{
             }
 
         }
-
-
-
     }
+
 }

@@ -36,12 +36,12 @@ public class CompleteWithinObjective extends AbstractObjective {
         return false;
     }
 
+
     @Override
-    public void onNotify() {
+    public void update(Object o) {
         rounds--;
         if(rounds < 0) rounds = 0;
-
-        super.onNotify();
+        super.update(o);
     }
 
     @Override

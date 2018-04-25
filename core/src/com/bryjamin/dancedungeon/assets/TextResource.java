@@ -15,6 +15,10 @@ public class TextResource {
     public static final String TARGETING_NO_TARGETS_IN_RANGE = "No targets are in range";
 
 
+    public static final String BATTLE_OBJECTIVES = "Objectives";
+    public static final String BATTLE_BONUS = "Bonus";
+
+
 
 
 

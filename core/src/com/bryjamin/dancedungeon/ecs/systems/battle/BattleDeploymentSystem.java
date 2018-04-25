@@ -1,13 +1,9 @@
 package com.bryjamin.dancedungeon.ecs.systems.battle;
 
 import com.artemis.Aspect;
-import com.artemis.BaseSystem;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.artemis.World;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -17,7 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.MainGame;
-import com.bryjamin.dancedungeon.Observer;
+import com.bryjamin.dancedungeon.assets.NinePatches;
 import com.bryjamin.dancedungeon.assets.Padding;
 import com.bryjamin.dancedungeon.assets.Skins;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
@@ -25,7 +21,6 @@ import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.DeploymentComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
 import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
@@ -39,8 +34,10 @@ import com.bryjamin.dancedungeon.factories.player.UnitMap;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
-import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
+import com.bryjamin.dancedungeon.utils.observer.XObservable;
+
+import java.util.Observable;
 
 
 /**
@@ -78,7 +75,7 @@ public class BattleDeploymentSystem extends EntitySystem {
     private UnitFactory unitFactory = new UnitFactory();
     private UnitData unitToBeDeployed;
 
-    public Array<Observer> observers = new Array<Observer>();
+    public XObservable observable = new XObservable();
 
     private boolean processingFlag = true;
 
@@ -116,23 +113,20 @@ public class BattleDeploymentSystem extends EntitySystem {
         }
 
         deploymentLocations = new Array<>(tileSystem.getAllySpawningLocations());
-
         deploymentTable = new Table(uiSkin);
 
         stageUIRenderingSystem.stage.addActor(deploymentTable);
 
+        calculateUnitToBeDeployed();
         createDeploymentLocations();
 
 
     }
 
 
-    public void createDeploymentLocations() {
+    private void calculateUnitToBeDeployed(){
 
-        final PartyDetails partyDetails = playerPartyManagementSystem.getPartyDetails();
-
-
-        //Get PartyDetails
+        PartyDetails partyDetails = playerPartyManagementSystem.getPartyDetails();
 
         for (int i = 0; i < deployedArray.length; i++) {
             //Checks if the unit has already been deployed, or has the health to be deployed.
@@ -148,9 +142,10 @@ public class BattleDeploymentSystem extends EntitySystem {
             }
         }
 
-        if(unitToBeDeployed != null) {
-            updateDeploymentTable(unitToBeDeployed);
-        }
+    }
+
+
+    public void createDeploymentLocations() {
 
         for (final Coordinates c : deploymentLocations) {
             Entity e = unitFactory.baseDeploymentZone(world, tileSystem.createRectangleUsingCoordinates(c), c);
@@ -167,9 +162,14 @@ public class BattleDeploymentSystem extends EntitySystem {
                         deploymentLocations.removeValue(c, false);
 
                         if (!deployedArray[deployedArray.length - 1]) { //If all units have been deployed, exit this system
+
+                            observable.notifyObservers(world.getSystem(BattleDeploymentSystem.class));
+
+                            calculateUnitToBeDeployed();
                             createDeploymentLocations();
                         } else {
                             processingFlag = false;
+                            observable.notifyObservers(world.getSystem(BattleDeploymentSystem.class));
                             turnSystem.setProcessingFlag(true);
                             deploymentTable.remove();
                         }
@@ -196,7 +196,7 @@ public class BattleDeploymentSystem extends EntitySystem {
         deploymentTable.setHeight(Measure.units(15f));
 
         NinePatch patch = new NinePatch(renderingSystem.getAtlas().findRegion(TextureStrings.BORDER), 4, 4, 4, 4);
-        deploymentTable.setBackground(new NinePatchDrawable(patch));
+        deploymentTable.setBackground(new NinePatchDrawable(NinePatches.getBorderPatch(renderingSystem.getAtlas())));
 
         deploymentTable.setPosition(0, 0);
 
@@ -218,6 +218,14 @@ public class BattleDeploymentSystem extends EntitySystem {
     @Override
     protected void processSystem() {
 
+    }
+
+    public XObservable getObservers() {
+        return observable;
+    }
+
+    public boolean isProcessingFlag() {
+        return processingFlag;
     }
 
     public boolean isProcessing() {
