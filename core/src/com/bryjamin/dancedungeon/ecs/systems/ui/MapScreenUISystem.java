@@ -640,22 +640,9 @@ public class MapScreenUISystem extends BaseSystem {
             if(es.isEquipped){
 
             } else {
-
-                Skill inventorySkill = es.skill;
-                ; //selectedCharacter.getSkillsComponent().skills.get(es.index);
-
-                if(skill != null) { //If the Equipped slot is Empty, add the New Skill into the Slot.
-
-                    selectedCharacter.getSkillsComponent().skills.set(index, inventorySkill);
-                    partyDetails.getSkillInventory().set(es.index, skill);
-                } else { //If Equipped slot is null add into the player'skill equipped.
-                    selectedCharacter.getSkillsComponent().skills.add(inventorySkill);
-                    partyDetails.getSkillInventory().removeValue(inventorySkill, true);
-                }
-
+                partyDetails.swapCharacterSkillWithInventorySkill(selectedCharacter, es.index, index);
                 updateInventoryTable(inventoryTable);
                 updateEquippedSkillTable(equippedSkillsTable, selectedCharacter);
-
             }
 
 
@@ -672,12 +659,12 @@ public class MapScreenUISystem extends BaseSystem {
 
 
         private Skill skill;
-        private int index;
+        private int inventoryIndex;
 
-        public InventoryTarget(Actor actor, Skill s, int index) {
+        public InventoryTarget(Actor actor, Skill s, int inventoryIndex) {
             super(actor);
             this.skill = s;
-            this.index = index;
+            this.inventoryIndex = inventoryIndex;
         }
 
         @Override
@@ -690,27 +677,12 @@ public class MapScreenUISystem extends BaseSystem {
 
             SkillSource es =  (SkillSource) source;
 
-            if(es.isEquipped){
-
-                Skill old = es.skill; //selectedCharacter.getSkillsComponent().skills.get(es.index);
-
-
-                if(skill != null) {
-                    selectedCharacter.getSkillsComponent().skills.set(es.index, skill);
-                    partyDetails.getSkillInventory().set(index, old);
-                } else {
-                    selectedCharacter.getSkillsComponent().skills.removeIndex(es.index);
-                    partyDetails.getSkillInventory().add(old);
-                }
-
+            if(es.isEquipped){ //If skill is equipped swap with an inventory skill
+                partyDetails.swapCharacterSkillWithInventorySkill(selectedCharacter, es.index, inventoryIndex);
                 updateInventoryTable(inventoryTable);
                 updateEquippedSkillTable(equippedSkillsTable, selectedCharacter);
 
             } else {
-
-
-
-
             }
         }
     }

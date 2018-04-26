@@ -126,7 +126,7 @@ public class EndBattleSystem extends EntitySystem implements Observer {
         if(!processingFlag) return;
 
 
-        if(playerPartyManagementSystem.getPartyDetails().morale == 0) {
+        if(playerPartyManagementSystem.getPartyDetails().getMorale() == 0) {
             ((BattleScreen) game.getScreen()).defeat();
 
             actionQueueSystem.observerArray.removeValue(this, true);

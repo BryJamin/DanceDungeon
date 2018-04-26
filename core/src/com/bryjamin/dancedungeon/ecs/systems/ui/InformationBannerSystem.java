@@ -82,13 +82,13 @@ public class InformationBannerSystem extends BaseSystem implements Observer {
 
         Table tableForMoneyIconAndText = new Table(uiSkin);
         tableForMoneyIconAndText.add(new Image(renderingSystem.getRegion(TextureStrings.ICON_MONEY))).size(Measure.units(5f));
-        Label label = new Label("" + partyDetails.money, uiSkin);
+        Label label = new Label("" + partyDetails.getMoney(), uiSkin);
         label.setAlignment(Align.center);
         tableForMoneyIconAndText.add(label);
 
         infoTable.add(tableForMoneyIconAndText).width(width);
 
-        label = new Label(String.format(Locale.ENGLISH,"Morale: %d/%d", partyDetails.morale, PartyDetails.MAX_MORALE), uiSkin);
+        label = new Label(String.format(Locale.ENGLISH,"Morale: %d/%d", partyDetails.getMorale(), PartyDetails.MAX_MORALE), uiSkin);
         label.setAlignment(Align.center);
         infoTable.add(label).width(width).align(Align.center);
 

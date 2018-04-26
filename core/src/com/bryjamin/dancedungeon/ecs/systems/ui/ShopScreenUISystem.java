@@ -116,6 +116,7 @@ public class ShopScreenUISystem extends BaseSystem {
         Stage stage = stageUIRenderingSystem.stage;
 
         container.clear();
+        updateSkillsToSellArrays();
 
         Label label = new Label("Welcome to the shop!", uiSkin);
         container.add(label).padTop(Measure.units(10f)).expandX();
@@ -489,7 +490,7 @@ public class ShopScreenUISystem extends BaseSystem {
         @Override
         public void act(float delta){
 
-            if(partyManagementSystem.getPartyDetails().money < s.getStorePrice()){
+            if(partyManagementSystem.getPartyDetails().getMoney() < s.getStorePrice()){
                 this.setDisabled(true);
                 this.setColor(Color.RED);
             } else {

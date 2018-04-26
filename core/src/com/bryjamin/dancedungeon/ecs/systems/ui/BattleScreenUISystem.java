@@ -592,17 +592,14 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
                 Label goldIncrease = new Label(" +" + reward.getValue(), uiSkin);
                 rewardTable.add(goldIncrease);
 
-                partyDetails.money += reward.getValue();
+                partyDetails.changeMoney(reward.getValue());
                 break;
             case MORALE:
-
                 Label gold = new Label("Morale", uiSkin);
                 rewardTable.add(gold);
-
                 Label reputationIncrease = new Label(" +" + reward.getValue(), uiSkin);
                 rewardTable.add(reputationIncrease);
-
-                partyDetails.morale += reward.getValue();
+                partyDetails.changeMorale(reward.getValue());
                 break;
             case SKILL_POINT:
 

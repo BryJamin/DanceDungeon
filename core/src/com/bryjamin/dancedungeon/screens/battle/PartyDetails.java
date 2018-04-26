@@ -5,6 +5,8 @@ import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.factories.spells.SkillLibrary;
 
+import java.util.Arrays;
+
 
 /**
  * Created by BB on 17/12/2017.
@@ -16,11 +18,9 @@ public class PartyDetails {
     public static int MAX_INVENTORY = 4;
     public static int PARTY_SIZE = 3;
 
-    public int money = 10;
-    public int grenades;
-    public int medicalSupplies;
+    private int money = 3;
     public int skillPoints;
-    public int morale = 5;
+    private int morale = 5;
 
     private UnitData[] party = new UnitData[PARTY_SIZE];
 
@@ -29,8 +29,8 @@ public class PartyDetails {
 
     public PartyDetails(){
 
-        skillInventory.add(SkillLibrary.getSkill(SkillLibrary.SKILL_HEAVY_STRIKE));
-        skillInventory.add(SkillLibrary.getSkill(SkillLibrary.SKILL_HEAVY_STRIKE));
+       //skillInventory.add(SkillLibrary.getSkill(SkillLibrary.SKILL_HEAVY_STRIKE));
+       // skillInventory.add(SkillLibrary.getSkill(SkillLibrary.SKILL_HEAVY_STRIKE));
         skillInventory.add(SkillLibrary.getSkill(SkillLibrary.SKILL_HEAVY_STRIKE));
         skillInventory.add(SkillLibrary.getSkill(SkillLibrary.SKILL_HEAVY_STRIKE));
 
@@ -96,4 +96,49 @@ public class PartyDetails {
 
     }
 
+
+    /**
+     * Used to swap character skills with skills in inventory.
+     * @param character - The party member
+     * @param skillIndex - The index of the Character Skill on the party member
+     * @param inventoryIndex -
+     */
+    public void swapCharacterSkillWithInventorySkill(UnitData character, int skillIndex, int inventoryIndex){
+
+        if(!Arrays.asList(party).contains(character) || inventoryIndex > MAX_INVENTORY - 1) return;
+
+
+        Array<Skill> characterSkills = character.getSkillsComponent().skills;
+
+        Skill characterSkill = (skillIndex > characterSkills.size - 1) ? null :
+                characterSkills.get(skillIndex);
+
+        Skill inventorySkill = (inventoryIndex > skillInventory.size - 1) ? null :
+                skillInventory.get(skillIndex);
+
+
+        if(characterSkill != null && inventorySkill != null){//Swap if both slots have Skills
+            characterSkills.set(skillIndex, inventorySkill);
+            skillInventory.set(inventoryIndex, characterSkill);
+        } else if(characterSkill == null && inventorySkill != null){//Remove if only one slot has a skill and add to the other.
+            characterSkills.add(inventorySkill);
+            skillInventory.removeValue(inventorySkill, true);
+        } else if(characterSkill != null && inventorySkill == null){
+            skillInventory.add(characterSkill);
+            characterSkills.removeValue(characterSkill, true);
+        }
+    }
+
+
+    public int getMoney() {
+        return money;
+    }
+
+    public int getSkillPoints() {
+        return skillPoints;
+    }
+
+    public int getMorale() {
+        return morale;
+    }
 }
