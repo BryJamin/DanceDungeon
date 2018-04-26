@@ -3,24 +3,12 @@ package com.bryjamin.dancedungeon.ecs.systems.battle;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
-import com.artemis.World;
 import com.artemis.systems.EntityProcessingSystem;
-import com.badlogic.gdx.graphics.Color;
-import com.bryjamin.dancedungeon.assets.TextureStrings;
-import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
-import com.bryjamin.dancedungeon.ecs.components.FollowPositionComponent;
-import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
-import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
-import com.bryjamin.dancedungeon.ecs.components.graphics.ScaleTransformationComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.UITargetingComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.SelectedEntityComponent;
 import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
-import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
-import com.bryjamin.dancedungeon.utils.texture.Layer;
-import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 /**
  * Created by BB on 18/11/2017.
@@ -91,17 +79,15 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
 
         Coordinates c = world.getSystem(TileSystem.class).getCoordinatesUsingPosition(x, y);
 
-
-
         if (world.getSystem(TileSystem.class).getOccupiedMap().containsValue(c, false)) {
 
             Entity selected = world.getSystem(TileSystem.class).getOccupiedMap().getKey(c, false);
 
             if(turnMapper.has(selected)) {
 
-                if (selected.getComponent(TurnComponent.class).hasActions()) {//TODO you can't select a character if it has no actions left
+                //if (selected.getComponent(TurnComponent.class).hasActions()) {//TODO you can't select a character if it has no actions left
                     world.getSystem(TileSystem.class).getOccupiedMap().getKey(c, false).edit().add(new SelectedEntityComponent());
-                }
+                //}
                 return true;
             }
         }
@@ -118,39 +104,13 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
     private void setUpCharacter(final Entity playableCharacter) {
 
         //Can't select a character with no actions
-
-        //This only exists for players
-        //if(playerControlledM.has(selectedEntity)) {
         if (playerControlledM.has(playableCharacter)) {
             if (!playableCharacter.getComponent(TurnComponent.class).hasActions()) return;
         }
 
-        createTargetReticle(world, playableCharacter);
-        //createUnitInformationEntity(world, playableCharacter);
 
-        if (playerControlledM.has(playableCharacter)) {
-            battleScreenUISystem.createCharacterSkillHUD(playableCharacter);
-        }
-    }
 
-    private void createTargetReticle(World world, Entity entity) {
-
-        float width = entity.getComponent(CenteringBoundComponent.class).bound.width * 2.5f;
-        float height = entity.getComponent(CenteringBoundComponent.class).bound.height * 2.5f;
-
-        Entity recticle = world.createEntity();
-        recticle.edit().add(new PositionComponent())
-                .add(new ScaleTransformationComponent(1.1f))
-                .add(new UITargetingComponent())
-                .add(new FollowPositionComponent(entity.getComponent(PositionComponent.class).position,
-                        CenterMath.offsetX(entity.getComponent(CenteringBoundComponent.class).bound.width, width),
-                        CenterMath.offsetY(entity.getComponent(CenteringBoundComponent.class).bound.height, height)))
-                .add(new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE, new TextureDescription.Builder(TextureStrings.TARGETING)
-                        .width(width)
-                        .height(height)
-                        .color(playerControlledM.has(entity) ? new Color(Color.WHITE) : new Color(Color.RED))
-                        .build()));
-
+        battleScreenUISystem.setUpSelectedCharacterHUD(playableCharacter);
     }
 
 

@@ -62,6 +62,8 @@ public class RangedDummyFactory {
                 .build();
 
         UnitData unitData = new UnitData("Eugh");
+        unitData.icon = TextureStrings.BIGGABLOBBA;
+        unitData.name = "Blaster";
         unitData.setStatComponent(statComponent);
 
         ComponentBag bag = unitFactory.baseEnemyUnitBag(unitData);

@@ -2,7 +2,9 @@ package com.bryjamin.dancedungeon.ecs.systems.ui;
 
 import com.artemis.Aspect;
 import com.artemis.BaseSystem;
+import com.artemis.ComponentMapper;
 import com.artemis.Entity;
+import com.artemis.World;
 import com.artemis.utils.IntBag;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -34,9 +36,17 @@ import com.bryjamin.dancedungeon.assets.Padding;
 import com.bryjamin.dancedungeon.assets.Skins;
 import com.bryjamin.dancedungeon.assets.TextResource;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
+import com.bryjamin.dancedungeon.ecs.components.FollowPositionComponent;
+import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.ai.StoredSkillComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.ScaleTransformationComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UITargetingComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
 import com.bryjamin.dancedungeon.ecs.systems.action.BattleWorldInputHandlerSystem;
@@ -54,7 +64,10 @@ import com.bryjamin.dancedungeon.screens.battle.BattleScreen;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
 import com.bryjamin.dancedungeon.screens.strategy.MapScreen;
 import com.bryjamin.dancedungeon.utils.Measure;
+import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.observer.Observer;
+import com.bryjamin.dancedungeon.utils.texture.Layer;
+import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 
 /**
@@ -75,14 +88,29 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
     private RenderingSystem renderingSystem;
     private TileSystem tileSystem;
 
+
+    private ComponentMapper<PlayerControlledComponent> pcm;
+    private ComponentMapper<EnemyComponent> em;
+    private ComponentMapper<StoredSkillComponent> storedm;
+
     private static final float SKILL_BUTTON_SIZE = Measure.units(7.5f);
     private static final float PROFILE_PICTURE_SIZE = Measure.units(5.5f);
+
+
+    private static final float RECTICLE_SCALE = 1.5f;
 
     private enum State {
         BATTLE, DEPLOYING_UNITS
     }
 
     private State state = State.DEPLOYING_UNITS;
+
+
+    private enum BottomTableState {
+        PLAYER_SELECT, ENEMY_SELECT, ALLY_SELECT //TODO maybe.
+    }
+
+    private BottomTableState botTabState;
 
     //Deployment State
     private final Table deploymentTable = new Table();
@@ -391,39 +419,109 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
      * You can interact with the skills to view what they do and show where they will target on the battle map.
      * @param e
      */
-    public void createCharacterSkillHUD(Entity e) {
+    public void setUpSelectedCharacterHUD(Entity e) {
 
-        bottomContainer.setVisible(true);
+        if(pcm.has(e)){
+            botTabState = BottomTableState.PLAYER_SELECT;
+        } else if(em.has(e)){
+            botTabState = BottomTableState.ENEMY_SELECT;
+        }
+
+        createMovementTiles(e);
+        createTargetReticle(world, e);
 
         UnitData unitData = e.getComponent(UnitComponent.class).getUnitData();
+        bottomContainer.setVisible(true);
 
         Label name = new Label(unitData.name, uiSkin);
 
-        characterProfileTable.clear();
-        characterProfileTable.add(name).height(Measure.units(5f)).center().expandX();
-        characterProfileTable.row();
-        characterProfileTable.add(new Image(new TextureRegionDrawable(atlas.findRegion(unitData.icon)))).size(PROFILE_PICTURE_SIZE).expandY();
+
+        switch (botTabState){
+
+            case PLAYER_SELECT:
+
+                characterProfileTable.clear();
+                characterProfileTable.add(name).height(Measure.units(5f)).center().expandX();
+                characterProfileTable.row();
+                characterProfileTable.add(new Image(new TextureRegionDrawable(atlas.findRegion(unitData.icon)))).size(PROFILE_PICTURE_SIZE).expandY();
 
 
-        tableForSkillButtons.clear();
-        tableForSkillButtons.setTouchable(Touchable.enabled);
-        tableForSkillButtons.addListener(new ClickListener(){}); //Empty click listener to avoid menu closing, if a player misses tapping a skill
+                tableForSkillButtons.clear();
+                tableForSkillButtons.setTouchable(Touchable.enabled);
+                tableForSkillButtons.addListener(new ClickListener(){}); //Empty click listener to avoid menu closing, if a player misses tapping a skill
 
-        skillButtonButtonGroup.clear();
-        SkillsComponent skillsComponent = e.getComponent(SkillsComponent.class);
-        for (int i = 0; i < skillsComponent.skills.size; i++) {
-            createSkillButton(e, skillsComponent.skills.get(i));
+                skillButtonButtonGroup.clear();
+                SkillsComponent skillsComponent = e.getComponent(SkillsComponent.class);
+                for (int i = 0; i < skillsComponent.skills.size; i++) {
+                    createSkillButton(e, skillsComponent.skills.get(i));
+                }
+
+                break;
+
+
+            case ENEMY_SELECT:
+
+                characterProfileTable.clear();
+                characterProfileTable.add(name).height(Measure.units(5f)).center().expandX();
+                characterProfileTable.row();
+                characterProfileTable.add(new Image(new TextureRegionDrawable(atlas.findRegion(unitData.icon)))).size(PROFILE_PICTURE_SIZE).expandY();
+                skillInformationTable.setVisible(true);
+                populateSkillInformationTableForEnemies(e);
+                break;
+
+
+
+
+
         }
 
 
-        createMovementTiles(e);
         //skillButtonButtonGroup.uncheckAll();
     }
+
+
+    private void populateSkillInformationTableForEnemies(Entity enemy){
+
+        if(!storedm.has(enemy)){
+            skillInformationTable.clear();
+            skillInformationTable.add(new Label(TextResource.BATTLE_NO_ENEMY_ATTACK, uiSkin, Fonts.LABEL_STYLE_SMALL_FONT));
+            tableForSkillButtons.setVisible(false);
+        } else {
+
+            Skill skill = storedm.get(enemy).skill;
+
+            Stack stack = new Stack();
+            Drawable drawable = new TextureRegionDrawable(atlas.findRegion(skill.getIcon()));
+            final Button btn = new Button(uiSkin, "inventory");
+            btn.setChecked(true);
+            btn.setTouchable(Touchable.disabled);
+
+            Table table = new Table();
+            Image image = new Image(drawable);
+            image.setTouchable(Touchable.disabled);
+            table.add(image).size(SKILL_BUTTON_SIZE - Padding.SMALL);
+
+
+            stack.add(btn);
+            stack.add(table);
+            tableForSkillButtons.add(stack).width(SKILL_BUTTON_SIZE).height(SKILL_BUTTON_SIZE).pad(Measure.units(1.5f)).center().expandX().expandY();
+
+            updateSkillText(enemy, skill);
+
+
+        }
+
+
+
+
+    }
+
 
     private void updateSkillText(Entity player, Skill skill) {
 
         skillInformationTable.setVisible(true);
         skillInformationTable.clear();
+        skillInformationTable.setDebug(true);
 
         Label skillName = new Label(skill.getName(), uiSkin);
         skillInformationTable.align(Align.top);
@@ -435,7 +533,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
         description.setText(skill.getDescription(world, player));
         description.setAlignment(Align.center);
 
-        skillInformationTable.add(description).width(skillInformationTable.getWidth()).expandY();
+        skillInformationTable.add(description).width(skillInformationTable.getWidth()).expandY().expandX();
 
     }
 
@@ -446,7 +544,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
      * @param skill
      */
     private void createSkillTargeting(Entity unit, Skill skill) {
-        this.clearTargetingTiles();
+        this.clearTargetingUI();
         skill.createTargeting(world, unit);
     }
 
@@ -491,13 +589,12 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
                     createSkillTargeting(player,
                             skill);
-                } else {
+                } else { //Remove skill targets and return to showing movement targets
                     skillInformationTable.clear();
                     skillInformationTable.setVisible(false);
-                    clearTargetingTiles();
+                    clearTargetingUI();
                     createMovementTiles(player);
                 }
-         //       btn.setChecked(true);
             }
         });
 
@@ -621,7 +718,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
     /**
      * Clears the button entities and selected entity from the system
      */
-    public void clearTargetingTiles() {
+    public void clearTargetingUI() {
         IntBag bag = world.getAspectSubscriptionManager().get(Aspect.all(UITargetingComponent.class)).getEntities();
         for (int i = 0; i < bag.size(); i++) {
             world.getEntity(bag.get(i)).deleteFromWorld();
@@ -629,9 +726,55 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
     }
 
     public void resetBottomContainer() {
-        this.clearTargetingTiles();
+        this.clearTargetingUI();
         bottomContainer.setVisible(false);
         populateBottomContainer();
     }
+
+
+
+
+    /// BATTLE MAP OPERATIONS //
+
+    private void createTargetReticle(World world, Entity entity) {
+
+        float width = tileSystem.getMinimumCellSize() * RECTICLE_SCALE;
+        float height = tileSystem.getMinimumCellSize() * RECTICLE_SCALE;
+
+        CenteringBoundComponent centeringBoundComponent = entity.getComponent(CenteringBoundComponent.class);
+
+
+        Entity recticle = world.createEntity();
+        recticle.edit().add(new PositionComponent())
+                .add(new ScaleTransformationComponent(1.05f))
+                .add(new UITargetingComponent())
+                .add(new FollowPositionComponent(entity.getComponent(PositionComponent.class).position,
+                        CenterMath.offsetX(centeringBoundComponent.bound.width, width),
+                        CenterMath.offsetY(centeringBoundComponent.bound.height, height)))
+                .add(new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE, new TextureDescription.Builder(TextureStrings.TARGETING)
+                        .width(width)
+                        .height(height)
+                        .color(pcm.has(entity) ? new Color(Color.WHITE) : new Color(Color.RED))
+                        .build()));
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }

@@ -23,13 +23,6 @@ public class EnemyFactory {
 
     public EnemyFactory(){
 
-        enemyUnits.put(BLOB, new Command() {
-            @Override
-            public ComponentBag getEnemy() {
-                return new DummyFactory().targetDummyWalker();
-            }
-        });
-
         enemyUnits.put(FAST_BLOB, new Command() {
             @Override
             public ComponentBag getEnemy() {

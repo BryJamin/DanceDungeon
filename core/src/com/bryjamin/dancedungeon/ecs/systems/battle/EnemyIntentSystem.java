@@ -85,32 +85,19 @@ public class EnemyIntentSystem extends EntitySystem implements Observer{
 
                    // if(!storedSkillComponent.storedCoordinates.equals(coordinates)){
 
-                        Coordinates stored = storedSkillComponent.storedCoordinates;
-                        Coordinates storedTarget = storedSkillComponent.storedTargetCoordinates;
+                    Coordinates stored = storedSkillComponent.storedCoordinates;
+                    Coordinates storedTarget = storedSkillComponent.storedTargetCoordinates;
 
-                        Array<Coordinates> coordinatesArray = new Array<Coordinates>();
+                    Array<Coordinates> coordinatesArray = tileSystem.getFreeCoordinateInAGivenDirection(coordinates, new Direction[]{
+                                CoordinateMath.getDirectionOfCoordinate(stored, storedTarget)});
+                    
+                    Rectangle currentR1 = tileSystem.getRectangleUsingCoordinates(coordinates);
 
-
-                        if(stored.getX() < storedTarget.getX() && stored.getY() == storedTarget.getY()){
-                            coordinatesArray = tileSystem.getFreeCoordinateInAGivenDirection(coordinates, new Direction[]{Direction.RIGHT});
-                        } else if(stored.getX() > storedTarget.getX() && stored.getY() == storedTarget.getY()){
-                            coordinatesArray = tileSystem.getFreeCoordinateInAGivenDirection(coordinates, new Direction[]{Direction.LEFT});
-                        } else if(stored.getX() == storedTarget.getX() && stored.getY() > storedTarget.getY()){
-                            coordinatesArray = tileSystem.getFreeCoordinateInAGivenDirection(coordinates, new Direction[]{Direction.DOWN});
-                        } else if(stored.getX() == storedTarget.getX() && stored.getY() < storedTarget.getY()){
-                            coordinatesArray = tileSystem.getFreeCoordinateInAGivenDirection(coordinates, new Direction[]{Direction.UP});
-                        }
-
-
-                        for(Coordinates c : coordinatesArray) { //There is only one I need to refactor to have a none coordinates array return value
-
-                            Entity highlight = enemyIntentBox(tileSystem.getRectangleUsingCoordinates(c));
-                            storedSkillComponent.storedTargetCoordinates = c;
-                            storedSkillComponent.storedCoordinates = coordinates;
-                            new TargetingFactory().createRedTargetingMarkers(world, e.getComponent(CoordinateComponent.class).coordinates, c);
-                        }
-
-                    //}
+                    enemyIntentBox(tileSystem.getRectangleUsingCoordinates(coordinatesArray.peek()));
+                    storedSkillComponent.storedTargetCoordinates = coordinatesArray.peek();
+                    storedSkillComponent.storedCoordinates = coordinates;
+                    new TargetingFactory().createRedTargetingMarkers(world, e.getComponent(CoordinateComponent.class).coordinates, coordinatesArray.peek());
+                    entityUIArrow(currentR1, CoordinateMath.getDirectionOfCoordinate(storedSkillComponent.storedCoordinates, storedSkillComponent.storedTargetCoordinates));
 
 
                     break;

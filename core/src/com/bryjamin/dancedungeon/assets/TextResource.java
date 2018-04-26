@@ -21,6 +21,10 @@ public class TextResource {
 
 
 
+    public static final String BATTLE_NO_ENEMY_ATTACK = "This Enemy is Not Attacking";
+
+
+
 
 
 }

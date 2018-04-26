@@ -80,23 +80,6 @@ public class DummyFactory {
     }
 
 
-    public ComponentBag targetDummyWalker() {
-
-        UnitData unitData = new UnitData("Eugh");
-        unitData.setStatComponent(new StatComponent.StatBuilder()
-                .healthAndMax(health)
-                .movementRange(3)
-                .build());
-
-        ComponentBag bag = targetDummy(unitData);
-        bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, blob.color(Color.CYAN).build()));
-        bag.add(new StatComponent.StatBuilder().movementRange(4)
-                .build());
-
-        return bag;
-
-    }
-
     //TODO fix AI
     public UtilityAiCalculator dummyAi(Skill slash) {
         return new UtilityAiCalculator(
@@ -111,6 +94,9 @@ public class DummyFactory {
     public ComponentBag targetDummySprinter() {
 
         UnitData unitData = new UnitData("Eugh");
+        unitData.icon = TextureStrings.BLOB;
+        unitData.name = "Blob";
+
         unitData.setStatComponent(new StatComponent.StatBuilder().movementRange(6)
                 .healthAndMax(sprinterHealth)
                 .build());
