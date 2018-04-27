@@ -13,6 +13,7 @@ public class TextureStrings {
     public static final String ARCHER = "player/phi_walk";
     public static final String BLOB = "enemy/blob";
     public static final String BIGGABLOBBA = "enemy/boss/biggablobba";
+    public static final String BLASTER_BOSS = "enemy/boss/boss_blaster";
     public static final String SPITTER = "enemy/silverhead_standing";
     public static final String TARGETING = "player/targeting";
     public static final String END_TURN_BUTTON = "player/end_turn";

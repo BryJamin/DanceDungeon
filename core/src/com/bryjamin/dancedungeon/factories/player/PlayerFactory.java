@@ -38,8 +38,6 @@ public class PlayerFactory {
     public ComponentBag player(UnitData unitData){
 
         ComponentBag bag = unitFactory.basePlayerUnitBag(unitData);
-
-        bag.add(unitData.getSkillsComponent());
         bag.add(new CenteringBoundComponent(new Rectangle(0, 0, width, height)));
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, createPlayerTexture(TextureStrings.WARRIOR).build()));
 
@@ -57,8 +55,6 @@ public class PlayerFactory {
     public ComponentBag archer(UnitData unitData){
 
         ComponentBag bag = unitFactory.basePlayerUnitBag(unitData);
-
-        bag.add(unitData.getSkillsComponent());
         bag.add(new CenteringBoundComponent(new Rectangle(0, 0, width, height)));
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, createPlayerTexture(TextureStrings.ARCHER).build()));
 
@@ -76,8 +72,6 @@ public class PlayerFactory {
     public ComponentBag mage(UnitData unitData){
 
         ComponentBag bag = unitFactory.basePlayerUnitBag(unitData);
-
-        bag.add(unitData.getSkillsComponent());
         bag.add(new CenteringBoundComponent(new Rectangle(0, 0, width, height)));
         bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, createPlayerTexture(TextureStrings.PLAYER).build()));
 

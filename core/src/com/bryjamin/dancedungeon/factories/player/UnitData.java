@@ -1,8 +1,13 @@
 package com.bryjamin.dancedungeon.factories.player;
 
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
+import com.bryjamin.dancedungeon.factories.spells.Skill;
+import com.bryjamin.dancedungeon.factories.spells.SkillLibrary;
 
 /**
  * Created by BB on 22/12/2017.
@@ -12,20 +17,44 @@ import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
  *
  */
 
-public class UnitData {
+public class UnitData implements Json.Serializable {
 
     public static int MAXIMUM_SKILLS = 2;
 
     public String id = UnitMap.UNIT_WARRIOR;
-
     public String icon = TextureStrings.CLASS_CYRONAUT;
-
     public String name = "Jeff";
 
+    //STATS
+    private int health;
+    private int maxHealth;
+
+    private int movementRange;
+    private int attackRange;
+
+
     public StatComponent statComponent = new StatComponent();
-    private SkillsComponent skillsComponent = new SkillsComponent();
+    private Array<Skill> skills = new Array<>();
 
     public UnitData(){}
+
+
+
+
+
+    public UnitData(UnitData unitData) {
+        this.id = unitData.id;
+        this.icon = unitData.icon;
+        this.name = unitData.name;
+        this.health = unitData.health;
+        this.maxHealth = unitData.maxHealth;
+        this.movementRange = unitData.movementRange;
+        this.attackRange = unitData.attackRange;
+        this.statComponent = unitData.statComponent;
+        this.skills = unitData.getSkills();
+    }
+
+
 
     public UnitData(String id){
         this.id = id;
@@ -47,12 +76,33 @@ public class UnitData {
         this.statComponent = statComponent;
     }
 
-    public SkillsComponent getSkillsComponent() {
-        return skillsComponent;
+    public Array<Skill> getSkills() {
+        return skills;
     }
 
-    public void setSkillsComponent(SkillsComponent skillsComponent) {
-        this.skillsComponent = skillsComponent;
+    @Override
+    public void write(Json json) {
+        json.writeFields(this);
     }
 
+    @Override
+    public void read(Json json, JsonValue jsonData) {
+
+        json.readFields(this, jsonData);
+
+        if(jsonData.hasChild("skillIds")){
+            JsonValue skills = jsonData.get("skillIds");
+
+            for(int i = 0; i < skills.size; i++){
+                //System.out.println(skills.get(i));
+                this.skills.add(SkillLibrary.getSkill(skills.get(i).asString()));
+            }
+        }
+
+        statComponent.health = this.health;
+        statComponent.maxHealth = this.maxHealth;
+        statComponent.movementRange = this.movementRange;
+        statComponent.attackRange = this.attackRange;
+
+    }
 }

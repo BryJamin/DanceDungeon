@@ -25,15 +25,22 @@ public class SkillLibrary {
     }
 
     //Return a new Skill object to avoid any potential over-writes of the skills within the static array
-    public static Skill getSkill(String key){
-        System.out.println(key);
-        return new Skill(items.get(key));
+    public static Skill getSkill(String key) {
+
+        if(items.containsKey(key)){
+            return new Skill(items.get(key));
+        } else if(enemySkills.containsKey(key)){
+            return new Skill(enemySkills.get(key));
+        } else {
+            throw new SkillNotFoundException(key);
+        }
     }
 
     public static Skill getEnemySkill(String key){
-        System.out.println(key);
         return new Skill(enemySkills.get(key));
     }
+
+    public static void empty(){};
 
 
     public static final String SKILL_HEAVY_STRIKE = "a5f2cd73-7ade-4577-8d7b-862299baf774";
@@ -45,8 +52,23 @@ public class SkillLibrary {
 
 
     public static final String ENEMY_SKILL_BLAST = "e682fd39-6f06-47f8-aa60-175065ea12cf";
+    public static final String ENEMY_SKILL_BIG_BLAST = "598cbfff-19b7-412c-9618-cde1db76617b";
     public static final String ENEMY_SKILL_SWIPE = "d3059e1f-41f5-48a1-8ff5-5cc67cea1927";
     public static final String ENEMY_SKILL_THROW_ROCK = "509d0cd7-ad54-4794-b53e-2f97bc87d8b8";
 
+
+    private static class SkillNotFoundException extends RuntimeException {
+
+        private String id;
+
+        public SkillNotFoundException(String id){
+            this.id = id;
+        }
+
+        @Override
+        public String getMessage() {
+            return "Skill not found in Library. ID: " + id;
+        }
+    }
 
 }

@@ -213,8 +213,6 @@ public class ActionQueueSystem extends EntitySystem {
             @Override
             public void performAction(World world, Entity entity) {
 
-                System.out.println("MOVEMENT ACTION ");
-
                 for (Coordinates c : coordinatesSequence) {
                     entity.getComponent(MoveToComponent.class).movementPositions.add(
                             world.getSystem(TileSystem.class).getPositionUsingCoordinates(

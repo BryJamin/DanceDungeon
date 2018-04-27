@@ -31,10 +31,8 @@ public class CharacterGenerator {
                 .attack(5)
                 .healthAndMax(health).build());
 
-        warrior.setSkillsComponent(new SkillsComponent(
-                SkillLibrary.getSkill(SkillLibrary.SKILL_HEAVY_STRIKE),
-                SkillLibrary.getSkill(SkillLibrary.SKILL_CLOBBER)
-                ));
+        warrior.getSkills().addAll(SkillLibrary.getSkill(SkillLibrary.SKILL_HEAVY_STRIKE),
+                SkillLibrary.getSkill(SkillLibrary.SKILL_CLOBBER));
 
         return warrior;
     }
@@ -50,9 +48,7 @@ public class CharacterGenerator {
                         .attackRange(6)
                         .attack(7).build());
 
-        mage.setSkillsComponent(
-                new SkillsComponent(
-                        SkillLibrary.getSkill(SkillLibrary.SKILL_THROW_BOMB)));
+        mage.getSkills().addAll(SkillLibrary.getSkill(SkillLibrary.SKILL_THROW_BOMB));
 
         mage.name = genName();
 
@@ -70,10 +66,7 @@ public class CharacterGenerator {
                         .attackRange(6)
                         .attack(7).build());
 
-        mage.setSkillsComponent(
-                new SkillsComponent(
-                        SkillLibrary.getSkill(SkillLibrary.SKILL_STRAIGHT_SHOT)
-                ));
+        mage.getSkills().addAll(SkillLibrary.getSkill(SkillLibrary.SKILL_STRAIGHT_SHOT));
 
         mage.name = genName();
 

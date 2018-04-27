@@ -1,5 +1,10 @@
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap;
+import com.bryjamin.dancedungeon.factories.CharacterGenerator;
+import com.bryjamin.dancedungeon.factories.player.PlayerFactory;
+import com.bryjamin.dancedungeon.factories.player.UnitData;
+import com.bryjamin.dancedungeon.factories.player.UnitMap;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.factories.spells.SkillLibrary;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
@@ -13,32 +18,23 @@ public class JsonSkillTest  extends GameTest {
     public void testEventCount() throws Exception {
 
         ObjectMap<String, Skill> map = new ObjectMap<String, Skill>();
-/*
 
-        map.put("dadawdw", new Skill(new Skill.Builder()
-                .name("Foredsdssight")
-                .icon("skills/Fire")
-                .description("Increase the Dodge chance of an self by 20% for three turns")
-                .targeting(Skill.Targeting.Self)
-                .actionType(Skill.ActionType.UsesMoveAndAttackAction)
-                .spellAnimation(Skill.SpellAnimation.Glitter)
-                .spellEffects(Skill.SpellEffect.Dodge.value(0.2f).duration(3))));
 
-        Skill s = new Skill();
-        s.affectedAreas = new Coordinates[]{new Coordinates(0, 1), new Coordinates(1, 0), new Coordinates(0, -1), new Coordinates(-1, 0)};
-        s.affectedAreaSkill = new Skill(new Skill.Builder()
-                .name("Fodsdsresight")
-                .icon("skills/Fire")
-                .description("Increase the Dodge chance of an self by 20% for three turns")
-                .targeting(Skill.Targeting.Self)
-                .actionType(Skill.ActionType.UsesMoveAndAttackAction));
-*/
+        UnitMap unitMap = new UnitMap();
 
-        //map.put("ODOADOAWDAWDAW", s);
+        CharacterGenerator cg = new CharacterGenerator();
 
-                Json json = new Json();
+        UnitData ud = cg.createArcher();
 
-        System.out.println(json.prettyPrint(map));
+
+        Array<String> s = new Array<>();
+        s.addAll("1", "2", "3");
+
+        ud.setSkillIds(s);
+
+        Json json = new Json();
+
+        System.out.println(json.prettyPrint(ud));
 
 
         SkillLibrary skillLibrary = new SkillLibrary();

@@ -157,13 +157,8 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
         if(o.getClass().equals(BattleDeploymentSystem.class)){
             populateDeploymentTable();
-
-            System.out.println("Here");
-
             if(!((BattleDeploymentSystem) o).isProcessing()){
                 state = State.BATTLE;
-
-                System.out.println("Not here");
                 populateBottomContainer();
             }
         }

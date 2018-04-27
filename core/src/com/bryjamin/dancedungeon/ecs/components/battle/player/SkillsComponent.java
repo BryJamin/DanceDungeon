@@ -24,6 +24,10 @@ public class SkillsComponent extends Component {
     }
 
 
+    public SkillsComponent(Array<Skill> skills){
+        this.skills = skills;
+    }
+
     public void endTurn(){
         for(Skill skill : skills){
             skill.endTurnUpdate();

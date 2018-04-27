@@ -76,7 +76,7 @@ public class PartyDetails {
         skillInventory.removeValue(s, true);
 
         for(UnitData unitData : party){
-            unitData.getSkillsComponent().skills.removeValue(s, true);
+            unitData.getSkills().removeValue(s, true);
         }
     }
 
@@ -89,7 +89,7 @@ public class PartyDetails {
         Array<Skill> equipped = new Array<Skill>();
 
         for(UnitData unitData : party){
-            equipped.addAll(unitData.getSkillsComponent().skills);
+            equipped.addAll(unitData.getSkills());
         }
 
         return equipped;
@@ -103,7 +103,7 @@ public class PartyDetails {
      */
     public void swapCharacterSkillWithInventorySkill(UnitData character, Skill characterSkill, Skill inventorySkill){
 
-        Array<Skill> characterSkills = character.getSkillsComponent().skills;
+        Array<Skill> characterSkills = character.getSkills();
 
         if(characterSkill != null && !characterSkills.contains(characterSkill, true)) return;
         if(inventorySkill != null && !skillInventory.contains(inventorySkill, true)) return;

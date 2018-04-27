@@ -49,6 +49,9 @@ public class RangedDummyFactory {
             .index(2)
             .size(height);
 
+    public final DrawableDescription.DrawableDescriptionBuilder boss = new TextureDescription.Builder(TextureStrings.BLASTER_BOSS)
+            .size(height);
+
 
     public ComponentBag rangedDummy() {
 
@@ -87,6 +90,52 @@ public class RangedDummyFactory {
         bag.add(new AnimationStateComponent(STANDING_ANIMATION));
         bag.add(new AnimationMapComponent()
                 .put(STANDING_ANIMATION, TextureStrings.BIGGABLOBBA, 0.6f, Animation.PlayMode.LOOP));
+
+        return bag;
+
+
+    }
+
+
+
+
+    public ComponentBag bossRangedDummy() {
+
+        Skill fireball = SkillLibrary.getEnemySkill(SkillLibrary.ENEMY_SKILL_BIG_BLAST);
+
+        StatComponent statComponent = new StatComponent.StatBuilder()
+                .healthAndMax(health)
+                .attack(3)
+                .attackRange(basicAttackRange)
+                .movementRange(4)
+                .build();
+
+        UnitData unitData = new UnitData("Eugh");
+        unitData.icon = TextureStrings.BLASTER_BOSS;
+        unitData.name = "Blaster";
+        unitData.setStatComponent(statComponent);
+
+        ComponentBag bag = unitFactory.baseEnemyUnitBag(unitData);
+        bag.add(new SkillsComponent(fireball));
+        bag.add(new CenteringBoundComponent(width, height));
+        bag.add(new HitBoxComponent(new HitBox(width, height)));
+
+        bag.add(new UtilityAiComponent(
+                new UtilityAiCalculator(
+                        new ActionScoreCalculator(new EndTurnAction()),
+                        new ActionScoreCalculator(new FindBestMovementAreaToAttackFromAction(),
+                                new CanMoveCalculator(100f, null)),
+                        new ActionScoreCalculator(new BasicAttackAction(), new CanUseSkillCalculator(fireball, 100f, null)
+                        )
+                )));
+
+        bag.add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE, boss.build()));
+
+        int STANDING_ANIMATION = 23;
+
+        bag.add(new AnimationStateComponent(STANDING_ANIMATION));
+        bag.add(new AnimationMapComponent()
+                .put(STANDING_ANIMATION, TextureStrings.BLASTER_BOSS, 0.6f, Animation.PlayMode.LOOP));
 
         return bag;
 

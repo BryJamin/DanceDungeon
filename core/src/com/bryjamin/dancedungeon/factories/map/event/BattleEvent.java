@@ -87,7 +87,7 @@ public class BattleEvent extends MapEvent {
 
         public Builder bonusObjective(AbstractObjective... val)
         { this.bonusObjectives = val;
-            System.out.println("BONUS OBJECTIVE LENGTH IS" + this.bonusObjectives.length);
+
 
         return this; }
 

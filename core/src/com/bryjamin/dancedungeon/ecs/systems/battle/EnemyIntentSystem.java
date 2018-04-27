@@ -146,8 +146,6 @@ public class EnemyIntentSystem extends EntitySystem implements Observer{
 
     public boolean releaseAttack(){
 
-        System.out.println(this.getEntities().size());
-
         if(this.getEntities().size() != 0){
 
             Entity e = this.getEntities().get(0);

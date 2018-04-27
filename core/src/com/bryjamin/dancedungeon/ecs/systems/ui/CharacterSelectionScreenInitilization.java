@@ -239,12 +239,12 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
 
             imgContainer = new Table();
             imgContainer.setBackground(NinePatches.getDefaultNinePatch(renderingSystem.getAtlas()));
-            imgContainer.add(new Image(renderingSystem.getAtlas().findRegion(unitData.getSkillsComponent().skills.first().getIcon()))).size(Measure.units(4f));
+            imgContainer.add(new Image(renderingSystem.getAtlas().findRegion(unitData.getSkills().first().getIcon()))).size(Measure.units(4f));
 
             partyMemberContainer.add(imgContainer).width(Measure.units(5f));
-            partyMemberContainer.add(new Label(unitData.getSkillsComponent().skills.first().getName(), uiSkin)).expandX();
+            partyMemberContainer.add(new Label(unitData.getSkills().first().getName(), uiSkin)).expandX();
 
-            Label description = new Label(unitData.getSkillsComponent().skills.first().getDescription(), uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
+            Label description = new Label(unitData.getSkills().first().getDescription(), uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
             description.setWrap(true);
             description.setAlignment(Align.center);
             partyMemberContainer.add(description).width(Measure.units(50f));

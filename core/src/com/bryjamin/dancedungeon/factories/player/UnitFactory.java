@@ -18,6 +18,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.UnPushableComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
@@ -126,11 +127,39 @@ public class UnitFactory {
 
         //Graphical
         bag.add(new BlinkOnHitComponent());
-        bag.add(unitData.getSkillsComponent());
+        bag.add(new SkillsComponent(unitData.getSkills()));
         bag.add(unitData.getStatComponent());
         bag.add(new TurnComponent());
 
         return bag;
+
+    }
+
+
+    public Entity baseUnitBag(World world, UnitData unitData){
+
+        Entity e = world.createEntity();
+
+        e.edit().add(new PositionComponent());
+        e.edit().add(new UnitComponent(unitData));
+        e.edit().add(new SolidComponent());
+
+        System.out.println("HEALTH " + unitData.statComponent.health);
+
+        e.edit().add(new HealthComponent(unitData.statComponent.health, unitData.statComponent.maxHealth));
+        e.edit().add(new CoordinateComponent());
+        e.edit().add(new MoveToComponent(Measure.units(60f)));
+        e.edit().add(new VelocityComponent());
+        e.edit().add(new TargetComponent());
+        e.edit().add(new BuffComponent());
+
+        //Graphical
+        e.edit().add(new BlinkOnHitComponent());
+        e.edit().add(new SkillsComponent(unitData.getSkills()));
+        e.edit().add(unitData.getStatComponent());
+        e.edit().add(new TurnComponent());
+
+        return e;
 
     }
 

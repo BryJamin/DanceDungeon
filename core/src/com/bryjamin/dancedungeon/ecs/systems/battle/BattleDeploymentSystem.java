@@ -27,6 +27,7 @@ import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.InformationBannerSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
 import com.bryjamin.dancedungeon.factories.enemy.EnemyFactory;
+import com.bryjamin.dancedungeon.factories.enemy.EnemyLibrary;
 import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.player.UnitFactory;
@@ -91,14 +92,21 @@ public class BattleDeploymentSystem extends EntitySystem {
             if (battleEvent.getEnemies().size == 0)
                 continue; //TODO this could be cleaner, if I fail to include enemies, an error should be printed.
 
-            Entity e = BagToEntity.bagToEntity(world.createEntity(), enemyFactory.get(battleEvent.getEnemies().random()));
+            Entity e = EnemyLibrary.getUnit(world, EnemyLibrary.RANGED_BLASTER);
+
+
+            //Entity e = BagToEntity.bagToEntity(world.createEntity(), enemyFactory.get(battleEvent.getEnemies().random()));
+
             Coordinates selected = tileSystem.getEnemySpawningLocations().random();
             spawningLocations.removeValue(selected, true);
             e.getComponent(CoordinateComponent.class).coordinates.set(selected);
         }
 
-        createDeploymentLocations();
+        deploymentLocations = new Array<>(tileSystem.getAllySpawningLocations());
+
+
         calculateUnitToBeDeployed();
+        createDeploymentLocations();
 
 
     }

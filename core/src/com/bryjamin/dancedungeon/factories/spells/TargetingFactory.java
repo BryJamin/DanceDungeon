@@ -443,8 +443,6 @@ public class TargetingFactory {
     public ComponentBag highlightBox(Rectangle r, Color color) {
         ComponentBag bag = new ComponentBag();
 
-        //System.out.println("COLOR" + color.a);
-
         bag.add(new PositionComponent(r.x, r.y));
         bag.add(new DrawableComponent(TILE_LAYER,
                 new TextureDescription.Builder(TextureStrings.BLOCK)
@@ -452,12 +450,6 @@ public class TargetingFactory {
                         .width(r.getWidth())
                         .height(r.getHeight())
                         .build()));
-       /* bag.add(new FadeComponent(new FadeComponent.FadeBuilder()
-                .fadeIn(true)
-                .alpha(0.17f)
-                .minAlpha(0.15f)
-                .maxAlpha(0.55f)
-                .maximumTime(1.5f)));*/
         bag.add(new HitBoxComponent(new HitBox(r)));
         bag.add(new CenteringBoundComponent());
         bag.add(new UITargetingComponent());

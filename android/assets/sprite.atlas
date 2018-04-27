@@ -6,105 +6,105 @@ filter: Nearest,Nearest
 repeat: none
 backgrounds/brick_floor
   rotate: false
-  xy: 787, 425
+  xy: 787, 293
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
 backgrounds/brick_floor
   rotate: false
-  xy: 721, 293
+  xy: 853, 359
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 1
 backgrounds/brick_floor
   rotate: false
-  xy: 787, 359
+  xy: 919, 425
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 2
 backgrounds/brick_floor
   rotate: false
-  xy: 853, 425
+  xy: 853, 293
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 3
 backgrounds/brick_floor
   rotate: false
-  xy: 787, 293
+  xy: 919, 359
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 4
 backgrounds/brick_floor
   rotate: false
-  xy: 853, 359
+  xy: 985, 425
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 5
 backgrounds/brick_floor
   rotate: false
-  xy: 919, 425
+  xy: 919, 293
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 6
 backgrounds/brick_floor
   rotate: false
-  xy: 853, 293
+  xy: 985, 359
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 7
 backgrounds/brick_floor
   rotate: false
-  xy: 919, 359
+  xy: 1051, 425
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 8
 backgrounds/brick_floor
   rotate: false
-  xy: 985, 425
+  xy: 985, 293
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 9
 backgrounds/brick_floor
   rotate: false
-  xy: 919, 293
+  xy: 1051, 359
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 10
 backgrounds/brick_floor
   rotate: false
-  xy: 985, 359
+  xy: 1117, 425
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 11
 backgrounds/brick_floor
   rotate: false
-  xy: 1051, 425
+  xy: 1051, 293
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 12
 backgrounds/brick_floor
   rotate: false
-  xy: 985, 293
+  xy: 1117, 359
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 13
 backgrounds/brick_floor
   rotate: false
-  xy: 1051, 359
+  xy: 1183, 425
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -130,6 +130,13 @@ border
   orig: 64, 64
   offset: 0, 0
   index: 0
+border_split
+  rotate: false
+  xy: 721, 359
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 0
 decor/grass_tile
   rotate: false
   xy: 1, 1
@@ -146,42 +153,42 @@ decor/grass_tile
   index: 1
 decor/grass_tile
   rotate: false
-  xy: 463, 259
+  xy: 463, 127
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 2
 decor/grass_tile
   rotate: false
-  xy: 397, 127
+  xy: 529, 193
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 3
 decor/grass_tile
   rotate: false
-  xy: 35, 1
+  xy: 595, 259
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 4
 decor/rock
   rotate: false
-  xy: 299, 61
+  xy: 35, 1
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 0
 decor/rock
   rotate: false
-  xy: 463, 225
+  xy: 299, 61
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 1
 decor/rock
   rotate: false
-  xy: 497, 259
+  xy: 629, 259
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
@@ -202,126 +209,126 @@ decor/rock
   index: 4
 decor/rock
   rotate: false
-  xy: 463, 191
+  xy: 663, 259
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 5
 decor/turret
   rotate: false
-  xy: 1777, 359
+  xy: 1909, 425
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
 decor/turret
   rotate: false
-  xy: 1843, 425
+  xy: 1843, 293
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 1
 decor/turret
   rotate: false
-  xy: 1777, 293
+  xy: 1909, 359
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 2
 decor/turret
   rotate: false
-  xy: 1843, 359
+  xy: 1975, 425
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 3
 decor/turret
   rotate: false
-  xy: 1909, 425
+  xy: 1909, 293
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 4
 decor/turret
   rotate: false
-  xy: 1843, 293
+  xy: 1975, 359
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 5
 decor/turret
   rotate: false
-  xy: 1909, 359
+  xy: 1975, 293
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 6
 decor/turret
   rotate: false
-  xy: 1975, 425
+  xy: 199, 167
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 7
 decor/turret
   rotate: false
-  xy: 1909, 293
+  xy: 199, 101
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 8
 decor/turret
   rotate: false
-  xy: 1975, 359
+  xy: 199, 35
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 9
 decor/turret
   rotate: false
-  xy: 1975, 293
+  xy: 265, 227
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 10
 decor/turret
   rotate: false
-  xy: 199, 167
+  xy: 265, 161
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 11
 decor/turret
   rotate: false
-  xy: 199, 101
+  xy: 331, 227
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 12
 decor/turret
   rotate: false
-  xy: 199, 35
+  xy: 265, 95
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 13
 decor/turret
   rotate: false
-  xy: 265, 227
+  xy: 331, 161
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 14
 decor/turret
   rotate: false
-  xy: 265, 161
+  xy: 397, 227
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 15
 decor/wall
   rotate: false
-  xy: 497, 225
+  xy: 103, 1
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
@@ -410,37 +417,72 @@ enemy/boss/biggablobba
   orig: 64, 64
   offset: 0, 0
   index: 6
-enemy/silverhead_standing
+enemy/boss/boss_blaster
   rotate: false
-  xy: 1579, 425
+  xy: 787, 425
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
-enemy/silverhead_standing
+enemy/boss/boss_blaster
   rotate: false
-  xy: 1513, 293
+  xy: 787, 425
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 1
-enemy/silverhead_standing
+enemy/boss/boss_blaster
   rotate: false
-  xy: 1513, 293
+  xy: 721, 293
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 2
+enemy/boss/boss_blaster
+  rotate: false
+  xy: 721, 293
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 4
+enemy/boss/boss_blaster
+  rotate: false
+  xy: 787, 359
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 3
 enemy/silverhead_standing
   rotate: false
-  xy: 1579, 359
+  xy: 1579, 293
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 0
+enemy/silverhead_standing
+  rotate: false
+  xy: 1645, 359
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 1
+enemy/silverhead_standing
+  rotate: false
+  xy: 1645, 359
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 3
+enemy/silverhead_standing
+  rotate: false
+  xy: 1711, 425
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 2
 enemy/xi_portrait
   rotate: false
-  xy: 397, 161
+  xy: 529, 227
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -454,133 +496,133 @@ icons/arrow
   index: 0
 icons/icon_combat
   rotate: false
-  xy: 1117, 359
+  xy: 1249, 425
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
 icons/icon_money
   rotate: false
-  xy: 1183, 425
+  xy: 1183, 293
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
 icons/icon_rest
   rotate: false
-  xy: 1117, 293
+  xy: 1249, 359
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
 icons/item
   rotate: false
-  xy: 1183, 359
+  xy: 1315, 425
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
 icons/lock
   rotate: false
-  xy: 1183, 293
+  xy: 1315, 359
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
 icons/music
   rotate: false
-  xy: 1315, 425
+  xy: 1315, 293
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
 icons/music
   rotate: false
-  xy: 1249, 293
+  xy: 1381, 359
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 1
 icons/music
   rotate: false
-  xy: 1315, 359
+  xy: 1447, 425
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 2
 icons/music_off
   rotate: false
-  xy: 1381, 425
+  xy: 1381, 293
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
 icons/question_mark
   rotate: false
-  xy: 1381, 293
+  xy: 1513, 359
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
 icons/settings_goto
   rotate: false
-  xy: 1447, 359
+  xy: 1579, 425
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
 icons/sound
   rotate: false
-  xy: 1711, 359
+  xy: 1843, 425
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
 icons/sound_off
   rotate: false
-  xy: 1777, 425
+  xy: 1777, 293
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
 icons/units/bow_specialist
   rotate: false
-  xy: 721, 359
+  xy: 853, 425
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
 icons/units/cyronaut
   rotate: false
-  xy: 1117, 425
+  xy: 1117, 293
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
 icons/units/mage
   rotate: false
-  xy: 1249, 359
+  xy: 1381, 425
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
 icons/units/warrior
   rotate: false
-  xy: 265, 95
+  xy: 397, 161
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
 icons/warning
   rotate: false
-  xy: 331, 227
+  xy: 331, 95
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
 line_vertical
   rotate: false
-  xy: 1249, 425
+  xy: 1249, 293
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -650,91 +692,91 @@ player/block_walk
   index: 2
 player/end_turn
   rotate: false
-  xy: 1051, 293
+  xy: 1183, 359
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
 player/phi_walk
   rotate: false
-  xy: 1315, 293
+  xy: 1447, 359
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
 player/phi_walk
-  rotate: false
-  xy: 1381, 359
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 1
-player/phi_walk
-  rotate: false
-  xy: 1447, 425
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 2
-player/sgt_sword
   rotate: false
   xy: 1513, 425
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
-  index: 0
-player/sgt_sword
+  index: 1
+player/phi_walk
   rotate: false
   xy: 1447, 293
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 1
-player/sgt_sword
-  rotate: false
-  xy: 1513, 359
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 2
 player/sgt_sword
   rotate: false
-  xy: 1513, 359
+  xy: 1513, 293
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
-  index: 3
+  index: 0
 player/sgt_sword
   rotate: false
-  xy: 1513, 359
+  xy: 1579, 359
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 1
+player/sgt_sword
+  rotate: false
+  xy: 1645, 425
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 2
+player/sgt_sword
+  rotate: false
+  xy: 1645, 425
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 4
+player/sgt_sword
+  rotate: false
+  xy: 1645, 425
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 3
 player/targeting
   rotate: false
-  xy: 1711, 293
+  xy: 1843, 359
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
 player/xi_firing
   rotate: false
-  xy: 331, 161
+  xy: 463, 227
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
 player/xi_firing
   rotate: false
-  xy: 397, 227
+  xy: 397, 95
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 1
 player/xi_firing
   rotate: false
-  xy: 331, 95
+  xy: 463, 161
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -832,35 +874,35 @@ skills/QuickStep
   index: 0
 skills/slash
   rotate: false
-  xy: 1645, 425
+  xy: 1645, 293
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
 skills/slash
   rotate: false
-  xy: 1579, 293
+  xy: 1711, 359
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 1
 skills/slash
   rotate: false
-  xy: 1645, 359
+  xy: 1777, 425
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 2
 skills/slash
   rotate: false
-  xy: 1711, 425
+  xy: 1711, 293
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 3
 skills/slash
   rotate: false
-  xy: 1645, 293
+  xy: 1777, 359
   size: 64, 64
   orig: 64, 64
   offset: 0, 0

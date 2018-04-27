@@ -74,7 +74,7 @@ public class EventManager {
             @Override
             public BattleEvent getEvent() {
                 return new BattleEvent.Builder(MapData.MAP_1)
-                        .enemyPool(EnemyFactory.MAGE_BLOB)
+                        .enemyPool(EnemyFactory.BOSS_MAGE)
                         .primaryObjective(new DefeatAllEnemiesObjective())
                         .bonusObjective(new CompleteWithinObjective(AbstractObjective.Reward.MORALE, 3))
                         .build();

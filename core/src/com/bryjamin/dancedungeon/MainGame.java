@@ -14,6 +14,9 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.bryjamin.dancedungeon.assets.FileStrings;
 import com.bryjamin.dancedungeon.assets.Fonts;
+import com.bryjamin.dancedungeon.factories.enemy.EnemyLibrary;
+import com.bryjamin.dancedungeon.factories.spells.Skill;
+import com.bryjamin.dancedungeon.factories.spells.SkillLibrary;
 import com.bryjamin.dancedungeon.screens.LoadingScreen;
 import com.bryjamin.dancedungeon.utils.Measure;
 
@@ -74,6 +77,10 @@ public class MainGame extends Game {
         small.fontParameters.minFilter = Texture.TextureFilter.Linear;
         small.fontParameters.magFilter = Texture.TextureFilter.Linear;
         assetManager.load(Fonts.SMALL, BitmapFont.class, small);
+
+        SkillLibrary.empty();
+        System.out.println(SkillLibrary.ENEMY_SKILL_BIG_BLAST);
+        EnemyLibrary.empty();
 
         setScreen(new LoadingScreen(this));
     }

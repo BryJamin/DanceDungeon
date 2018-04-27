@@ -146,8 +146,6 @@ public class MapScreenUISystem extends BaseSystem {
                     world.getSystem(MapInputSystem.class).closedMenu();
                 } else {
 
-                    System.out.println(selectedCharacter == null);
-
                     if(selectedCharacter == null) { //Default the menu opens to the first character in the party.
                         openCharacterWindow(partyDetails.getParty()[0]);
                     } else {
@@ -443,7 +441,7 @@ public class MapScreenUISystem extends BaseSystem {
             equippedSkillsTable.row();
 
             try {
-                final Skill s = unitData.getSkillsComponent().skills.get(i);
+                final Skill s = unitData.getSkills().get(i);
 
                 if (s != null) {
 

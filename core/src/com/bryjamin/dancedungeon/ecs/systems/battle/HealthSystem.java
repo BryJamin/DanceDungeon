@@ -67,8 +67,8 @@ public class HealthSystem extends EntityProcessingSystem {
 
                 healthChangedflag = true;
 
-                if(affectMapper.has(e)){
-                    playerPartyManagementSystem.editMorale(-1);
+                if(affectMapper.has(e)){//Damage taken by morale affected entities damage the party's morale as well
+                    playerPartyManagementSystem.editMorale((int) -hc.getAccumulatedDamage());
                 }
 
 

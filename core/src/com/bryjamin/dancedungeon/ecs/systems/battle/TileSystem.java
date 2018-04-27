@@ -512,6 +512,6 @@ public class TileSystem extends EntitySystem {
     }
 
     public Array<Coordinates> getAllySpawningLocations() {
-        return allySpawningLocations;
+        return new Array<>(allySpawningLocations);
     }
 }
