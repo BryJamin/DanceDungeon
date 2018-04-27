@@ -244,7 +244,7 @@ public class ShopScreenUISystem extends BaseSystem {
 
                 for(Skill s : partyManagementSystem.getPartyDetails().getSkillInventory()){
                     shopTable.row();
-                    addToShopTable(shopTable, s, true);
+                    addToShopTable(shopTable, s, false);
                 }
 
                 for(Skill s : partyManagementSystem.getPartyDetails().getEquippedInventory()){
