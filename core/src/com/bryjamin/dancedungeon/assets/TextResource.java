@@ -21,6 +21,15 @@ public class TextResource {
 
 
 
+    public static final String SHOP_BUY = "Buy";
+    public static final String SHOP_SELL = "Sell";
+    public static final String SHOP_LEAVE = "Leave";
+    public static final String SHOP_WELCOME = "Welcome, Please Browse My Wares";
+    public static final String SHOP_NOTHING_TO_BUY = "There is Nothing Left to Buy";
+
+
+
+
     public static final String BATTLE_NO_ENEMY_ATTACK = "This Enemy is Not Attacking";
 
 
