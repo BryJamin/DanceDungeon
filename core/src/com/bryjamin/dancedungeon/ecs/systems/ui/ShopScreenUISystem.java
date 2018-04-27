@@ -18,14 +18,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.assets.Fonts;
-import com.bryjamin.dancedungeon.assets.NinePatches;
 import com.bryjamin.dancedungeon.assets.Padding;
 import com.bryjamin.dancedungeon.assets.Skins;
 import com.bryjamin.dancedungeon.assets.TextResource;
@@ -38,8 +36,6 @@ import com.bryjamin.dancedungeon.screens.strategy.MapScreen;
 import com.bryjamin.dancedungeon.screens.strategy.ShopScreen;
 import com.bryjamin.dancedungeon.utils.Measure;
 
-import javax.xml.soap.Text;
-
 public class ShopScreenUISystem extends BaseSystem {
 
     private StageUIRenderingSystem stageUIRenderingSystem;
@@ -48,6 +44,9 @@ public class ShopScreenUISystem extends BaseSystem {
 
 
     private Table container;
+    private Table shopTable;
+    private ScrollPane skillScrollPane;
+
     private Table buyTable;
 
     private Table buyMenuSkillsTable;
@@ -56,6 +55,8 @@ public class ShopScreenUISystem extends BaseSystem {
 
 
     private ButtonGroup<Button> skillButtons = new ButtonGroup<>();
+
+    private float TABLE_WIDTH = Measure.units(95f);
 
 
     private MainGame game;
@@ -106,79 +107,6 @@ public class ShopScreenUISystem extends BaseSystem {
 
     }
 
-    private void updateShopUI(){
-
-        Stage stage = stageUIRenderingSystem.stage;
-
-        container.clear();
-
-        Label label = new Label(TextResource.SHOP_WELCOME, uiSkin);
-        container.add(label).padTop(Measure.units(10f)).expandX();
-        container.row();
-
-        TextButton leaveRestArea = new TextButton(TextResource.SHOP_LEAVE, uiSkin);
-        leaveRestArea.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                goToPreviousScreen(shopScreen.getPreviousScreen());
-            }
-        });
-
-        TextButton switchToSellButton = new TextButton(TextResource.SHOP_SELL, uiSkin);
-        switchToSellButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                state = State.SELL;
-                updateShopUI();
-            }
-        });
-
-        TextButton switchToBuyButton = new TextButton(TextResource.SHOP_BUY, uiSkin);
-        switchToBuyButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                state = State.BUY;
-                updateShopUI();
-            }
-        });
-
-        Table tabTable = new Table(uiSkin);
-        container.add(tabTable).width(stage.getWidth());
-
-        tabTable.add(switchToBuyButton).width(Measure.units(15f)).expandX();
-        tabTable.add(switchToSellButton).width(Measure.units(15f)).expandX();
-
-        container.row();
-
-        switch (state){
-            case BUY:
-/*                buyTable = new Table(uiSkin);
-                buyTable.align(Align.bottom);
-                buyTable.setBackground(new NinePatchDrawable(NinePatches.getDefaultBorderPatch(renderingSystem.getAtlas())));
-                container.add(buyTable).width(stage.getWidth()).padRight(Padding.SMALL).padLeft(Padding.SMALL).height(Measure.units(32.5f)).expandY();
-                updateBuyButtonTable(buyTable);*/
-
-                System.out.println("Here");
-
-                addBuyOrSellScrollPane(container);
-
-                break;
-            case SELL:
-                addBuyOrSellScrollPane(container);
-
-                //container.add(createSellScrollPane()).width(Measure.units(95f)).maxHeight(Measure.units(27.5f)).expandY();
-                break;
-        }
-
-        container.row();
-        container.add(leaveRestArea).width(stage.getWidth()).maxWidth(Measure.units(25f)).height(Measure.units(7.5f)).align(Align.bottom).padBottom(Padding.SMALL);
-
-
-
-
-
-    }
-
 
     private void createShopUI(){
 
@@ -193,35 +121,81 @@ public class ShopScreenUISystem extends BaseSystem {
 
         stage.addActor(container);
 
-        updateShopUI();
+        populateShopUI();
 
 
     }
 
+    private void populateShopUI(){
 
-    public void addBuyOrSellScrollPane(Table table){
+        Stage stage = stageUIRenderingSystem.stage;
 
-        Table shopTable = new Table(uiSkin);
+        container.clear();
 
-        ScrollPane scrollPane = new ScrollPane(shopTable, uiSkin);
-        scrollPane.setScrollbarsOnTop(true);
-        scrollPane.setForceScroll(false, true);
-        scrollPane.setFadeScrollBars(false);
-        scrollPane.setOverscroll(false ,false);
+        Label label = new Label(TextResource.SHOP_WELCOME, uiSkin);
+        container.add(label).padTop(Measure.units(10f)).expandX(); //Avoids info banner
+        container.row();
 
+        TextButton leaveRestArea = new TextButton(TextResource.SHOP_LEAVE, uiSkin);
+        leaveRestArea.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                goToPreviousScreen(shopScreen.getPreviousScreen());
+            }
+        });
+
+        final TextButton switchToSellButton = new TextButton(TextResource.SHOP_SELL, uiSkin);
+        switchToSellButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                state = State.SELL;
+                populateShopTable();
+            }
+        });
+
+        final TextButton switchToBuyButton = new TextButton(TextResource.SHOP_BUY, uiSkin);
+        switchToBuyButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                state = State.BUY;
+                populateShopTable();
+            }
+        });
+
+        Table tabTable = new Table(uiSkin);
+        container.add(tabTable).width(TABLE_WIDTH).height(Measure.units(7.5f));
+        tabTable.add(switchToBuyButton).expandX().fill();
+        tabTable.add(switchToSellButton).expandX().fill();
+
+        ButtonGroup<TextButton> buttonGroup = new ButtonGroup<>();
+        buttonGroup.setUncheckLast(true);
+        buttonGroup.add(switchToBuyButton);
+        buttonGroup.add(switchToSellButton);
+        container.row();
+
+        shopTable = new Table(uiSkin);
+        skillScrollPane = new ScrollPane(shopTable, uiSkin);
+        skillScrollPane.setFadeScrollBars(false);
+        skillScrollPane.setOverscroll(false, false);
+        container.add(skillScrollPane).width(TABLE_WIDTH).maxHeight(Measure.units(27.5f)).minHeight(Measure.units(27.5f)).expandY();
+        populateShopTable();
+        container.row();
+        container.add(leaveRestArea).width(stage.getWidth()).maxWidth(Measure.units(25f)).height(Measure.units(7.5f)).align(Align.bottom).padBottom(Padding.SMALL);
+    }
+
+
+    public void populateShopTable(){
+
+        shopTable.clear();
 
         switch (state){
 
             case BUY:
 
-
-
                 if(skillToBuyArray.size <= 0){ //If there is something to sell.
                     Label youHaveNothingToSell = new Label(TextResource.SHOP_NOTHING_TO_BUY, uiSkin);
                     shopTable.add(youHaveNothingToSell);
                 } else {
-
-                    System.out.println("??????");
 
                     for(Skill s : skillToBuyArray){
                         shopTable.row();
@@ -233,7 +207,6 @@ public class ShopScreenUISystem extends BaseSystem {
                 break;
 
             case SELL:
-
 
                 if(partyManagementSystem.getPartyDetails().getSkillInventory().size == 0 &&
                         partyManagementSystem.getPartyDetails().getEquippedInventory().size == 0){
@@ -252,15 +225,8 @@ public class ShopScreenUISystem extends BaseSystem {
                     addToShopTable(shopTable, s, true);
                 }
 
-
-
                 break;
-
-
         }
-
-
-        table.add(scrollPane).width(Measure.units(95f)).maxHeight(Measure.units(27.5f)).minHeight(Measure.units(27.5f)).expandY();;
 
     }
 
@@ -296,7 +262,7 @@ public class ShopScreenUISystem extends BaseSystem {
 
         shopTable.add(new Label("", uiSkin)).padBottom(Measure.units(5f)).padLeft(Padding.SMALL);
         shopTable.add(new Image(renderingSystem.getAtlas().findRegion(s.getIcon()))).height(Measure.units(5f)).width(Measure.units(5f)).padRight(Measure.units(1.5f));
-        shopTable.add(new Label(s.getName(), uiSkin, Fonts.LABEL_STYLE_SMALL_FONT)).padRight(Measure.units(1.5f));
+        shopTable.add(new Label(s.getName(), uiSkin)).padRight(Measure.units(1.5f)).expandX();
 
         Label skillDescription = new Label(skillDes, uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
         skillDescription.setWrap(true);
@@ -304,8 +270,10 @@ public class ShopScreenUISystem extends BaseSystem {
         shopTable.add(skillDescription).width(Measure.units(50f)).padRight(Measure.units(1.5f));
 
 
-        Stack sellButtonStack = new Stack();
 
+
+
+        Stack sellButtonStack = new Stack();
 
         switch (state){
             case BUY:
@@ -321,13 +289,13 @@ public class ShopScreenUISystem extends BaseSystem {
 
         Table priceDisplay = new Table(uiSkin);
         priceDisplay.setTouchable(Touchable.disabled);
-        priceDisplay.add(new Label(priceTagText, uiSkin));
-        priceDisplay.add(new Image(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.ICON_MONEY)))).size(Measure.units(5f)).padLeft(Padding.SMALL);
+        //priceDisplay.add(new Label(priceTagText, uiSkin));
+        priceDisplay.add(new Image(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.ICON_MONEY)))).size(Measure.units(5f)).expandX();
+        priceDisplay.add(new Label("" + price, uiSkin)).expandX();
 
-        priceDisplay.add(new Label("" + price, uiSkin));
         sellButtonStack.add(priceDisplay);
 
-        shopTable.add(sellButtonStack).height(Measure.units(7.5f)).width(Measure.units(15f)).padRight(Padding.SMALL);
+        shopTable.add(sellButtonStack).height(Measure.units(7.5f)).width(Measure.units(8.5f)).padRight(Padding.SMALL);
 
     }
 
@@ -366,7 +334,7 @@ public class ShopScreenUISystem extends BaseSystem {
                     partyManagementSystem.getPartyDetails().addSkillToInventory(s);
                     partyManagementSystem.editMoney(-s.getStorePrice());
                     skillToBuyArray.removeValue(s, true);
-                    updateShopUI();
+                    populateShopTable();
                 }
             });
 
@@ -390,11 +358,8 @@ public class ShopScreenUISystem extends BaseSystem {
 
     private class SellButton extends TextButton {
 
-        private int price;
-
         public SellButton(String text, Skin skin, final Skill s, final int price){
             super(text, skin);
-            this.price = price;
 
             this.addListener(new ChangeListener() {
                 @Override
@@ -402,7 +367,7 @@ public class ShopScreenUISystem extends BaseSystem {
                     partyManagementSystem.getPartyDetails().removeSkillFromInventoryOrParty(s);
                     partyManagementSystem.editMoney(price);
                     skillToBuyArray.removeValue(s, true);
-                    refreshUI();
+                    populateShopTable();
                 }
             });
 

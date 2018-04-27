@@ -13,7 +13,7 @@ public class NinePatches {
 
     public static NinePatch getBorderPatch(TextureAtlas atlas, Color c){
 
-        NinePatch ninePatch = new NinePatch(atlas.findRegion(TextureStrings.BORDER), 8, 8, 8, 8);
+        NinePatch ninePatch = new NinePatch(atlas.findRegion(TextureStrings.BORDER), 16, 16, 16, 16);
         ninePatch.setColor(c);
 
         return ninePatch;

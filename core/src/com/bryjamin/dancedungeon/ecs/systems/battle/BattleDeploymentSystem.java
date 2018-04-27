@@ -51,12 +51,7 @@ import com.bryjamin.dancedungeon.utils.observer.XObservable;
 public class BattleDeploymentSystem extends EntitySystem {
 
     private TileSystem tileSystem;
-    private TurnSystem turnSystem;
     private PlayerPartyManagementSystem playerPartyManagementSystem;
-    private BattleScreenUISystem battleScreenUISystem;
-    private StageUIRenderingSystem stageUIRenderingSystem;
-    private InformationBannerSystem informationBannerSystem;
-    private RenderingSystem renderingSystem;
 
     private int count;
     private boolean[] deployedArray = new boolean[PartyDetails.PARTY_SIZE];
@@ -110,10 +105,6 @@ public class BattleDeploymentSystem extends EntitySystem {
             e.getComponent(CoordinateComponent.class).coordinates.set(selected);
         }
 
-        deploymentLocations = new Array<>(tileSystem.getAllySpawningLocations());
-        deploymentTable = new Table(uiSkin);
-
-        stageUIRenderingSystem.stage.addActor(deploymentTable);
 
         calculateUnitToBeDeployed();
         createDeploymentLocations();
@@ -143,7 +134,10 @@ public class BattleDeploymentSystem extends EntitySystem {
     }
 
 
-    public void createDeploymentLocations() {
+    /**
+     * Creates UI entities in the Tiles where units can be deployed.
+     */
+    private void createDeploymentLocations() {
 
         for (final Coordinates c : deploymentLocations) {
             Entity e = unitFactory.baseDeploymentZone(world, tileSystem.createRectangleUsingCoordinates(c), c);
@@ -151,35 +145,43 @@ public class BattleDeploymentSystem extends EntitySystem {
             e.edit().add(new ActionOnTapComponent(new WorldAction() {
                 @Override
                 public void performAction(World world, Entity entity) {
-
-                    if (unitToBeDeployed != null) {
-                        deployedArray[count] = true;
-
-                        Entity e = BagToEntity.bagToEntity(world.createEntity(), unitMap.getUnit(unitToBeDeployed));
-                        e.getComponent(CoordinateComponent.class).coordinates.set(c);
-                        deploymentLocations.removeValue(c, false);
-
-                        if (!deployedArray[deployedArray.length - 1]) { //If all units have been deployed, exit this system
-
-                            observable.notifyObservers(world.getSystem(BattleDeploymentSystem.class));
-
-                            calculateUnitToBeDeployed();
-                            createDeploymentLocations();
-                        } else {
-                            processingFlag = false;
-                            observable.notifyObservers(world.getSystem(BattleDeploymentSystem.class));
-                            turnSystem.setProcessingFlag(true);
-                            deploymentTable.remove();
-                        }
-                        clear();
-                    }
-
-
+                    deployUnit(c);
                 }
             }));
         }
 
 
+    }
+
+
+    /**
+     * Converts the UnitData given into an Entity that is placed on the Map. ]
+     *
+     * Once a unit is placed, the next unit to be placed is calculated.
+     * Observers are then updated.
+     *
+     * If no more units can be deployed this system stops processing.
+     *
+     */
+    private void deployUnit(Coordinates c){
+        if (unitToBeDeployed != null) {
+            deployedArray[count] = true;
+
+            Entity e = BagToEntity.bagToEntity(world.createEntity(), unitMap.getUnit(unitToBeDeployed));
+            e.getComponent(CoordinateComponent.class).coordinates.set(c);
+            deploymentLocations.removeValue(c, false);
+
+            if (!deployedArray[deployedArray.length - 1]) { //If all units have been deployed, exit this system
+                calculateUnitToBeDeployed(); //Setup next before notifying
+                createDeploymentLocations();
+                observable.notifyObservers(this);
+            } else {
+                processingFlag = false;
+                observable.notifyObservers(this);
+                deploymentTable.remove();
+            }
+            clear();
+        }
     }
 
 

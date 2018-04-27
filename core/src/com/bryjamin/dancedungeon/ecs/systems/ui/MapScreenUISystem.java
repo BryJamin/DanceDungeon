@@ -569,15 +569,11 @@ public class MapScreenUISystem extends BaseSystem {
     private class SkillSource extends DragAndDrop.Source {
 
         private Skill skill;
-        private int index;
-        private Actor actor;
         public boolean isEquipped = true;
 
         public SkillSource(Actor actor, Skill skill, int index) {
             super(actor);
             this.skill = skill;
-            this.actor = actor;
-            this.index = index;
         }
 
         DragAndDrop.Payload payload = new DragAndDrop.Payload();
@@ -590,8 +586,7 @@ public class MapScreenUISystem extends BaseSystem {
             i.setWidth(Measure.units(17.5f));
 
             payload.setDragActor(i);
-            dragAndDrop.setDragActorPosition(i.getWidth() / 2, -i.getHeight() / 2);
-            //dragAndDrop.setDragActorPosition(-(i.getWidth()/2), i.getHeight()/2);
+            dragAndDrop.setDragActorPosition(i.getWidth() / 2, -i.getHeight() / 2); //Sets the image position to the center
             payload.setObject(this);
 
             return payload;
@@ -659,9 +654,7 @@ public class MapScreenUISystem extends BaseSystem {
 
             SkillSource es =  (SkillSource) source;
 
-            if(es.isEquipped){
-
-            } else {
+            if(!es.isEquipped){
                 partyDetails.swapCharacterSkillWithInventorySkill(selectedCharacter, skill, es.skill);
                 updateInventoryTable(inventoryTable);
                 updateEquippedSkillTable(equippedSkillsTable, selectedCharacter);
@@ -682,6 +675,7 @@ public class MapScreenUISystem extends BaseSystem {
 
         private Skill skill;
         private int inventoryIndex;
+        private boolean highlight = false;
 
         public InventoryTarget(Actor actor, Skill s, int inventoryIndex) {
             super(actor);
@@ -692,9 +686,10 @@ public class MapScreenUISystem extends BaseSystem {
         @Override
         public boolean drag(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
 
-            if(((SkillSource) source).isEquipped) {
+            if(((SkillSource) source).isEquipped && !highlight) {
                 Table t = (Table) getActor();
-                t.setBackground(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.BLOCK)));
+                t.setBackground(new NinePatchDrawable(NinePatches.getBorderPatch(renderingSystem.getAtlas(), new Color(Color.WHITE))));
+                highlight = true;
             }
 
 
@@ -705,6 +700,7 @@ public class MapScreenUISystem extends BaseSystem {
         public void reset(DragAndDrop.Source source, DragAndDrop.Payload payload) {
             Table t = (Table) getActor();
             t.setBackground(new NinePatchDrawable(NinePatches.getDefaultBorderPatch(renderingSystem.getAtlas())));
+            highlight = false;
         }
 
         @Override

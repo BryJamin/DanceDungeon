@@ -25,7 +25,9 @@ import static com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem.TURN.INTEN
  * System used to keep track of blob and enemy turns
  */
 
-public class TurnSystem extends EntitySystem {
+public class TurnSystem extends EntitySystem implements Observer{
+
+    private BattleDeploymentSystem battleDeploymentSystem;
 
     private ComponentMapper<TurnComponent> turnMapper;
     private ComponentMapper<BuffComponent> buffMapper;
@@ -74,6 +76,19 @@ public class TurnSystem extends EntitySystem {
         super(Aspect.all(TurnComponent.class, SkillsComponent.class, StatComponent.class).one(UtilityAiComponent.class, PlayerControlledComponent.class));
     }
 
+    @Override
+    protected void initialize() {
+        battleDeploymentSystem.getObservers().addObserver(this);
+    }
+
+    @Override
+    public void update(Object o) {
+        if(o.getClass() == BattleDeploymentSystem.class){
+            if(!((BattleDeploymentSystem) o).isProcessing()){
+                processingFlag = true;
+            }
+        }
+    }
 
     @Override
     public void inserted(Entity e) {
