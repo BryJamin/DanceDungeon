@@ -78,7 +78,7 @@ public class BattleScreen extends AbstractScreen {
 
                         //Initialize Tiles
                         new TileSystem(battleEvent),
-                        new BattleDeploymentSystem(game, battleEvent),
+                        new BattleDeploymentSystem(battleEvent),
 
                         new BattleWorldInputHandlerSystem(gameport),
 

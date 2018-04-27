@@ -57,12 +57,7 @@ public class BattleDeploymentSystem extends EntitySystem {
     private boolean[] deployedArray = new boolean[PartyDetails.PARTY_SIZE];
 
     private BattleEvent battleEvent;
-
-    private Array<Coordinates> enemySpawning;
-    private Array<Coordinates> deploymentLocations;
-
-
-    private Table deploymentTable;
+    private Array<Coordinates> deploymentLocations = new Array<>();
 
     private UnitMap unitMap = new UnitMap();
     private UnitFactory unitFactory = new UnitFactory();
@@ -72,12 +67,9 @@ public class BattleDeploymentSystem extends EntitySystem {
 
     private boolean processingFlag = true;
 
-    private Skin uiSkin;
-
-    public BattleDeploymentSystem(MainGame game, BattleEvent battleEvent) {
+    public BattleDeploymentSystem(BattleEvent battleEvent) {
         super(Aspect.all(DeploymentComponent.class));
         this.battleEvent = battleEvent;
-        this.uiSkin = Skins.DEFAULT_SKIN(game.assetManager);
     }
 
     @Override
@@ -105,9 +97,8 @@ public class BattleDeploymentSystem extends EntitySystem {
             e.getComponent(CoordinateComponent.class).coordinates.set(selected);
         }
 
-
-        calculateUnitToBeDeployed();
         createDeploymentLocations();
+        calculateUnitToBeDeployed();
 
 
     }
@@ -178,7 +169,6 @@ public class BattleDeploymentSystem extends EntitySystem {
             } else {
                 processingFlag = false;
                 observable.notifyObservers(this);
-                deploymentTable.remove();
             }
             clear();
         }
