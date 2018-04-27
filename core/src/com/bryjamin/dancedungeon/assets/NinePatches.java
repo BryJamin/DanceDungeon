@@ -7,8 +7,28 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 
 public class NinePatches {
 
-    public static NinePatch getBorderPatch(TextureAtlas atlas){
-        return new NinePatch(atlas.findRegion(TextureStrings.BORDER), 8, 8, 8, 8);
+    public static NinePatch getDefaultBorderPatch(TextureAtlas atlas){
+        return getBorderPatch(atlas, new Color(Colors.TABLE_BORDER_COLOR));
+    }
+
+    public static NinePatch getBorderPatch(TextureAtlas atlas, Color c){
+
+        NinePatch ninePatch = new NinePatch(atlas.findRegion(TextureStrings.BORDER), 8, 8, 8, 8);
+        ninePatch.setColor(c);
+
+        return ninePatch;
+    }
+
+    public static NinePatch getBorderPatch(TextureAtlas atlas, float alpha){
+
+        Color c = new Color(Colors.TABLE_BORDER_COLOR);
+        c.a = alpha;
+
+        return getBorderPatch(atlas, c);
+    }
+
+    public static NinePatchDrawable getDefaultNinePatch(TextureAtlas atlas){
+        return new NinePatchDrawable(getDefaultBorderPatch(atlas));
     }
 
 

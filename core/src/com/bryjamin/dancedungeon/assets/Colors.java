@@ -44,8 +44,11 @@ public class Colors {
     public static final Color ENEMY_INTENT_ARROW_COLOR = RGBtoColor(255f, 0f, 0f, 1);;
     public static final Color ENEMY_INTENT_HIGHLIGHT_BOX_COLOR = RGBtoColor(255, 69, 0f, 1); //RGBtoColor(255f, 0f, 0f, 1);
 
-
     public static final Color HEATH_BAR_COLOR = RGBtoColor(50,205,50, 1); //RGBtoColor(255f, 0f, 0f, 1);
+
+
+    public static final Color TABLE_BORDER_COLOR = RGBtoColor(39, 226, 255, 1);
+    public static final Color TABLE_BORDER_COLOR_HIGHLIGHTED = RGBtoColor(1, 1, 1, 1);
 
 
     public static Color RGBtoColor(float r, float g, float b, float a){

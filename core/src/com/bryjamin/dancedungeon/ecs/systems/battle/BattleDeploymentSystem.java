@@ -37,8 +37,6 @@ import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 import com.bryjamin.dancedungeon.utils.observer.XObservable;
 
-import java.util.Observable;
-
 
 /**
  * This System is to used to setup the initial deployment of player characters
@@ -181,30 +179,6 @@ public class BattleDeploymentSystem extends EntitySystem {
             }));
         }
 
-
-    }
-
-
-    public void updateDeploymentTable(UnitData unitData) {
-
-        if (deploymentTable.hasChildren()) {
-            deploymentTable.clear();
-        }
-
-        // deploymentTable.setDebug(true);
-        deploymentTable.setWidth(stageUIRenderingSystem.stage.getWidth());
-        deploymentTable.setHeight(Measure.units(15f));
-
-        NinePatch patch = new NinePatch(renderingSystem.getAtlas().findRegion(TextureStrings.BORDER), 4, 4, 4, 4);
-        deploymentTable.setBackground(new NinePatchDrawable(NinePatches.getBorderPatch(renderingSystem.getAtlas())));
-
-        deploymentTable.setPosition(0, 0);
-
-        Label deployingLabel = new Label("Please Select Where To Deploy: ", uiSkin);
-
-        deploymentTable.add(deployingLabel).pad(Padding.SMALL);
-
-        deploymentTable.add(new Image(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(unitData.icon)))).size(Measure.units(7.5f), Measure.units(7.5f));
 
     }
 

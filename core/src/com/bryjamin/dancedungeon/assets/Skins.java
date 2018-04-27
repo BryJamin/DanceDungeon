@@ -24,8 +24,10 @@ public class Skins {
         uiSkin.add(Fonts.SMALL_FONT_STYLE_NAME, assetManager.get(Fonts.SMALL));
         uiSkin.addRegions(assetManager.get(FileStrings.SPRITE_ATLAS_FILE, TextureAtlas.class));
 
-        TextureRegion tr = assetManager.get(FileStrings.SPRITE_ATLAS_FILE, TextureAtlas.class).findRegion(TextureStrings.BORDER, 0);
-        uiSkin.add("border", new NinePatch(tr, 4, 4, 4, 4));
+        //Add Button Skin
+        uiSkin.add("border", NinePatches.getDefaultBorderPatch(assetManager.get(FileStrings.SPRITE_ATLAS_FILE, TextureAtlas.class)));
+
+        //Add UI skin regions
         uiSkin.addRegions(new TextureAtlas(Gdx.files.internal("uiskin.atlas")));
         uiSkin.load(Gdx.files.internal("uiskin.json"));
 

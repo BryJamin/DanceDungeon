@@ -11,7 +11,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -160,7 +159,7 @@ public class ShopScreenUISystem extends BaseSystem {
             case BUY:
                 buyTable = new Table(uiSkin);
                 buyTable.align(Align.bottom);
-                buyTable.setBackground(new NinePatchDrawable(NinePatches.getBorderPatch(renderingSystem.getAtlas())));
+                buyTable.setBackground(new NinePatchDrawable(NinePatches.getDefaultBorderPatch(renderingSystem.getAtlas())));
                 container.add(buyTable).width(stage.getWidth()).padRight(Padding.SMALL).padLeft(Padding.SMALL).height(Measure.units(32.5f)).expandY();
                 updateBuyButtonTable(buyTable);
 

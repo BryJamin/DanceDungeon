@@ -274,7 +274,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
         objectivesTable = new Table(uiSkin);
         //objectivesTable.setHeight(Measure.units(27.5f));
-        objectivesTable.setBackground(new NinePatchDrawable(NinePatches.getBorderPatch(renderingSystem.getAtlas())));
+        objectivesTable.setBackground(NinePatches.getDefaultNinePatch(renderingSystem.getAtlas()));
         objectivesTable.setDebug(StageUIRenderingSystem.DEBUG);
 
         objectivesAndButtonContainer.add(objectivesTable).width(Measure.units(35f)).padBottom(Padding.MEDIUM);
@@ -367,7 +367,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
         deploymentTable.setWidth(stageUIRenderingSystem.stage.getWidth());
 
         //NinePatch patch = new NinePatch(renderingSystem.getAtlas().findRegion(TextureStrings.BORDER), 4, 4, 4, 4);
-        //deploymentTable.setBackground(new NinePatchDrawable(NinePatches.getBorderPatch(renderingSystem.getAtlas())));
+        //deploymentTable.setBackground(new NinePatchDrawable(NinePatches.getDefaultBorderPatch(renderingSystem.getAtlas())));
 
         Label deployingLabel = new Label("Please Select Where To Deploy: ", uiSkin);
 
@@ -381,7 +381,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
 
     private void applyNinePathToTable(Table table){
-        table.setBackground(new NinePatchDrawable(NinePatches.getBorderPatch(renderingSystem.getAtlas())));
+        table.setBackground(NinePatches.getDefaultNinePatch(renderingSystem.getAtlas()));
     }
 
 

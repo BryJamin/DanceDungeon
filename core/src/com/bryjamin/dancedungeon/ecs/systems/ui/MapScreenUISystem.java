@@ -30,6 +30,7 @@ import com.bryjamin.dancedungeon.assets.Fonts;
 import com.bryjamin.dancedungeon.assets.NinePatches;
 import com.bryjamin.dancedungeon.assets.Padding;
 import com.bryjamin.dancedungeon.assets.Skins;
+import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.systems.MapCameraSystemFlingAndPan;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.input.MapInputSystem;
@@ -187,7 +188,7 @@ public class MapScreenUISystem extends BaseSystem {
 
 
         Table tempTable = new Table(uiSkin);
-        tempTable.setBackground(new NinePatchDrawable(NinePatches.getBorderPatch(renderingSystem.getAtlas())).tint(new Color(1, 1, 1, 0.95f)));
+        tempTable.setBackground(new NinePatchDrawable(NinePatches.getBorderPatch(renderingSystem.getAtlas(), 0.95f)));
         characterWindow.add(tempTable).width(WINDOW_WIDTH);
 
         selectCharacterButtonsTable = new Table(uiSkin);
@@ -205,7 +206,7 @@ public class MapScreenUISystem extends BaseSystem {
 
         inventoryTable = new Table(uiSkin);
         inventoryTable.align(Align.top);
-        inventoryTable.setBackground(new NinePatchDrawable(NinePatches.getBorderPatch(renderingSystem.getAtlas())).tint(new Color(1, 1, 1, 0.95f)));
+        inventoryTable.setBackground(new NinePatchDrawable(NinePatches.getBorderPatch(renderingSystem.getAtlas(), 0.95f)));
         characterWindow.add(inventoryTable).width(WINDOW_WIDTH).height(Measure.units(10f)).colspan(4).padTop(Measure.units(2.5f));
 
 
@@ -400,7 +401,7 @@ public class MapScreenUISystem extends BaseSystem {
             Table inventoryInformation = new Table(uiSkin);
             inventoryInformation.setTouchable(Touchable.enabled);
             inventoryInformation.setDebug(StageUIRenderingSystem.DEBUG);
-            inventoryInformation.setBackground(new NinePatchDrawable(NinePatches.getBorderPatch(renderingSystem.getAtlas())));
+            inventoryInformation.setBackground(new NinePatchDrawable(NinePatches.getDefaultBorderPatch(renderingSystem.getAtlas())));
             inventoryTable.add(inventoryInformation).width(Measure.units(22.5f)).height(BUTTON_SIZE + Measure.units(2f)).expandX();
 
             try {
@@ -449,7 +450,7 @@ public class MapScreenUISystem extends BaseSystem {
                     Table skillTable = new Table(uiSkin);
                     skillTable.align(Align.left);
                     skillTable.setTouchable(Touchable.enabled);
-                    skillTable.setBackground(new NinePatchDrawable(NinePatches.getBorderPatch(renderingSystem.getAtlas())));
+                    skillTable.setBackground(new NinePatchDrawable(NinePatches.getDefaultBorderPatch(renderingSystem.getAtlas())));
 
                     equippedSkillsTable.add(skillTable).width(INFORMATION_WINDOW_WIDTH).height(BUTTON_SIZE).padBottom(Padding.SMALL);
 
@@ -473,7 +474,7 @@ public class MapScreenUISystem extends BaseSystem {
 
                 Table skillNotSetTable = new Table(uiSkin);
                 skillNotSetTable.setTouchable(Touchable.enabled);
-                skillNotSetTable.setBackground(new NinePatchDrawable(NinePatches.getBorderPatch(renderingSystem.getAtlas())));
+                skillNotSetTable.setBackground(new NinePatchDrawable(NinePatches.getDefaultBorderPatch(renderingSystem.getAtlas())));
 
                 Label skillNotSet = new Label("Equipment Slot is Empty", uiSkin);
                 skillNotSet.setAlignment(Align.center);
@@ -601,6 +602,11 @@ public class MapScreenUISystem extends BaseSystem {
         public void dragStop(InputEvent event, float x, float y, int pointer, DragAndDrop.Payload payload, DragAndDrop.Target target) {
             super.dragStop(event, x, y, pointer, payload, target);
         }
+
+
+
+
+
     }
 
     private class InventorySource extends SkillSource {
@@ -618,6 +624,7 @@ public class MapScreenUISystem extends BaseSystem {
 
         private Skill skill;
         private int index;
+        private boolean highlighted = false;
 
         public EquippedTarget(Actor actor, Skill s, int index) {
             super(actor);
@@ -629,7 +636,22 @@ public class MapScreenUISystem extends BaseSystem {
 
         @Override
         public boolean drag(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
+
+
+            if(!((SkillSource) source).isEquipped && !highlighted) {
+                Table t = (Table) getActor();
+                t.setBackground(new NinePatchDrawable(NinePatches.getBorderPatch(renderingSystem.getAtlas(), new Color(Color.WHITE))));
+                highlighted = true;
+            }
+
             return true;
+        }
+
+        @Override
+        public void reset(DragAndDrop.Source source, DragAndDrop.Payload payload) {
+            Table t = (Table) getActor();
+            t.setBackground(NinePatches.getDefaultNinePatch(renderingSystem.getAtlas()));
+            highlighted = false;
         }
 
         @Override
@@ -640,7 +662,7 @@ public class MapScreenUISystem extends BaseSystem {
             if(es.isEquipped){
 
             } else {
-                partyDetails.swapCharacterSkillWithInventorySkill(selectedCharacter, es.index, index);
+                partyDetails.swapCharacterSkillWithInventorySkill(selectedCharacter, skill, es.skill);
                 updateInventoryTable(inventoryTable);
                 updateEquippedSkillTable(equippedSkillsTable, selectedCharacter);
             }
@@ -669,7 +691,20 @@ public class MapScreenUISystem extends BaseSystem {
 
         @Override
         public boolean drag(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
+
+            if(((SkillSource) source).isEquipped) {
+                Table t = (Table) getActor();
+                t.setBackground(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.BLOCK)));
+            }
+
+
             return true;
+        }
+
+        @Override
+        public void reset(DragAndDrop.Source source, DragAndDrop.Payload payload) {
+            Table t = (Table) getActor();
+            t.setBackground(new NinePatchDrawable(NinePatches.getDefaultBorderPatch(renderingSystem.getAtlas())));
         }
 
         @Override
@@ -678,7 +713,7 @@ public class MapScreenUISystem extends BaseSystem {
             SkillSource es =  (SkillSource) source;
 
             if(es.isEquipped){ //If skill is equipped swap with an inventory skill
-                partyDetails.swapCharacterSkillWithInventorySkill(selectedCharacter, es.index, inventoryIndex);
+                partyDetails.swapCharacterSkillWithInventorySkill(selectedCharacter, es.skill, skill);
                 updateInventoryTable(inventoryTable);
                 updateEquippedSkillTable(equippedSkillsTable, selectedCharacter);
 

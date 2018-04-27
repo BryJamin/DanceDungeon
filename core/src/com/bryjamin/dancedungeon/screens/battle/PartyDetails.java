@@ -100,26 +100,17 @@ public class PartyDetails {
     /**
      * Used to swap character skills with skills in inventory.
      * @param character - The party member
-     * @param skillIndex - The index of the Character Skill on the party member
-     * @param inventoryIndex -
      */
-    public void swapCharacterSkillWithInventorySkill(UnitData character, int skillIndex, int inventoryIndex){
-
-        if(!Arrays.asList(party).contains(character) || inventoryIndex > MAX_INVENTORY - 1) return;
-
+    public void swapCharacterSkillWithInventorySkill(UnitData character, Skill characterSkill, Skill inventorySkill){
 
         Array<Skill> characterSkills = character.getSkillsComponent().skills;
 
-        Skill characterSkill = (skillIndex > characterSkills.size - 1) ? null :
-                characterSkills.get(skillIndex);
-
-        Skill inventorySkill = (inventoryIndex > skillInventory.size - 1) ? null :
-                skillInventory.get(skillIndex);
-
+        if(characterSkill != null && !characterSkills.contains(characterSkill, true)) return;
+        if(inventorySkill != null && !skillInventory.contains(inventorySkill, true)) return;
 
         if(characterSkill != null && inventorySkill != null){//Swap if both slots have Skills
-            characterSkills.set(skillIndex, inventorySkill);
-            skillInventory.set(inventoryIndex, characterSkill);
+            characterSkills.set(characterSkills.indexOf(characterSkill, true), inventorySkill);
+            skillInventory.set(skillInventory.indexOf(inventorySkill, true), characterSkill);
         } else if(characterSkill == null && inventorySkill != null){//Remove if only one slot has a skill and add to the other.
             characterSkills.add(inventorySkill);
             skillInventory.removeValue(inventorySkill, true);

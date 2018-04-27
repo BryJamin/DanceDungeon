@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.assets.Fonts;
+import com.bryjamin.dancedungeon.assets.NinePatches;
 import com.bryjamin.dancedungeon.assets.Padding;
 import com.bryjamin.dancedungeon.assets.Skins;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
@@ -205,7 +206,11 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
         for(int i = 0; i < partyMembers.size; i++){
 
             Table partyMemberContainer = new Table(uiSkin);
-            partyMemberContainer.setBackground(new NinePatchDrawable(new NinePatch(renderingSystem.getAtlas().findRegion(TextureStrings.BORDER), 4, 4, 4, 4)).tint(new Color(1,1,1, 0.5f)));
+
+            NinePatchDrawable ninePatchDrawable = NinePatches.getDefaultNinePatch(renderingSystem.getAtlas());
+            ninePatchDrawable.getPatch().getColor().a = 0.5f;
+
+            partyMemberContainer.setBackground(ninePatchDrawable);
 
 
             partyMemberContainer.align(Align.center);
@@ -220,7 +225,7 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
             partyMemberContainer.row();
 
 
-            Image border = new Image(new NinePatch(renderingSystem.getAtlas().findRegion(TextureStrings.BORDER), 4, 4, 4, 4));
+            Image border = new Image(NinePatches.getDefaultNinePatch(renderingSystem.getAtlas()));
             Table imgContainer = new Table();
             imgContainer.add(new Image(renderingSystem.getAtlas().findRegion(unitData.icon))).size(Measure.units(7.5f));
             //characterPortraitContainer.row();
@@ -233,7 +238,7 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
             //skillsTableContainer.row();
 
             imgContainer = new Table();
-            imgContainer.setBackground(new NinePatchDrawable(new NinePatch(renderingSystem.getAtlas().findRegion(TextureStrings.BORDER), 4, 4, 4, 4)));
+            imgContainer.setBackground(NinePatches.getDefaultNinePatch(renderingSystem.getAtlas()));
             imgContainer.add(new Image(renderingSystem.getAtlas().findRegion(unitData.getSkillsComponent().skills.first().getIcon()))).size(Measure.units(4f));
 
             partyMemberContainer.add(imgContainer).width(Measure.units(5f));

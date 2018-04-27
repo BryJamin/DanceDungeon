@@ -90,7 +90,7 @@ public class EnemyIntentSystem extends EntitySystem implements Observer{
 
                     Array<Coordinates> coordinatesArray = tileSystem.getFreeCoordinateInAGivenDirection(coordinates, new Direction[]{
                                 CoordinateMath.getDirectionOfCoordinate(stored, storedTarget)});
-                    
+
                     Rectangle currentR1 = tileSystem.getRectangleUsingCoordinates(coordinates);
 
                     enemyIntentBox(tileSystem.getRectangleUsingCoordinates(coordinatesArray.peek()));
