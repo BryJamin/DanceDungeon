@@ -57,7 +57,10 @@
     "baseDamage": 1,
     "targeting": "Melee",
     "spellAnimation": "Slash",
-    "attackType": "Damage"
+    "attackType": "Damage",
+
+    "storePrice": 2
+
   },
 
   "1e3e7778-14e1-4466-b1fb-b24a01723155": {
@@ -71,6 +74,9 @@
     "minRange": 2,
     "maxRange": 5,
     "attackType": "Damage",
+
+    "storePrice": 2,
+
     "affectedAreaSkill": {
       "push": 1,
       "baseDamage": 0,

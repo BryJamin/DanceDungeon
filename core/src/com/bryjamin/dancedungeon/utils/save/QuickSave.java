@@ -46,6 +46,7 @@ public class QuickSave {
         }
 
 
+        prefs.clear(); //Destroy invalid quick saves
         return false;
     }
 

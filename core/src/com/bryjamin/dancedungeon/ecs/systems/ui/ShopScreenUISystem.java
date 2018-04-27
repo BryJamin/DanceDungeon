@@ -3,6 +3,7 @@ package com.bryjamin.dancedungeon.ecs.systems.ui;
 import com.artemis.BaseSystem;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -26,6 +27,7 @@ import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.assets.Fonts;
 import com.bryjamin.dancedungeon.assets.Padding;
 import com.bryjamin.dancedungeon.assets.Skins;
+import com.bryjamin.dancedungeon.assets.Styles;
 import com.bryjamin.dancedungeon.assets.TextResource;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
@@ -144,7 +146,7 @@ public class ShopScreenUISystem extends BaseSystem {
             }
         });
 
-        final TextButton switchToSellButton = new TextButton(TextResource.SHOP_SELL, uiSkin);
+        final TextButton switchToSellButton = new TextButton(TextResource.SHOP_SELL, uiSkin, Styles.TEXT_BUTTON_STYLE_TOGGLE);
         switchToSellButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -153,7 +155,7 @@ public class ShopScreenUISystem extends BaseSystem {
             }
         });
 
-        final TextButton switchToBuyButton = new TextButton(TextResource.SHOP_BUY, uiSkin);
+        final TextButton switchToBuyButton = new TextButton(TextResource.SHOP_BUY, uiSkin, Styles.TEXT_BUTTON_STYLE_TOGGLE);
         switchToBuyButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -167,7 +169,7 @@ public class ShopScreenUISystem extends BaseSystem {
         tabTable.add(switchToBuyButton).expandX().fill();
         tabTable.add(switchToSellButton).expandX().fill();
 
-        ButtonGroup<TextButton> buttonGroup = new ButtonGroup<>();
+        ButtonGroup<Button> buttonGroup = new ButtonGroup<>();
         buttonGroup.setUncheckLast(true);
         buttonGroup.add(switchToBuyButton);
         buttonGroup.add(switchToSellButton);
@@ -232,7 +234,7 @@ public class ShopScreenUISystem extends BaseSystem {
 
 
 
-    private void addToShopTable(Table shopTable, Skill s, boolean isEquipped){
+    private void addToShopTable(Table shopTable, final Skill s, boolean isEquipped){
 
 
         String skillDes;
@@ -275,23 +277,36 @@ public class ShopScreenUISystem extends BaseSystem {
 
         Stack sellButtonStack = new Stack();
 
-        switch (state){
-            case BUY:
-                BuyButton buyButton = new BuyButton("", uiSkin, s);
-                sellButtonStack.add(buyButton);
-                break;
-            case SELL:
-                SellButton sellButton = new SellButton("", uiSkin, s, price);
-                sellButtonStack.add(sellButton);
-                break;
 
-        }
+        Image moneyImage = new Image(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.ICON_MONEY)));
 
         Table priceDisplay = new Table(uiSkin);
         priceDisplay.setTouchable(Touchable.disabled);
         //priceDisplay.add(new Label(priceTagText, uiSkin));
-        priceDisplay.add(new Image(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.ICON_MONEY)))).size(Measure.units(5f)).expandX();
+        priceDisplay.add(moneyImage).size(Measure.units(5f)).expandX();
         priceDisplay.add(new Label("" + price, uiSkin)).expandX();
+
+
+        switch (state){
+            case BUY:
+                BuyButton buyButton = new BuyButton(s);
+                sellButtonStack.add(buyButton);
+
+                if(partyManagementSystem.getPartyDetails().getMoney() < s.getStorePrice()) {
+                    sellButtonStack.setColor(new Color(Color.RED));
+                    buyButton.setDisabled(true);
+                    buyButton.setTouchable(Touchable.disabled);
+                    buyButton.setColor(new Color(Color.RED));
+                    moneyImage.setColor(new Color(Color.RED));
+                }
+
+                break;
+            case SELL:
+                SellButton sellButton = new SellButton(s, price);
+                sellButtonStack.add(sellButton);
+                break;
+
+        }
 
         sellButtonStack.add(priceDisplay);
 
@@ -318,13 +333,13 @@ public class ShopScreenUISystem extends BaseSystem {
     }
 
 
-    private class BuyButton extends TextButton {
+    private class BuyButton extends Button {
 
         private int price;
         private Skill s;
 
-        public BuyButton(String text, Skin skin, final Skill s){
-            super(text, skin);
+        public BuyButton(final Skill s){
+            super(uiSkin, Styles.BUTTON_STYLE_TOGGLE);
             this.price = price;
             this.s = s;
 
@@ -340,26 +355,13 @@ public class ShopScreenUISystem extends BaseSystem {
 
         }
 
-        @Override
-        public void act(float delta){
-
-            if(partyManagementSystem.getPartyDetails().getMoney() < s.getStorePrice()){
-                this.setDisabled(true);
-                this.setColor(Color.RED);
-            } else {
-                this.setDisabled(false);
-            }
-
-            super.act(delta);
-        }
-
     }
 
 
-    private class SellButton extends TextButton {
+    private class SellButton extends Button {
 
-        public SellButton(String text, Skin skin, final Skill s, final int price){
-            super(text, skin);
+        public SellButton(final Skill s, final int price){
+            super(uiSkin, Styles.BUTTON_STYLE_TOGGLE);
 
             this.addListener(new ChangeListener() {
                 @Override
