@@ -14,8 +14,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.bryjamin.dancedungeon.assets.FileStrings;
 import com.bryjamin.dancedungeon.assets.Fonts;
-import com.bryjamin.dancedungeon.factories.enemy.EnemyLibrary;
-import com.bryjamin.dancedungeon.factories.spells.Skill;
+import com.bryjamin.dancedungeon.factories.enemy.UnitLibrary;
 import com.bryjamin.dancedungeon.factories.spells.SkillLibrary;
 import com.bryjamin.dancedungeon.screens.LoadingScreen;
 import com.bryjamin.dancedungeon.utils.Measure;
@@ -81,7 +80,7 @@ public class MainGame extends Game {
 
         //LOAD IN DATA FROM JSON
         SkillLibrary.empty();
-        EnemyLibrary.loadFromJSON();
+        UnitLibrary.loadFromJSON();
 
         setScreen(new LoadingScreen(this));
     }

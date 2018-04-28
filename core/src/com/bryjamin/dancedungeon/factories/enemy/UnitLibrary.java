@@ -27,6 +27,8 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationMapComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationStateComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.player.UnitFactory;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
@@ -37,7 +39,10 @@ import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
-public class EnemyLibrary {
+public class UnitLibrary {
+
+    private static final String ENEMY_UNITS_FILE = "json/units/enemies.json";
+    private static final String CHARACTER_UNITS_FILE = "json/units/characters.json";
 
 
     private static final OrderedMap<String, UnitData> enemies = new OrderedMap<>();
@@ -49,11 +54,13 @@ public class EnemyLibrary {
         Json json = new Json();
         json.setIgnoreUnknownFields(true);
 
-        Array<UnitData> array = json.fromJson(Array.class, Gdx.files.internal("json/enemies/enemies.json"));
+        Array<UnitData> array = json.fromJson(Array.class, Gdx.files.internal(ENEMY_UNITS_FILE));
+        array.addAll(json.fromJson(Array.class, Gdx.files.internal(CHARACTER_UNITS_FILE)));
 
         for(UnitData unitData : array){
             if(enemies.containsKey(unitData.getId())) {
-                throw new RuntimeException("Duplicate key found in Enemy Library: " + unitData.getId());
+                throw new RuntimeException("Duplicate key found in Unit Library: " + unitData.getId() + "\n" +
+                "Unit Name: " + unitData.getName());
             }
 
             enemies.put(unitData.getId(), unitData);
@@ -74,40 +81,54 @@ public class EnemyLibrary {
     }
 
 
+    public static Entity getEnemyUnit(World world, String id){
 
-    public static Entity getUnit(World world, String id){
+        Entity e = getUnit(world, id);
+        e.edit().add(new EnemyComponent());
+
+        e.edit().add(new UtilityAiComponent(new UtilityAiCalculator(
+                new ActionScoreCalculator(new EndTurnAction()),
+                new ActionScoreCalculator(new FindBestMovementAreaToAttackFromAction(), new IsNextToCalculator(null, 100f),
+                        new CanMoveCalculator(100f, null)),
+                new ActionScoreCalculator(new BasicAttackAction(), new IsNextToCalculator(150f, null),
+                        new CanUseSkillCalculator(e.getComponent(UnitComponent.class).getUnitData().getSkills().first(), 100f, null)
+                ))));
+
+        return e;
+
+    }
+
+
+    public static Entity getPlayerUnit(World world, String id){
+
+        Entity e = getUnit(world, id);
+        e.edit().add(new PlayerControlledComponent());
+
+        return e;
+
+    }
+
+
+    public static Entity convertUnitDataIntoEntity(World world, UnitData unitData){
 
         float width = Measure.units(5f);
         float height = Measure.units(5f);
 
         UnitFactory unitFactory = new UnitFactory();
 
-        UnitData unitData = getUnitData(id);
-
         Entity unit = unitFactory.baseUnitBag(world, unitData);
-        unit.edit().add(new EnemyComponent());
 
-        unit.edit().add(new MoveToComponent(Measure.units(80f)));
 
         unit.edit().add(new CenteringBoundComponent(width, height));
-
         unit.edit().add(new HitBoxComponent(new HitBox(width, height)));
 
         unit.edit().add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE,
                 new TextureDescription.Builder(unitData.icon)
-                .height(height)
-                .width(width)
-                .build()));
-
-        unit.edit().add(new UtilityAiComponent(new UtilityAiCalculator(
-                new ActionScoreCalculator(new EndTurnAction()),
-                new ActionScoreCalculator(new FindBestMovementAreaToAttackFromAction(), new IsNextToCalculator(null, 100f),
-                        new CanMoveCalculator(100f, null)),
-                new ActionScoreCalculator(new BasicAttackAction(), new IsNextToCalculator(150f, null), new CanUseSkillCalculator(unitData.getSkills().first(), 100f, null)
-                ))));
+                        .height(height)
+                        .width(width)
+                        .build()));
 
         int STANDING_ANIMATION = 23;
-
         unit.edit().add(new AnimationStateComponent(STANDING_ANIMATION));
         unit.edit().add(new AnimationMapComponent()
                 .put(STANDING_ANIMATION, unitData.icon, 0.6f, Animation.PlayMode.LOOP));
@@ -115,23 +136,29 @@ public class EnemyLibrary {
         return unit;
 
 
-
-
-
-
     }
 
 
-    public static void empty(){};
-
-
-    public static int getLibrarySize(){
-        return enemies.size;
+    public static Entity convertUnitDataIntoPlayerEntity(World world, UnitData unitData){
+        Entity e = convertUnitDataIntoEntity(world, unitData);
+        e.edit().add(new PlayerControlledComponent());
+        return e;
     }
 
+
+    private static Entity getUnit(World world, String id){
+        UnitData unitData = getUnitData(id);
+        return convertUnitDataIntoEntity(world, unitData);
+
+    }
 
     public static final String MELEE_BLOB = "cf5db9a9-b053-4de8-ad17-4f56a1e008f6";
     public static final String RANGED_BLASTER = "7720994b-263a-439d-b83c-70586bb63777";
+
+
+    public static final String CHARACTERS_SGT_SWORD = "2ade2064-eaf1-4a63-8ba4-1fd98b72c0dc";
+    public static final String CHARACTERS_BOLAS = "98be151b-d019-49c3-9514-defb59f26d0c";
+    public static final String CHARACTERS_FIRAS = "925dcc29-c81c-4abc-9bd3-adee4b8e636a";
 
 
 

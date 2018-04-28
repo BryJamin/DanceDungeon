@@ -4,36 +4,19 @@ import com.artemis.Aspect;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.artemis.World;
-import com.badlogic.gdx.graphics.g2d.NinePatch;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
-import com.bryjamin.dancedungeon.MainGame;
-import com.bryjamin.dancedungeon.assets.NinePatches;
-import com.bryjamin.dancedungeon.assets.Padding;
-import com.bryjamin.dancedungeon.assets.Skins;
-import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.DeploymentComponent;
 import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
-import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
-import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
-import com.bryjamin.dancedungeon.ecs.systems.ui.InformationBannerSystem;
-import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
 import com.bryjamin.dancedungeon.factories.enemy.EnemyFactory;
-import com.bryjamin.dancedungeon.factories.enemy.EnemyLibrary;
+import com.bryjamin.dancedungeon.factories.enemy.UnitLibrary;
 import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.player.UnitFactory;
 import com.bryjamin.dancedungeon.factories.player.UnitMap;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
-import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 import com.bryjamin.dancedungeon.utils.observer.XObservable;
@@ -92,7 +75,7 @@ public class BattleDeploymentSystem extends EntitySystem {
             if (battleEvent.getEnemies().size == 0)
                 continue; //TODO this could be cleaner, if I fail to include enemies, an error should be printed.
 
-            Entity e = EnemyLibrary.getUnit(world, EnemyLibrary.RANGED_BLASTER);
+            Entity e = UnitLibrary.getEnemyUnit(world, UnitLibrary.RANGED_BLASTER);
 
 
             //Entity e = BagToEntity.bagToEntity(world.createEntity(), enemyFactory.get(battleEvent.getEnemies().random()));
@@ -166,7 +149,7 @@ public class BattleDeploymentSystem extends EntitySystem {
         if (unitToBeDeployed != null) {
             deployedArray[count] = true;
 
-            Entity e = BagToEntity.bagToEntity(world.createEntity(), unitMap.getUnit(unitToBeDeployed));
+            Entity e = UnitLibrary.convertUnitDataIntoPlayerEntity(world, unitToBeDeployed);
             e.getComponent(CoordinateComponent.class).coordinates.set(c);
             deploymentLocations.removeValue(c, false);
 

@@ -45,15 +45,10 @@ public class CharacterSelectionScreen extends AbstractScreen {
     private void createWorld() {
 
 
-        Array<UnitData> availiable = new Array<UnitData>();
-        availiable.addAll(cg.createMage(), cg.createWarrior(), cg.createArcher(), cg.createMage(), cg.createWarrior(), cg.createArcher(),
-                cg.createMage(), cg.createWarrior(), cg.createMage(), cg.createMage(), cg.createWarrior(), cg.createWarrior(), cg.createWarrior());
-
-
         WorldConfiguration config = new WorldConfigurationBuilder()
                 .with(WorldConfigurationBuilder.Priority.HIGHEST,
 
-                        new CharacterSelectionScreenInitilization(game, gameport, availiable),
+                        new CharacterSelectionScreenInitilization(game, gameport),
                         new BasicInputSystemWithStage(gameport),
 
                         new MovementSystem(),

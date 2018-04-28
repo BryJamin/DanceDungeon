@@ -25,6 +25,7 @@ import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.factories.CharacterGenerator;
+import com.bryjamin.dancedungeon.factories.enemy.UnitLibrary;
 import com.bryjamin.dancedungeon.factories.map.MapGenerator;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
@@ -63,7 +64,7 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
 
     private Array<UnitData> partyMembers = new Array<UnitData>(PARTY_SIZE);
 
-    public CharacterSelectionScreenInitilization(MainGame game, Viewport gameport, Array<UnitData> availableMembers) {
+    public CharacterSelectionScreenInitilization(MainGame game, Viewport gameport) {
         this.gameport = gameport;
         this.game = game;
         this.availableMembers = availableMembers;
@@ -75,7 +76,7 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
 
         CharacterGenerator cg = new CharacterGenerator();
 
-        heroSquads.add(new Array<>(new UnitData[]{cg.createWarrior(), cg.createArcher(), cg.createMage()}));
+        heroSquads.add(new Array<>(new UnitData[]{UnitLibrary.getUnitData(UnitLibrary.MELEE_BLOB), UnitLibrary.getUnitData(UnitLibrary.MELEE_BLOB), UnitLibrary.getUnitData(UnitLibrary.MELEE_BLOB)}));
         heroSquads.add(new Array<>(new UnitData[]{cg.createWarrior(), cg.createArcher(), cg.createMage()}));
         heroSquads.add(new Array<>(new UnitData[]{cg.createWarrior(), cg.createArcher(), cg.createMage()}));
 

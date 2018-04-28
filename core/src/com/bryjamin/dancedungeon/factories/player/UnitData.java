@@ -8,6 +8,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.factories.spells.SkillLibrary;
+import com.bryjamin.dancedungeon.utils.Measure;
 
 /**
  * Created by BB on 22/12/2017.
@@ -32,6 +33,8 @@ public class UnitData implements Json.Serializable {
     private int movementRange;
     private int attackRange;
 
+    private float mapMovementSpeed = Measure.units(60f);
+
 
     public StatComponent statComponent = new StatComponent();
     private Array<Skill> skills = new Array<>();
@@ -51,7 +54,7 @@ public class UnitData implements Json.Serializable {
         this.movementRange = unitData.movementRange;
         this.attackRange = unitData.attackRange;
         this.statComponent = unitData.statComponent;
-        this.skills = unitData.getSkills();
+        this.skills = new Array<>(unitData.getSkills());
     }
 
 
@@ -107,5 +110,18 @@ public class UnitData implements Json.Serializable {
         statComponent.movementRange = this.movementRange;
         statComponent.attackRange = this.attackRange;
 
+    }
+
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public float getMapMovementSpeed() {
+        return mapMovementSpeed;
     }
 }

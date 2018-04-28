@@ -31,18 +31,6 @@
     "maxHealth": 2,
     "movementRange": 3,
     "skillIds": [ "e682fd39-6f06-47f8-aa60-175065ea12cf"]
-  },
-
-
-  {
-    "class": "com.bryjamin.dancedungeon.factories.player.UnitData",
-    "id": "75e6e7fd-8e73-4115-a8af-9d2c226e70ea",
-    "name": "",
-    "icon": "enemy/boss/biggablobba",
-    "health": 2,
-    "maxHealth": 2,
-    "movementRange": 3,
-    "skillIds": [ "e682fd39-6f06-47f8-aa60-175065ea12cf"]
   }
 
 ]
