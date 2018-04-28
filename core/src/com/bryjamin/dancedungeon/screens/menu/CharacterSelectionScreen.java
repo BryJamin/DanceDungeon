@@ -34,7 +34,6 @@ import com.bryjamin.dancedungeon.utils.GameDelta;
 public class CharacterSelectionScreen extends AbstractScreen {
 
     private World world;
-    private CharacterGenerator cg = new CharacterGenerator();
 
     public CharacterSelectionScreen(MainGame game) {
         super(game);

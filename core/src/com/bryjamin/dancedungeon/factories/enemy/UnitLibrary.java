@@ -158,7 +158,7 @@ public class UnitLibrary {
 
     public static final String CHARACTERS_SGT_SWORD = "2ade2064-eaf1-4a63-8ba4-1fd98b72c0dc";
     public static final String CHARACTERS_BOLAS = "98be151b-d019-49c3-9514-defb59f26d0c";
-    public static final String CHARACTERS_FIRAS = "925dcc29-c81c-4abc-9bd3-adee4b8e636a";
+    public static final String CHARACTERS_FIRAS = "b0a19b01-cf75-4b77-b6e5-0cb7dcb5afe9";
 
 
 

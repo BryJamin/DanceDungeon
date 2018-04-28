@@ -74,11 +74,23 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
         }
         this.uiSkin = Skins.DEFAULT_SKIN(game.assetManager);
 
-        CharacterGenerator cg = new CharacterGenerator();
 
-        heroSquads.add(new Array<>(new UnitData[]{UnitLibrary.getUnitData(UnitLibrary.MELEE_BLOB), UnitLibrary.getUnitData(UnitLibrary.MELEE_BLOB), UnitLibrary.getUnitData(UnitLibrary.MELEE_BLOB)}));
-        heroSquads.add(new Array<>(new UnitData[]{cg.createWarrior(), cg.createArcher(), cg.createMage()}));
-        heroSquads.add(new Array<>(new UnitData[]{cg.createWarrior(), cg.createArcher(), cg.createMage()}));
+        heroSquads.add(new Array<>(new UnitData[]{
+                UnitLibrary.getUnitData(UnitLibrary.CHARACTERS_SGT_SWORD),
+                UnitLibrary.getUnitData(UnitLibrary.CHARACTERS_BOLAS),
+                UnitLibrary.getUnitData(UnitLibrary.CHARACTERS_FIRAS)}));
+
+
+        heroSquads.add(new Array<>(new UnitData[]{
+                UnitLibrary.getUnitData(UnitLibrary.MELEE_BLOB),
+                UnitLibrary.getUnitData(UnitLibrary.MELEE_BLOB),
+                UnitLibrary.getUnitData(UnitLibrary.MELEE_BLOB)}));
+
+
+        heroSquads.add(new Array<>(new UnitData[]{
+                UnitLibrary.getUnitData(UnitLibrary.MELEE_BLOB),
+                UnitLibrary.getUnitData(UnitLibrary.MELEE_BLOB),
+                UnitLibrary.getUnitData(UnitLibrary.MELEE_BLOB)}));
 
         partyMembers = heroSquads.get(0);
 

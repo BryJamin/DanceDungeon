@@ -54,7 +54,10 @@ public class UnitData implements Json.Serializable {
         this.movementRange = unitData.movementRange;
         this.attackRange = unitData.attackRange;
         this.statComponent = unitData.statComponent;
-        this.skills = new Array<>(unitData.getSkills());
+
+        for(Skill s : unitData.getSkills()){
+            this.skills.add(new Skill(s));
+        }
     }
 
 
