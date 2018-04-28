@@ -20,7 +20,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.ai.StoredSkillComponent;
 public class StunnedSystem extends EntitySystem implements Observer{
 
 
-    private EnemyIntentSystem enemyIntentSystem;
+    private EnemyIntentUISystem enemyIntentUISystem;
     private TurnSystem turnSystem;
 
     ComponentMapper<UnitComponent> unitM;
@@ -43,7 +43,7 @@ public class StunnedSystem extends EntitySystem implements Observer{
 
         if(storedSkillM.has(e)){
             e.edit().remove(StoredSkillComponent.class);
-            enemyIntentSystem.updateIntent();
+            enemyIntentUISystem.updateIntent();
         }
 
     }

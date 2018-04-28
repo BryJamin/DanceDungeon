@@ -1,22 +1,22 @@
 package com.bryjamin.dancedungeon.ecs.systems.battle;
 
 import com.artemis.Aspect;
-import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.artemis.World;
+import com.artemis.utils.IntBag;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.Queue;
 import com.bryjamin.dancedungeon.ecs.ai.actions.EndTurnAction;
-import com.bryjamin.dancedungeon.ecs.ai.actions.FindBestMovementAreaToAttackFromAction;
 import com.bryjamin.dancedungeon.ecs.components.actions.UtilityAiComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.StoredSkillComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyIntentUIComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.FriendlyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
@@ -82,6 +82,12 @@ public class UtilityAiSystem extends EntitySystem {
             }
         };
 
+        IntBag bag = world.getAspectSubscriptionManager().get(Aspect.all(EnemyIntentUIComponent.class, CoordinateComponent.class)).getEntities();
+        Array<Coordinates> inLineOfFireCoordinates = new Array<>();
+        for(int i = 0; i < bag.size(); i++){
+            inLineOfFireCoordinates.add(world.getEntity(bag.get(i)).getComponent(CoordinateComponent.class).coordinates);
+        }
+
 
 
 
@@ -94,6 +100,9 @@ public class UtilityAiSystem extends EntitySystem {
 
 
         Array<Entity> targets = targetM.get(e).getTargets(world);
+
+
+        //TODO reduce score for if EnemyIntentUI is in a certain coordinate
 
         //Calculate score based on which coordinates you can attack from.
         for(Coordinates c : pathsMap.orderedKeys()) {
@@ -137,6 +146,11 @@ public class UtilityAiSystem extends EntitySystem {
                 scoreMap.get(c).score -= 5;
             }
 
+            //Reduce score if in the path of another enemy shot
+       /*     if(inLineOfFireCoordinates.contains(c, false)){
+                scoreMap.get(c).score -= 10;
+            }*/
+
         }
 
 
@@ -157,12 +171,6 @@ public class UtilityAiSystem extends EntitySystem {
         actionQueueSystem.createMovementAction(e, pathsMap.get(chosen.coordinates));
 
 
-        System.out.println(pathsMap.get(chosen.coordinates));
-        System.out.println(pathsMap.get(chosen.coordinates).last());
-        System.out.println(chosen.coordinates);
-
-        System.out.println(chosen.coordinates);
-
         if((pathsMap.get(chosen.coordinates).last().equals(chosen.coordinates))) {
 
             actionQueueSystem.pushLastAction(e, new WorldConditionalAction() {
@@ -177,13 +185,14 @@ public class UtilityAiSystem extends EntitySystem {
                     entity.edit().add(new StoredSkillComponent(entity.getComponent(CoordinateComponent.class).coordinates,
                             chosen.target, chosen.s));
 
-                    world.getSystem(EnemyIntentSystem.class).updateIntent();
+                    world.getSystem(EnemyIntentUISystem.class).updateIntent();
 
                     //chosen.s.cast(world, entity, chosen.target);
                 }
             });
 
         }
+
 
         turnComponent.movementActionAvailable = false;
         turnComponent.attackActionAvailable = false;

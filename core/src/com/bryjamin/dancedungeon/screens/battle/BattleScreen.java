@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BattleDeploymentSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.EnemyIntentUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.StunnedSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.UtilityAiSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.ArchingTextureSystem;
@@ -26,7 +27,6 @@ import com.bryjamin.dancedungeon.ecs.systems.battle.BlinkOnHitSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BuffSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.DeathSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.EndBattleSystem;
-import com.bryjamin.dancedungeon.ecs.systems.battle.EnemyIntentSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.GenerateTargetsSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.HealthSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.NoMoreActionsGreyScaleSystem;
@@ -80,7 +80,6 @@ public class BattleScreen extends AbstractScreen {
                         //Initialize Tiles
                         new TileSystem(battleEvent),
                         new BattleDeploymentSystem(battleEvent),
-                        new UtilityAiSystem(),
 
                         new BattleWorldInputHandlerSystem(gameport),
 
@@ -116,7 +115,8 @@ public class BattleScreen extends AbstractScreen {
                         new ArchingTextureSystem(),
 
                         new NoMoreActionsGreyScaleSystem(),
-                        new EnemyIntentSystem(),
+                        new EnemyIntentUISystem(),
+                        new UtilityAiSystem(),
                         new StunnedSystem(),
                         new AnimationSystem(game),
                         new RenderingSystem(game, gameport),

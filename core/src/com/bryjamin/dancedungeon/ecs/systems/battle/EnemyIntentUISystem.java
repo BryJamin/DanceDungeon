@@ -20,7 +20,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.ai.StoredSkillComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.ScaleTransformationComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyIntentComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyIntentUIComponent;
 import com.bryjamin.dancedungeon.factories.spells.TargetingFactory;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.enums.Direction;
@@ -37,12 +37,12 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
  * Used to show enemy intent to players
  */
 
-public class EnemyIntentSystem extends EntitySystem implements Observer{
+public class EnemyIntentUISystem extends EntitySystem implements Observer{
 
 
     TileSystem tileSystem;
 
-    ComponentMapper<EnemyIntentComponent> eiMapper;
+    ComponentMapper<EnemyIntentUIComponent> eiMapper;
     ComponentMapper<StoredSkillComponent> storedMapper;
     ComponentMapper<CoordinateComponent> coordinateMapper;
 
@@ -52,7 +52,7 @@ public class EnemyIntentSystem extends EntitySystem implements Observer{
 
     private boolean processingFlag = false;
 
-    public EnemyIntentSystem() {
+    public EnemyIntentUISystem() {
         super(Aspect.all(StoredSkillComponent.class, CoordinateComponent.class));
     }
 
@@ -66,7 +66,7 @@ public class EnemyIntentSystem extends EntitySystem implements Observer{
 
         processingFlag = false;
 
-        IntBag enemyIntent = world.getAspectSubscriptionManager().get(Aspect.all(EnemyIntentComponent.class)).getEntities();
+        IntBag enemyIntent = world.getAspectSubscriptionManager().get(Aspect.all(EnemyIntentUIComponent.class)).getEntities();
 
         for(int i = 0; i < enemyIntent.size(); i++){
             world.delete(enemyIntent.get(i));
@@ -96,7 +96,22 @@ public class EnemyIntentSystem extends EntitySystem implements Observer{
                     enemyIntentBox(tileSystem.getRectangleUsingCoordinates(coordinatesArray.peek()));
                     storedSkillComponent.storedTargetCoordinates = coordinatesArray.peek();
                     storedSkillComponent.storedCoordinates = coordinates;
-                    new TargetingFactory().createRedTargetingMarkers(world, e.getComponent(CoordinateComponent.class).coordinates, coordinatesArray.peek());
+
+
+                    //Adds red markers that have co-ordinates so AI known which areas may be attacked when they move.
+                    for(Entity markers : new TargetingFactory().createRedTargetingMarkers(world, e.getComponent(CoordinateComponent.class).coordinates, coordinatesArray.peek())){
+
+                        CoordinateComponent coordinateComponent = new CoordinateComponent(tileSystem.getCoordinatesUsingPosition(markers.getComponent(PositionComponent.class).position.x,
+
+                                markers.getComponent(PositionComponent.class).position.y
+                                ));
+
+                        coordinateComponent.freePlacement = true;
+
+                        markers.edit().add(coordinateComponent);
+
+
+                    };
                     entityUIArrow(currentR1, CoordinateMath.getDirectionOfCoordinate(storedSkillComponent.storedCoordinates, storedSkillComponent.storedTargetCoordinates));
 
 
@@ -177,7 +192,7 @@ public class EnemyIntentSystem extends EntitySystem implements Observer{
                 .add(new FadeComponent(new FadeComponent.FadeBuilder()
                         .minAlpha(0.5f)
                         .maximumTime(2f)))
-                .add(new EnemyIntentComponent());
+                .add(new EnemyIntentUIComponent());
 
         return e;
     }
@@ -216,7 +231,7 @@ public class EnemyIntentSystem extends EntitySystem implements Observer{
                 .add(new HitBoxComponent(new HitBox(r)))
                 .add(new CenteringBoundComponent())
                 .add(new ScaleTransformationComponent(1f, 1.3f, 1.3f))
-                .add(new EnemyIntentComponent());
+                .add(new EnemyIntentUIComponent());
 
 
         return e;

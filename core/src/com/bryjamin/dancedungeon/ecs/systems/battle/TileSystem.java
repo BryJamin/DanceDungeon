@@ -459,7 +459,7 @@ public class TileSystem extends EntitySystem {
 
                 if(om.get(shotCoords) == null){
                     break;
-                } else if (om.get(shotCoords).size > 0) {
+                } else if (om.get(shotCoords).size > 0 && occupiedMap.containsValue(shotCoords, false)) {
                     coordinatesArray.add(shotCoords);
                     break;
                 } else {

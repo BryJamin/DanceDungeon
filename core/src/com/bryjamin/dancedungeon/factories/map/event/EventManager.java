@@ -69,7 +69,7 @@ public class EventManager {
             @Override
             public BattleEvent getEvent() {
                 return new BattleEvent.Builder(MapData.MAP_1)
-                        .enemyPool(UnitLibrary.MELEE_BLOB, UnitLibrary.RANGED_BLASTER)
+                        .enemyPool(UnitLibrary.RANGED_BLASTER)
                         .primaryObjective(new DefeatAllEnemiesObjective())
                         .bonusObjective(new CompleteWithinObjective(AbstractObjective.Reward.MORALE, 3))
                         .build();

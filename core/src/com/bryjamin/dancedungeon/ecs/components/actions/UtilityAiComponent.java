@@ -10,5 +10,5 @@ import com.bryjamin.dancedungeon.ecs.ai.UtilityAiCalculator;
 public class UtilityAiComponent extends Component {
 
     public UtilityAiComponent(){}
-    
+
 }

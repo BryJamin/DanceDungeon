@@ -402,7 +402,7 @@ public class ActionQueueSystem extends EntitySystem {
 
             @Override
             public void performAction(World world, Entity entity) {
-                world.getSystem(EnemyIntentSystem.class).updateIntent();
+                world.getSystem(EnemyIntentUISystem.class).updateIntent();
             }
         });
     }

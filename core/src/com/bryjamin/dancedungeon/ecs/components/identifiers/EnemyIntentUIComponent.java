@@ -8,8 +8,8 @@ import com.artemis.Component;
  * Used as an identifier to show which highlighted squares on the map are being used to highlight
  * an 'intent' of the unit.
  *
- * This is mainly used to easily clear out these UI entities from the map in the EnemyIntentSystem.
+ * This is mainly used to easily clear out these UI entities from the map in the EnemyIntentUISystem.
  */
 
-public class EnemyIntentComponent extends Component {
+public class EnemyIntentUIComponent extends Component {
 }

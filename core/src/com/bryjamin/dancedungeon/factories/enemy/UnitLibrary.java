@@ -7,37 +7,14 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.OrderedMap;
-import com.bryjamin.dancedungeon.assets.TextureStrings;
-import com.bryjamin.dancedungeon.ecs.ai.ActionScoreCalculator;
-import com.bryjamin.dancedungeon.ecs.ai.UtilityAiCalculator;
-import com.bryjamin.dancedungeon.ecs.ai.actions.BasicAttackAction;
-import com.bryjamin.dancedungeon.ecs.ai.actions.EndTurnAction;
-import com.bryjamin.dancedungeon.ecs.ai.actions.FindBestMovementAreaToAttackFromAction;
-import com.bryjamin.dancedungeon.ecs.ai.calculations.CanMoveCalculator;
-import com.bryjamin.dancedungeon.ecs.ai.calculations.CanUseSkillCalculator;
-import com.bryjamin.dancedungeon.ecs.ai.calculations.IsNextToCalculator;
-import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
-import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.UtilityAiComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationMapComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationStateComponent;
-import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.player.UnitFactory;
-import com.bryjamin.dancedungeon.factories.spells.Skill;
-import com.bryjamin.dancedungeon.factories.spells.SkillLibrary;
-import com.bryjamin.dancedungeon.utils.HitBox;
-import com.bryjamin.dancedungeon.utils.Measure;
-import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
-import com.bryjamin.dancedungeon.utils.texture.Layer;
-import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 public class UnitLibrary {
 
@@ -134,6 +111,7 @@ public class UnitLibrary {
 
     public static final String MELEE_BLOB = "cf5db9a9-b053-4de8-ad17-4f56a1e008f6";
     public static final String RANGED_BLASTER = "7720994b-263a-439d-b83c-70586bb63777";
+    public static final String RANGED_LOBBA = "925dcc29-c81c-4abc-9bd3-adee4b8e636a";
 
 
     public static final String CHARACTERS_SGT_SWORD = "2ade2064-eaf1-4a63-8ba4-1fd98b72c0dc";

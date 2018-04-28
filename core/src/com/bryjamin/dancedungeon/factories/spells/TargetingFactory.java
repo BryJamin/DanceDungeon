@@ -22,7 +22,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UITargetingComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyIntentComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyIntentUIComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.ReselectEntityComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.SelectedEntityComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
@@ -502,7 +502,7 @@ public class TargetingFactory {
                 new Color(Color.RED)));
 
         redBox.edit().remove(UITargetingComponent.class);
-        redBox.edit().add(new EnemyIntentComponent());
+        redBox.edit().add(new EnemyIntentUIComponent());
 
         return redBox;
 

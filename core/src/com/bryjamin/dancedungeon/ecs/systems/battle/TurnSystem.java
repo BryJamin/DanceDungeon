@@ -175,7 +175,7 @@ public class TurnSystem extends EntitySystem implements Observer{
             switch (battleState){
 
                 case NEXT_TURN:
-                    if(world.getSystem(EnemyIntentSystem.class).releaseAttack()){
+                    if(world.getSystem(EnemyIntentUISystem.class).releaseAttack()){
                         battleState = STATE.WAITING;
                     } else {
                         setUp(ENEMY);
