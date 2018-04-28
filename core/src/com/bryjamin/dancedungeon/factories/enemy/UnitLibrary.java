@@ -54,6 +54,7 @@ public class UnitLibrary {
         Json json = new Json();
         json.setIgnoreUnknownFields(true);
 
+
         Array<UnitData> array = json.fromJson(Array.class, Gdx.files.internal(ENEMY_UNITS_FILE));
         array.addAll(json.fromJson(Array.class, Gdx.files.internal(CHARACTER_UNITS_FILE)));
 
@@ -115,6 +116,9 @@ public class UnitLibrary {
         float height = Measure.units(5f);
 
         UnitFactory unitFactory = new UnitFactory();
+
+
+        System.out.println(unitData.getMapMovementSpeed());
 
         Entity unit = unitFactory.baseUnitBag(world, unitData);
 

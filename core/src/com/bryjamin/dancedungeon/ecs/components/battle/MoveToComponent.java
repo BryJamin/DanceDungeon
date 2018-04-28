@@ -19,7 +19,7 @@ public class MoveToComponent extends Component {
 
     public Array<Vector3> movementPositions = new Array<Vector3>();
 
-    public float speed = Measure.units(20f);
+    public float speed;
 
     public MoveToComponent(){
 

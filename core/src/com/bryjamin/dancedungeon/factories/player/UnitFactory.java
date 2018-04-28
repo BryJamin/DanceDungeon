@@ -148,7 +148,7 @@ public class UnitFactory {
 
         e.edit().add(new HealthComponent(unitData.statComponent.health, unitData.statComponent.maxHealth));
         e.edit().add(new CoordinateComponent());
-        e.edit().add(new MoveToComponent(unitData.getMapMovementSpeed()));
+        e.edit().add(new MoveToComponent(Measure.units(unitData.getMapMovementSpeed())));
         e.edit().add(new VelocityComponent());
         e.edit().add(new TargetComponent());
         e.edit().add(new BuffComponent());

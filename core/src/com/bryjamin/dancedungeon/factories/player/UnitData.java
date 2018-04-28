@@ -33,7 +33,10 @@ public class UnitData implements Json.Serializable {
     private int movementRange;
     private int attackRange;
 
-    private float mapMovementSpeed = Measure.units(60f);
+    private int stun;
+
+    private float mapMovementSpeed = 60f;
+
 
 
     public StatComponent statComponent = new StatComponent();
@@ -54,6 +57,8 @@ public class UnitData implements Json.Serializable {
         this.movementRange = unitData.movementRange;
         this.attackRange = unitData.attackRange;
         this.statComponent = unitData.statComponent;
+
+        this.mapMovementSpeed = unitData.mapMovementSpeed;
 
         for(Skill s : unitData.getSkills()){
             this.skills.add(new Skill(s));

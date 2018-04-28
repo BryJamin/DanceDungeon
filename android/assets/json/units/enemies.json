@@ -7,6 +7,7 @@
     "icon": "enemy/boss/biggablobba",
     "maxHealth": 2,
     "movementRange": 3,
+    "mapMovementSpeed" : 45,
     "skillIds": [ "e682fd39-6f06-47f8-aa60-175065ea12cf"]
   },
 
@@ -25,12 +26,12 @@
   {
     "class": "com.bryjamin.dancedungeon.factories.player.UnitData",
     "id": "925dcc29-c81c-4abc-9bd3-adee4b8e636a",
-    "name": "",
-    "icon": "enemy/boss/biggablobba",
-    "health": 2,
+    "name": "Lobba",
+    "icon": "enemy/silverhead_standing",
     "maxHealth": 2,
     "movementRange": 3,
-    "skillIds": [ "e682fd39-6f06-47f8-aa60-175065ea12cf"]
+    "mapMovementSpeed" : 100,
+    "skillIds": [ "509d0cd7-ad54-4794-b53e-2f97bc87d8b8"]
   }
 
 ]

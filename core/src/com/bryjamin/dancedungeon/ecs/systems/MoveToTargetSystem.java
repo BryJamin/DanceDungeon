@@ -42,15 +42,14 @@ public class MoveToTargetSystem extends EntityProcessingSystem {
         float vx = AngleMath.velocityX(moveToComponent.speed, angle);
         float vy = AngleMath.velocityY(moveToComponent.speed, angle);
 
-
-        boolean isPositionX = positionComponent.position.x == targetPosition.x;
-        boolean isPositionY = positionComponent.position.y == targetPosition.y;
+        boolean isOnTargetX = positionComponent.position.x == targetPosition.x;
+        boolean isOnTargetY = positionComponent.position.y == targetPosition.y;
 
         if (positionComponent.getX() < targetPosition.x) {
 
             if (positionComponent.getX() + vx * world.delta > targetPosition.x) {
                 positionComponent.position.x = targetPosition.x;
-                isPositionX = true;
+                isOnTargetX = true;
             } else {
                 velocityComponent.velocity.x = vx;
             }
@@ -59,7 +58,7 @@ public class MoveToTargetSystem extends EntityProcessingSystem {
 
             if (positionComponent.getX() + vx * world.delta < targetPosition.x) {
                 positionComponent.position.x = targetPosition.x;
-                isPositionX = true;
+                isOnTargetX = true;
             } else {
                 velocityComponent.velocity.x = vx;
             }
@@ -71,7 +70,7 @@ public class MoveToTargetSystem extends EntityProcessingSystem {
 
             if (positionComponent.getY() + vy * world.delta > targetPosition.y) {
                 positionComponent.position.y = targetPosition.y;
-                isPositionY = true;
+                isOnTargetY = true;
             } else {
                 velocityComponent.velocity.y = vy;
             }
@@ -80,7 +79,7 @@ public class MoveToTargetSystem extends EntityProcessingSystem {
 
             if (positionComponent.getY() + vy * world.delta < targetPosition.y) {
                 positionComponent.position.y = targetPosition.y;
-                isPositionY = true;
+                isOnTargetY = true;
             } else {
                 velocityComponent.velocity.y = vy;
             }
@@ -88,7 +87,7 @@ public class MoveToTargetSystem extends EntityProcessingSystem {
         }
 
 
-        if (isPositionX && isPositionY) moveToComponent.movementPositions.removeIndex(0);
+        if (isOnTargetX && isOnTargetY) moveToComponent.movementPositions.removeIndex(0);
 
         if (moveToComponent.movementPositions.size <= 0) {
             velocityComponent.velocity.x = 0;

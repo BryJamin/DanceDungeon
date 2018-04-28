@@ -59,26 +59,14 @@ public class BattleDeploymentSystem extends EntitySystem {
     @Override
     protected void initialize() {
 
-
-        EnemyFactory enemyFactory = new EnemyFactory();
-
         Array<Coordinates> spawningLocations = new Array<Coordinates>(tileSystem.getEnemySpawningLocations());
-
-        //TODO Need to be built upon
-
-        //TODO Currently enemeis are place randomly based on whther they are featured within the spawning pool of the event
-
-        //TODO Should events determine whetehr they spawn something or should a system be a deicider?
 
         for (int i = 0; i < 3; i++) {
 
             if (battleEvent.getEnemies().size == 0)
-                continue; //TODO this could be cleaner, if I fail to include enemies, an error should be printed.
+                continue; //TODO this could be cleaner, if I fail to include enemies, an error should be printed. Or featured in a test?
 
-            Entity e = UnitLibrary.getEnemyUnit(world, UnitLibrary.RANGED_BLASTER);
-
-
-            //Entity e = BagToEntity.bagToEntity(world.createEntity(), enemyFactory.get(battleEvent.getEnemies().random()));
+            Entity e = UnitLibrary.getEnemyUnit(world, battleEvent.getEnemies().random());
 
             Coordinates selected = tileSystem.getEnemySpawningLocations().random();
             spawningLocations.removeValue(selected, true);
@@ -95,6 +83,10 @@ public class BattleDeploymentSystem extends EntitySystem {
     }
 
 
+    /**
+     * Calculates the next Unit to deployed. If a unit's health is zero it's place will be skipped
+     * in the queue
+     */
     private void calculateUnitToBeDeployed(){
 
         PartyDetails partyDetails = playerPartyManagementSystem.getPartyDetails();
@@ -166,6 +158,9 @@ public class BattleDeploymentSystem extends EntitySystem {
     }
 
 
+    /**
+     * Clears DeploymentUI Entities from the Game World
+     */
     private void clear() {
         for (Entity e : this.getEntities()) {
             e.deleteFromWorld();
@@ -179,10 +174,6 @@ public class BattleDeploymentSystem extends EntitySystem {
 
     public XObservable getObservers() {
         return observable;
-    }
-
-    public boolean isProcessingFlag() {
-        return processingFlag;
     }
 
     public boolean isProcessing() {
