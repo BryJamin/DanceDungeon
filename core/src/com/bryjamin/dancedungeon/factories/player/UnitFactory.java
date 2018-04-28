@@ -27,6 +27,8 @@ import com.bryjamin.dancedungeon.ecs.components.identifiers.FriendlyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.SolidComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
+import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
+import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
@@ -142,6 +144,8 @@ public class UnitFactory {
 
     public Entity baseUnitBag(World world, UnitData unitData){
 
+        float size = TileSystem.CELL_SIZE * unitData.getDrawScale();
+
         Entity e = world.createEntity();
 
         e.edit().add(new PositionComponent());
@@ -159,6 +163,16 @@ public class UnitFactory {
         e.edit().add(new BlinkOnHitComponent());
         e.edit().add(new SkillsComponent(unitData.getSkills()));
         e.edit().add(new TurnComponent());
+
+
+        e.edit().add(new CenteringBoundComponent(size, size));
+        e.edit().add(new HitBoxComponent(new HitBox(size, size)));
+
+        e.edit().add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE,
+                new TextureDescription.Builder(unitData.icon)
+                        .size(size)
+                        .build()));
+
 
         return e;
 

@@ -86,15 +86,7 @@ public class UnitLibrary {
 
         Entity e = getUnit(world, id);
         e.edit().add(new EnemyComponent());
-
-        e.edit().add(new UtilityAiComponent(new UtilityAiCalculator(
-                new ActionScoreCalculator(new EndTurnAction()),
-                new ActionScoreCalculator(new FindBestMovementAreaToAttackFromAction(), new IsNextToCalculator(null, 100f),
-                        new CanMoveCalculator(100f, null)),
-                new ActionScoreCalculator(new BasicAttackAction(), new IsNextToCalculator(150f, null),
-                        new CanUseSkillCalculator(e.getComponent(UnitComponent.class).getUnitData().getSkills().first(), 100f, null)
-                ))));
-
+        e.edit().add(new UtilityAiComponent());
         return e;
 
     }
@@ -112,25 +104,9 @@ public class UnitLibrary {
 
     public static Entity convertUnitDataIntoEntity(World world, UnitData unitData){
 
-        float width = Measure.units(5f);
-        float height = Measure.units(5f);
-
         UnitFactory unitFactory = new UnitFactory();
-
-
-        System.out.println(unitData.getMapMovementSpeed());
-
         Entity unit = unitFactory.baseUnitBag(world, unitData);
 
-
-        unit.edit().add(new CenteringBoundComponent(width, height));
-        unit.edit().add(new HitBoxComponent(new HitBox(width, height)));
-
-        unit.edit().add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE,
-                new TextureDescription.Builder(unitData.icon)
-                        .height(height)
-                        .width(width)
-                        .build()));
 
         int STANDING_ANIMATION = 23;
         unit.edit().add(new AnimationStateComponent(STANDING_ANIMATION));

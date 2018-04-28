@@ -32,7 +32,8 @@ public class UnitData implements Json.Serializable {
 
     public int stun;
 
-    private float mapMovementSpeed = 60f;
+    private float mapMovementSpeed = 80f;
+    private float drawScale = 0.75f;
 
     private Array<Skill> skills = new Array<>();
 
@@ -50,6 +51,8 @@ public class UnitData implements Json.Serializable {
         this.maxHealth = unitData.maxHealth;
         this.movementRange = unitData.movementRange;
         this.attackRange = unitData.attackRange;
+
+        this.drawScale = unitData.drawScale;
 
         this.mapMovementSpeed = unitData.mapMovementSpeed;
 
@@ -90,7 +93,6 @@ public class UnitData implements Json.Serializable {
             JsonValue skills = jsonData.get("skillIds");
 
             for(int i = 0; i < skills.size; i++){
-                //System.out.println(skills.get(i));
                 this.skills.add(SkillLibrary.getSkill(skills.get(i).asString()));
             }
         }
@@ -142,6 +144,9 @@ public class UnitData implements Json.Serializable {
     }
 
 
+    public float getDrawScale() {
+        return drawScale;
+    }
 
     public void changeHealth(int healthChange){
 

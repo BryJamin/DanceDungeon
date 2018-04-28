@@ -55,20 +55,22 @@ public class TileSystem extends EntitySystem {
     private BattleEvent battleEvent;
 
 
-    private float originX = Measure.units(7.5f);
-    private float originY = Measure.units(14.5f);
+    private static final float originX = Measure.units(7.5f);
+    private static final float originY = Measure.units(14.5f);
 
-    private int rows = 6;
-    private int columns = 8;
+    private static final int rows = 6;
+    private static final int columns = 8;
 
-    private float width = columns * Measure.units(6.5f);
-    private float height = rows * Measure.units(6.5f);
+    private static final float width = columns * Measure.units(6.5f);
+    private static final float height = rows * Measure.units(6.5f);
 
     private int maxX;
     private int maxY;
 
-    private float tileWidthSize;
-    private float tileHeightSize;
+    private static final float tileWidthSize = width / columns;;
+    private static final float tileHeightSize = height / rows;
+
+    public static final float CELL_SIZE = tileWidthSize;
 
     private Array<Coordinates> enemySpawningLocations = new Array<Coordinates>();
     private Array<Coordinates> allySpawningLocations = new Array<Coordinates>();
@@ -96,9 +98,6 @@ public class TileSystem extends EntitySystem {
 
     @Override
     protected void initialize() {
-
-        tileWidthSize = width / columns;
-        tileHeightSize = height / rows;
 
         this.maxX = columns;
         this.maxY = rows;
@@ -370,12 +369,31 @@ public class TileSystem extends EntitySystem {
 
     }
 
-    public boolean findShortestPath(Entity e, Queue<Coordinates> fillQueue, Coordinates c, int maxDistance) {
+    public boolean findShortestPath(Entity e, Queue<Coordinates> fillQueue, Coordinates target, int maxDistance) {
+
+        Array<Coordinates> coordinatesArray = new Array<>();
+        coordinatesArray.add(target);
+        return findShortestPath(e, fillQueue, coordinatesArray, maxDistance);
+    }
+
+
+
+/*
+    public OrderedMap<Coordinates, Queue<Coordinates>> findPathsToAllCoordinates(Entity e, Coordinates start) {
+
+        OrderedMap<Coordinates, Queue<Coordinates>> queueOrderedMap = new OrderedMap<>();
+
+
+
+
 
         Array<Coordinates> coordinatesArray = new Array<Coordinates>();
         coordinatesArray.add(c);
         return findShortestPath(e, fillQueue, coordinatesArray, maxDistance);
     }
+*/
+
+
 
     public boolean findShortestPath(Entity e, Queue<Coordinates> fillQueue, Array<Coordinates> targets, int maxDistance) {
 
@@ -387,14 +405,9 @@ public class TileSystem extends EntitySystem {
 
         } else { //TODO what to with walls and etc? If there even are walls.
 
-            Array<Coordinates> c = new Array<>();
-            c.addAll(occupiedMap.values);
-
-
-
             aStarPathCalculator = new AStarPathCalculator(
                     coordinateMap.keys().toArray(),
-                    new Array<>(occupiedMap.values),
+                    occupiedMap.values().toArray(),
                     enemyMap.values().toArray());
         }
         return aStarPathCalculator.findShortestPathMultipleChoice(fillQueue,
@@ -470,6 +483,15 @@ public class TileSystem extends EntitySystem {
         return coordinatesArray;
 
     }
+
+
+/*    public Array<Coordinates> getUnoccupiedCoordinates(){
+
+        Array<Coordinates> unoccupiedCoordinates = new Array<>();
+
+
+
+    }*/
 
 
     public OrderedMap<Entity, Coordinates> getPlayerControlledMap() {

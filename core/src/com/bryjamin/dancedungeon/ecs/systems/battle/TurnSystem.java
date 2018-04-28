@@ -28,6 +28,7 @@ import static com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem.TURN.INTEN
 
 public class TurnSystem extends EntitySystem implements Observer{
 
+    private UtilityAiSystem utilityAiSystem;
     private BattleDeploymentSystem battleDeploymentSystem;
 
     private ComponentMapper<TurnComponent> turnMapper;
@@ -256,13 +257,8 @@ public class TurnSystem extends EntitySystem implements Observer{
                 } else if (!turnComponent.hasActions()) {
                     turnComponent.state = TurnComponent.State.END;
                 } else {
-
                     turnComponent.state = TurnComponent.State.WAITING;
-
-                    if (utilityAiMapper.has(currentEntity)) {
-                        utilityAiMapper.get(currentEntity).utilityAiCalculator.performAction(world, currentEntity);
-                    }
-
+                    utilityAiSystem.calculateMove(currentEntity);
                 }
 
                 break;

@@ -22,7 +22,8 @@ public class AStarPathCalculator {
 
     private static final int HORIZONTAL_COST = 10;
 
-    private boolean strictMaxRange;
+    private boolean strictMaxRange; //If this variable is true, if the path is greater than the movement range,
+    //the path returns false
 
     public void setStrictMaxRange(boolean strictMaxRange) {
         this.strictMaxRange = strictMaxRange;

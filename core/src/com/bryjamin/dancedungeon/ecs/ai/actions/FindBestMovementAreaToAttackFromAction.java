@@ -162,7 +162,6 @@ public class FindBestMovementAreaToAttackFromAction implements WorldAction {
             this.score = score;
         }
 
-
     }
 
 

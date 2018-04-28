@@ -11,6 +11,7 @@ import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BattleDeploymentSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.StunnedSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.UtilityAiSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.ArchingTextureSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
@@ -79,6 +80,7 @@ public class BattleScreen extends AbstractScreen {
                         //Initialize Tiles
                         new TileSystem(battleEvent),
                         new BattleDeploymentSystem(battleEvent),
+                        new UtilityAiSystem(),
 
                         new BattleWorldInputHandlerSystem(gameport),
 
