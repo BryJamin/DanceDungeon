@@ -14,7 +14,6 @@ import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.DeploymentComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.UnPushableComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
@@ -71,7 +70,13 @@ public class UnitFactory {
         e.edit().add(new AffectMoraleComponent());
         e.edit().add(new FriendlyComponent());
         e.edit().add(new BlinkOnHitComponent());
-        e.edit().add(new StatComponent(new StatComponent.StatBuilder().healthAndMax(1)));
+
+
+        UnitData unitData = new UnitData();
+        unitData.setHealth(2);
+        unitData.setHealth(2);
+
+        e.edit().add(new UnitComponent(unitData));
         e.getComponent(DrawableComponent.class).drawables.getColor().set(new Color(Color.ORANGE));
         return e;
     }
@@ -118,7 +123,7 @@ public class UnitFactory {
         bag.add(new UnitComponent(unitData));
         bag.add(new SolidComponent());
 
-        bag.add(new HealthComponent(unitData.statComponent.health, unitData.statComponent.maxHealth));
+        bag.add(new HealthComponent(unitData.getHealth(), unitData.getMaxHealth()));
         bag.add(new CoordinateComponent());
         bag.add(new MoveToComponent(Measure.units(60f)));
         bag.add(new VelocityComponent());
@@ -128,7 +133,6 @@ public class UnitFactory {
         //Graphical
         bag.add(new BlinkOnHitComponent());
         bag.add(new SkillsComponent(unitData.getSkills()));
-        bag.add(unitData.getStatComponent());
         bag.add(new TurnComponent());
 
         return bag;
@@ -144,9 +148,7 @@ public class UnitFactory {
         e.edit().add(new UnitComponent(unitData));
         e.edit().add(new SolidComponent());
 
-        System.out.println("HEALTH " + unitData.statComponent.health);
-
-        e.edit().add(new HealthComponent(unitData.statComponent.health, unitData.statComponent.maxHealth));
+        e.edit().add(new HealthComponent(unitData.getHealth(), unitData.getMaxHealth()));
         e.edit().add(new CoordinateComponent());
         e.edit().add(new MoveToComponent(Measure.units(unitData.getMapMovementSpeed())));
         e.edit().add(new VelocityComponent());
@@ -156,7 +158,6 @@ public class UnitFactory {
         //Graphical
         e.edit().add(new BlinkOnHitComponent());
         e.edit().add(new SkillsComponent(unitData.getSkills()));
-        e.edit().add(unitData.getStatComponent());
         e.edit().add(new TurnComponent());
 
         return e;

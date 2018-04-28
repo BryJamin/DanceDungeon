@@ -5,11 +5,12 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.badlogic.gdx.utils.Array;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
+import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.utils.observer.Observer;
 import com.bryjamin.dancedungeon.ecs.components.actions.UtilityAiComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.BuffComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
@@ -35,7 +36,7 @@ public class TurnSystem extends EntitySystem implements Observer{
     private ComponentMapper<PlayerControlledComponent> playerMapper;
 
     private ComponentMapper<SkillsComponent> skillMapper;
-    private ComponentMapper<StatComponent> statMapper;
+    private ComponentMapper<UnitComponent> unitM;
 
 
     private Array<Observer> nextTurnObservers = new Array<>();
@@ -73,7 +74,7 @@ public class TurnSystem extends EntitySystem implements Observer{
 
     @SuppressWarnings("unchecked")
     public TurnSystem() {
-        super(Aspect.all(TurnComponent.class, SkillsComponent.class, StatComponent.class).one(UtilityAiComponent.class, PlayerControlledComponent.class));
+        super(Aspect.all(TurnComponent.class, SkillsComponent.class, UnitComponent.class).one(UtilityAiComponent.class, PlayerControlledComponent.class));
     }
 
     @Override
@@ -247,10 +248,10 @@ public class TurnSystem extends EntitySystem implements Observer{
 
             case DECIDING:
 
-                StatComponent statComponent = statMapper.get(currentEntity);
+                UnitData unitData = unitM.get(currentEntity).getUnitData();
 
-                if(statComponent.stun > 0){
-                    statComponent.stun--;
+                if(unitData.stun > 0){
+                    //statComponen.stun--;
                     turnComponent.state = TurnComponent.State.END;
                 } else if (!turnComponent.hasActions()) {
                     turnComponent.state = TurnComponent.State.END;

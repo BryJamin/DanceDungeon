@@ -113,8 +113,8 @@ public class InformationBannerSystem extends BaseSystem implements Observer {
                         .height(Measure.units(3.5f))
                         .padRight(Measure.units(1.5f));
 
-                int current = unitData.getStatComponent().health;
-                int max = unitData.getStatComponent().maxHealth;
+                int current = unitData.getHealth();
+                int max = unitData.getMaxHealth();
 
                 characterTable.add(new Label(String.format(Locale.ENGLISH, "HP %s/%s", current, max), uiSkin));
 

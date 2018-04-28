@@ -6,7 +6,6 @@ import com.artemis.WorldConfigurationBuilder;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MoveToTargetSystem;
@@ -22,8 +21,6 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdateBoundPositionsSyste
 import com.bryjamin.dancedungeon.ecs.systems.input.BasicInputSystemWithStage;
 import com.bryjamin.dancedungeon.ecs.systems.ui.CharacterSelectionScreenInitilization;
 import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
-import com.bryjamin.dancedungeon.factories.CharacterGenerator;
-import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.screens.AbstractScreen;
 import com.bryjamin.dancedungeon.utils.GameDelta;
 

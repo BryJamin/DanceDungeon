@@ -10,14 +10,12 @@ import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.DeploymentComponent;
 import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
-import com.bryjamin.dancedungeon.factories.enemy.EnemyFactory;
 import com.bryjamin.dancedungeon.factories.enemy.UnitLibrary;
 import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.player.UnitFactory;
 import com.bryjamin.dancedungeon.factories.player.UnitMap;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
-import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 import com.bryjamin.dancedungeon.utils.observer.XObservable;
 
@@ -94,7 +92,7 @@ public class BattleDeploymentSystem extends EntitySystem {
         for (int i = 0; i < deployedArray.length; i++) {
             //Checks if the unit has already been deployed, or has the health to be deployed.
             if (!deployedArray[i]) {
-                if (partyDetails.getParty()[i].getStatComponent().health <= 0) {
+                if (partyDetails.getParty()[i].getHealth() <= 0) {
                     deployedArray[i] = true;
                     continue;
                 }

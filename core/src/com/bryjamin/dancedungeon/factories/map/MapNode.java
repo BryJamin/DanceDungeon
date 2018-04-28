@@ -2,10 +2,6 @@ package com.bryjamin.dancedungeon.factories.map;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.JsonValue;
-import com.bryjamin.dancedungeon.factories.enemy.EnemyFactory;
-import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
 import com.bryjamin.dancedungeon.factories.map.event.MapEvent;
 
 import java.util.Objects;

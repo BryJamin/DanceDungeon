@@ -11,19 +11,19 @@ import com.artemis.Component;
 
 public class HealthComponent extends Component {
 
-    public float health;
-    public float maxHealth;
+    public int health;
+    public int maxHealth;
 
-    private float accumulatedDamage;
-    private float accumulatedHealing;
+    private int accumulatedDamage;
+    private int accumulatedHealing;
 
 
-    public HealthComponent(float health) {
+    public HealthComponent(int health) {
         this.health = health;
         this.maxHealth = health;
     }
 
-    public HealthComponent(float health, float maxHealth) {
+    public HealthComponent(int health, int maxHealth) {
         this.health = health;
         this.maxHealth = maxHealth  ;
     }
@@ -33,19 +33,19 @@ public class HealthComponent extends Component {
     }
 
 
-    public void applyDamage(float accumulatedDamage){
+    public void applyDamage(int accumulatedDamage){
         this.accumulatedDamage += accumulatedDamage;
     }
 
-    public void applyHealing(float accumulatedHealing){
+    public void applyHealing(int accumulatedHealing){
         this.accumulatedHealing += accumulatedHealing;
     }
 
-    public float getAccumulatedDamage() {
+    public int getAccumulatedDamage() {
         return accumulatedDamage;
     }
 
-    public float getAccumulatedHealing() {
+    public int getAccumulatedHealing() {
         return accumulatedHealing;
     }
 

@@ -78,8 +78,7 @@ public class RestScreenUiSystem extends BaseSystem {
             public void changed(ChangeEvent event, Actor actor) {
 
                 for(UnitData unitData : partyManagementSystem.getPartyDetails().getParty()){
-
-                    unitData.getStatComponent().changeHealth(1);
+                    unitData.changeHealth(1);
                 }
 
                 Screen menu = restScreen.getPreviousScreen();

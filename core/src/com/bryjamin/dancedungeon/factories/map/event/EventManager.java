@@ -3,7 +3,6 @@ package com.bryjamin.dancedungeon.factories.map.event;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.bryjamin.dancedungeon.assets.MapData;
-import com.bryjamin.dancedungeon.factories.enemy.EnemyFactory;
 import com.bryjamin.dancedungeon.factories.enemy.UnitLibrary;
 import com.bryjamin.dancedungeon.factories.map.event.objectives.AbstractObjective;
 import com.bryjamin.dancedungeon.factories.map.event.objectives.CompleteWithinObjective;
@@ -99,7 +98,7 @@ public class EventManager {
             @Override
             public BattleEvent getEvent() {
                 return new BattleEvent.Builder(MapData.MAP_3)
-                        .enemyPool(EnemyFactory.FAST_BLOB, EnemyFactory.SPITTER_BLOB, EnemyFactory.MAGE_BLOB)
+                        .enemyPool(UnitLibrary.MELEE_BLOB)
                         .primaryObjective(new DefeatAllEnemiesObjective())
                         .bonusObjective(new CompleteWithinObjective(AbstractObjective.Reward.MORALE, 3))
                         .build();

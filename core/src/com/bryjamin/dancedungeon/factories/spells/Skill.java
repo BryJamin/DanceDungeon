@@ -11,7 +11,6 @@ import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.StunnedComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.UnPushableComponent;
@@ -20,6 +19,7 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationStateComponent
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.KillOnAnimationEndComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.SolidComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionQueueSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.factories.spells.animations.BasicProjectile;
@@ -276,7 +276,7 @@ public class Skill {
         for (Entity e : world.getSystem(TileSystem.class).getCoordinateMap().get(target)) {
 
             if(stun > 0){
-                e.getComponent(StatComponent.class).stun = stun;
+                e.getComponent(UnitComponent.class).getUnitData().stun = stun;
                 e.edit().add(new StunnedComponent());
             }
 

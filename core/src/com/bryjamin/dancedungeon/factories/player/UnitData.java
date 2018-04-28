@@ -4,11 +4,8 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
-import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.factories.spells.SkillLibrary;
-import com.bryjamin.dancedungeon.utils.Measure;
 
 /**
  * Created by BB on 22/12/2017.
@@ -33,13 +30,10 @@ public class UnitData implements Json.Serializable {
     private int movementRange;
     private int attackRange;
 
-    private int stun;
+    public int stun;
 
     private float mapMovementSpeed = 60f;
 
-
-
-    public StatComponent statComponent = new StatComponent();
     private Array<Skill> skills = new Array<>();
 
     public UnitData(){}
@@ -56,7 +50,6 @@ public class UnitData implements Json.Serializable {
         this.maxHealth = unitData.maxHealth;
         this.movementRange = unitData.movementRange;
         this.attackRange = unitData.attackRange;
-        this.statComponent = unitData.statComponent;
 
         this.mapMovementSpeed = unitData.mapMovementSpeed;
 
@@ -77,14 +70,6 @@ public class UnitData implements Json.Serializable {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public StatComponent getStatComponent() {
-        return statComponent;
-    }
-
-    public void setStatComponent(StatComponent statComponent) {
-        this.statComponent = statComponent;
     }
 
     public Array<Skill> getSkills() {
@@ -112,14 +97,28 @@ public class UnitData implements Json.Serializable {
 
         //In save games health may be less than max, But for newly loaded data health should be set to max
         this.health = jsonData.hasChild("health") ? this.health : this.maxHealth;
-        statComponent.health = this.health;
-
-        statComponent.maxHealth = this.maxHealth;
-        statComponent.movementRange = this.movementRange;
-        statComponent.attackRange = this.attackRange;
 
     }
 
+    public int getHealth() {
+        return health;
+    }
+
+    public int getMaxHealth() {
+        return maxHealth;
+    }
+
+    public int getMovementRange() {
+        return movementRange;
+    }
+
+    public int getAttackRange() {
+        return attackRange;
+    }
+
+    public int getStun() {
+        return stun;
+    }
 
     public String getIcon() {
         return icon;
@@ -132,4 +131,28 @@ public class UnitData implements Json.Serializable {
     public float getMapMovementSpeed() {
         return mapMovementSpeed;
     }
+
+
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
+    public void setMaxHealth(int maxHealth) {
+        this.maxHealth = maxHealth;
+    }
+
+
+
+    public void changeHealth(int healthChange){
+
+        health += healthChange;
+
+        if(health < 0){
+            health = 0;
+        } else if(health > maxHealth){
+            health = maxHealth;
+        }
+
+    }
+
 }

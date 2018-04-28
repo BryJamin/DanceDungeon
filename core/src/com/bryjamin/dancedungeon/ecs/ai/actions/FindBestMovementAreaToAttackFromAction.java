@@ -7,13 +7,14 @@ import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.Queue;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.FriendlyComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionQueueSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
+import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.factories.spells.TargetingFactory;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
@@ -35,7 +36,8 @@ public class FindBestMovementAreaToAttackFromAction implements WorldAction {
     @Override
     public void performAction(World world, Entity entity) {
 
-        StatComponent statComponent = entity.getComponent(StatComponent.class);
+        UnitData unitData = entity.getComponent(UnitComponent.class).getUnitData();
+
         Coordinates current = entity.getComponent(CoordinateComponent.class).coordinates;
 
         OrderedMap<Coordinates, Queue<Coordinates>> possiblePaths = new OrderedMap<Coordinates, Queue<Coordinates>>();
@@ -71,9 +73,9 @@ public class FindBestMovementAreaToAttackFromAction implements WorldAction {
                     //TODO GET ALL 'ENEMY INTENT' AND THEIR CORRESPONDING COORDINATES. IF THEY ARE OVER A TILE, REDUCE THE SCORE TO AVOID BLOCKING EACH OTHER
 
                     Queue<Coordinates> path = new Queue<Coordinates>();
-                    if(tileSystem.findShortestPath(entity, path, c,  statComponent.movementRange)){
+                    if(tileSystem.findShortestPath(entity, path, c,  unitData.getMovementRange())){
                         possiblePaths.put(c, path);
-                        if(path.size > statComponent.movementRange)
+                        if(path.size > unitData.getMovementRange())
                             score -= 20; //Can't be reached in one movement
                     } else {
                         score = 0;

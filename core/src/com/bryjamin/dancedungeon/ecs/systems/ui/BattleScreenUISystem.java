@@ -25,7 +25,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.bryjamin.dancedungeon.MainGame;
@@ -39,7 +38,6 @@ import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.FollowPositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.StoredSkillComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
@@ -552,7 +550,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
     private void createMovementTiles(Entity e) {
         TurnComponent turnComponent = e.getComponent(TurnComponent.class);
         if (turnComponent.movementActionAvailable) {
-            new TargetingFactory().createMovementTiles(world, e, e.getComponent(StatComponent.class).movementRange);
+            new TargetingFactory().createMovementTiles(world, e, e.getComponent(UnitComponent.class).getUnitData().getMovementRange());
         }
     }
 

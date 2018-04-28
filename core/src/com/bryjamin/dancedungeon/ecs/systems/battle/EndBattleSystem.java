@@ -7,9 +7,10 @@ import com.artemis.EntitySystem;
 import com.artemis.utils.Bag;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.MainGame;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
+import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.utils.observer.Observer;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
@@ -35,6 +36,7 @@ public class EndBattleSystem extends EntitySystem implements Observer {
     private ActionQueueSystem actionQueueSystem;
 
     private ComponentMapper<EnemyComponent> enemyMapper;
+    private ComponentMapper<UnitComponent> uMapper;
     private ComponentMapper<PlayerControlledComponent> pcMapper;
 
 
@@ -136,10 +138,10 @@ public class EndBattleSystem extends EntitySystem implements Observer {
 
             for(Entity e : playerBag){
                 HealthComponent hc = e.getComponent(HealthComponent.class);
-                StatComponent statComponent = e.getComponent(StatComponent.class);
+                UnitData unitData = uMapper.get(e).getUnitData();
 
-                statComponent.health = (int) hc.health;
-                statComponent.maxHealth = (int) hc.maxHealth;
+                unitData.setHealth(hc.health);
+                unitData.setMaxHealth(hc.maxHealth);
             }
 
             actionQueueSystem.observerArray.removeValue(this, true);

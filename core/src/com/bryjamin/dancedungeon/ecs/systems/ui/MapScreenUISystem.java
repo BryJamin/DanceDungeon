@@ -350,12 +350,12 @@ public class MapScreenUISystem extends BaseSystem {
         Image portrait = new Image(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(unitData.icon)));
         selectedCharacterTable.add(portrait).size(Measure.units(7.5f)).expandX();
 
-        int max = unitData.getStatComponent().maxHealth;
-        int current = unitData.getStatComponent().health;
+        int current = unitData.getHealth();
+        int max = unitData.getMaxHealth();
 
         //selectedCharacterTable.row();
         selectedCharacterTable.add(new Label(String.format(Locale.ENGLISH, "HP %s/%s", current, max), uiSkin)).expandX();
-        selectedCharacterTable.add(new Label(String.format(Locale.ENGLISH, "Spd %s", unitData.getStatComponent().movementRange), uiSkin)).expandX();
+        selectedCharacterTable.add(new Label(String.format(Locale.ENGLISH, "Spd %s", unitData.getMovementRange()), uiSkin)).expandX();
 
         //Skills Table Row / Upgrades
         //selectedCharacterTable.row();
