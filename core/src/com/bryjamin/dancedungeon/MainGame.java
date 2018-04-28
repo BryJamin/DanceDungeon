@@ -78,9 +78,10 @@ public class MainGame extends Game {
         small.fontParameters.magFilter = Texture.TextureFilter.Linear;
         assetManager.load(Fonts.SMALL, BitmapFont.class, small);
 
+
+        //LOAD IN DATA FROM JSON
         SkillLibrary.empty();
-        System.out.println(SkillLibrary.ENEMY_SKILL_BIG_BLAST);
-        EnemyLibrary.empty();
+        EnemyLibrary.loadFromJSON();
 
         setScreen(new LoadingScreen(this));
     }

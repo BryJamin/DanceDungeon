@@ -30,7 +30,7 @@ public class JsonSkillTest  extends GameTest {
         Array<String> s = new Array<>();
         s.addAll("1", "2", "3");
 
-        ud.setSkillIds(s);
+        //ud.setSkillIds(s);
 
         Json json = new Json();
 

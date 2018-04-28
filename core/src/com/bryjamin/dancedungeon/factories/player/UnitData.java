@@ -99,7 +99,10 @@ public class UnitData implements Json.Serializable {
             }
         }
 
+        //In save games health may be less than max, But for newly loaded data health should be set to max
+        this.health = jsonData.hasChild("health") ? this.health : this.maxHealth;
         statComponent.health = this.health;
+
         statComponent.maxHealth = this.maxHealth;
         statComponent.movementRange = this.movementRange;
         statComponent.attackRange = this.attackRange;

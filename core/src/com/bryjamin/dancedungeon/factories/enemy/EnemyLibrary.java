@@ -42,15 +42,24 @@ public class EnemyLibrary {
 
     private static final OrderedMap<String, UnitData> enemies = new OrderedMap<>();
 
-    static {
+    public static void loadFromJSON(){
+
+        enemies.clear();
+
         Json json = new Json();
         json.setIgnoreUnknownFields(true);
 
         Array<UnitData> array = json.fromJson(Array.class, Gdx.files.internal("json/enemies/enemies.json"));
 
         for(UnitData unitData : array){
+            if(enemies.containsKey(unitData.getId())) {
+                throw new RuntimeException("Duplicate key found in Enemy Library: " + unitData.getId());
+            }
+
             enemies.put(unitData.getId(), unitData);
         }
+
+
     }
 
 
@@ -116,6 +125,12 @@ public class EnemyLibrary {
     public static void empty(){};
 
 
+    public static int getLibrarySize(){
+        return enemies.size;
+    }
+
+
+    public static final String MELEE_BLOB = "cf5db9a9-b053-4de8-ad17-4f56a1e008f6";
     public static final String RANGED_BLASTER = "7720994b-263a-439d-b83c-70586bb63777";
 
 
