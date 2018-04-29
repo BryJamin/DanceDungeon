@@ -14,8 +14,6 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.Queue;
 import com.bryjamin.dancedungeon.assets.Fonts;
-import com.bryjamin.dancedungeon.assets.TextureStrings;
-import com.bryjamin.dancedungeon.ecs.ai.actions.EndTurnAction;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.UtilityAiComponent;
@@ -317,7 +315,7 @@ public class UtilityAiSystem extends EntitySystem {
             ui.edit().add(new PositionComponent(CenterMath.centerOnPositionX(size, center.x),
                     CenterMath.centerOnPositionY(size, center.y)));
             ui.edit().add(new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE,
-                    new TextDescription.Builder(Fonts.MEDIUM)
+                    new TextDescription.Builder(Fonts.SMALL)
                             .text("" + scoreMap.get(c).total())
                             //.width(r.width)
                             //.height(r.height)

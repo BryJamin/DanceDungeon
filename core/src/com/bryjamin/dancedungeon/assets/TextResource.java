@@ -14,6 +14,9 @@ public class TextResource {
     public static final String BATTLE_OVER_VICTORY = "Victory";
     public static final String TARGETING_NO_TARGETS_IN_RANGE = "No targets are in range";
 
+    public static final String CONFIRM_YES = "Yes";
+    public static final String CONFIRM_NO = "No";
+
 
     public static final String BATTLE_OBJECTIVES = "Objectives";
     public static final String BATTLE_BONUS = "Bonus";
@@ -29,6 +32,16 @@ public class TextResource {
 
 
 
+    public static final String SCREEN_CHARACTER_START = "Start Expedition";
+    public static final String SCREEN_CHARACTER_HEROES = "Change Heroes";
+    public static final String SCREEN_CHARACTER_BACK = "Back";
+
+
+    public static final String SCREEN_MAP_VIEW_INVENTORY = "View Inventory";
+    public static final String SCREEN_MAP_CLOSE_INVENTORY = "Close Inventory";
+    public static final String SCREEN_MAP_SAVE = "Save & Quit";
+    public static final String SCREEN_MAP_ARE_YOU_SURE = "Are You Sure You Want To Save and Quit The Game?";
+    public static final String SCREEN_MAP_INVENTORY_DRAG_TIP = "Inventory (Drag and Drop to Equip)";
 
     public static final String BATTLE_NO_ENEMY_ATTACK = "This Enemy is Not Attacking";
 

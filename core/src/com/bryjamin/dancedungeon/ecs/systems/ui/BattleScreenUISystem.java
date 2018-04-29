@@ -67,6 +67,7 @@ import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.observer.Observer;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
+import com.bryjamin.dancedungeon.utils.ui.AreYouSureFrame;
 
 
 /**
@@ -115,7 +116,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
     private final Table deploymentTable = new Table();
 
     private final Table bottomContainer = new Table();
-    private Table areYouSureContainer = new Table();
+    private AreYouSureFrame areYouSureContainer;
 
 
 
@@ -185,35 +186,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
             }
         });
 
-        areYouSureContainer.add(new Label("Some Units Still Have Actions Remaining", uiSkin)).colspan(2).padBottom(Padding.MEDIUM);
-        areYouSureContainer.row();
-        areYouSureContainer.add(new Label("Are You Sure You Want To End Your Turn?", uiSkin)).colspan(2).padBottom(Padding.MEDIUM);;
-        areYouSureContainer.row();
-
-        TextButton yes = new TextButton("Yes", uiSkin);
-        yes.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                areYouSureContainer.setVisible(false);
-                turnSystem.endAllyTurn();
-                resetBottomContainer();
-            }
-        });
-
-
-
-        TextButton no = new TextButton("No", uiSkin);
-        no.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                areYouSureContainer.setVisible(false);
-            }
-        });
-
-
-        areYouSureContainer.add(yes).width(Measure.units(20f)).height(Measure.units(5f)).expandX();
-        areYouSureContainer.add(no).width(Measure.units(20f)).height(Measure.units(5f)).expandX();
-
+        areYouSureContainer.update();
     }
 
 
@@ -222,14 +195,30 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
         battleDeploymentSystem.getObservers().addObserver(this);
 
-        areYouSureContainer = new Table(uiSkin);
+        areYouSureContainer = new AreYouSureFrame(
+                new ChangeListener() {
+                    @Override
+                    public void changed(ChangeEvent event, Actor actor) {
+                        areYouSureContainer.setVisible(false);
+                        turnSystem.endAllyTurn();
+                        resetBottomContainer();
+                    }
+        }, new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                areYouSureContainer.setVisible(false);
+            }
+        }, uiSkin, "Some Units Still Have Actions Remaining",
+                "Are You Sure You Want To End Your Turn?"
+        );
+
         areYouSureContainer.setDebug(StageUIRenderingSystem.DEBUG);
         areYouSureContainer.setWidth(stage.getWidth());
         areYouSureContainer.setHeight(stage.getHeight());
         areYouSureContainer.align(Align.center);
         areYouSureContainer.setVisible(false);
         areYouSureContainer.setTouchable(Touchable.enabled);
-        areYouSureContainer.setBackground(new TextureRegionDrawable(atlas.findRegion(TextureStrings.BLOCK)).tint(new Color(0, 0, 0, 0.95f)));
+        areYouSureContainer.setBackground(new TextureRegionDrawable(atlas.findRegion(TextureStrings.BLOCK)).tint(new Color(0, 0, 0, 0.85f)));
 
 
         bottomContainer.setSkin(uiSkin);

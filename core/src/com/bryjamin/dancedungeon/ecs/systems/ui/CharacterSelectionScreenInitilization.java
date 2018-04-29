@@ -2,6 +2,7 @@ package com.bryjamin.dancedungeon.ecs.systems.ui;
 
 import com.artemis.BaseSystem;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -9,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
@@ -18,6 +20,7 @@ import com.bryjamin.dancedungeon.assets.Fonts;
 import com.bryjamin.dancedungeon.assets.NinePatches;
 import com.bryjamin.dancedungeon.assets.Padding;
 import com.bryjamin.dancedungeon.assets.Skins;
+import com.bryjamin.dancedungeon.assets.TextResource;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
@@ -26,6 +29,7 @@ import com.bryjamin.dancedungeon.factories.enemy.UnitLibrary;
 import com.bryjamin.dancedungeon.factories.map.MapGenerator;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
+import com.bryjamin.dancedungeon.screens.menu.MenuScreen;
 import com.bryjamin.dancedungeon.screens.strategy.MapScreen;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
@@ -41,14 +45,15 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
     private static int PARTY_SIZE = 3;
 
     private static final float BOTTOM_BUTTON_WIDTH = Measure.units(30f);
+    private static final float BOTTOM_BUTTON_HEIGHT = Measure.units(7.5f);
 
     private StageUIRenderingSystem stageUIRenderingSystem;
     private RenderingSystem renderingSystem;
 
     private Skin uiSkin;
     private Table container;
-    private Table characterPane;
-    private Table partyTable;
+    private Table characterTable;
+    private Table bottomContainer;
     private TextButton startExpedition;
 
 
@@ -122,41 +127,41 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
     protected void initialize() {
 
         createWorldMap();
-        createAvailablePartyFrame();
-        createCurrentPartyFrame();
 
-        //This is because initalize is recalled and kind of screws up a bit.
-        //Better option is to have an intialize and 'redraw' method. When refreshinging tables
-        if(characterPane == null) {
-            characterPane = new Table(uiSkin);
-        }
+
+        Stage stage = stageUIRenderingSystem.stage;
+
+        container = new Table();
+        stage.addActor(container);
+        container.setDebug(StageUIRenderingSystem.DEBUG);
+        //container.setBackground(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.BLOCK)).tint(new Color(0,0,0,0.6f)));
+        container.setWidth(stage.getWidth());
+        container.setHeight(stage.getHeight());
+        container.align(Align.top);
+
+
+        characterTable = new Table(uiSkin);
+        container.add(characterTable).expandY();
+
+        container.row();
+        bottomContainer = new Table(uiSkin);
+        container.add(bottomContainer).height(Measure.units(12.5f));
+
+        populateCharacterTable();
+        populateBottomContainer();
 
     }
 
 
     /**
-     * Creates the Current Patty frame used for expeditions
+     * Populates Bottom Container With Buttons
      */
-    private void createCurrentPartyFrame(){
+    private void populateBottomContainer(){
 
+        bottomContainer.clear();
+        bottomContainer.setDebug(StageUIRenderingSystem.DEBUG);
 
-        if(partyTable == null){
-            partyTable = new Table(uiSkin);
-        } else {
-            partyTable.remove();
-            partyTable.clear();
-        }
-
-        stageUIRenderingSystem.stage.addActor(partyTable);
-        partyTable.setWidth(stageUIRenderingSystem.stage.getWidth());
-        partyTable.setHeight(Measure.units(12.5f));
-        partyTable.setDebug(StageUIRenderingSystem.DEBUG);
-
-
-        float size = Measure.units(7.5f);
-
-        startExpedition = new TextButton("Start Expedition", uiSkin);
-
+        startExpedition = new TextButton(TextResource.SCREEN_CHARACTER_START, uiSkin);
 
         startExpedition.addListener(new ChangeListener() {
             @Override
@@ -178,38 +183,35 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
             }
         });
 
-        partyTable.add(startExpedition).width(BOTTOM_BUTTON_WIDTH).height(Measure.units(7.5f)).expandX().padLeft(Measure.units(10f))
-                .padRight(Measure.units(2.5f));
+        bottomContainer.add(startExpedition).width(BOTTOM_BUTTON_WIDTH).height(BOTTOM_BUTTON_HEIGHT).padRight(Padding.SMALL).expandX();
 
 
-        TextButton whatever = new TextButton("Change Heroes", uiSkin);
+        TextButton whatever = new TextButton(TextResource.SCREEN_CHARACTER_HEROES, uiSkin);
+        bottomContainer.add(whatever).width(BOTTOM_BUTTON_WIDTH).height(BOTTOM_BUTTON_HEIGHT).padRight(Padding.SMALL).expandX();
 
 
-        partyTable.add(whatever).width(BOTTOM_BUTTON_WIDTH).height(Measure.units(7.5f)).expandX().padRight(Measure.units(10f));
+
+        TextButton backToMainMenu = new TextButton(TextResource.SCREEN_CHARACTER_BACK, uiSkin);
+
+        backToMainMenu.addListener(new ClickListener(){
+
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.getScreen().dispose();
+                game.setScreen(new MenuScreen(game));
+            }
+        });
+
+        bottomContainer.add(backToMainMenu).width(BOTTOM_BUTTON_WIDTH).height(BOTTOM_BUTTON_HEIGHT).padRight(Padding.SMALL).expandX();
+
 
     }
 
 
-    private void createAvailablePartyFrame(){
-
-        Stage stage = stageUIRenderingSystem.stage;
+    private void populateCharacterTable(){
 
 
-        container = new Table();
-        stage.addActor(container);
-        container.setDebug(StageUIRenderingSystem.DEBUG);
-        //container.setBackground(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.BLOCK)).tint(new Color(0,0,0,0.6f)));
-        container.setWidth(stage.getWidth());
-        container.setHeight(stage.getHeight());
-        container.align(Align.top);
-
-        float padTop = Measure.units(3.5f);
-
-        //TODO Create rows of Defender, Attacker, Support
-
-        Label selectYourParty = new Label("Your Heroes", uiSkin);
-        container.add(selectYourParty).expandX().padTop(Padding.SMALL);
-        container.row();
+        characterTable.clear();
 
         for(int i = 0; i < partyMembers.size; i++){
 
@@ -222,12 +224,9 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
 
 
             partyMemberContainer.align(Align.center);
-            container.add(partyMemberContainer).width(container.getWidth() - Measure.units(2.5f)).padBottom(Padding.SMALL);
+            characterTable.add(partyMemberContainer).width(container.getWidth() - Measure.units(2.5f)).padBottom(Padding.SMALL).expandY();
 
             UnitData unitData = partyMembers.get(i);
-
-            //Table characterPortraitContainer = new Table(uiSkin);
-            //partyMemberContainer.add(characterPortraitContainer).expandX().padRight(Padding.MEDIUM);
 
             partyMemberContainer.add(new Label(unitData.name, uiSkin)).width(Measure.units(15f)).align(Align.left).colspan(4).padLeft(Padding.SMALL);
             partyMemberContainer.row();
@@ -238,12 +237,6 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
             imgContainer.add(new Image(renderingSystem.getAtlas().findRegion(unitData.icon))).size(Measure.units(7.5f));
             //characterPortraitContainer.row();
             partyMemberContainer.add(imgContainer).size(Measure.units(7.5f)).padRight(Padding.MEDIUM).padBottom(Padding.SMALL).padLeft(Padding.SMALL);
-
-
-            //Table skillsTableContainer = new Table(uiSkin);
-            //partyMemberContainer.add(skillsTableContainer).width(Measure.units(80f));
-
-            //skillsTableContainer.row();
 
             imgContainer = new Table();
             imgContainer.setBackground(NinePatches.getDefaultNinePatch(renderingSystem.getAtlas()));
@@ -259,7 +252,7 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
 
 
 
-            container.row();
+            characterTable.row();
 
         }
 

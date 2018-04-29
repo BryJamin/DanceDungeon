@@ -1,6 +1,7 @@
 package com.bryjamin.dancedungeon.ecs.systems.ui;
 
 import com.artemis.BaseSystem;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -30,6 +31,7 @@ import com.bryjamin.dancedungeon.assets.Fonts;
 import com.bryjamin.dancedungeon.assets.NinePatches;
 import com.bryjamin.dancedungeon.assets.Padding;
 import com.bryjamin.dancedungeon.assets.Skins;
+import com.bryjamin.dancedungeon.assets.TextResource;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.systems.MapCameraSystemFlingAndPan;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
@@ -38,9 +40,11 @@ import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
+import com.bryjamin.dancedungeon.screens.menu.MenuScreen;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CameraMath;
 import com.bryjamin.dancedungeon.utils.save.QuickSave;
+import com.bryjamin.dancedungeon.utils.ui.AreYouSureFrame;
 
 import java.util.Locale;
 
@@ -65,6 +69,8 @@ public class MapScreenUISystem extends BaseSystem {
     private Table characterWindow;
     private Table viewInventoryAndQuickSaveTab;
     private Table selectCharacterButtonsTable;
+
+    private AreYouSureFrame areYouSureContainer;
 
     private ButtonGroup<Button> buttonButtonGroup;
 
@@ -120,7 +126,7 @@ public class MapScreenUISystem extends BaseSystem {
         container.add(viewInventoryAndQuickSaveTab).height(Measure.units(7.5f)).width(stage.getWidth());
 
 
-        TextButton quickSave = new TextButton("Quick Save", uiSkin);
+        TextButton quickSave = new TextButton(TextResource.SCREEN_MAP_SAVE, uiSkin);
 
         quickSave.addListener(new ChangeListener() {
             @Override
@@ -130,12 +136,12 @@ public class MapScreenUISystem extends BaseSystem {
                     closeCharacterWindow();
                 }
 
+                areYouSureContainer.update();
 
-                QuickSave.quickSave(gameMap, partyDetails);
             }
         });
 
-        final TextButton viewInventory = new TextButton("View Inventory", uiSkin);
+        final TextButton viewInventory = new TextButton(TextResource.SCREEN_MAP_VIEW_INVENTORY, uiSkin);
 
         viewInventory.addListener(new ClickListener() {
 
@@ -159,7 +165,7 @@ public class MapScreenUISystem extends BaseSystem {
         viewInventory.addAction(new Action() {
             @Override
             public boolean act(float delta) {
-                viewInventory.setText(characterWindowContainer.isVisible() ? "Close Inventory" : "View Inventory");
+                viewInventory.setText(characterWindowContainer.isVisible() ? TextResource.SCREEN_MAP_CLOSE_INVENTORY : TextResource.SCREEN_MAP_VIEW_INVENTORY);
                 return false;
             }
         });
@@ -208,6 +214,35 @@ public class MapScreenUISystem extends BaseSystem {
         characterWindow.add(inventoryTable).width(WINDOW_WIDTH).height(Measure.units(10f)).colspan(4).padTop(Measure.units(2.5f));
 
 
+
+        areYouSureContainer = new AreYouSureFrame(
+                new ChangeListener() {
+                    @Override
+                    public void changed(ChangeEvent event, Actor actor) {
+                        QuickSave.quickSave(gameMap, partyDetails);
+                        game.getScreen().dispose();
+                        game.setScreen(new MenuScreen(game));
+                    }
+                }, new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                areYouSureContainer.setVisible(false);
+            }
+        }, uiSkin, "Save & Quit?",
+                "You Will Continue From Something Or The Other"
+        );
+
+        areYouSureContainer.setDebug(StageUIRenderingSystem.DEBUG);
+        areYouSureContainer.setWidth(stage.getWidth());
+        areYouSureContainer.setHeight(stage.getHeight());
+        areYouSureContainer.align(Align.center);
+        areYouSureContainer.setVisible(false);
+        areYouSureContainer.setTouchable(Touchable.enabled);
+        areYouSureContainer.setBackground(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.BLOCK)).tint(new Color(0, 0, 0, 0.85f)));
+
+        stage.addActor(areYouSureContainer);
+
+
     }
 
     @Override
@@ -218,6 +253,8 @@ public class MapScreenUISystem extends BaseSystem {
         if (characterWindowContainer.isVisible()) {
             characterWindowContainer.setPosition(CameraMath.getBtmLftX(gameport), CameraMath.getBtmY(gameport.getCamera()));
         }
+
+        areYouSureContainer.setPosition(container.getX(), container.getY());
     }
 
     //TODO messy?
@@ -292,46 +329,13 @@ public class MapScreenUISystem extends BaseSystem {
 
         this.selectedCharacter = unitData;
 
-        final Stage stage = stageUIRenderingSystem.stage;
-
         dragAndDrop = new DragAndDrop();
+        dragAndDrop.setKeepWithinStage(false);
+
         characterWindowContainer.setVisible(true);
-        //CHARACTER WINDOW TABLE
-        //LEFT SIDE
-        //CHARACTER PANE
         updateSelectedCharacterTable(characterInformationTable, unitData);
-        //CHARACTER PANE END
-        //INVENTORY PANE
         updateInventoryTable(inventoryTable);
-        //--------------------- INVENTORY PANE END ----------------------------//
-        //RIGHT SIDE - SKILL INFORMATION, WHEN PLAYER CLICKS A SKILL ICON.
         updateSkillInformationTable(skillInformationTable, null);
-
-        //Adds A listenerer to the container to monitor if the player taps outside the window, in order to close it
-        stage.addListener(new InputListener() { //Tracks taps outside of the character Window in order to close window
-
-
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                closeCharacterWindow();
-                stage.removeListener(this);
-            }
-
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-
-                //Checks if the touch is outside the Character Window
-       /*         if (x < characterWindow.getX() || x > characterWindow.getX() + characterWindow.getWidth()
-                        || y < characterWindow.getY() || y > characterWindow.getY() + characterWindow.getHeight()) {
-
-                    if(in)
-
-                    return true;
-                }
-*/
-                return false;
-            }
-        });
 
 
     }
@@ -357,9 +361,6 @@ public class MapScreenUISystem extends BaseSystem {
         selectedCharacterTable.add(new Label(String.format(Locale.ENGLISH, "HP %s/%s", current, max), uiSkin)).expandX();
         selectedCharacterTable.add(new Label(String.format(Locale.ENGLISH, "Spd %s", unitData.getMovementRange()), uiSkin)).expandX();
 
-        //Skills Table Row / Upgrades
-        //selectedCharacterTable.row();
-        //selectedCharacterTable.add(new Label("Skills", uiSkin)).colspan(5).expandX();
         selectedCharacterTable.row();
 
         equippedSkillsTable = new Table(uiSkin);
@@ -387,7 +388,7 @@ public class MapScreenUISystem extends BaseSystem {
 
         final float BUTTON_SIZE = Measure.units(5f);
 
-        Label title = new Label("Inventory (Drag and Drop to Equip)", uiSkin);
+        Label title = new Label(TextResource.SCREEN_MAP_INVENTORY_DRAG_TIP, uiSkin);
 
         inventoryTable.add(title).expandX().padBottom(Padding.SMALL).colspan(4);
         inventoryTable.row();
@@ -584,15 +585,22 @@ public class MapScreenUISystem extends BaseSystem {
             i.setWidth(Measure.units(17.5f));
 
             payload.setDragActor(i);
-            dragAndDrop.setDragActorPosition(i.getWidth() / 2, -i.getHeight() / 2); //Sets the image position to the center
+            dragAndDrop.setDragActorPosition(Gdx.input.getX() + i.getWidth() / 2, Gdx.input.getY() -i.getHeight() / 2); //Sets the image position to the center
             payload.setObject(this);
+
+            System.out.println("here");
 
             return payload;
         }
 
 
+
+
         @Override
         public void dragStop(InputEvent event, float x, float y, int pointer, DragAndDrop.Payload payload, DragAndDrop.Target target) {
+
+            System.out.println("also here");
+
             super.dragStop(event, x, y, pointer, payload, target);
         }
 

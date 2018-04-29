@@ -81,9 +81,6 @@ public class MainGame extends Game {
         FreetypeFontLoader.FreeTypeFontLoaderParameter title = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
         title.fontFileName = FileStrings.DEFAULT_FONT_FILE;
         title.fontParameters.size = (int) Measure.units(7.5f);
-        title.fontParameters.shadowOffsetX = (int) Measure.units(0.5f);
-        title.fontParameters.shadowOffsetY = (int) Measure.units(0.5f);
-        //title.fontParameters.borderWidth = Measure.units(0.5f);
         title.fontParameters.minFilter = Texture.TextureFilter.Linear;
         title.fontParameters.magFilter = Texture.TextureFilter.Linear;
         assetManager.load(Fonts.LARGE, BitmapFont.class, title);

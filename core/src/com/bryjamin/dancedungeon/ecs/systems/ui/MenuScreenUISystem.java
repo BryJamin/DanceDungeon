@@ -50,7 +50,19 @@ public class MenuScreenUISystem extends BaseSystem {
     private RenderingSystem renderingSystem;
 
     private Skin uiSkin;
+
     private Table container;
+    private Table titleContainer;
+    private Table startButtonContainer;
+    private Table bottomContainer;
+
+
+    private enum MenuState {
+        OPTIONS, MAIN
+    }
+
+
+
     private Viewport gameport;
 
     private MainGame game;
@@ -94,11 +106,39 @@ public class MenuScreenUISystem extends BaseSystem {
 
         stage.addActor(container);
 
-        container.align(Align.center);
+        container.align(Align.top);
 
-        container.add(new Label("PlayFight", uiSkin, Fonts.LARGE_FONT_STYLE_NAME, new Color(Color.WHITE))).padBottom(Padding.MEDIUM);
+        titleContainer = new Table(uiSkin);
+        titleContainer.setDebug(true);
+
+        Label title = new Label("ISLE", uiSkin, Fonts.LARGE_FONT_STYLE_NAME, new Color(Color.WHITE));
+        title.setAlignment(Align.left);
+
+        titleContainer.add(title).width(container.getWidth()).height(Measure.units(10f)).padLeft(Padding.MEDIUM).expandX();
+
+        container.add(titleContainer);
+
         container.row();
+        startButtonContainer = new Table(uiSkin);
+        container.add(startButtonContainer).expandY();
+        populateMiddleContainer();
 
+        container.row();
+        bottomContainer = new Table(uiSkin);
+        bottomContainer.setDebug(true);
+        container.add(bottomContainer).height(Measure.units(10f));
+
+
+
+
+
+    }
+
+
+
+    public void populateMiddleContainer(){
+
+        startButtonContainer.clear();
 
         if(QuickSave.isThereAValidQuickSave()){
             TextButton textBtn1 = new TextButton("Continue", uiSkin);
@@ -115,8 +155,8 @@ public class MenuScreenUISystem extends BaseSystem {
                 }
             });
 
-            container.add(textBtn1).width(Measure.units(20f)).padBottom(Padding.MEDIUM);
-            container.row();
+            startButtonContainer.add(textBtn1).width(Measure.units(20f)).padBottom(Padding.MEDIUM);
+            startButtonContainer.row();
         }
 
 
@@ -140,9 +180,10 @@ public class MenuScreenUISystem extends BaseSystem {
             }
         });
 
-        container.add(textBtn1).width(Measure.units(20f)).padBottom(Padding.MEDIUM);
-        container.row();
-        container.add(textBtn2).width(Measure.units(20f));
+        startButtonContainer.add(textBtn1).width(Measure.units(20f)).padBottom(Padding.MEDIUM);
+        startButtonContainer.row();
+        startButtonContainer.add(textBtn2).width(Measure.units(20f));
+
 
 
     }
