@@ -103,6 +103,14 @@ public class AStarPathCalculator {
 
     public boolean findShortestPath(Queue<Coordinates> fillQueue, Coordinates start, Coordinates end, int maxRange){
 
+/*
+        if(start == end){
+            fillQueue.addLast(start);
+            return true;
+        }
+*/
+
+
         Array<Node> openList = new Array<Node>();
         Array<Node> closedList = new Array<Node>();
 

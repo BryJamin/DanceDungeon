@@ -52,6 +52,7 @@ import com.bryjamin.dancedungeon.ecs.systems.battle.ActionQueueSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BattleDeploymentSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.UtilityAiSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
 import com.bryjamin.dancedungeon.factories.map.event.objectives.AbstractObjective;
@@ -418,6 +419,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
             botTabState = BottomTableState.PLAYER_SELECT;
         } else if(em.has(e)){
             botTabState = BottomTableState.ENEMY_SELECT;
+            world.getSystem(UtilityAiSystem.class).createDebugScoreTools(e);
         }
 
         createMovementTiles(e);

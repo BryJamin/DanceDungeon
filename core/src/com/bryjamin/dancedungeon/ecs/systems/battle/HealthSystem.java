@@ -119,7 +119,7 @@ public class HealthSystem extends EntityProcessingSystem {
         floatingTextEntity.edit().add(new VelocityComponent(0, Measure.units(20f)));
         floatingTextEntity.edit().add(new ExpireComponent(2.0f));
         floatingTextEntity.edit().add(new DrawableComponent(Layer.BACKGROUND_LAYER_FAR,
-                new TextDescription.Builder(Fonts.MEDIUM)
+                new TextDescription.Builder(Fonts.SMALL)
                         .text(text)
                         .color(color)
                         .build()));

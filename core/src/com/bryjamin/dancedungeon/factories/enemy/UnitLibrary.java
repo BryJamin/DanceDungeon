@@ -31,17 +31,25 @@ public class UnitLibrary {
         Json json = new Json();
         json.setIgnoreUnknownFields(true);
 
+        String[] fileArray = new String[]{
+                ENEMY_UNITS_FILE,
+                CHARACTER_UNITS_FILE
+        };
 
-        Array<UnitData> array = json.fromJson(Array.class, Gdx.files.internal(ENEMY_UNITS_FILE));
-        array.addAll(json.fromJson(Array.class, Gdx.files.internal(CHARACTER_UNITS_FILE)));
+        for(String file : fileArray){
 
-        for(UnitData unitData : array){
-            if(enemies.containsKey(unitData.getId())) {
-                throw new RuntimeException("Duplicate key found in Unit Library: " + unitData.getId() + "\n" +
-                "Unit Name: " + unitData.getName());
+            Array<UnitData> array = json.fromJson(Array.class, Gdx.files.internal(file));
+
+            for(UnitData unitData : array){
+                if(enemies.containsKey(unitData.getId())) {
+                    throw new RuntimeException("Duplicate key found in Unit Library: " + unitData.getId() + "\n" +
+                            "Unit Name: " + unitData.getName()  + "\n" +
+                            "File Name: " + file);
+                }
+                enemies.put(unitData.getId(), unitData);
             }
 
-            enemies.put(unitData.getId(), unitData);
+
         }
 
 
