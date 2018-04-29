@@ -154,13 +154,21 @@ public class UtilityAiSystem extends EntitySystem {
     }
 
 
+    /**
+     * Update the Score Map.
+     * Checks if the Paths generated are too long, Or if the Coordinate is in the line of fire.
+     * Checks if the 'attack' score of the co-ordinate
+     *
+     *
+     * @param skill
+     */
     private void updateScoreMap(Skill skill){
 
         for(Coordinates c : pathsMap.orderedKeys()) {
 
             scoreMap.get(c).attackScore = calculateAttackScoreOfACoordinate(c, skill);
 
-            if(pathsMap.get(c).last() != c){//If the does not end the target co-ordinate due to it being too long, reduce the movementScore
+            if(pathsMap.get(c).last() != c){//If the path does not end at the target co-ordinate due to it being too long, reduce the movementScore
                 scoreMap.get(c).movementScore -= 5;
             }
 
@@ -174,8 +182,10 @@ public class UtilityAiSystem extends EntitySystem {
     }
 
 
-
-    public boolean calculateScoreForAllCoordinates(Entity e){
+    /**
+     * Calculates the Attack and Movement scores for Each co-ordinate reachable by this entity.
+     */
+    private boolean calculateScoreForAllCoordinates(Entity e){
 
         pathsMap.clear();
         scoreMap.clear();

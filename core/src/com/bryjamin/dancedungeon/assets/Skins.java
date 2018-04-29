@@ -22,6 +22,7 @@ public class Skins {
 
         uiSkin.add("myFont12", assetManager.get(Fonts.MEDIUM));
         uiSkin.add(Fonts.SMALL_FONT_STYLE_NAME, assetManager.get(Fonts.SMALL));
+        uiSkin.add(Fonts.LARGE_FONT_STYLE_NAME, assetManager.get(Fonts.LARGE));
         uiSkin.addRegions(assetManager.get(FileStrings.SPRITE_ATLAS_FILE, TextureAtlas.class));
 
         //Add Button Skin
