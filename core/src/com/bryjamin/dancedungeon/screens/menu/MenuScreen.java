@@ -5,19 +5,8 @@ import com.artemis.WorldConfiguration;
 import com.artemis.WorldConfigurationBuilder;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.bryjamin.dancedungeon.MainGame;
-import com.bryjamin.dancedungeon.assets.FileStrings;
-import com.bryjamin.dancedungeon.assets.Padding;
-import com.bryjamin.dancedungeon.assets.Skins;
-import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MoveToTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
@@ -30,16 +19,10 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.FadeSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdateBoundPositionsSystem;
 import com.bryjamin.dancedungeon.ecs.systems.input.BasicInputSystemWithStage;
-import com.bryjamin.dancedungeon.ecs.systems.ui.CharacterSelectionScreenInitilization;
 import com.bryjamin.dancedungeon.ecs.systems.ui.MenuScreenUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
-import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.screens.AbstractScreen;
-import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
-import com.bryjamin.dancedungeon.screens.strategy.MapScreen;
 import com.bryjamin.dancedungeon.utils.GameDelta;
-import com.bryjamin.dancedungeon.utils.Measure;
-import com.bryjamin.dancedungeon.utils.save.QuickSave;
 
 /**
  * Created by BB on 08/10/2017.

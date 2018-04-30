@@ -30,7 +30,6 @@ import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
-import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
@@ -115,33 +114,6 @@ public class UnitFactory {
         return e;
     }
 
-
-
-
-    public ComponentBag baseUnitBag(UnitData unitData){
-
-        ComponentBag bag = new ComponentBag();
-        bag.add(new PositionComponent());
-        bag.add(new UnitComponent(unitData));
-        bag.add(new SolidComponent());
-
-        bag.add(new HealthComponent(unitData.getHealth(), unitData.getMaxHealth()));
-        bag.add(new CoordinateComponent());
-        bag.add(new MoveToComponent(Measure.units(60f)));
-        bag.add(new VelocityComponent());
-        bag.add(new TargetComponent());
-        bag.add(new BuffComponent());
-
-        //Graphical
-        bag.add(new BlinkOnHitComponent());
-        bag.add(new SkillsComponent(unitData.getSkills()));
-        bag.add(new TurnComponent());
-
-        return bag;
-
-    }
-
-
     public Entity baseUnitBag(World world, UnitData unitData){
 
         float size = TileSystem.CELL_SIZE * unitData.getDrawScale();
@@ -177,35 +149,6 @@ public class UnitFactory {
         return e;
 
     }
-
-
-    public ComponentBag basePlayerUnitBag(UnitData unitData){
-        ComponentBag bag = baseUnitBag(unitData);
-        bag.add(new PlayerControlledComponent());
-        return bag;
-    }
-
-    public ComponentBag baseAllyUnitBag(UnitData unitData){
-        ComponentBag bag = baseUnitBag(unitData);
-        bag.add(new PlayerControlledComponent());
-        return bag;
-    }
-
-    public ComponentBag baseEnemyUnitBag(UnitData unitData){
-        ComponentBag bag = baseUnitBag(unitData);
-        bag.add(new EnemyComponent());
-        return bag;
-    }
-
-
-
-
-
-
-
-
-
-
 
 
 }

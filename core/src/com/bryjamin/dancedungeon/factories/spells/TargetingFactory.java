@@ -31,8 +31,6 @@ import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
-import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
-import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.math.CoordinateMath;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
@@ -125,7 +123,7 @@ public class TargetingFactory {
 
         TileSystem tileSystem = world.getSystem(TileSystem.class);
 
-        Entity redBox = BagToEntity.bagToEntity(world.createEntity(), highlightBox(tileSystem.createRectangleUsingCoordinates(coordinates), isRed ? new Color(Colors.UI_ATTACK_TILE_COLOR) : new Color(Color.CYAN)));
+        Entity redBox = highlightBox(world, tileSystem.createRectangleUsingCoordinates(coordinates), isRed ? new Color(Colors.UI_ATTACK_TILE_COLOR) : new Color(Color.CYAN));
 
         redBox.edit().add(new ActionOnTapComponent(new WorldAction() {
             @Override
@@ -263,7 +261,7 @@ public class TargetingFactory {
 
             Rectangle r = tileSystem.createRectangleUsingCoordinates(c);
 
-            Entity box = BagToEntity.bagToEntity(world.createEntity(), highlightBox(r, new Color(Colors.UI_MOVEMENT_TILE_COLOR)));
+            Entity box = highlightBox(world, r, new Color(Colors.UI_MOVEMENT_TILE_COLOR));
             entityArray.add(box);
             box.edit().add(new ActionOnTapComponent(new WorldAction() {
                 @Override
@@ -439,34 +437,36 @@ public class TargetingFactory {
     }
 
 
-    public ComponentBag highlightBox(Rectangle r, Color color) {
-        ComponentBag bag = new ComponentBag();
+    public Entity highlightBox(World world, Rectangle r, Color color) {
 
-        bag.add(new PositionComponent(r.x, r.y));
-        bag.add(new DrawableComponent(TILE_LAYER,
-                new TextureDescription.Builder(TextureStrings.BLOCK)
-                        .color(color)
-                        .width(r.getWidth())
-                        .height(r.getHeight())
-                        .build()));
-        bag.add(new HitBoxComponent(new HitBox(r)));
-        bag.add(new CenteringBoundComponent());
-        bag.add(new UITargetingComponent());
+        Entity e = world.createEntity();
 
-        return bag;
+        e.edit().add(new PositionComponent(r.x, r.y));
+        e.edit().add(new DrawableComponent(TILE_LAYER,
+                 new TextureDescription.Builder(TextureStrings.BLOCK)
+                         .color(color)
+                         .width(r.getWidth())
+                         .height(r.getHeight())
+                         .build()));
+        e.edit().add(new HitBoxComponent(new HitBox(r)));
+        e.edit().add(new CenteringBoundComponent());
+        e.edit().add(new UITargetingComponent());
+
+        return e;
     }
 
 
-    public ComponentBag whiteMarkerBox(Rectangle r, Color c) {
-        ComponentBag bag = new ComponentBag();
+    public Entity whiteMarkerBox(World world, Rectangle r, Color c) {
+
+        Entity e = world.createEntity();
 
         float size = Measure.units(1.5f);
 
         Vector2 center = r.getCenter(new Vector2());
 
-        bag.add(new PositionComponent(CenterMath.centerOnPositionX(size, center.x),
+        e.edit().add(new PositionComponent(CenterMath.centerOnPositionX(size, center.x),
                 CenterMath.centerOnPositionY(size, center.y)));
-        bag.add(new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE,
+        e.edit().add(new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE,
                 new TextureDescription.Builder(TextureStrings.BLOCK)
                         .color(c)
                         .width(size)
@@ -478,10 +478,10 @@ public class TargetingFactory {
                 .minAlpha(0.15f)
                 .maxAlpha(0.55f)
                 .maximumTime(2.0f)));*/
-        bag.add(new CenteringBoundComponent());
-        bag.add(new UITargetingComponent());
+        e.edit().add(new CenteringBoundComponent());
+        e.edit().add(new UITargetingComponent());
 
-        return bag;
+        return e;
     }
 
 
@@ -489,7 +489,7 @@ public class TargetingFactory {
 
         TileSystem tileSystem = world.getSystem(TileSystem.class);
 
-        Entity redBox = BagToEntity.bagToEntity(world.createEntity(), whiteMarkerBox(tileSystem.createRectangleUsingCoordinates(coordinates), new Color(Color.WHITE)));
+        Entity redBox = whiteMarkerBox(world,tileSystem.createRectangleUsingCoordinates(coordinates), new Color(Color.WHITE));
 
         return redBox;
     }
@@ -498,8 +498,7 @@ public class TargetingFactory {
 
         TileSystem tileSystem = world.getSystem(TileSystem.class);
 
-        Entity redBox = BagToEntity.bagToEntity(world.createEntity(), whiteMarkerBox(tileSystem.createRectangleUsingCoordinates(coordinates),
-                new Color(Color.RED)));
+        Entity redBox = whiteMarkerBox(world, tileSystem.createRectangleUsingCoordinates(coordinates), new Color(Color.RED));
 
         redBox.edit().remove(UITargetingComponent.class);
         redBox.edit().add(new EnemyIntentUIComponent());

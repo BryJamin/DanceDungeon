@@ -32,9 +32,9 @@ import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
+import com.bryjamin.dancedungeon.utils.options.DevOptions;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
 import com.bryjamin.dancedungeon.utils.texture.TextDescription;
-import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 import java.util.Comparator;
 
@@ -67,8 +67,8 @@ public class UtilityAiSystem extends EntitySystem {
 
     @Override
     protected void initialize() {
-        Preferences preferences = Gdx.app.getPreferences("Dev_Settings");
-        debug = preferences.getBoolean("score_debug", true);
+        Preferences preferences = Gdx.app.getPreferences(DevOptions.DEV_PREFS_KEY);
+        debug = preferences.getBoolean(DevOptions.UTILITY_SCORE_DEBUG, false);
     }
 
     @Override

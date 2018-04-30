@@ -18,7 +18,6 @@ public class ComponentBag extends Bag<Component> {
 
        // try {
             if(BagSearch.contains(component.getClass(), this)) {
-
                 BagSearch.removeObjectOfTypeClass(component.getClass(), this);
             }
               //  super.add(component);

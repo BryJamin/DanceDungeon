@@ -1,14 +1,14 @@
-package com.bryjamin.dancedungeon.utils.save;
+package com.bryjamin.dancedungeon.utils.options;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.utils.Json;
+import com.bryjamin.dancedungeon.assets.Prefs;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
 
 public class QuickSave {
 
-    public final static String QUICK_SAVE_PREF_KEY = "QuickSave";
     public final static String MAP_DATA = "map";
     public final static String PARTY_DATA = "partyData";
 
@@ -18,7 +18,7 @@ public class QuickSave {
     public static void quickSave(GameMap gameMap, PartyDetails partyDetails){
 
         Json json = new Json();
-        Preferences prefs = Gdx.app.getPreferences("QuickSave");
+        Preferences prefs = Gdx.app.getPreferences(Prefs.QUICK_SAVE_PREF);
         prefs.putString(MAP_DATA, json.toJson(gameMap, GameMap.class));
         prefs.putString(PARTY_DATA, json.toJson(partyDetails, PartyDetails.class));
         prefs.flush();
@@ -28,7 +28,7 @@ public class QuickSave {
 
     public static boolean isThereAValidQuickSave(){
 
-        Preferences prefs = Gdx.app.getPreferences("QuickSave");
+        Preferences prefs = Gdx.app.getPreferences(Prefs.QUICK_SAVE_PREF);
         Json json = new Json();
 
         if(prefs.contains(MAP_DATA) && prefs.contains(PARTY_DATA)){

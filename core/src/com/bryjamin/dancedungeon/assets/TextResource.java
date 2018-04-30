@@ -30,6 +30,9 @@ public class TextResource {
     public static final String SHOP_WELCOME = "Welcome, Please Browse My Wares";
     public static final String SHOP_NOTHING_TO_BUY = "There is Nothing Left to Buy";
 
+    public static final String SCREEN_MENU_CONTINUE = "Continue";
+    public static final String SCREEN_MENU_NEW_GAME = "New Game";
+    public static final String SCREEN_MENU_OPTIONS = "Options";
 
 
     public static final String SCREEN_CHARACTER_START = "Start Expedition";

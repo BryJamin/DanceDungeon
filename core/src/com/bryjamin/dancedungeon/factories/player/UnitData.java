@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
+import com.bryjamin.dancedungeon.factories.enemy.UnitLibrary;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.factories.spells.SkillLibrary;
 
@@ -19,7 +20,7 @@ public class UnitData implements Json.Serializable {
 
     public static int MAXIMUM_SKILLS = 2;
 
-    public String id = UnitMap.UNIT_WARRIOR;
+    public String id = UnitLibrary.MELEE_BLOB;
     public String icon = TextureStrings.CLASS_CYRONAUT;
     public String name = "Jeff";
 

@@ -11,15 +11,17 @@ import com.badlogic.gdx.utils.ObjectMap;
 public class SkillLibrary {
 
     // Map where we store our items as "item id"-"item" pairs
-    private static final ObjectMap<String, Skill> items;
-    private static final ObjectMap<String, Skill> enemySkills;
+    private static ObjectMap<String, Skill> items;
+    private static ObjectMap<String, Skill> enemySkills;
 
-    static {
+    public static void loadFromJSON(){
+
         Json json = new Json();
         items = json.fromJson(ObjectMap.class, Gdx.files.internal("json/playerskills.json"));
         enemySkills = json.fromJson(ObjectMap.class, Gdx.files.internal("json/enemyskills.json"));
-    }
 
+
+    }
     public ObjectMap<String, Skill> getItems() {
         return items;
     }
@@ -35,6 +37,8 @@ public class SkillLibrary {
             throw new SkillNotFoundException(key);
         }
     }
+
+
 
     public static Skill getEnemySkill(String key){
         return new Skill(enemySkills.get(key));

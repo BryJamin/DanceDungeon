@@ -3,39 +3,31 @@ package com.bryjamin.dancedungeon.ecs.systems.ui;
 import com.artemis.BaseSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.assets.Fonts;
-import com.bryjamin.dancedungeon.assets.NinePatches;
 import com.bryjamin.dancedungeon.assets.Padding;
 import com.bryjamin.dancedungeon.assets.Skins;
+import com.bryjamin.dancedungeon.assets.TextResource;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
-import com.bryjamin.dancedungeon.factories.enemy.UnitLibrary;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
-import com.bryjamin.dancedungeon.factories.map.MapGenerator;
-import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
 import com.bryjamin.dancedungeon.screens.menu.CharacterSelectionScreen;
 import com.bryjamin.dancedungeon.screens.strategy.MapScreen;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
-import com.bryjamin.dancedungeon.utils.save.QuickSave;
+import com.bryjamin.dancedungeon.utils.options.QuickSave;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
@@ -141,7 +133,7 @@ public class MenuScreenUISystem extends BaseSystem {
         startButtonContainer.clear();
 
         if(QuickSave.isThereAValidQuickSave()){
-            TextButton textBtn1 = new TextButton("Continue", uiSkin);
+            TextButton textBtn1 = new TextButton(TextResource.SCREEN_MENU_CONTINUE, uiSkin);
             textBtn1.addListener(new ClickListener() {
 
                 @Override
@@ -160,7 +152,7 @@ public class MenuScreenUISystem extends BaseSystem {
         }
 
 
-        TextButton textBtn1 = new TextButton("New Game", uiSkin);
+        TextButton textBtn1 = new TextButton(TextResource.SCREEN_MENU_NEW_GAME, uiSkin);
         textBtn1.addListener(new ClickListener() {
 
             @Override

@@ -27,15 +27,7 @@ public class PartyDetails {
 
     private Array<Skill> skillInventory = new Array<Skill>();
 
-    public PartyDetails(){
-
-       //skillInventory.add(SkillLibrary.getSkill(SkillLibrary.SKILL_HEAVY_STRIKE));
-       // skillInventory.add(SkillLibrary.getSkill(SkillLibrary.SKILL_HEAVY_STRIKE));
-        skillInventory.add(SkillLibrary.getSkill(SkillLibrary.SKILL_HEAVY_STRIKE));
-        skillInventory.add(SkillLibrary.getSkill(SkillLibrary.SKILL_HEAVY_STRIKE));
-
-       // skillInventory.add(new StunStrike());
-    }
+    public PartyDetails(){}
 
     public void addPartyMember(UnitData unitData, int position){
         if(position - 1 > party.length) throw new RuntimeException("Not place for the party member");

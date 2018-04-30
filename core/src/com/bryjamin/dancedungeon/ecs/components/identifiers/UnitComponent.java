@@ -1,6 +1,7 @@
 package com.bryjamin.dancedungeon.ecs.components.identifiers;
 
 import com.artemis.Component;
+import com.bryjamin.dancedungeon.factories.enemy.UnitLibrary;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.player.UnitMap;
 
@@ -15,7 +16,7 @@ import com.bryjamin.dancedungeon.factories.player.UnitMap;
 
 public class UnitComponent extends Component {
 
-    private UnitData unitData = new UnitData(UnitMap.UNIT_MAGE);
+    private UnitData unitData = UnitLibrary.getUnitData(UnitLibrary.MELEE_BLOB);
 
     public UnitComponent(){}
 

@@ -88,7 +88,7 @@ public class MainGame extends Game {
 
 
         //LOAD IN DATA FROM JSON
-        SkillLibrary.empty();
+        SkillLibrary.loadFromJSON();
         UnitLibrary.loadFromJSON();
 
         setScreen(new LoadingScreen(this));
