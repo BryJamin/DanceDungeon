@@ -35,7 +35,7 @@ public class MapInputSystem extends EntitySystem {
 
     private boolean disable = false;
 
-    private enum State {
+    public enum State {
         MENU_OPEN, MENU_CLOSED
     }
 
@@ -55,6 +55,8 @@ public class MapInputSystem extends EntitySystem {
     protected void processSystem() {
 
         InputMultiplexer multiplexer = new InputMultiplexer();
+
+        System.out.println(state);
 
         switch (state) {
 

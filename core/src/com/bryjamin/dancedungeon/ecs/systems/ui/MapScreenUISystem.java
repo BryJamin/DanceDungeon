@@ -34,6 +34,7 @@ import com.bryjamin.dancedungeon.assets.Skins;
 import com.bryjamin.dancedungeon.assets.TextResource;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.systems.MapCameraSystemFlingAndPan;
+import com.bryjamin.dancedungeon.ecs.systems.action.BattleWorldInputHandlerSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.input.MapInputSystem;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
@@ -58,6 +59,7 @@ public class MapScreenUISystem extends BaseSystem {
     private InformationBannerSystem informationBannerSystem;
     private RenderingSystem renderingSystem;
     private MapCameraSystemFlingAndPan camSys;
+    private MapInputSystem mapInputSystem;
     private MainGame game;
     private GameMap gameMap;
     private PartyDetails partyDetails;
@@ -137,6 +139,7 @@ public class MapScreenUISystem extends BaseSystem {
                 }
 
                 areYouSureContainer.update();
+                mapInputSystem.openMenu();
 
             }
         });
@@ -157,7 +160,7 @@ public class MapScreenUISystem extends BaseSystem {
                     } else {
                         openCharacterWindow(selectedCharacter);
                     }
-                    world.getSystem(MapInputSystem.class).openMenu();
+                    mapInputSystem.openMenu();
                 }
             }
         });
@@ -227,6 +230,7 @@ public class MapScreenUISystem extends BaseSystem {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 areYouSureContainer.setVisible(false);
+                mapInputSystem.closedMenu();
             }
         }, uiSkin, "Save & Quit?",
                 "You Will Continue From Something Or The Other"
@@ -239,6 +243,7 @@ public class MapScreenUISystem extends BaseSystem {
         areYouSureContainer.setVisible(false);
         areYouSureContainer.setTouchable(Touchable.enabled);
         areYouSureContainer.setBackground(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.BLOCK)).tint(new Color(0, 0, 0, 0.85f)));
+
 
         stage.addActor(areYouSureContainer);
 
@@ -534,6 +539,13 @@ public class MapScreenUISystem extends BaseSystem {
 
     }
 
+
+
+
+
+
+
+
     private void closeCharacterWindow() {
         if (characterWindowContainer == null) return;
         //characterWindowContainer.clear();
@@ -581,14 +593,12 @@ public class MapScreenUISystem extends BaseSystem {
         public DragAndDrop.Payload dragStart(InputEvent event, float x, float y, int pointer) {
 
             Image i = new Image(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(skill.getIcon())));
-            i.setHeight(Measure.units(17.5f));
-            i.setWidth(Measure.units(17.5f));
+            i.setHeight(Measure.units(20f));
+            i.setWidth(Measure.units(20f));
 
             payload.setDragActor(i);
-            dragAndDrop.setDragActorPosition(Gdx.input.getX() + i.getWidth() / 2, Gdx.input.getY() -i.getHeight() / 2); //Sets the image position to the center
+            dragAndDrop.setDragActorPosition( i.getWidth() / 2,  -i.getHeight() / 2); //Sets the image position to the center
             payload.setObject(this);
-
-            System.out.println("here");
 
             return payload;
         }
@@ -598,9 +608,6 @@ public class MapScreenUISystem extends BaseSystem {
 
         @Override
         public void dragStop(InputEvent event, float x, float y, int pointer, DragAndDrop.Payload payload, DragAndDrop.Target target) {
-
-            System.out.println("also here");
-
             super.dragStop(event, x, y, pointer, payload, target);
         }
 
