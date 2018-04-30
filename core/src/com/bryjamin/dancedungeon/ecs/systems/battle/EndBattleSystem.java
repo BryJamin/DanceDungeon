@@ -65,7 +65,7 @@ public class EndBattleSystem extends EntitySystem implements Observer {
 
     @Override
     protected void initialize() {
-        actionQueueSystem.observerArray.add(this);
+        actionQueueSystem.observable.addObserver(this);
 
 
         Array<AbstractObjective> abstractObjectives = new Array<AbstractObjective>();
@@ -131,7 +131,7 @@ public class EndBattleSystem extends EntitySystem implements Observer {
         if(playerPartyManagementSystem.getPartyDetails().getMorale() == 0) {
             ((BattleScreen) game.getScreen()).defeat();
 
-            actionQueueSystem.observerArray.removeValue(this, true);
+            actionQueueSystem.observable.removeObserver(this);
         }
 
         if (currentEvent.isComplete(world)) {
@@ -144,7 +144,7 @@ public class EndBattleSystem extends EntitySystem implements Observer {
                 unitData.setMaxHealth(hc.maxHealth);
             }
 
-            actionQueueSystem.observerArray.removeValue(this, true);
+            actionQueueSystem.observable.removeObserver(this);
 
             battleScreenUISystem.createVictoryRewards(currentEvent, partyDetails);
             battleWorldInputHandlerSystem.setState(BattleWorldInputHandlerSystem.State.ONLY_STAGE);

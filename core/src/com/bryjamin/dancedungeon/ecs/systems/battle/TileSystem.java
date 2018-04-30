@@ -104,7 +104,6 @@ public class TileSystem extends EntitySystem {
 
         map = new TmxMapLoader(new InternalFileHandleResolver()).load(battleEvent.getMapLocation());
 
-
         TiledMapTileLayer objects =  (TiledMapTileLayer) map.getLayers().get("Object");
         TiledMapTileLayer background =  (TiledMapTileLayer) map.getLayers().get("Background");
 

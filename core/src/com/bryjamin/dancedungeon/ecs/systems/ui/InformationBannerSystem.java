@@ -29,6 +29,7 @@ public class InformationBannerSystem extends BaseSystem implements Observer {
     private PlayerPartyManagementSystem partyManagementSystem;
 
     private Table container;
+    private Table infoTable;
 
     private MainGame game;
     private Viewport gameport;
@@ -75,7 +76,7 @@ public class InformationBannerSystem extends BaseSystem implements Observer {
         PartyDetails partyDetails = partyManagementSystem.getPartyDetails();
         float width = container.getWidth() / 3;
 
-        Table infoTable = new Table(uiSkin);
+        infoTable = new Table(uiSkin);
         infoTable.align(Align.center);
         container.add(infoTable).height(Measure.units(5f));
 
@@ -137,6 +138,11 @@ public class InformationBannerSystem extends BaseSystem implements Observer {
         container.align(Align.top);
         stage.addActor(container);
 
+    }
+
+
+    public Table getBanner() {
+        return infoTable;
     }
 
     public void updateInformation(){

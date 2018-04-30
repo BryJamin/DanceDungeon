@@ -29,6 +29,7 @@ import com.bryjamin.dancedungeon.assets.Fonts;
 import com.bryjamin.dancedungeon.assets.NinePatches;
 import com.bryjamin.dancedungeon.assets.Padding;
 import com.bryjamin.dancedungeon.assets.Skins;
+import com.bryjamin.dancedungeon.assets.Styles;
 import com.bryjamin.dancedungeon.assets.TextResource;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.systems.MapCameraSystemFlingAndPan;
@@ -41,6 +42,7 @@ import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
 import com.bryjamin.dancedungeon.screens.menu.MenuScreen;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CameraMath;
+import com.bryjamin.dancedungeon.utils.options.PlayerSave;
 import com.bryjamin.dancedungeon.utils.options.QuickSave;
 import com.bryjamin.dancedungeon.utils.ui.AreYouSureFrame;
 
@@ -86,6 +88,8 @@ public class MapScreenUISystem extends BaseSystem {
 
     private Table inventoryTable;
     private Table skillInformationTable;
+
+    private Table tutorialTable;
 
     private UnitData selectedCharacter;
 
@@ -246,6 +250,8 @@ public class MapScreenUISystem extends BaseSystem {
 
 
     }
+
+
 
     @Override
     protected void processSystem() {

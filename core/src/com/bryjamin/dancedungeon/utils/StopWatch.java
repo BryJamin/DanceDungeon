@@ -16,7 +16,7 @@ public class StopWatch {
 
 
     public void stop(){
-        
+
         long elapsed = System.nanoTime() - start;
 
         System.out.println(name + ": Time elapsed is " + (elapsed));

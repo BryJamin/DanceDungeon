@@ -172,7 +172,7 @@ public class UtilityAiSystem extends EntitySystem {
 
             //Reduce movementScore if in the path of another enemy shot
             if(inLineOfFireCoordinates.contains(c, false)){
-                scoreMap.get(c).movementScore -= 10;
+                scoreMap.get(c).movementScore -= 15;
             }
 
         }

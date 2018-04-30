@@ -54,5 +54,11 @@ public class TextResource {
 
 
 
+    public static final String TUTORIAL_BATTLE_SCENARIO_1 = "It Appears This is Your First Time Playing. Would You Like To Do a Training Battle?";
+    public static final String TUTORIAL_BATTLE_SCENARIO_2 = "Would You Like To Do a Training Battle?";
+
+
+
+
 
 }

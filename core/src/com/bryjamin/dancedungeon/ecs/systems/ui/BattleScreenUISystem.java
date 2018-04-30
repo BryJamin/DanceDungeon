@@ -9,6 +9,8 @@ import com.artemis.utils.IntBag;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -28,6 +30,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.bryjamin.dancedungeon.MainGame;
+import com.bryjamin.dancedungeon.assets.Colors;
 import com.bryjamin.dancedungeon.assets.FileStrings;
 import com.bryjamin.dancedungeon.assets.Fonts;
 import com.bryjamin.dancedungeon.assets.NinePatches;
@@ -47,6 +50,7 @@ import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UITargetingComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
+import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.BattleWorldInputHandlerSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionQueueSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BattleDeploymentSystem;
@@ -69,11 +73,13 @@ import com.bryjamin.dancedungeon.utils.texture.Layer;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 import com.bryjamin.dancedungeon.utils.ui.AreYouSureFrame;
 
+import java.util.Locale;
+
 
 /**
  * Created by BB on 23/01/2018.
  * <p>
- * Used to create the Skill UI, when an entity is selected.
+ * Controls all Aspects Of UI on the BattleScreen.
  * <p>
  * It can also be called to update and remove certain parts of the skill UI.
  */
@@ -85,6 +91,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
     private BattleDeploymentSystem battleDeploymentSystem;
     private BattleWorldInputHandlerSystem battleWorldInputHandlerSystem;
     private StageUIRenderingSystem stageUIRenderingSystem;
+    private PlayerPartyManagementSystem playerPartyManagementSystem;
     private RenderingSystem renderingSystem;
     private TileSystem tileSystem;
 
@@ -118,6 +125,8 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
     private final Table bottomContainer = new Table();
     private AreYouSureFrame areYouSureContainer;
 
+    private Table tutorialInformationWindow;
+
 
 
 
@@ -127,7 +136,9 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
     private Table skillInformationTable;
     private Table characterProfileTable;
     private Table objectivesTable;
-    private Table objectivesAndButtonContainer;
+    private Table rightSideContainer;
+
+    private Table moraleTable;
 
 
     private ButtonGroup<Button> skillButtonButtonGroup = new ButtonGroup<>();
@@ -155,38 +166,16 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
     @Override
     public void update(Object o) {
 
-        if(o.getClass().equals(BattleDeploymentSystem.class)){
+        if(o instanceof BattleDeploymentSystem){
             populateDeploymentTable();
             if(!((BattleDeploymentSystem) o).isProcessing()){
                 state = State.BATTLE;
                 populateBottomContainer();
             }
+        } else if(o instanceof PlayerPartyManagementSystem){
+            populateMoraleTable();
         }
 
-    }
-
-
-    public void populateAreYouSureContainer(){
-
-        if(areYouSureContainer.hasChildren()){
-            areYouSureContainer.reset();
-        }
-
-        areYouSureContainer.setVisible(true);
-        areYouSureContainer.addAction(new Action() { //Ensures, units can not be interacted with when this Container is visible
-            @Override
-            public boolean act(float delta) {
-                if(areYouSureContainer.isVisible()){
-                    battleWorldInputHandlerSystem.setState(BattleWorldInputHandlerSystem.State.ONLY_STAGE);
-                } else {
-                    battleWorldInputHandlerSystem.setState(BattleWorldInputHandlerSystem.State.DEPLOYMENT);
-                    return true;
-                }
-                return false;
-            }
-        });
-
-        areYouSureContainer.update();
     }
 
 
@@ -194,6 +183,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
     protected void initialize() {
 
         battleDeploymentSystem.getObservers().addObserver(this);
+        playerPartyManagementSystem.addObserver(this);
 
         areYouSureContainer = new AreYouSureFrame(
                 new ChangeListener() {
@@ -229,39 +219,98 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
         bottomContainer.setVisible(false);
         applyNinePathToTable(bottomContainer);
         bottomContainer.add(characterProfileTable).padBottom(Padding.SMALL);
+
+
+        tableForSkillButtons = new Table(uiSkin);
+        applyNinePathToTable(tableForSkillButtons);
+        tableForSkillButtons.setDebug(StageUIRenderingSystem.DEBUG);
+
         populateBottomContainer();
 
 
-        objectivesAndButtonContainer = new Table();
-        objectivesAndButtonContainer.setWidth(Measure.units(35f));
-        objectivesAndButtonContainer.setHeight(Measure.units(27.5f));
-        objectivesAndButtonContainer.setPosition(stage.getWidth() - Measure.units(37.5f), Measure.units(22.5f));
-        populateObjectivesAndButtons();
+        rightSideContainer = new Table();
+        rightSideContainer.setWidth(Measure.units(35f));
+        rightSideContainer.setHeight(Measure.units(27.5f));
+        rightSideContainer.setPosition(stage.getWidth() - Measure.units(37.5f), Measure.units(22.5f));
+        populateRightSideContainer();
 
         skillButtonButtonGroup.setMinCheckCount(0);
         skillButtonButtonGroup.setMaxCheckCount(1);
         skillButtonButtonGroup.setUncheckLast(true);
 
 
-        stage.addActor(objectivesAndButtonContainer);
+        stage.addActor(rightSideContainer);
         stage.addActor(bottomContainer);
         stage.addActor(areYouSureContainer);
+
+        tutorialInformationWindow = new Table(uiSkin);
+        tutorialInformationWindow.setVisible(false);
+        //tutorialInformationWindow.setDebug(true);
+        tutorialInformationWindow.setBackground(NinePatches.getBorderNinePatch(renderingSystem.getAtlas(), Colors.TUTORIAL_TABLE_OUTLINE));
+        tutorialInformationWindow.setTouchable(Touchable.enabled);
+        tutorialInformationWindow.addListener(new ClickListener(){
+
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                tutorialInformationWindow.setVisible(false);
+            }
+        });
+
+
+        stage.addActor(tutorialInformationWindow);
 
 
     }
 
 
-    private void populateObjectivesAndButtons(){
+    private void populateAreYouSureContainer(){
 
-        objectivesAndButtonContainer.clear();
+        if(areYouSureContainer.hasChildren()){
+            areYouSureContainer.reset();
+        }
+
+        areYouSureContainer.setVisible(true);
+        areYouSureContainer.addAction(new Action() { //Ensures, units can not be interacted with when this Container is visible
+            @Override
+            public boolean act(float delta) {
+                if(areYouSureContainer.isVisible()){
+                    battleWorldInputHandlerSystem.setState(BattleWorldInputHandlerSystem.State.ONLY_STAGE);
+                } else {
+                    battleWorldInputHandlerSystem.setState(BattleWorldInputHandlerSystem.State.DEPLOYMENT);
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        areYouSureContainer.update();
+    }
+
+
+    ///RIGHT SIDE OF THE BATTLE SCREEN ///
+
+    /// MORALE, OBJECTIVES AND END TURN ////
+
+    private void populateRightSideContainer(){
+
+        rightSideContainer.clear();
+
+        //MORALE
+        moraleTable = new Table(uiSkin);
+        moraleTable.setBackground(NinePatches.getBorderNinePatch(atlas, Colors.AMOEBA_FAST_PURPLE));
+        moraleTable.setDebug(StageUIRenderingSystem.DEBUG);
+        rightSideContainer.add(moraleTable).padBottom(Padding.MEDIUM).fill();
+        rightSideContainer.row();
+        populateMoraleTable();
+
 
         objectivesTable = new Table(uiSkin);
         //objectivesTable.setHeight(Measure.units(27.5f));
         objectivesTable.setBackground(NinePatches.getDefaultNinePatch(renderingSystem.getAtlas()));
         objectivesTable.setDebug(StageUIRenderingSystem.DEBUG);
 
-        objectivesAndButtonContainer.add(objectivesTable).width(Measure.units(35f)).padBottom(Padding.MEDIUM);
-        objectivesAndButtonContainer.row();
+        rightSideContainer.add(objectivesTable).width(Measure.units(35f)).padBottom(Padding.MEDIUM);
+        rightSideContainer.row();
 
         endTurn = new TextButton(TextResource.BATTLE_END_TURN, uiSkin);
         endTurn.addListener(new ChangeListener() {
@@ -288,8 +337,46 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
             }
         });
 
-        objectivesAndButtonContainer.add(endTurn).width(Measure.units(20f)).height(Measure.units(7.5f)).expandX();
+        rightSideContainer.add(endTurn).width(Measure.units(20f)).height(Measure.units(7.5f)).expandX();
     }
+
+
+    private void populateMoraleTable(){
+
+        moraleTable.clearChildren();
+        Label morale = new Label(String.format(Locale.ENGLISH,"Morale: %d/%d", playerPartyManagementSystem.getPartyDetails().getMorale(), PartyDetails.MAX_MORALE), uiSkin);
+        morale.setAlignment(Align.center);
+        moraleTable.add(morale).width(moraleTable.getWidth()).align(Align.center);
+
+
+    }
+
+
+
+    public void updateObjectiveTable(BattleEvent battleEvent){
+
+        if(objectivesTable.hasChildren()){
+            objectivesTable.clear();
+        }
+
+        objectivesTable.add(new Label(TextResource.BATTLE_OBJECTIVES, uiSkin)).expandX().padBottom(Padding.SMALL);
+        objectivesTable.row();
+        objectivesTable.add(new Label(battleEvent.getPrimaryObjective().getDescription(), uiSkin)).padBottom(Padding.SMALL);;
+        objectivesTable.row();
+        objectivesTable.add(new Label(TextResource.BATTLE_BONUS, uiSkin)).padBottom(Padding.SMALL);;
+
+        for(AbstractObjective o : battleEvent.getBonusObjective()){
+            objectivesTable.row();
+            objectivesTable.add(new Label(o.getDescription(), uiSkin, Fonts.SMALL_FONT_STYLE_NAME,
+                    o.isFailed(world) ? new Color(Color.GRAY) : new Color(Color.WHITE)
+            )).padBottom(Padding.SMALL);;
+        }
+    }
+
+
+
+    /// BOTTOM OF BATTLE SCREEN ///
+    /// CHARACTER PORTRAITS AND SKILLS ///
 
     private void populateBottomContainer(){
 
@@ -316,9 +403,6 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
                 bottomContainer.add(characterProfileTable).width(Measure.units(20f)).height(BOTTOM_TABLE_HEIGHT).padRight(Padding.MEDIUM).expandX().fillX();
 
                 //Table for Skill buttons.
-                tableForSkillButtons = new Table(uiSkin);
-                applyNinePathToTable(tableForSkillButtons);
-                tableForSkillButtons.setDebug(StageUIRenderingSystem.DEBUG);
                 bottomContainer.add(tableForSkillButtons).width(Measure.units(22.5f)).height(BOTTOM_TABLE_HEIGHT).padRight(Padding.MEDIUM).expandX();
 
 
@@ -375,26 +459,6 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
     }
 
 
-    public void updateObjectiveTable(BattleEvent battleEvent){
-
-        if(objectivesTable.hasChildren()){
-            objectivesTable.clear();
-        }
-
-        objectivesTable.add(new Label(TextResource.BATTLE_OBJECTIVES, uiSkin)).expandX().padBottom(Padding.SMALL);
-        objectivesTable.row();
-        objectivesTable.add(new Label(battleEvent.getPrimaryObjective().getDescription(), uiSkin)).padBottom(Padding.SMALL);;
-        objectivesTable.row();
-        objectivesTable.add(new Label(TextResource.BATTLE_BONUS, uiSkin)).padBottom(Padding.SMALL);;
-
-        for(AbstractObjective o : battleEvent.getBonusObjective()){
-            objectivesTable.row();
-            objectivesTable.add(new Label(o.getDescription(), uiSkin, Fonts.SMALL_FONT_STYLE_NAME,
-                    o.isFailed(world) ? new Color(Color.GRAY) : new Color(Color.WHITE)
-            )).padBottom(Padding.SMALL);;
-        }
-    }
-
 
 
     /**
@@ -411,7 +475,6 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
             world.getSystem(UtilityAiSystem.class).createDebugScoreTools(e);
         }
 
-        createMovementTiles(e);
         createTargetReticle(world, e);
 
         UnitData unitData = e.getComponent(UnitComponent.class).getUnitData();
@@ -423,7 +486,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
         switch (botTabState){
 
             case PLAYER_SELECT:
-
+                createMovementTiles(e);
                 characterProfileTable.clear();
                 characterProfileTable.add(name).height(Measure.units(5f)).center().expandX();
                 characterProfileTable.row();
@@ -505,7 +568,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
         skillInformationTable.setVisible(true);
         skillInformationTable.clear();
-        skillInformationTable.setDebug(true);
+        skillInformationTable.setDebug(StageUIRenderingSystem.DEBUG);
 
         Label skillName = new Label(skill.getName(), uiSkin);
         skillInformationTable.align(Align.top);
@@ -742,6 +805,260 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
                         .build()));
 
     }
+
+
+
+
+
+
+    //// TUTORIAL OPERATIONS ///
+
+
+    public Table createTutorialWindow(Rectangle rectangleToCenterOn, TutorialSystem.TutorialState tutorialState) {
+
+        Rectangle centerRect;
+        Vector2 center;
+        float width;
+        float height;
+
+        Label title;
+        Label text1;
+        Label text2;
+        Label text3;
+
+
+        tutorialInformationWindow.clearChildren();
+        tutorialInformationWindow.align(Align.center);
+
+
+
+        switch (tutorialState){
+
+
+            case BANNER:
+
+                Table t = moraleTable;
+                Vector2 pos = moraleTable.localToStageCoordinates(new Vector2());
+                centerRect = new Rectangle(pos.x, pos.y, t.getWidth(), t.getHeight());
+
+                center = centerRect.getCenter(new Vector2());
+
+                tutorialInformationWindow.setVisible(true);
+                tutorialInformationWindow.setHeight(Measure.units(25f));
+                tutorialInformationWindow.setWidth(Measure.units(40));
+
+                tutorialInformationWindow.setPosition( CenterMath.centerOnPositionX(tutorialInformationWindow.getWidth(), center.x),
+                        CenterMath.centerOnPositionY(tutorialInformationWindow.getHeight(), center.y) - Measure.units(15f));
+
+                float labelWidth = Measure.units(35f);
+
+                Label morale = new Label("Morale", uiSkin);
+
+                tutorialInformationWindow.add(morale).width(labelWidth).pad(Padding.SMALL);
+                tutorialInformationWindow.row();
+
+                Label l = new Label("This is Your Heroes' Morale. If This Hits Zero. The Game is Over!", uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
+                l.setWrap(true);
+                Label line2 = new Label("Morale is Lost When Allied Forts are Damaged. Or If One of Your Heroes 'Faint'", uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
+                line2.setWrap(true);
+
+                tutorialInformationWindow.add(l).width(labelWidth).pad(Padding.SMALL);
+                tutorialInformationWindow.row();
+                tutorialInformationWindow.add(line2).width(labelWidth).pad(Padding.SMALL);
+                break;
+
+
+            case ALLIED_STRUCTURE:
+
+
+                centerRect = rectangleToCenterOn;
+
+                tutorialInformationWindow.setVisible(true);
+                tutorialInformationWindow.setHeight(Measure.units(30f));
+                tutorialInformationWindow.setWidth(Measure.units(30f));
+
+                tutorialInformationWindow.setPosition(centerRect.x + Measure.units(10f), CenterMath.centerOnPositionY(tutorialInformationWindow.getHeight(), centerRect.y));
+
+                center = centerRect.getCenter(new Vector2());
+
+                tutorialInformationWindow.setVisible(true);
+                tutorialInformationWindow.setHeight(Measure.units(25f));
+                tutorialInformationWindow.setWidth(Measure.units(40));
+
+                tutorialInformationWindow.setPosition( CenterMath.centerOnPositionX(tutorialInformationWindow.getWidth(), center.x),
+                        CenterMath.centerOnPositionY(tutorialInformationWindow.getHeight(), center.y) - Measure.units(15f));
+
+                float aSWidth = Measure.units(35f);
+
+                Label aS = new Label("Allied Structure", uiSkin);
+
+                tutorialInformationWindow.add(aS).width(aSWidth).pad(Padding.SMALL);
+                tutorialInformationWindow.row();
+
+                Label aSl = new Label("These are Allied Structures", uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
+                aSl.setWrap(true);
+                Label aSline2 = new Label("If They Take Damage You Lose Morale!", uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
+                aSline2.setWrap(true);
+
+                tutorialInformationWindow.add(aSl).width(aSWidth).pad(Padding.SMALL);
+                tutorialInformationWindow.row();
+                tutorialInformationWindow.add(aSline2).width(aSWidth).pad(Padding.SMALL);
+
+                break;
+
+
+
+            case ENEMY_FIRST_MOVE:
+
+                centerRect = rectangleToCenterOn;
+
+                width = Measure.units(35f);
+
+                tutorialInformationWindow.setVisible(true);
+                //tutorialInformationWindow.setHeight(Measure.units(30f));
+                tutorialInformationWindow.setWidth(width);
+                tutorialInformationWindow.setPosition(centerRect.x + Measure.units(10f), CenterMath.centerOnPositionY(tutorialInformationWindow.getHeight(), centerRect.y));
+
+                width = Measure.units(30);
+
+                title = new Label("Enemies", uiSkin);
+
+                tutorialInformationWindow.add(title).width(width).pad(Padding.SMALL);
+                tutorialInformationWindow.row();
+
+                text1 = new Label("This is An Enemy", uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
+                text1.setWrap(true);
+                text2 = new Label("Enemies Indicate Their Next Attacks", uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
+                text2.setWrap(true);
+                text3 = new Label("You Can Tap On Enemies To View Their Attack Details", uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
+                text3.setWrap(true);
+
+
+                tutorialInformationWindow.add(text1).width(width).pad(Padding.SMALL);
+                tutorialInformationWindow.row();
+                tutorialInformationWindow.add(text2).width(width).pad(Padding.SMALL);
+                tutorialInformationWindow.row();
+                tutorialInformationWindow.add(text3).width(width).pad(Padding.SMALL);
+
+                break;
+
+            case PLAYER_FIRST_MOVE:
+
+                centerRect = rectangleToCenterOn;
+
+                width = Measure.units(35f);
+
+                tutorialInformationWindow.setVisible(true);
+                //tutorialInformationWindow.setHeight(Measure.units(30f));
+                tutorialInformationWindow.setWidth(width);
+                tutorialInformationWindow.setPosition(centerRect.x + Measure.units(10f), CenterMath.centerOnPositionY(tutorialInformationWindow.getHeight(), centerRect.y));
+
+                width = Measure.units(30);
+
+                title = new Label("Heroes", uiSkin);
+
+                tutorialInformationWindow.add(title).width(width).pad(Padding.SMALL);
+                tutorialInformationWindow.row();
+
+                text1 = new Label("This is A Hero Unit", uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
+                text1.setWrap(true);
+                text2 = new Label("Tap On This Unit And Move It Next To The Enemy", uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
+                text2.setWrap(true);
+
+                tutorialInformationWindow.add(text1).width(width).pad(Padding.SMALL);
+                tutorialInformationWindow.row();
+                tutorialInformationWindow.add(text2).width(width).pad(Padding.SMALL);
+
+                break;
+
+
+            case MOVE_HERE_PROMPT:
+
+                center = rectangleToCenterOn.getCenter(new Vector2());
+
+                width = Measure.units(15);
+                height = Measure.units(5f);
+
+
+
+                tutorialInformationWindow.setVisible(true);
+                //tutorialInformationWindow.setHeight(Measure.units(30f));
+                tutorialInformationWindow.setWidth(width);
+                tutorialInformationWindow.setHeight(height);
+                tutorialInformationWindow.setPosition(CenterMath.centerOnPositionX(width, center.x), CenterMath.centerOnPositionY(height, center.y + Measure.units(7.5f)));
+
+                width = Measure.units(8.5f);
+
+                text1 = new Label("Move Here", uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
+                tutorialInformationWindow.add(text1).expandX().align(Align.center);
+
+                break;
+
+
+            case SKILLS:
+
+                tableForSkillButtons.validate();
+                tableForSkillButtons.setVisible(true);
+                pos = tableForSkillButtons.localToStageCoordinates(new Vector2(0, 0));
+
+                center = new Rectangle(pos.x, pos.y, tableForSkillButtons.getWidth(), tableForSkillButtons.getHeight()).getCenter(new Vector2());
+
+                width = Measure.units(45f);
+                height = Measure.units(25);
+
+                tutorialInformationWindow.setVisible(true);
+                tutorialInformationWindow.setWidth(width);
+                tutorialInformationWindow.align(Align.top);
+                tutorialInformationWindow.setHeight(height);
+                tutorialInformationWindow.setPosition(CenterMath.centerOnPositionX(width, center.x), CenterMath.centerOnPositionY(height, center.y + Measure.units(25)));
+
+                width = width - Measure.units(2.5f);
+
+                title = new Label("Skills", uiSkin);
+
+
+                tutorialInformationWindow.add(title).width(width).pad(Padding.SMALL);
+                tutorialInformationWindow.row();
+
+                text1 = new Label("These Are Your Hero's Skills", uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
+                text1.setWrap(true);
+                text2 = new Label("Tap On The Skill Icon To Highlight Where You Can Attack", uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
+                text2.setWrap(true);
+                text3 = new Label("You Can Not Move After Using A Skill", uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
+                text3.setWrap(true);
+
+                tutorialInformationWindow.add(text1).width(width).padBottom(Padding.SMALL);
+                tutorialInformationWindow.row();
+                tutorialInformationWindow.add(text2).width(width).padBottom(Padding.SMALL);
+                tutorialInformationWindow.row();
+                tutorialInformationWindow.add(text3).width(width).padBottom(Padding.SMALL);
+
+
+
+
+                break;
+
+        }
+
+        return tutorialInformationWindow;
+
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
 
 
 

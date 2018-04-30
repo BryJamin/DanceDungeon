@@ -25,14 +25,20 @@ import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
+import com.bryjamin.dancedungeon.ecs.systems.input.MapInputSystem;
 import com.bryjamin.dancedungeon.factories.enemy.UnitLibrary;
+import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.factories.map.MapGenerator;
+import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
+import com.bryjamin.dancedungeon.factories.map.event.TutorialEvent;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
+import com.bryjamin.dancedungeon.screens.battle.BattleScreen;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
 import com.bryjamin.dancedungeon.screens.menu.MenuScreen;
 import com.bryjamin.dancedungeon.screens.strategy.MapScreen;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
+import com.bryjamin.dancedungeon.utils.options.PlayerSave;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
@@ -179,7 +185,11 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
                     }
                 }
 
-                game.setScreen(new MapScreen(game, new MapGenerator().generateGameMap(), partyDetails));
+                if(!PlayerSave.isFirstTimePlayer()) {
+                    game.setScreen(new MapScreen(game, new MapGenerator().generateGameMap(), partyDetails));
+                } else {
+                    game.setScreen(new BattleScreen(game, game.getScreen(), new TutorialEvent(), partyDetails, true));
+                }
             }
         });
 

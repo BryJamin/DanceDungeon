@@ -102,7 +102,6 @@ public class TurnSystem extends EntitySystem implements Observer{
         }
 
         turnMapper.get(e).reset();
-
     }
 
     @Override
@@ -118,6 +117,11 @@ public class TurnSystem extends EntitySystem implements Observer{
         } catch (Exception exception) {
             exception.printStackTrace();
         }
+
+    }
+
+
+    public void addAlly(){
 
     }
 

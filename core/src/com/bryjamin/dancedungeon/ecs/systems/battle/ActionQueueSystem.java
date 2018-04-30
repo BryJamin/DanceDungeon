@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.Queue;
+import com.bryjamin.dancedungeon.utils.observer.Observable;
 import com.bryjamin.dancedungeon.utils.observer.Observer;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
@@ -44,7 +45,7 @@ public class ActionQueueSystem extends EntitySystem {
 
     private ComponentMapper<MoveToComponent> mtcMapper;
 
-    public Array<Observer> observerArray = new Array<>();
+    public Observable observable = new Observable();
     private Queue<Array<PushedAction>> actionQueue = new Queue<>();
 
     private Array<PushedAction> asyncActionArray = new Array<>();
@@ -108,9 +109,7 @@ public class ActionQueueSystem extends EntitySystem {
             //state = State.PERFORM_ACTION; //Resets the state
 
             if(processingFlag){
-                for(Observer o : observerArray){
-                    o.update(this);
-                }
+                observable.notifyObservers(this);
             }
 
             processingFlag = false;

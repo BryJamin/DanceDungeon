@@ -58,7 +58,7 @@ public class EnemyIntentUISystem extends EntitySystem implements Observer{
 
     @Override
     protected void initialize() {
-        actionQueueSystem.observerArray.add(this);
+        actionQueueSystem.observable.addObserver(this);
     }
 
     @Override

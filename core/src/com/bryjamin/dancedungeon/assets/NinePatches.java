@@ -31,5 +31,9 @@ public class NinePatches {
         return new NinePatchDrawable(getDefaultBorderPatch(atlas));
     }
 
+    public static NinePatchDrawable getBorderNinePatch(TextureAtlas atlas, Color c){
+        return new NinePatchDrawable(getBorderPatch(atlas, c));
+    }
+
 
 }

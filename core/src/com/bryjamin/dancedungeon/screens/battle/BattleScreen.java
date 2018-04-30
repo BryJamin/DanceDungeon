@@ -44,6 +44,7 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.ScaleTransformationSystem
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdateBoundPositionsSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.InformationBannerSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
+import com.bryjamin.dancedungeon.ecs.systems.ui.TutorialSystem;
 import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
 import com.bryjamin.dancedungeon.screens.AbstractScreen;
 import com.bryjamin.dancedungeon.screens.menu.DefeatScreen;
@@ -61,12 +62,18 @@ public class BattleScreen extends AbstractScreen {
 
     private Screen previousScreen;
     private World world;
+    private boolean isTutorial;
 
     public BattleScreen(MainGame game, Screen previousScreen, BattleEvent battleEvent, PartyDetails partyDetails) {
+        this(game, previousScreen, battleEvent, partyDetails, false);
+    }
+
+    public BattleScreen(MainGame game, Screen previousScreen, BattleEvent battleEvent, PartyDetails partyDetails, boolean isTutorial) {
         super(game);
         this.previousScreen = previousScreen;
         this.partyDetails = partyDetails;
         this.battleEvent = battleEvent;
+        this.isTutorial = isTutorial;
         createWorld();
     }
 
@@ -79,11 +86,12 @@ public class BattleScreen extends AbstractScreen {
 
                         //Initialize Tiles
                         new TileSystem(battleEvent),
-                        new BattleDeploymentSystem(battleEvent),
+                        new TutorialSystem(isTutorial),
+                        new BattleDeploymentSystem(battleEvent, isTutorial),
 
                         new BattleWorldInputHandlerSystem(gameport),
 
-                        new InformationBannerSystem(game, gameport, InformationBannerSystem.State.BATTLE_SCREEN),
+                        //new InformationBannerSystem(game, gameport, InformationBannerSystem.State.BATTLE_SCREEN),
                         new BattleScreenUISystem(UIStage, game),
 
                         new PlayerPartyManagementSystem(partyDetails),

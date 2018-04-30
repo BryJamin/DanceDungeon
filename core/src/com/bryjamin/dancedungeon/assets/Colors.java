@@ -47,6 +47,10 @@ public class Colors {
     public static final Color HEATH_BAR_COLOR = RGBtoColor(50,205,50, 1); //RGBtoColor(255f, 0f, 0f, 1);
 
 
+
+    public static final Color TUTORIAL_TABLE_OUTLINE = RGBtoColor(57,255,20, 1); //RGBtoColor(255f, 0f, 0f, 1);
+
+
     public static final Color TABLE_BORDER_COLOR = RGBtoColor(39, 226, 255, 1);
     public static final Color TABLE_BORDER_COLOR_HIGHLIGHTED = RGBtoColor(1, 1, 1, 1);
 

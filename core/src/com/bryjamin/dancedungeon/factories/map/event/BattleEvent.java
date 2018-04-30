@@ -16,6 +16,7 @@ public class BattleEvent extends MapEvent {
     private String id = "unidentified";
     private String mapLocation = MapData.MAP_1;
 
+
     private AbstractObjective primaryObjective = new DefeatAllEnemiesObjective();
     private AbstractObjective[] bonusObjectives = new AbstractObjective[]{new CompleteWithinObjective(7)};
 

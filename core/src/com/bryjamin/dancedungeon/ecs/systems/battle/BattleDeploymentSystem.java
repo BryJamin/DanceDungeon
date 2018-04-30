@@ -47,10 +47,16 @@ public class BattleDeploymentSystem extends EntitySystem {
 
     private boolean processingFlag = true;
 
-    public BattleDeploymentSystem(BattleEvent battleEvent) {
+    private boolean isTutorial = false;
+
+    public BattleDeploymentSystem(BattleEvent battleEvent, boolean isTutorial) {
         super(Aspect.all(DeploymentComponent.class));
         this.battleEvent = battleEvent;
+        this.isTutorial = isTutorial;
     }
+
+
+
 
     @Override
     protected void initialize() {
@@ -164,7 +170,18 @@ public class BattleDeploymentSystem extends EntitySystem {
     }
 
     @Override
+    protected boolean checkProcessing() {
+        return processingFlag;
+    }
+
+    @Override
     protected void processSystem() {
+
+        if(isTutorial) {
+            processingFlag = false;
+            observable.notifyObservers(this);
+            clear();
+        }
 
     }
 

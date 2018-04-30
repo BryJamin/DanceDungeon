@@ -2,6 +2,7 @@ package com.bryjamin.dancedungeon.ecs.systems;
 
 import com.artemis.BaseSystem;
 import com.badlogic.gdx.utils.Array;
+import com.bryjamin.dancedungeon.utils.observer.Observable;
 import com.bryjamin.dancedungeon.utils.observer.Observer;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
 
@@ -13,7 +14,7 @@ import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
 public class PlayerPartyManagementSystem extends BaseSystem {
 
     private PartyDetails partyDetails;
-    private Array<Observer> observerArray = new Array<Observer>();
+    private Observable observable = new Observable();
 
     public PlayerPartyManagementSystem(PartyDetails partyDetails){
         this.partyDetails = partyDetails;
@@ -41,12 +42,14 @@ public class PlayerPartyManagementSystem extends BaseSystem {
     }
 
     public void notifyObservers(){
-        for(Observer o : observerArray){
-            o.update(this);
-        }
+        observable.notifyObservers(this);
+    }
+
+    public Observable getObservable() {
+        return observable;
     }
 
     public void addObserver(Observer o){
-        observerArray.add(o);
+        observable.addObserver(o);
     }
 }
