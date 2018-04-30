@@ -72,10 +72,9 @@
     "targeting": "Melee",
     "spellAnimation": "Thrown",
     "minRange": 2,
-    "maxRange": 5,
+    "maxRange": 11,
     "attackType": "Damage",
-
-    "storePrice": 2,
+    "storePrice": 3,
 
     "affectedAreaSkill": {
       "push": 1,

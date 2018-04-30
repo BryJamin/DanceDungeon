@@ -162,19 +162,27 @@ public class EnemyIntentUISystem extends EntitySystem implements Observer{
     public boolean releaseAttack(){
 
         if(this.getEntities().size() != 0){
-
             Entity e = this.getEntities().get(0);
             StoredSkillComponent storedSkillComponent = storedMapper.get(e);
             storedSkillComponent.skill.cast(world, e, storedSkillComponent.storedTargetCoordinates);
             e.edit().remove(StoredSkillComponent.class);
-
             return true;
-
         }
-
         return false;
 
     }
+
+    public boolean releaseAttack(Entity e){
+        if(this.getEntities().contains(e)){
+            StoredSkillComponent storedSkillComponent = storedMapper.get(e);
+            storedSkillComponent.skill.cast(world, e, storedSkillComponent.storedTargetCoordinates);
+            e.edit().remove(StoredSkillComponent.class);
+            return true;
+        }
+        return false;
+    }
+
+
 
     public Entity enemyIntentBox(Rectangle r) {
 

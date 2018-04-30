@@ -59,6 +59,25 @@ public class TextResource {
 
 
 
+    public static final String SKILL_TYPE_MELEE = "Melee";
+    public static final String SKILL_TYPE_RANGED = "Ranged";
+    public static final String SKILL_TYPE_THROWN = "Thrown";
+
+
+    public static String TUTORIAL_PUSHING_TITLE = "Pushing";
+    public static String TUTORIAL_PUSHING_TEXT_1 = "Pushing Enemies Can Cause Their Targets To Change Before The Next Turn";
+    public static String TUTORIAL_PUSHING_TEXT_2 = "Pushing Enemies Into Walls Or Other Enemies Can Deal Extra Damage";
+
+
+
+    public static String TUTORIAL_RANGED_ATTACK_TITLE = "Ranged Attack";
+    public static String TUTORIAL_RANGED_ATTACK_TEXT_1 = "This Hero Has A Ranged Attack";
+    public static String TUTORIAL_RANGED_ATTACK_TEXT_2 = "Ranged Attacks Travel In A Straight Line Until Blocked";
+
+
+    public static String TUTORIAL_THROWN_ATTACK = "Thrown Attack";
+    public static String TUTORIAL_THROWN_ATTACK_TEXT_1 = "This Hero Has A Thrown Attack";
+    public static String TUTORIAL_THROWN_ATTACK_TEXT_2 = "Thrown Attacks Can Travel OVER Objects But Can't Target ADJACENT Tiles";
 
 
 }

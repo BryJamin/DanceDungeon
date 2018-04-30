@@ -305,5 +305,10 @@ public class TurnSystem extends EntitySystem implements Observer{
     public void addNextTurnObserver(Observer o){
         this.nextTurnObservers.add(o);
     }
+
+    public void removeObserver(Observer o){
+        this.nextTurnObservers.removeValue(o, true);
+    }
+
 }
 

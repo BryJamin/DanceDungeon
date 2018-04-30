@@ -65,6 +65,7 @@ import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.factories.spells.TargetingFactory;
 import com.bryjamin.dancedungeon.screens.battle.BattleScreen;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
+import com.bryjamin.dancedungeon.screens.menu.CharacterSelectionScreen;
 import com.bryjamin.dancedungeon.screens.strategy.MapScreen;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
@@ -710,10 +711,18 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
         textButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+
+
                 Screen menu = ((BattleScreen) game.getScreen()).getPreviousScreen();
-                game.getScreen().dispose();
-                game.setScreen(menu);
-                ((MapScreen) menu).battleVictory();
+
+                if(menu instanceof CharacterSelectionScreen){
+                    game.getScreen().dispose();
+                    game.setScreen(menu);
+                }else {
+                    game.getScreen().dispose();
+                    game.setScreen(menu);
+                    ((MapScreen) menu).battleVictory();
+                }
             }
         });
 
@@ -1033,10 +1042,101 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
                 tutorialInformationWindow.row();
                 tutorialInformationWindow.add(text3).width(width).padBottom(Padding.SMALL);
 
+                break;
 
+            case PUSHING:
+
+                center = rectangleToCenterOn.getCenter(new Vector2());
+
+                width = Measure.units(35f);
+
+                tutorialInformationWindow.setVisible(true);
+                //tutorialInformationWindow.setHeight(Measure.units(30f));
+                tutorialInformationWindow.setWidth(width);
+                tutorialInformationWindow.setPosition(
+                        CenterMath.centerOnPositionX(tutorialInformationWindow.getWidth(), center.x) + Measure.units(22.5f),
+                        CenterMath.centerOnPositionY(tutorialInformationWindow.getHeight(), center.y));
+
+                width = width - Measure.units(2.5f);
+
+                title = new Label(TextResource.TUTORIAL_PUSHING_TITLE, uiSkin);
+
+                tutorialInformationWindow.add(title).width(width).pad(Padding.SMALL);
+                tutorialInformationWindow.row();
+
+                text1 = new Label(TextResource.TUTORIAL_PUSHING_TEXT_1, uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
+                text1.setWrap(true);
+                text2 = new Label(TextResource.TUTORIAL_PUSHING_TEXT_2, uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
+                text2.setWrap(true);
+
+                tutorialInformationWindow.add(text1).width(width).padBottom(Padding.SMALL);
+                tutorialInformationWindow.row();
+                tutorialInformationWindow.add(text2).width(width).padBottom(Padding.SMALL);
+
+                break;
+
+            case RANGED_PLAYER_ARRIVES:
+
+                center = rectangleToCenterOn.getCenter(new Vector2());
+
+                width = Measure.units(35f);
+
+                tutorialInformationWindow.setVisible(true);
+                //tutorialInformationWindow.setHeight(Measure.units(30f));
+                tutorialInformationWindow.setWidth(width);
+                tutorialInformationWindow.setPosition(
+                        CenterMath.centerOnPositionX(tutorialInformationWindow.getWidth(), center.x) + Measure.units(25f),
+                        CenterMath.centerOnPositionY(tutorialInformationWindow.getHeight(), center.y));
+
+                width = width - Measure.units(2.5f);
+
+                title = new Label(TextResource.TUTORIAL_RANGED_ATTACK_TITLE, uiSkin);
+
+                tutorialInformationWindow.add(title).width(width).pad(Padding.SMALL);
+                tutorialInformationWindow.row();
+
+                text1 = new Label(TextResource.TUTORIAL_RANGED_ATTACK_TEXT_1, uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
+                text1.setWrap(true);
+                text2 = new Label(TextResource.TUTORIAL_RANGED_ATTACK_TEXT_2, uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
+                text2.setWrap(true);
+
+                tutorialInformationWindow.add(text1).width(width).padBottom(Padding.SMALL);
+                tutorialInformationWindow.row();
+                tutorialInformationWindow.add(text2).width(width).padBottom(Padding.SMALL);
 
 
                 break;
+
+
+            case THROWN_PLAYER_ARRIVES:
+
+                center = rectangleToCenterOn.getCenter(new Vector2());
+
+                width = Measure.units(35f);
+
+                tutorialInformationWindow.setVisible(true);
+                tutorialInformationWindow.setWidth(width);
+                tutorialInformationWindow.setPosition(
+                        CenterMath.centerOnPositionX(tutorialInformationWindow.getWidth(), center.x) + Measure.units(25f),
+                        CenterMath.centerOnPositionY(tutorialInformationWindow.getHeight(), center.y));
+
+                width = width - Measure.units(2.5f);
+
+                title = new Label(TextResource.TUTORIAL_THROWN_ATTACK, uiSkin);
+
+                tutorialInformationWindow.add(title).width(width).pad(Padding.SMALL);
+                tutorialInformationWindow.row();
+
+                text1 = new Label(TextResource.TUTORIAL_THROWN_ATTACK_TEXT_1, uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
+                text1.setWrap(true);
+                text2 = new Label(TextResource.TUTORIAL_THROWN_ATTACK_TEXT_2, uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
+                text2.setWrap(true);
+
+                tutorialInformationWindow.add(text1).width(width).padBottom(Padding.SMALL);
+                tutorialInformationWindow.row();
+                tutorialInformationWindow.add(text2).width(width).padBottom(Padding.SMALL);
+
+
 
         }
 
