@@ -56,8 +56,6 @@ public class MapInputSystem extends EntitySystem {
 
         InputMultiplexer multiplexer = new InputMultiplexer();
 
-        System.out.println(state);
-
         switch (state) {
 
             case MENU_OPEN:

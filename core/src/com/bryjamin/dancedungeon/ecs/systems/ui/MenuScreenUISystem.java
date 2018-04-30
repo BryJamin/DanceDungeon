@@ -193,8 +193,6 @@ public class MenuScreenUISystem extends BaseSystem {
                 String text = DevOptions.getUtilityScoreSetting() ?
                         TextResource.SCREEN_MENU_SHOW_MOVEMENT_SCORE_ON : TextResource.SCREEN_MENU_SHOW_MOVEMENT_SCORE_OFF;
 
-                System.out.println(DevOptions.getUtilityScoreSetting());
-
                 TextButton toggleScore = new TextButton(text, uiSkin);
                 toggleScore.addListener(new ClickListener() {
 
@@ -210,7 +208,6 @@ public class MenuScreenUISystem extends BaseSystem {
 
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
-                        System.out.println("yo like what?>");
                         menuState = MenuState.MAIN;
                         populateMiddleContainer();
                     }
