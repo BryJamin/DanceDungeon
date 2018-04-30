@@ -27,9 +27,12 @@ import com.bryjamin.dancedungeon.screens.menu.CharacterSelectionScreen;
 import com.bryjamin.dancedungeon.screens.strategy.MapScreen;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
+import com.bryjamin.dancedungeon.utils.options.DevOptions;
 import com.bryjamin.dancedungeon.utils.options.QuickSave;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
+
+import javax.xml.soap.Text;
 
 
 public class MenuScreenUISystem extends BaseSystem {
@@ -53,7 +56,7 @@ public class MenuScreenUISystem extends BaseSystem {
         OPTIONS, MAIN
     }
 
-
+    private MenuState menuState = MenuState.MAIN;
 
     private Viewport gameport;
 
@@ -132,49 +135,95 @@ public class MenuScreenUISystem extends BaseSystem {
 
         startButtonContainer.clear();
 
-        if(QuickSave.isThereAValidQuickSave()){
-            TextButton textBtn1 = new TextButton(TextResource.SCREEN_MENU_CONTINUE, uiSkin);
-            textBtn1.addListener(new ClickListener() {
+        switch (menuState){
 
-                @Override
-                public void clicked(InputEvent event, float x, float y) {
-                    game.getScreen().dispose();
-                    QuickSave.SavedData savedData = QuickSave.savedData;
-                    GameMap gameMap = savedData.getGameMap();
-                    gameMap.setUpLoadedMap();
-                    PartyDetails partyDetails = savedData.getPartyDetails();
-                    game.setScreen(new MapScreen(game, gameMap, partyDetails));
+            case MAIN:
+
+                if(QuickSave.isThereAValidQuickSave()){
+                    TextButton textBtn1 = new TextButton(TextResource.SCREEN_MENU_CONTINUE, uiSkin);
+                    textBtn1.addListener(new ClickListener() {
+
+                        @Override
+                        public void clicked(InputEvent event, float x, float y) {
+                            game.getScreen().dispose();
+                            QuickSave.SavedData savedData = QuickSave.savedData;
+                            QuickSave.clear();
+                            GameMap gameMap = savedData.getGameMap();
+                            gameMap.setUpLoadedMap();
+                            PartyDetails partyDetails = savedData.getPartyDetails();
+                            game.setScreen(new MapScreen(game, gameMap, partyDetails));
+                        }
+                    });
+
+                    startButtonContainer.add(textBtn1).width(Measure.units(20f)).padBottom(Padding.MEDIUM);
+                    startButtonContainer.row();
                 }
-            });
 
-            startButtonContainer.add(textBtn1).width(Measure.units(20f)).padBottom(Padding.MEDIUM);
-            startButtonContainer.row();
+
+                TextButton textBtn1 = new TextButton(TextResource.SCREEN_MENU_NEW_GAME, uiSkin);
+                textBtn1.addListener(new ClickListener() {
+
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        game.getScreen().dispose();
+                        game.setScreen(new CharacterSelectionScreen(game));
+                    }
+                });
+
+                TextButton textBtn2 = new TextButton(TextResource.SCREEN_MENU_OPTIONS, uiSkin);
+                textBtn2.addListener(new ClickListener() {
+
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        menuState = MenuState.OPTIONS;
+                        populateMiddleContainer();
+                    }
+                });
+
+                startButtonContainer.add(textBtn1).width(Measure.units(20f)).padBottom(Padding.MEDIUM);
+                startButtonContainer.row();
+                startButtonContainer.add(textBtn2).width(Measure.units(20f));
+
+                break;
+
+
+            case OPTIONS:
+
+
+                String text = DevOptions.getUtilityScoreSetting() ?
+                        TextResource.SCREEN_MENU_SHOW_MOVEMENT_SCORE_ON : TextResource.SCREEN_MENU_SHOW_MOVEMENT_SCORE_OFF;
+
+                System.out.println(DevOptions.getUtilityScoreSetting());
+
+                TextButton toggleScore = new TextButton(text, uiSkin);
+                toggleScore.addListener(new ClickListener() {
+
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        DevOptions.toggleUtilityInfo();
+                        populateMiddleContainer();
+                    }
+                });
+
+                TextButton back = new TextButton(TextResource.SCREEN_CHARACTER_BACK, uiSkin);
+                back.addListener(new ClickListener() {
+
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        System.out.println("yo like what?>");
+                        menuState = MenuState.MAIN;
+                        populateMiddleContainer();
+                    }
+                });
+
+                startButtonContainer.add(toggleScore).padBottom(Padding.MEDIUM);;
+                startButtonContainer.row();
+                startButtonContainer.add(back);
+
+                break;
+
+
         }
-
-
-        TextButton textBtn1 = new TextButton(TextResource.SCREEN_MENU_NEW_GAME, uiSkin);
-        textBtn1.addListener(new ClickListener() {
-
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.getScreen().dispose();
-                game.setScreen(new CharacterSelectionScreen(game));
-            }
-        });
-
-        TextButton textBtn2 = new TextButton("Quit Game", uiSkin);
-        textBtn2.addListener(new ClickListener() {
-
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.exit();
-                System.exit(0);
-            }
-        });
-
-        startButtonContainer.add(textBtn1).width(Measure.units(20f)).padBottom(Padding.MEDIUM);
-        startButtonContainer.row();
-        startButtonContainer.add(textBtn2).width(Measure.units(20f));
 
 
 

@@ -1,9 +1,8 @@
 package com.bryjamin.dancedungeon.factories.map.event.objectives;
 
 import com.artemis.World;
-import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.utils.observer.Observer;
-import com.bryjamin.dancedungeon.utils.observer.XObservable;
+import com.bryjamin.dancedungeon.utils.observer.Observable;
 
 public abstract class AbstractObjective implements Observer {
 
@@ -31,7 +30,7 @@ public abstract class AbstractObjective implements Observer {
 
     protected Reward reward = Reward.MONEY;
 
-    private XObservable xObservable = new XObservable(); //Array of observers that listen to the Objective.
+    private Observable observable = new Observable(); //Array of observers that listen to the Objective.
 
     private UpdateOn[] updateOnArray;
 
@@ -58,12 +57,12 @@ public abstract class AbstractObjective implements Observer {
     }
 
     public void addObserver(Observer o){
-        xObservable.addObserver(o);
+        observable.addObserver(o);
     }
 
     @Override
     public void update(Object o) {
-        xObservable.notifyObservers(this);
+        observable.notifyObservers(this);
     }
 
     public Reward getReward() {

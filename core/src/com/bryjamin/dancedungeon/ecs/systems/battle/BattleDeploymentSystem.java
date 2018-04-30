@@ -14,10 +14,9 @@ import com.bryjamin.dancedungeon.factories.enemy.UnitLibrary;
 import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.player.UnitFactory;
-import com.bryjamin.dancedungeon.factories.player.UnitMap;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
-import com.bryjamin.dancedungeon.utils.observer.XObservable;
+import com.bryjamin.dancedungeon.utils.observer.Observable;
 
 
 /**
@@ -41,11 +40,10 @@ public class BattleDeploymentSystem extends EntitySystem {
     private BattleEvent battleEvent;
     private Array<Coordinates> deploymentLocations = new Array<>();
 
-    private UnitMap unitMap = new UnitMap();
     private UnitFactory unitFactory = new UnitFactory();
     private UnitData unitToBeDeployed;
 
-    public XObservable observable = new XObservable();
+    public Observable observable = new Observable();
 
     private boolean processingFlag = true;
 
@@ -170,7 +168,7 @@ public class BattleDeploymentSystem extends EntitySystem {
 
     }
 
-    public XObservable getObservers() {
+    public Observable getObservers() {
         return observable;
     }
 

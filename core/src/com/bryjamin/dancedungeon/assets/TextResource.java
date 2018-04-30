@@ -34,6 +34,9 @@ public class TextResource {
     public static final String SCREEN_MENU_NEW_GAME = "New Game";
     public static final String SCREEN_MENU_OPTIONS = "Options";
 
+    public static final String SCREEN_MENU_SHOW_MOVEMENT_SCORE_ON = "(DEV) Show Movement Score: ON";
+    public static final String SCREEN_MENU_SHOW_MOVEMENT_SCORE_OFF = "(DEV) Show Movement Score: OFF";
+
 
     public static final String SCREEN_CHARACTER_START = "Start Expedition";
     public static final String SCREEN_CHARACTER_HEROES = "Change Heroes";

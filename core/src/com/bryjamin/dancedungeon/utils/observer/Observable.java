@@ -2,7 +2,7 @@ package com.bryjamin.dancedungeon.utils.observer;
 
 import com.badlogic.gdx.utils.Array;
 
-public class XObservable {
+public class Observable {
 
 
     private Array<Observer> observers = new Array<>();

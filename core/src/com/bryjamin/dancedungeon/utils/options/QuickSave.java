@@ -26,6 +26,12 @@ public class QuickSave {
     }
 
 
+    public static void clear(){
+        Preferences prefs = Gdx.app.getPreferences(Prefs.QUICK_SAVE_PREF);
+        prefs.clear();
+        prefs.flush();
+    }
+
     public static boolean isThereAValidQuickSave(){
 
         Preferences prefs = Gdx.app.getPreferences(Prefs.QUICK_SAVE_PREF);
@@ -44,7 +50,6 @@ public class QuickSave {
 
 
         }
-
 
         prefs.clear();
         prefs.flush();//Destroy invalid quick saves
