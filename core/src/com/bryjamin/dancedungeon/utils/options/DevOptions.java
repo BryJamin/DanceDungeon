@@ -14,9 +14,6 @@ public class DevOptions {
     public final static String UTILITY_SCORE_DEBUG = "score_debug";
     public final static String PARTY_DATA = "partyData";
 
-    public static QuickSave.SavedData savedData;
-
-
     public static void toggleUtilityInfo(){
         Preferences preferences = Gdx.app.getPreferences(DEV_PREFS_KEY);
         preferences.putBoolean(UTILITY_SCORE_DEBUG, !preferences.getBoolean(UTILITY_SCORE_DEBUG, true));
@@ -28,40 +25,5 @@ public class DevOptions {
         Preferences preferences = Gdx.app.getPreferences(DEV_PREFS_KEY);
         return preferences.getBoolean(UTILITY_SCORE_DEBUG, true);
     }
-
-
-
-
-    public static QuickSave.SavedData loadSave(){
-        return savedData;
-    }
-
-
-    public static class SavedData {
-
-        public SavedData(GameMap gameMap, PartyDetails partyDetails) {
-            this.gameMap = gameMap;
-            this.partyDetails = partyDetails;
-        }
-
-        GameMap gameMap;
-        PartyDetails partyDetails;
-
-        public GameMap getGameMap() {
-            return gameMap;
-        }
-
-        public PartyDetails getPartyDetails() {
-            return partyDetails;
-        }
-    }
-
-
-
-
-
-
-
-
 
 }

@@ -12,8 +12,6 @@ public class PlayerSave {
     public final static String PLAYER_SAVE_PREFS_KEY = "player";
     private final static String FIRST_TIME_PLAYER = "First_Time_Tutorial_Prompt";
 
-    public static QuickSave.SavedData savedData;
-
 
     public static boolean isFirstTimePlayer(){
         Preferences preferences = Gdx.app.getPreferences(PLAYER_SAVE_PREFS_KEY);

@@ -7,6 +7,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.bryjamin.dancedungeon.MainGame;
+import com.bryjamin.dancedungeon.assets.music.MusicFiles;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MoveToTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
@@ -19,6 +20,7 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.FadeSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdateBoundPositionsSystem;
 import com.bryjamin.dancedungeon.ecs.systems.input.BasicInputSystemWithStage;
+import com.bryjamin.dancedungeon.ecs.systems.music.MusicSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.MenuScreenUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
 import com.bryjamin.dancedungeon.screens.AbstractScreen;
@@ -46,7 +48,7 @@ public class MenuScreen extends AbstractScreen {
 
                         new MenuScreenUISystem(game, gameport),
                         new BasicInputSystemWithStage(gameport),
-
+                        new MusicSystem(game, MusicFiles.BG_MAIN_MENU),
                         new MovementSystem(),
                         new UpdateBoundPositionsSystem(),
                         new MoveToTargetSystem()

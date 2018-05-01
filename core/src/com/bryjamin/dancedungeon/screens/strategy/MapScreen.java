@@ -7,6 +7,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.bryjamin.dancedungeon.MainGame;
+import com.bryjamin.dancedungeon.assets.music.MusicFiles;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MapCameraSystemFlingAndPan;
 import com.bryjamin.dancedungeon.ecs.systems.MoveToTargetSystem;
@@ -23,6 +24,7 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.ScaleTransformationSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdateBoundPositionsSystem;
 import com.bryjamin.dancedungeon.ecs.systems.input.MapInputSystem;
+import com.bryjamin.dancedungeon.ecs.systems.music.MusicSystem;
 import com.bryjamin.dancedungeon.ecs.systems.strategy.MapNodeSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.InformationBannerSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.MapScreenUISystem;
@@ -62,6 +64,7 @@ public class MapScreen extends AbstractScreen {
                         //Initialization Systems
                         new MapNodeSystem(game, gameMap, partyDetails),
 
+                        new MusicSystem(game, MusicFiles.MAP_MUSIC),
                         new PlayerPartyManagementSystem(partyDetails),
 
                         new MapInputSystem(game, gameport, 0, gameMap.getWidth() + Measure.units(20f)),
