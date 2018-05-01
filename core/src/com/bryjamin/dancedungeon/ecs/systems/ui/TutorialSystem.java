@@ -1,37 +1,31 @@
 package com.bryjamin.dancedungeon.ecs.systems.ui;
 
 import com.artemis.Aspect;
-import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.artemis.World;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Queue;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.UtilityAiComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.StoredSkillComponent;
-import com.bryjamin.dancedungeon.ecs.components.graphics.GreyScaleComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.TutorialAIComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionQueueSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.EnemyIntentUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
 import com.bryjamin.dancedungeon.factories.enemy.UnitLibrary;
-import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.factories.spells.SkillLibrary;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
-import com.bryjamin.dancedungeon.utils.observer.Observable;
 import com.bryjamin.dancedungeon.utils.observer.Observer;
 
 /**
@@ -108,7 +102,7 @@ public class TutorialSystem extends EntitySystem implements Observer{
 
     private Coordinates MELEE_ENEMY_COORDINATES = new Coordinates(6, 2);
     private Coordinates MELEE_ENEMY_FIRST_MOVE_COORDINATES = new Coordinates(4, 1);
-    private Coordinates MELEE_ENEMY_SECOND_MOVE_COORDINATES = new Coordinates(4, 2);
+    private Coordinates MELEE_ENEMY_SECOND_MOVE_COORDINATES = new Coordinates(3, 2);
 
     private Coordinates THIRD_ENEMY_FIRST_MOVE_COORDINATES = new Coordinates(5, 2);
 
@@ -129,7 +123,7 @@ public class TutorialSystem extends EntitySystem implements Observer{
         if(!processing) return;
 
         actionQueueSystem.observable.addObserver(this);
-        turnSystem.addNextTurnObserver(this);
+        turnSystem.addPlayerTurnObserver(this);
 
 
 
@@ -159,7 +153,7 @@ public class TutorialSystem extends EntitySystem implements Observer{
 
         meleePlayer = UnitLibrary.getPlayerUnit(world, UnitLibrary.CHARACTERS_SGT_SWORD);
         meleePlayer.getComponent(CoordinateComponent.class).coordinates.set(MELEE_PLAYER_START_COORDINATES);
-        meleePlayer.edit().add(new TutorialAIComponent());
+
         turnSystem.setUp(TurnSystem.TURN.ENEMY);
 
 
@@ -321,18 +315,16 @@ public class TutorialSystem extends EntitySystem implements Observer{
                     createAttackActionForEnemyEntity(tutorialEnemy3, SkillLibrary.getSkill(SkillLibrary.ENEMY_SKILL_SWIPE), new Coordinates(MIDDLE_ALLIED_STRUCTURE_COORDINATES));
 
 
+                    //Melee Enemy Moves Back to Underneath the allied structure
+                    createMovementActionForEnemyEntity(meleeEnemy, MELEE_ENEMY_FIRST_MOVE_COORDINATES);
+                    //Retargets the Structure
+                    createAttackActionForEnemyEntity(meleeEnemy, SkillLibrary.getSkill(SkillLibrary.ENEMY_SKILL_SWIPE), new Coordinates(MIDDLE_ALLIED_STRUCTURE_COORDINATES));
 
-                    tutorialEnemy3 = UnitLibrary.getEnemyUnit(world, UnitLibrary.RANGED_BLASTER);
-                    tutorialEnemy3.edit().remove(UtilityAiComponent.class);
-                    tutorialEnemy3.edit().add(new TutorialAIComponent());
-                    tutorialEnemy3.getComponent(CoordinateComponent.class).coordinates.set(7, 4);
 
-                    createMovementActionForEnemyEntity(tutorialEnemy3, new Coordinates(5, 3));
+                    Entity blasterForThrownPlayer = createTutorialEntity(new Coordinates(7, 2), UnitLibrary.RANGED_BLASTER);
+                    createMovementActionForEnemyEntity(blasterForThrownPlayer, new Coordinates(5, 1));
                     //createAttackActionForEnemyEntity(tutorialEnemy3, SkillLibrary.getSkill(SkillLibrary.ENEMY_SKILL_BLAST), new Coordinates(2, 5));
 
-
-
-                    createMovementActionForEnemyEntity(meleeEnemy, MELEE_ENEMY_SECOND_MOVE_COORDINATES);
                     //createAttackActionForEnemyEntity(meleeEnemy, SkillLibrary.getSkill(SkillLibrary.ENEMY_SKILL_SWIPE), new Coordinates(MIDDLE_ALLIED_STRUCTURE_COORDINATES));
 
 
@@ -351,18 +343,22 @@ public class TutorialSystem extends EntitySystem implements Observer{
                         e.edit().add(new UtilityAiComponent());
                     }
 
+                    if(this.getEntities().size() <= 0) {
 
-                    Entity e = UnitLibrary.getEnemyUnit(world, UnitLibrary.MELEE_BLOB);
-                    e.getComponent(CoordinateComponent.class).coordinates = new Coordinates(TUTORIAL_END_SPAWN_ONE);
-                    e = UnitLibrary.getEnemyUnit(world, UnitLibrary.RANGED_BLASTER);
-                    e.getComponent(CoordinateComponent.class).coordinates = new Coordinates(TUTORIAL_END_SPAWN_TWO);
+                        Entity e = UnitLibrary.getEnemyUnit(world, UnitLibrary.MELEE_BLOB);
+                        e.getComponent(CoordinateComponent.class).coordinates = new Coordinates(TUTORIAL_END_SPAWN_ONE);
+                        e = UnitLibrary.getEnemyUnit(world, UnitLibrary.RANGED_BLASTER);
+                        e.getComponent(CoordinateComponent.class).coordinates = new Coordinates(TUTORIAL_END_SPAWN_TWO);
+
+                    } else if(this.getEntities().size() == 1){
+
+                        Entity e = UnitLibrary.getEnemyUnit(world, UnitLibrary.RANGED_BLASTER);
+                        e.getComponent(CoordinateComponent.class).coordinates = new Coordinates(TUTORIAL_END_SPAWN_TWO);
+
+                    }
 
                     createTipWorldAction(new Rectangle(), TutorialState.OBJECTIVES);
-
                     tutorialState = TutorialState.END;
-
-
-
 
             }
 
@@ -380,10 +376,41 @@ public class TutorialSystem extends EntitySystem implements Observer{
 
 
 
-    private void createMovementActionForEnemyEntity(Entity e, Coordinates destination){
-        Queue<Coordinates> coordinatesQueue = new Queue<>();
-        tileSystem.findShortestPath(e, coordinatesQueue, destination, 1000);
-        actionQueueSystem.createMovementAction(e, coordinatesQueue);
+    private Entity createTutorialEntity(Coordinates c, String unitID){
+
+        Entity e = UnitLibrary.getEnemyUnit(world, unitID);
+        e.edit().remove(UtilityAiComponent.class);
+        e.edit().add(new TutorialAIComponent());
+        e.getComponent(CoordinateComponent.class).coordinates.set(c);
+
+        return e;
+    }
+
+
+    private void createMovementActionForEnemyEntity(final Entity e, final Coordinates destination){
+
+        actionQueueSystem.pushLastAction(e, new WorldConditionalAction() {
+            @Override
+            public boolean condition(World world, Entity entity) {
+                return entity.getComponent(MoveToComponent.class).isEmpty();
+            }
+
+            @Override
+            public void performAction(World world, Entity entity) {
+
+                Queue<Coordinates> coordinatesQueue = new Queue<>();
+                tileSystem.findShortestPath(e, coordinatesQueue, destination, 1000);
+
+
+                for (Coordinates c : coordinatesQueue) {
+                    entity.getComponent(MoveToComponent.class).movementPositions.add(
+                            world.getSystem(TileSystem.class).getPositionUsingCoordinates(
+                                    c, entity.getComponent(CenteringBoundComponent.class).bound));
+                }
+
+            }
+        });
+
     }
 
 

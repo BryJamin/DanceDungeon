@@ -34,7 +34,7 @@ public class StunnedSystem extends EntitySystem implements Observer{
 
     @Override
     protected void initialize() {
-        turnSystem.addNextTurnObserver(this);
+        turnSystem.addPlayerTurnObserver(this);
     }
 
     @Override

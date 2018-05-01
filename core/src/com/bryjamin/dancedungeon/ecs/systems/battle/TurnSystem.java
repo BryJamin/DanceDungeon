@@ -4,9 +4,11 @@ import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
+import com.artemis.utils.IntBag;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
+import com.bryjamin.dancedungeon.utils.observer.Observable;
 import com.bryjamin.dancedungeon.utils.observer.Observer;
 import com.bryjamin.dancedungeon.ecs.components.actions.UtilityAiComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.BuffComponent;
@@ -40,7 +42,8 @@ public class TurnSystem extends EntitySystem implements Observer{
     private ComponentMapper<UnitComponent> unitM;
 
 
-    private Array<Observer> nextTurnObservers = new Array<>();
+    private Observable enemyTurnObservable = new Observable();
+    private Observable playerTurnObservable = new Observable();
 
     private ComponentMapper<UtilityAiComponent> utilityAiMapper;
 
@@ -67,7 +70,7 @@ public class TurnSystem extends EntitySystem implements Observer{
         ENEMY, ALLY, INTENT
     }
 
-    private TURN turn = INTENT;
+    public TURN turn = INTENT;
 
     public TURN getTurn() {
         return turn;
@@ -129,13 +132,8 @@ public class TurnSystem extends EntitySystem implements Observer{
     public void endAllyTurn(){
         turn = INTENT;
         battleState = STATE.NEXT_TURN;
-
-        for(int i = 0; i < nextTurnObservers.size; i++){
-            nextTurnObservers.get(i).update(this);
-        }
-
+        playerTurnObservable.notifyObservers(this);
     }
-
 
     public void setUp(TURN turn) {
 
@@ -143,7 +141,16 @@ public class TurnSystem extends EntitySystem implements Observer{
         currentTurnEntities.clear();
 
         if (turn == ENEMY) {
-            currentTurnEntities.addAll(enemyTurnEntities);
+
+            IntBag bag = world.getAspectSubscriptionManager().get(Aspect.all(UtilityAiComponent.class, CoordinateComponent.class, EnemyComponent.class)).getEntities();
+
+            for(int i = 0; i < bag.size(); i++){
+                if(this.getEntities().contains(world.getEntity(bag.get(i)))) {
+                    currentTurnEntities.add(world.getEntity(bag.get(i)));
+                }
+            }
+
+            //currentTurnEntities.addAll(enemyTurnEntities);
         } else if (turn == ALLY) {
 
             currentTurnEntities.addAll(allyTurnEntities);
@@ -186,6 +193,7 @@ public class TurnSystem extends EntitySystem implements Observer{
                     }
                     break;
                 case WAITING:
+
                     if (!world.getSystem(ActionQueueSystem.class).isProcessing()) {
                         battleState = STATE.NEXT_TURN;
                     }
@@ -194,9 +202,6 @@ public class TurnSystem extends EntitySystem implements Observer{
 
             return;
         }
-
-
-        //if (world.getSystem(ActionQueueSystem.class).isProcessing()) return;
 
 
         switch (battleState) {
@@ -208,6 +213,7 @@ public class TurnSystem extends EntitySystem implements Observer{
                     switch (turn) {
                         case ENEMY:
                             setUp(ALLY);
+                            enemyTurnObservable.notifyObservers(this);
                             break;
                         case ALLY:
                             setUp(ENEMY);
@@ -302,13 +308,15 @@ public class TurnSystem extends EntitySystem implements Observer{
     }
 
 
-    public void addNextTurnObserver(Observer o){
-        this.nextTurnObservers.add(o);
+    public void addPlayerTurnObserver(Observer o){
+        this.playerTurnObservable.addObserver(o);
     }
 
-    public void removeObserver(Observer o){
-        this.nextTurnObservers.removeValue(o, true);
+
+    public void addEnemyTurnObserver(Observer o){
+        this.enemyTurnObservable.addObserver(o);
     }
+
 
 }
 

@@ -81,7 +81,7 @@ public class EndBattleSystem extends EntitySystem implements Observer {
             for(int j = 0; j < abstractObjectives.get(i).getUpdateOnArray().length; j++){
                 switch (abstractObjectives.get(i).getUpdateOnArray()[j]){
                     case END_TURN:
-                        turnSystem.addNextTurnObserver(abstractObjectives.get(i));
+                        turnSystem.addPlayerTurnObserver(abstractObjectives.get(i));
                         break;
                 }
             }
@@ -148,11 +148,10 @@ public class EndBattleSystem extends EntitySystem implements Observer {
                 unitData.setMaxHealth(hc.maxHealth);
             }
 
-            actionQueueSystem.observable.removeObserver(this);
-
             if(currentEvent instanceof TutorialEvent){
                 battleScreenUISystem.createTutorialWindow(new Rectangle(), TutorialSystem.TutorialState.END);
             } else {
+                actionQueueSystem.observable.removeObserver(this);
                 battleScreenUISystem.createVictoryRewards(currentEvent, partyDetails);
                 battleWorldInputHandlerSystem.setState(BattleWorldInputHandlerSystem.State.ONLY_STAGE);
             }

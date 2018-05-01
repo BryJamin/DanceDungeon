@@ -100,7 +100,6 @@ public class ActionQueueSystem extends EntitySystem {
     @Override
     protected void processSystem() {
 
-
         if(queuedActionIds.size == 0){
 
             //If the system has no more actions in the queue, it turns it self off

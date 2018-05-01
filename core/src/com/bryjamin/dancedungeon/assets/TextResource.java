@@ -6,7 +6,7 @@ package com.bryjamin.dancedungeon.assets;
 
 public class TextResource {
 
-    public static final String GAME_TITLE = "Prototype Demonstration";
+    public static final String GAME_TITLE = "ISLE";
     public static final String GAME_TITLE_START = "Start";
     public static final String BATTLE = "Battle!";
     public static final String BATTLE_OVER_CONTINUE = "Continue";
@@ -22,6 +22,9 @@ public class TextResource {
     public static final String BATTLE_BONUS = "Bonus";
     public static final String BATTLE_END_TURN = "End Turn";
 
+
+    public static final String BATTLE_ENEMY_TURN = "Enemy Turn";
+    public static final String BATTLE_ALLY_TURN = "Player Turn";
 
 
     public static final String SHOP_BUY = "Buy";

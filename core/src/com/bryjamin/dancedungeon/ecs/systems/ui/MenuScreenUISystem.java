@@ -105,9 +105,7 @@ public class MenuScreenUISystem extends BaseSystem {
         container.align(Align.top);
 
         titleContainer = new Table(uiSkin);
-        titleContainer.setDebug(true);
-
-        Label title = new Label("ISLE", uiSkin, Fonts.LARGE_FONT_STYLE_NAME, new Color(Color.WHITE));
+        Label title = new Label(TextResource.GAME_TITLE, uiSkin, Fonts.LARGE_FONT_STYLE_NAME, new Color(Color.WHITE));
         title.setAlignment(Align.left);
 
         titleContainer.add(title).width(container.getWidth()).height(Measure.units(10f)).padLeft(Padding.MEDIUM).expandX();
@@ -204,8 +202,6 @@ public class MenuScreenUISystem extends BaseSystem {
                     }
                 });
 
-
-                System.out.println(PlayerSave.isFirstTimePlayer());
 
                 text = PlayerSave.isFirstTimePlayer() ?
                         TextResource.SCREEN_MENU_TUTORIAL_ON : TextResource.SCREEN_MENU_TUTORIAL_OFF;

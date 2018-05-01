@@ -9,6 +9,7 @@ import com.artemis.utils.IntBag;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
@@ -16,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -41,6 +43,7 @@ import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.FollowPositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
+import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.StoredSkillComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
@@ -142,6 +145,8 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
     private Table moraleTable;
 
+    private Table nextTurnBanner;
+
 
     private ButtonGroup<Button> skillButtonButtonGroup = new ButtonGroup<>();
 
@@ -176,6 +181,8 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
             }
         } else if(o instanceof PlayerPartyManagementSystem){
             populateMoraleTable();
+        } else if(o instanceof TurnSystem){
+            createNextTurnBanner((turnSystem.getTurn()));
         }
 
     }
@@ -186,6 +193,8 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
         battleDeploymentSystem.getObservers().addObserver(this);
         playerPartyManagementSystem.addObserver(this);
+        turnSystem.addPlayerTurnObserver(this);
+        turnSystem.addEnemyTurnObserver(this);
 
         areYouSureContainer = new AreYouSureFrame(
                 new ChangeListener() {
@@ -212,6 +221,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
         areYouSureContainer.setTouchable(Touchable.enabled);
         areYouSureContainer.setBackground(new TextureRegionDrawable(atlas.findRegion(TextureStrings.BLOCK)).tint(new Color(0, 0, 0, 0.85f)));
 
+        nextTurnBanner = new Table(uiSkin);
 
         bottomContainer.setSkin(uiSkin);
         bottomContainer.setWidth(stage.getWidth());
@@ -478,6 +488,57 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
     }
 
+
+
+    private void createNextTurnBanner(TurnSystem.TURN turn){
+
+        nextTurnBanner.reset();
+        //nextTurnBanner.getActions().clear();
+        nextTurnBanner.getColor().set(new Color(Color.WHITE));
+        String text;
+
+        switch (turn){
+
+            default:
+            case INTENT:
+                text = TextResource.BATTLE_ENEMY_TURN;
+                nextTurnBanner.setBackground(NinePatches.getBorderNinePatch(renderingSystem.getAtlas(), new Color(Color.RED)));
+                break;
+
+            case ALLY:
+                text = TextResource.BATTLE_ALLY_TURN;
+                nextTurnBanner.setBackground(NinePatches.getBorderNinePatch(renderingSystem.getAtlas(), new Color(Colors.TABLE_BORDER_COLOR)));
+                break;
+        }
+
+        System.out.println(nextTurnBanner.getColor());
+
+        float height = Measure.units(15f);
+
+        nextTurnBanner.setVisible(true);
+        nextTurnBanner.setWidth(stage.getWidth());
+        nextTurnBanner.setHeight(height);
+        nextTurnBanner.setPosition(0, CenterMath.centerOnPositionY(height, stage.getHeight() / 2));
+        nextTurnBanner.align(Align.center);
+        nextTurnBanner.add(new Label(text, uiSkin));
+        nextTurnBanner.addAction(Actions.fadeOut(1.5f, Interpolation.fade));
+
+
+        actionQueueSystem.pushLastAction(world.createEntity(), new WorldConditionalAction() {
+            @Override
+            public boolean condition(World world, Entity entity) {
+                return nextTurnBanner.getColor().a == 0;
+            }
+
+            @Override
+            public void performAction(World world, Entity entity) {
+
+            }
+        });
+
+        stage.addActor(nextTurnBanner);
+
+    }
 
 
 
@@ -1141,16 +1202,18 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
             case OBJECTIVES:
 
+                objectivesTable.validate();
                 pos = objectivesTable.localToStageCoordinates(new Vector2(0, 0));
 
                 width = Measure.units(55f);
                 height = Measure.units(20f);
 
+
                 buildDefaultTutorialWindow(tutorialInformationWindow,
                         new Rectangle(pos.x, pos.y, objectivesTable.getWidth(), objectivesTable.getHeight()),
                         width,
                         height,
-                        - Measure.units(47.5f),
+                        -Measure.units(47.5f),
                         0,
                         TextResource.TUTORIAL_OBJECTIVES_TITLE,
                         TextResource.TUTORIAL_OBJECTIVES_TEXT_1,
