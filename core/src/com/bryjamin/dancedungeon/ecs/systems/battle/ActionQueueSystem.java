@@ -182,6 +182,10 @@ public class ActionQueueSystem extends EntitySystem {
             queuedActionMap.put(e, new Array<WorldConditionalAction>());
         }
 
+
+        System.out.println("qas " + queuedActionIds.size);
+        System.out.println("q id" + id);
+
         processingFlag = true; //Turns on the system
     }
 
@@ -189,6 +193,10 @@ public class ActionQueueSystem extends EntitySystem {
     public void pushLastAction(Entity e, WorldConditionalAction wca) {
         pushLastAction(e, wca, UUID.randomUUID().toString());
         processingFlag = true; //Turns on the system
+    }
+
+    public int getSizeOfQueue(){
+        return queuedActionIds.size;
     }
 
 

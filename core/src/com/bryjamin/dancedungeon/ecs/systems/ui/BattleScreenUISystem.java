@@ -134,7 +134,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
 
 
-
+    private Entity actionQueueEntity;
 
     //Battle State
     private Table tableForSkillButtons;
@@ -191,10 +191,12 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
     @Override
     protected void initialize() {
 
+        actionQueueEntity = world.createEntity();
+
         battleDeploymentSystem.getObservers().addObserver(this);
         playerPartyManagementSystem.addObserver(this);
-        turnSystem.addPlayerTurnObserver(this);
         turnSystem.addEnemyTurnObserver(this);
+        turnSystem.addPlayerTurnObserver(this);
 
         areYouSureContainer = new AreYouSureFrame(
                 new ChangeListener() {
@@ -353,7 +355,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
         return new Action() {
             @Override
             public boolean act(float delta) {
-                if (actionQueueSystem.isProcessing() || !turnSystem.isTurn(TurnSystem.TURN.ALLY)) {
+                if (actionQueueSystem.isProcessing() || !turnSystem.isTurn(TurnSystem.TURN.PLAYER)) {
                     endTurn.setVisible(false);
                 } else {
                     endTurn.setVisible(true);
@@ -490,7 +492,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
 
 
-    private void createNextTurnBanner(TurnSystem.TURN turn){
+    public void createNextTurnBanner(TurnSystem.TURN turn){
 
         nextTurnBanner.reset();
         //nextTurnBanner.getActions().clear();
@@ -500,12 +502,13 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
         switch (turn){
 
             default:
+            case ENEMY:
             case INTENT:
                 text = TextResource.BATTLE_ENEMY_TURN;
                 nextTurnBanner.setBackground(NinePatches.getBorderNinePatch(renderingSystem.getAtlas(), new Color(Color.RED)));
                 break;
 
-            case ALLY:
+            case PLAYER:
                 text = TextResource.BATTLE_ALLY_TURN;
                 nextTurnBanner.setBackground(NinePatches.getBorderNinePatch(renderingSystem.getAtlas(), new Color(Colors.TABLE_BORDER_COLOR)));
                 break;
@@ -513,28 +516,34 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
         System.out.println(nextTurnBanner.getColor());
 
-        float height = Measure.units(15f);
+        float height = Measure.units(7.5f);
+        float width = stage.getWidth() + Measure.units(20f);
 
         nextTurnBanner.setVisible(true);
-        nextTurnBanner.setWidth(stage.getWidth());
+        nextTurnBanner.setWidth(width);
         nextTurnBanner.setHeight(height);
-        nextTurnBanner.setPosition(0, CenterMath.centerOnPositionY(height, stage.getHeight() / 2));
+        nextTurnBanner.setPosition(CenterMath.centerOnPositionX(width, stage.getWidth() / 2), CenterMath.centerOnPositionY(height, stage.getHeight() / 2 + Measure.units(5f)));
         nextTurnBanner.align(Align.center);
         nextTurnBanner.add(new Label(text, uiSkin));
-        nextTurnBanner.addAction(Actions.fadeOut(1.5f, Interpolation.fade));
+
+        final Action a = Actions.fadeOut(1.25f, Interpolation.smoother);
+
+        nextTurnBanner.addAction(a);
 
 
-        actionQueueSystem.pushLastAction(world.createEntity(), new WorldConditionalAction() {
+        System.out.println("SIZE OF QUEUE WHEN BANNER CALLED " + actionQueueSystem.getSizeOfQueue());
+
+        actionQueueSystem.pushLastAction(actionQueueEntity, new WorldConditionalAction() {
             @Override
             public boolean condition(World world, Entity entity) {
-                return nextTurnBanner.getColor().a == 0;
+                return nextTurnBanner.getColor().a <= 0.1f;
             }
 
             @Override
             public void performAction(World world, Entity entity) {
 
             }
-        });
+        }, "WHHHHHYYYYYYYYYYUDYADMHAWDUYAWDUAWGDVAUEISNXDOSNGODXHFOUDASNHDCGFVAEGNXCRDFIQWGEDVYHJOASXRMKYAW");
 
         stage.addActor(nextTurnBanner);
 

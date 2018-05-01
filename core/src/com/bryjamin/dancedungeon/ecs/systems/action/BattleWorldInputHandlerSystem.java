@@ -79,7 +79,7 @@ public class BattleWorldInputHandlerSystem extends BaseSystem {
                 if(world.getSystem(ActionOnTapSystem.class).touch(input.x, input.y))
                     return true;
 
-            } else if (world.getSystem(TurnSystem.class).getTurn() == TurnSystem.TURN.ALLY) {
+            } else if (world.getSystem(TurnSystem.class).getTurn() == TurnSystem.TURN.PLAYER) {
 
                 if(world.getSystem(ActionOnTapSystem.class).touch(input.x, input.y))
                     return true;

@@ -33,7 +33,7 @@ public class UnitData implements Json.Serializable {
 
     public int stun;
 
-    private float mapMovementSpeed = 80f;
+    private float mapMovementSpeed = 70f;
     private float drawScale = 0.75f;
 
     private Array<Skill> skills = new Array<>();

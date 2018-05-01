@@ -7,6 +7,7 @@ import com.artemis.EntitySystem;
 import com.artemis.utils.IntBag;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
+import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.utils.observer.Observable;
 import com.bryjamin.dancedungeon.utils.observer.Observer;
@@ -18,7 +19,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 
-import static com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem.TURN.ALLY;
+import static com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem.TURN.PLAYER;
 import static com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem.TURN.ENEMY;
 import static com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem.TURN.INTENT;
 
@@ -32,6 +33,7 @@ public class TurnSystem extends EntitySystem implements Observer{
 
     private UtilityAiSystem utilityAiSystem;
     private BattleDeploymentSystem battleDeploymentSystem;
+    private BattleScreenUISystem battleScreenUISystem;
 
     private ComponentMapper<TurnComponent> turnMapper;
     private ComponentMapper<BuffComponent> buffMapper;
@@ -50,11 +52,7 @@ public class TurnSystem extends EntitySystem implements Observer{
     private ComponentMapper<CoordinateComponent> coordinateMapper;
 
     private Array<Entity> currentTurnEntities = new Array<Entity>();
-
     private Entity currentEntity;
-
-    private Array<Entity> enemyTurnEntities = new Array<Entity>();
-    private Array<Entity> allyTurnEntities = new Array<Entity>();
 
     private boolean processingFlag = false;
 
@@ -66,8 +64,8 @@ public class TurnSystem extends EntitySystem implements Observer{
     private STATE battleState = STATE.NEXT_TURN;
 
 
-    public enum TURN { //ENEMY - Enemy Turn, //ALLY - Ally Turn, //INTENT - Stored enemy actions
-        ENEMY, ALLY, INTENT
+    public enum TURN { //ENEMY - Enemy Turn, //PLAYER - Ally Turn, //INTENT - Stored enemy actions
+        ENEMY, PLAYER, INTENT
     }
 
     public TURN turn = INTENT;
@@ -97,20 +95,11 @@ public class TurnSystem extends EntitySystem implements Observer{
 
     @Override
     public void inserted(Entity e) {
-
-        if (enemyMapper.has(e)) {
-            enemyTurnEntities.add(e);
-        } else if (playerMapper.has(e)) {
-            allyTurnEntities.add(e);
-        }
-
         turnMapper.get(e).reset();
     }
 
     @Override
     public void removed(Entity e) {
-        enemyTurnEntities.removeValue(e, true);
-        allyTurnEntities.removeValue(e, true);
         currentTurnEntities.removeValue(e, true);
 
         try {
@@ -123,16 +112,28 @@ public class TurnSystem extends EntitySystem implements Observer{
 
     }
 
-
-    public void addAlly(){
-
+    public void endAllyTurn(){
+        setUp(INTENT);
+        battleState = STATE.NEXT_TURN;
+        playerTurnObservable.notifyObservers(this);
     }
 
 
-    public void endAllyTurn(){
-        turn = INTENT;
-        battleState = STATE.NEXT_TURN;
-        playerTurnObservable.notifyObservers(this);
+    private void populateTurnEntities(Aspect.Builder builder){
+
+        IntBag bag = world.getAspectSubscriptionManager().get(builder).getEntities();
+
+        for(int i = 0; i < bag.size(); i++){
+            Entity e = world.getEntity(bag.get(i));
+
+            if(this.getEntities().contains(e)) {
+                skillMapper.get(e).endTurn();
+                turnMapper.get(e).reset();
+                currentTurnEntities.add(e);
+            }
+        }
+
+
     }
 
     public void setUp(TURN turn) {
@@ -141,31 +142,12 @@ public class TurnSystem extends EntitySystem implements Observer{
         currentTurnEntities.clear();
 
         if (turn == ENEMY) {
+            populateTurnEntities(Aspect.all(UtilityAiComponent.class, CoordinateComponent.class, EnemyComponent.class));
+        } else if (turn == PLAYER) {
+            populateTurnEntities(Aspect.all(PlayerControlledComponent.class, CoordinateComponent.class));
 
-            IntBag bag = world.getAspectSubscriptionManager().get(Aspect.all(UtilityAiComponent.class, CoordinateComponent.class, EnemyComponent.class)).getEntities();
-
-            for(int i = 0; i < bag.size(); i++){
-                if(this.getEntities().contains(world.getEntity(bag.get(i)))) {
-                    currentTurnEntities.add(world.getEntity(bag.get(i)));
-                }
-            }
-
-            //currentTurnEntities.addAll(enemyTurnEntities);
-        } else if (turn == ALLY) {
-
-            currentTurnEntities.addAll(allyTurnEntities);
-           // world.getSystem(SelectedTargetSystem.class).reselectEntityAfterActionComplete();
         }
-
-        for (Entity e : currentTurnEntities) {
-            buffMapper.get(e).endTurn(); //Resets the turn for each entity
-            skillMapper.get(e).endTurn();
-            turnMapper.get(e).reset();
-        }
-
-
         battleState = STATE.NEXT_TURN;
-
         processingFlag = true;
 
 
@@ -181,11 +163,16 @@ public class TurnSystem extends EntitySystem implements Observer{
     @Override
     protected void processSystem() {
 
+        if(turn == PLAYER) return;
+
+        if(world.getSystem(ActionQueueSystem.class).isProcessing()) return;
+
         if(turn == INTENT){
 
             switch (battleState){
 
                 case NEXT_TURN:
+
                     if(world.getSystem(EnemyIntentUISystem.class).releaseAttack()){
                         battleState = STATE.WAITING;
                     } else {
@@ -212,10 +199,10 @@ public class TurnSystem extends EntitySystem implements Observer{
                 if (currentTurnEntities.size <= 0) { //Sets up New set of turn entities when current entiteis are finished
                     switch (turn) {
                         case ENEMY:
-                            setUp(ALLY);
+                            setUp(PLAYER);
                             enemyTurnObservable.notifyObservers(this);
                             break;
-                        case ALLY:
+                        case PLAYER:
                             setUp(ENEMY);
                             break;
                     }
@@ -223,7 +210,7 @@ public class TurnSystem extends EntitySystem implements Observer{
 
                 //If the next turn has an array size of zero, switch to the previous turn
                 if(currentTurnEntities.size <= 0){
-                    turn = turn == ENEMY ? ALLY : ENEMY;
+                    turn = turn == ENEMY ? PLAYER : ENEMY;
                     return;
                 }
 

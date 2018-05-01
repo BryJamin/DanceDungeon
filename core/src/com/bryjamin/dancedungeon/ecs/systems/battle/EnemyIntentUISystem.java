@@ -161,6 +161,8 @@ public class EnemyIntentUISystem extends EntitySystem implements Observer{
 
     public boolean releaseAttack(){
 
+        if(actionQueueSystem.isProcessing()) return true;
+
         if(this.getEntities().size() != 0){
             Entity e = this.getEntities().get(0);
             StoredSkillComponent storedSkillComponent = storedMapper.get(e);
