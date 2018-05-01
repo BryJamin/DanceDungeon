@@ -70,6 +70,7 @@ import com.bryjamin.dancedungeon.screens.strategy.MapScreen;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.observer.Observer;
+import com.bryjamin.dancedungeon.utils.options.PlayerSave;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 import com.bryjamin.dancedungeon.utils.ui.AreYouSureFrame;
@@ -134,7 +135,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
     //Battle State
     private Table tableForSkillButtons;
-    private Table skillInformationTable;
+    private Table skillDescriptionTable;
     private Table characterProfileTable;
     private Table objectivesTable;
     private Table rightSideContainer;
@@ -233,7 +234,14 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
         rightSideContainer.setWidth(Measure.units(35f));
         rightSideContainer.setHeight(Measure.units(27.5f));
         rightSideContainer.setPosition(stage.getWidth() - Measure.units(37.5f), Measure.units(22.5f));
+
+        moraleTable = new Table(uiSkin);
+        moraleTable.setBackground(NinePatches.getBorderNinePatch(atlas, Colors.AMOEBA_FAST_PURPLE));
+        moraleTable.setDebug(StageUIRenderingSystem.DEBUG);
+
         populateRightSideContainer();
+
+
 
         skillButtonButtonGroup.setMinCheckCount(0);
         skillButtonButtonGroup.setMaxCheckCount(1);
@@ -296,10 +304,9 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
         rightSideContainer.clear();
 
+        rightSideContainer.setDebug(StageUIRenderingSystem.DEBUG);
+
         //MORALE
-        moraleTable = new Table(uiSkin);
-        moraleTable.setBackground(NinePatches.getBorderNinePatch(atlas, Colors.AMOEBA_FAST_PURPLE));
-        moraleTable.setDebug(StageUIRenderingSystem.DEBUG);
         rightSideContainer.add(moraleTable).padBottom(Padding.MEDIUM).fill();
         rightSideContainer.row();
         populateMoraleTable();
@@ -326,7 +333,14 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
             }
         });
 
-        endTurn.addAction(new Action() {
+        endTurn.addAction(endTurnButtonAction());
+
+        rightSideContainer.add(endTurn).width(Measure.units(20f)).height(Measure.units(7.5f)).expandX();
+    }
+
+
+    private Action endTurnButtonAction(){
+        return new Action() {
             @Override
             public boolean act(float delta) {
                 if (actionQueueSystem.isProcessing() || !turnSystem.isTurn(TurnSystem.TURN.ALLY)) {
@@ -336,18 +350,16 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
                 }
                 return false;
             }
-        });
-
-        rightSideContainer.add(endTurn).width(Measure.units(20f)).height(Measure.units(7.5f)).expandX();
+        };
     }
 
 
     private void populateMoraleTable(){
 
-        moraleTable.clearChildren();
+        moraleTable.clear();
         Label morale = new Label(String.format(Locale.ENGLISH,"Morale: %d/%d", playerPartyManagementSystem.getPartyDetails().getMorale(), PartyDetails.MAX_MORALE), uiSkin);
         morale.setAlignment(Align.center);
-        moraleTable.add(morale).width(moraleTable.getWidth()).align(Align.center);
+        moraleTable.add(morale).fill().align(Align.center);
 
 
     }
@@ -364,13 +376,19 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
         objectivesTable.row();
         objectivesTable.add(new Label(battleEvent.getPrimaryObjective().getDescription(), uiSkin)).padBottom(Padding.SMALL);;
         objectivesTable.row();
-        objectivesTable.add(new Label(TextResource.BATTLE_BONUS, uiSkin)).padBottom(Padding.SMALL);;
 
-        for(AbstractObjective o : battleEvent.getBonusObjective()){
-            objectivesTable.row();
-            objectivesTable.add(new Label(o.getDescription(), uiSkin, Fonts.SMALL_FONT_STYLE_NAME,
-                    o.isFailed(world) ? new Color(Color.GRAY) : new Color(Color.WHITE)
-            )).padBottom(Padding.SMALL);;
+        if(battleEvent.getBonusObjective().length > 0) {
+            objectivesTable.add(new Label(TextResource.BATTLE_BONUS, uiSkin)).padBottom(Padding.SMALL);
+            ;
+
+            for (AbstractObjective o : battleEvent.getBonusObjective()) {
+                objectivesTable.row();
+                objectivesTable.add(new Label(o.getDescription(), uiSkin, Fonts.SMALL_FONT_STYLE_NAME,
+                        o.isFailed(world) ? new Color(Color.GRAY) : new Color(Color.WHITE)
+                )).padBottom(Padding.SMALL);
+                ;
+            }
+
         }
     }
 
@@ -404,15 +422,16 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
                 bottomContainer.add(characterProfileTable).width(Measure.units(20f)).height(BOTTOM_TABLE_HEIGHT).padRight(Padding.MEDIUM).expandX().fillX();
 
                 //Table for Skill buttons.
+
                 bottomContainer.add(tableForSkillButtons).width(Measure.units(22.5f)).height(BOTTOM_TABLE_HEIGHT).padRight(Padding.MEDIUM).expandX();
 
 
                 //Table used to show Skill Information. Is hidden until a skill is pressed.
-                skillInformationTable = new Table(uiSkin);
-                applyNinePathToTable(skillInformationTable);
-                skillInformationTable.setDebug(StageUIRenderingSystem.DEBUG);
-                skillInformationTable.setVisible(false);
-                bottomContainer.add(skillInformationTable).width(Measure.units(45f)).height(BOTTOM_TABLE_HEIGHT).expandY();
+                skillDescriptionTable = new Table(uiSkin);
+                applyNinePathToTable(skillDescriptionTable);
+                skillDescriptionTable.setDebug(StageUIRenderingSystem.DEBUG);
+                skillDescriptionTable.setVisible(false);
+                bottomContainer.add(skillDescriptionTable).width(Measure.units(45f)).height(BOTTOM_TABLE_HEIGHT).expandY();
 
 
                 break;
@@ -480,6 +499,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
         UnitData unitData = e.getComponent(UnitComponent.class).getUnitData();
         bottomContainer.setVisible(true);
+        tableForSkillButtons.setVisible(true);
 
         Label name = new Label(unitData.name, uiSkin);
 
@@ -513,7 +533,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
                 characterProfileTable.add(name).height(Measure.units(5f)).center().expandX();
                 characterProfileTable.row();
                 characterProfileTable.add(new Image(new TextureRegionDrawable(atlas.findRegion(unitData.icon)))).size(PROFILE_PICTURE_SIZE).expandY();
-                skillInformationTable.setVisible(true);
+                skillDescriptionTable.setVisible(true);
                 populateSkillInformationTableForEnemies(e);
                 break;
 
@@ -528,11 +548,17 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
     }
 
 
+    /**
+     * When An enemy is clicked The Skill Button And Description TABLE Are Automatically Shown.
+     * @param enemy
+     */
     private void populateSkillInformationTableForEnemies(Entity enemy){
 
+        tableForSkillButtons.clear();
+
         if(!storedm.has(enemy)){
-            skillInformationTable.clear();
-            skillInformationTable.add(new Label(TextResource.BATTLE_NO_ENEMY_ATTACK, uiSkin, Fonts.LABEL_STYLE_SMALL_FONT));
+            skillDescriptionTable.clear();
+            skillDescriptionTable.add(new Label(TextResource.BATTLE_NO_ENEMY_ATTACK, uiSkin, Fonts.LABEL_STYLE_SMALL_FONT));
             tableForSkillButtons.setVisible(false);
         } else {
 
@@ -565,23 +591,31 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
     }
 
 
+    /**
+     * This is called when a player presses A Skill In The Skill Button Table.
+     *
+     * It sets this Table To Visible and displays The Skill's name and description
+     *
+     * @param player - Player Entity
+     * @param skill - Skill of Skill Button Pressed
+     */
     private void updateSkillText(Entity player, Skill skill) {
 
-        skillInformationTable.setVisible(true);
-        skillInformationTable.clear();
-        skillInformationTable.setDebug(StageUIRenderingSystem.DEBUG);
+        skillDescriptionTable.clear();
+        skillDescriptionTable.setVisible(true);
+        skillDescriptionTable.setDebug(StageUIRenderingSystem.DEBUG);
 
         Label skillName = new Label(skill.getName(), uiSkin);
-        skillInformationTable.align(Align.top);
-        skillInformationTable.add(skillName).height(Measure.units(5f)).center().expandX().colspan(3);;
-        skillInformationTable.row();
+        skillDescriptionTable.align(Align.top);
+        skillDescriptionTable.add(skillName).height(Measure.units(5f)).center().expandX().colspan(3);;
+        skillDescriptionTable.row();
 
         description = new Label(skill.getDescription(world, player), uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
         description.setWrap(true);
         description.setText(skill.getDescription(world, player));
         description.setAlignment(Align.center);
 
-        skillInformationTable.add(description).width(skillInformationTable.getWidth()).expandY().expandX();
+        skillDescriptionTable.add(description).width(skillDescriptionTable.getWidth()).expandY().expandX();
 
     }
 
@@ -638,8 +672,8 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
                     createSkillTargeting(player,
                             skill);
                 } else { //Remove skill targets and return to showing movement targets
-                    skillInformationTable.clear();
-                    skillInformationTable.setVisible(false);
+                    skillDescriptionTable.clear();
+                    skillDescriptionTable.setVisible(false);
                     clearTargetingUI();
                     createMovementTiles(player);
                 }
@@ -840,78 +874,52 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
         tutorialInformationWindow.align(Align.center);
 
 
+        System.out.println(tutorialState);
 
         switch (tutorialState){
 
 
             case BANNER:
 
-                Table t = moraleTable;
+                endTurn.setVisible(false); //Hide End Turn Button Until The appropriate part of the tutorials
+                endTurn.getActions().clear();
+
                 Vector2 pos = moraleTable.localToStageCoordinates(new Vector2());
-                centerRect = new Rectangle(pos.x, pos.y, t.getWidth(), t.getHeight());
+                centerRect = new Rectangle(pos.x, pos.y, moraleTable.getWidth(), moraleTable.getHeight());
 
-                center = centerRect.getCenter(new Vector2());
+                width = Measure.units(35f);
+                height = Measure.units(27.5f);
 
-                tutorialInformationWindow.setVisible(true);
-                tutorialInformationWindow.setHeight(Measure.units(25f));
-                tutorialInformationWindow.setWidth(Measure.units(40));
+                buildDefaultTutorialWindow(tutorialInformationWindow,
+                        centerRect,
+                        width,
+                        height,
+                        0,
+                        -Measure.units(15f),
+                        TextResource.TUTORIAL_MORALE_TITLE,
+                        TextResource.TUTORIAL_MORALE_TEXT_1,
+                        TextResource.TUTORIAL_MORALE_TEXT_2
+                );
 
-                tutorialInformationWindow.setPosition( CenterMath.centerOnPositionX(tutorialInformationWindow.getWidth(), center.x),
-                        CenterMath.centerOnPositionY(tutorialInformationWindow.getHeight(), center.y) - Measure.units(15f));
-
-                float labelWidth = Measure.units(35f);
-
-                Label morale = new Label("Morale", uiSkin);
-
-                tutorialInformationWindow.add(morale).width(labelWidth).pad(Padding.SMALL);
-                tutorialInformationWindow.row();
-
-                Label l = new Label("This is Your Heroes' Morale. If This Hits Zero. The Game is Over!", uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
-                l.setWrap(true);
-                Label line2 = new Label("Morale is Lost When Allied Forts are Damaged. Or If One of Your Heroes 'Faint'", uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
-                line2.setWrap(true);
-
-                tutorialInformationWindow.add(l).width(labelWidth).pad(Padding.SMALL);
-                tutorialInformationWindow.row();
-                tutorialInformationWindow.add(line2).width(labelWidth).pad(Padding.SMALL);
                 break;
 
 
             case ALLIED_STRUCTURE:
 
+                width = Measure.units(35f);
+                height = Measure.units(20f);
 
-                centerRect = rectangleToCenterOn;
+                buildDefaultTutorialWindow(tutorialInformationWindow,
+                        rectangleToCenterOn,
+                        width,
+                        height,
+                        0,
+                        -Measure.units(15f),
+                        TextResource.TUTORIAL_ALLIED_STRUCTURE_TITLE,
+                        TextResource.TUTORIAL_ALLIED_STRUCTURE_TEXT_1,
+                        TextResource.TUTORIAL_ALLIED_STRUCTURE_TEXT_2
+                );
 
-                tutorialInformationWindow.setVisible(true);
-                tutorialInformationWindow.setHeight(Measure.units(30f));
-                tutorialInformationWindow.setWidth(Measure.units(30f));
-
-                tutorialInformationWindow.setPosition(centerRect.x + Measure.units(10f), CenterMath.centerOnPositionY(tutorialInformationWindow.getHeight(), centerRect.y));
-
-                center = centerRect.getCenter(new Vector2());
-
-                tutorialInformationWindow.setVisible(true);
-                tutorialInformationWindow.setHeight(Measure.units(25f));
-                tutorialInformationWindow.setWidth(Measure.units(40));
-
-                tutorialInformationWindow.setPosition( CenterMath.centerOnPositionX(tutorialInformationWindow.getWidth(), center.x),
-                        CenterMath.centerOnPositionY(tutorialInformationWindow.getHeight(), center.y) - Measure.units(15f));
-
-                float aSWidth = Measure.units(35f);
-
-                Label aS = new Label("Allied Structure", uiSkin);
-
-                tutorialInformationWindow.add(aS).width(aSWidth).pad(Padding.SMALL);
-                tutorialInformationWindow.row();
-
-                Label aSl = new Label("These are Allied Structures", uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
-                aSl.setWrap(true);
-                Label aSline2 = new Label("If They Take Damage You Lose Morale!", uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
-                aSline2.setWrap(true);
-
-                tutorialInformationWindow.add(aSl).width(aSWidth).pad(Padding.SMALL);
-                tutorialInformationWindow.row();
-                tutorialInformationWindow.add(aSline2).width(aSWidth).pad(Padding.SMALL);
 
                 break;
 
@@ -924,7 +932,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
                 width = Measure.units(35f);
 
                 tutorialInformationWindow.setVisible(true);
-                //tutorialInformationWindow.setHeight(Measure.units(30f));
+                tutorialInformationWindow.setHeight(Measure.units(35f));
                 tutorialInformationWindow.setWidth(width);
                 tutorialInformationWindow.setPosition(centerRect.x + Measure.units(10f), CenterMath.centerOnPositionY(tutorialInformationWindow.getHeight(), centerRect.y));
 
@@ -958,7 +966,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
                 width = Measure.units(35f);
 
                 tutorialInformationWindow.setVisible(true);
-                //tutorialInformationWindow.setHeight(Measure.units(30f));
+                tutorialInformationWindow.setHeight(Measure.units(25f));
                 tutorialInformationWindow.setWidth(width);
                 tutorialInformationWindow.setPosition(centerRect.x + Measure.units(10f), CenterMath.centerOnPositionY(tutorialInformationWindow.getHeight(), centerRect.y));
 
@@ -1046,12 +1054,14 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
             case PUSHING:
 
+                endTurn.addAction(endTurnButtonAction());
+
                 center = rectangleToCenterOn.getCenter(new Vector2());
 
-                width = Measure.units(35f);
+                width = Measure.units(40);
 
                 tutorialInformationWindow.setVisible(true);
-                //tutorialInformationWindow.setHeight(Measure.units(30f));
+                tutorialInformationWindow.setHeight(Measure.units(30f));
                 tutorialInformationWindow.setWidth(width);
                 tutorialInformationWindow.setPosition(
                         CenterMath.centerOnPositionX(tutorialInformationWindow.getWidth(), center.x) + Measure.units(22.5f),
@@ -1080,10 +1090,12 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
                 center = rectangleToCenterOn.getCenter(new Vector2());
 
                 width = Measure.units(35f);
+                height = Measure.units(35f);
 
                 tutorialInformationWindow.setVisible(true);
                 //tutorialInformationWindow.setHeight(Measure.units(30f));
                 tutorialInformationWindow.setWidth(width);
+                tutorialInformationWindow.setHeight(height);
                 tutorialInformationWindow.setPosition(
                         CenterMath.centerOnPositionX(tutorialInformationWindow.getWidth(), center.x) + Measure.units(25f),
                         CenterMath.centerOnPositionY(tutorialInformationWindow.getHeight(), center.y));
@@ -1110,33 +1122,86 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
             case THROWN_PLAYER_ARRIVES:
 
-                center = rectangleToCenterOn.getCenter(new Vector2());
-
                 width = Measure.units(35f);
+                height = Measure.units(30f);
+
+                buildDefaultTutorialWindow(tutorialInformationWindow,
+                        rectangleToCenterOn,
+                        width,
+                        height,
+                        Measure.units(25f),
+                        0,
+                        TextResource.TUTORIAL_THROWN_ATTACK,
+                        TextResource.TUTORIAL_THROWN_ATTACK_TEXT_1,
+                        TextResource.TUTORIAL_THROWN_ATTACK_TEXT_2
+                );
+
+                break;
+
+
+            case OBJECTIVES:
+
+                pos = objectivesTable.localToStageCoordinates(new Vector2(0, 0));
+
+                width = Measure.units(55f);
+                height = Measure.units(20f);
+
+                buildDefaultTutorialWindow(tutorialInformationWindow,
+                        new Rectangle(pos.x, pos.y, objectivesTable.getWidth(), objectivesTable.getHeight()),
+                        width,
+                        height,
+                        - Measure.units(47.5f),
+                        0,
+                        TextResource.TUTORIAL_OBJECTIVES_TITLE,
+                        TextResource.TUTORIAL_OBJECTIVES_TEXT_1,
+                        TextResource.TUTORIAL_OBJECTIVES_TEXT_2
+                        );
+
+                break;
+
+
+            case END:
+
+
+                tutorialInformationWindow.reset();
+
+                width = Measure.units(55f);
+                height = Measure.units(20f);
 
                 tutorialInformationWindow.setVisible(true);
                 tutorialInformationWindow.setWidth(width);
-                tutorialInformationWindow.setPosition(
-                        CenterMath.centerOnPositionX(tutorialInformationWindow.getWidth(), center.x) + Measure.units(25f),
-                        CenterMath.centerOnPositionY(tutorialInformationWindow.getHeight(), center.y));
+                tutorialInformationWindow.align(Align.top);
+                tutorialInformationWindow.setHeight(height);
+                tutorialInformationWindow.setPosition(CenterMath.centerOnPositionX(width, stage.getWidth() / 2),
+                        CenterMath.centerOnPositionY(height, stage.getHeight() / 2));
 
                 width = width - Measure.units(2.5f);
 
-                title = new Label(TextResource.TUTORIAL_THROWN_ATTACK, uiSkin);
+                title = new Label(TextResource.TUTORIAL_END_TITLE, uiSkin);
 
-                tutorialInformationWindow.add(title).width(width).pad(Padding.SMALL);
+                tutorialInformationWindow.add(title).width(width).padBottom(Padding.SMALL);
                 tutorialInformationWindow.row();
 
-                text1 = new Label(TextResource.TUTORIAL_THROWN_ATTACK_TEXT_1, uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
+                text1 = new Label(TextResource.TUTORIAL_END_TEXT_1, uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
                 text1.setWrap(true);
-                text2 = new Label(TextResource.TUTORIAL_THROWN_ATTACK_TEXT_2, uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
+                text2 = new Label(TextResource.TUTORIAL_END_TEXT_2, uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
                 text2.setWrap(true);
-
                 tutorialInformationWindow.add(text1).width(width).padBottom(Padding.SMALL);
                 tutorialInformationWindow.row();
                 tutorialInformationWindow.add(text2).width(width).padBottom(Padding.SMALL);
 
 
+                tutorialInformationWindow.addListener(new ClickListener(){
+
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        Screen menu = ((BattleScreen) game.getScreen()).getPreviousScreen();
+                        game.getScreen().dispose();
+                        game.setScreen(menu);
+                        PlayerSave.turnOffFirstTimePlayer();
+                    }
+
+                });
 
         }
 
@@ -1144,10 +1209,33 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
 
 
+    }
+
+    private void buildDefaultTutorialWindow(Table table, Rectangle toCenterOn, float width, float height, float offsetX, float offsetY, String title, String... text){
+
+        Vector2 center = toCenterOn.getCenter(new Vector2());
+
+        table.setVisible(true);
+        table.setWidth(width);
+        table.setHeight(height);
+        table.align(Align.top);
+        table.setHeight(height);
+        table.setPosition(CenterMath.centerOnPositionX(width, center.x) + offsetX, CenterMath.centerOnPositionY(height, center.y + offsetY));
 
 
+        Label labelTitle = new Label(title, uiSkin);
 
+        width = width - Measure.units(2.5f);
 
+        table.add(labelTitle).width(width).padBottom(Padding.SMALL).padTop(Padding.SMALL);
+        table.row();
+
+        for(String s : text){
+            Label textLabel = new Label(s, uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
+            textLabel.setWrap(true);
+            table.add(textLabel).width(width).padBottom(Padding.SMALL);
+            table.row();
+        }
 
     }
 

@@ -5,14 +5,12 @@ import com.badlogic.gdx.Preferences;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
 
+import static com.bryjamin.dancedungeon.utils.options.DevOptions.DEV_PREFS_KEY;
+
 public class PlayerSave {
+
     public final static String PLAYER_SAVE_PREFS_KEY = "player";
-
-
     private final static String FIRST_TIME_PLAYER = "First_Time_Tutorial_Prompt";
-
-    public final static String UTILITY_SCORE_DEBUG = "score_debug";
-    public final static String PARTY_DATA = "partyData";
 
     public static QuickSave.SavedData savedData;
 
@@ -23,43 +21,23 @@ public class PlayerSave {
     }
 
 
-
-
-    public static void toggleUtilityInfo(){
+    public static void toggleFirstTimePlayer(){
         Preferences preferences = Gdx.app.getPreferences(PLAYER_SAVE_PREFS_KEY);
-        preferences.putBoolean(UTILITY_SCORE_DEBUG, !preferences.getBoolean(UTILITY_SCORE_DEBUG, true));
+        preferences.putBoolean(FIRST_TIME_PLAYER, !preferences.getBoolean(FIRST_TIME_PLAYER, true));
         preferences.flush();
     }
 
 
-    public static boolean getUtilityScoreSetting(){
+    public void getFirstTimePlayer(){
         Preferences preferences = Gdx.app.getPreferences(PLAYER_SAVE_PREFS_KEY);
-        return preferences.getBoolean(UTILITY_SCORE_DEBUG, true);
+        preferences.putBoolean(FIRST_TIME_PLAYER, !preferences.getBoolean(FIRST_TIME_PLAYER, true));
+        preferences.flush();
     }
 
-
-    public static QuickSave.SavedData loadSave(){
-        return savedData;
-    }
-
-
-    public static class SavedData {
-
-        public SavedData(GameMap gameMap, PartyDetails partyDetails) {
-            this.gameMap = gameMap;
-            this.partyDetails = partyDetails;
-        }
-
-        GameMap gameMap;
-        PartyDetails partyDetails;
-
-        public GameMap getGameMap() {
-            return gameMap;
-        }
-
-        public PartyDetails getPartyDetails() {
-            return partyDetails;
-        }
+    public static void turnOffFirstTimePlayer(){
+        Preferences preferences = Gdx.app.getPreferences(PLAYER_SAVE_PREFS_KEY);
+        preferences.putBoolean(FIRST_TIME_PLAYER, false);
+        preferences.flush();
     }
 
 

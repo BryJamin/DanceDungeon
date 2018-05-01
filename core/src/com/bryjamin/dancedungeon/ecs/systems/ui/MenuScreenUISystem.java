@@ -28,6 +28,7 @@ import com.bryjamin.dancedungeon.screens.strategy.MapScreen;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.options.DevOptions;
+import com.bryjamin.dancedungeon.utils.options.PlayerSave;
 import com.bryjamin.dancedungeon.utils.options.QuickSave;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
@@ -203,6 +204,24 @@ public class MenuScreenUISystem extends BaseSystem {
                     }
                 });
 
+
+                System.out.println(PlayerSave.isFirstTimePlayer());
+
+                text = PlayerSave.isFirstTimePlayer() ?
+                        TextResource.SCREEN_MENU_TUTORIAL_ON : TextResource.SCREEN_MENU_TUTORIAL_OFF;
+
+                TextButton toggleTutorial = new TextButton(text, uiSkin);
+                toggleTutorial.addListener(new ClickListener() {
+
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        PlayerSave.toggleFirstTimePlayer();
+                        populateMiddleContainer();
+                    }
+                });
+
+
+
                 TextButton back = new TextButton(TextResource.SCREEN_CHARACTER_BACK, uiSkin);
                 back.addListener(new ClickListener() {
 
@@ -214,6 +233,8 @@ public class MenuScreenUISystem extends BaseSystem {
                 });
 
                 startButtonContainer.add(toggleScore).padBottom(Padding.MEDIUM);;
+                startButtonContainer.row();
+                startButtonContainer.add(toggleTutorial).padBottom(Padding.MEDIUM);;
                 startButtonContainer.row();
                 startButtonContainer.add(back);
 

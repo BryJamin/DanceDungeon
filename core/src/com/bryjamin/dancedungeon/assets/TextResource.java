@@ -37,6 +37,9 @@ public class TextResource {
     public static final String SCREEN_MENU_SHOW_MOVEMENT_SCORE_ON = "(DEV) Show Movement Score: ON";
     public static final String SCREEN_MENU_SHOW_MOVEMENT_SCORE_OFF = "(DEV) Show Movement Score: OFF";
 
+    public static final String SCREEN_MENU_TUTORIAL_ON = "(DEV) Tutorial: ON";
+    public static final String SCREEN_MENU_TUTORIAL_OFF = "(DEV) Tutorial: OFF";
+
 
     public static final String SCREEN_CHARACTER_START = "Start Expedition";
     public static final String SCREEN_CHARACTER_HEROES = "Change Heroes";
@@ -64,6 +67,15 @@ public class TextResource {
     public static final String SKILL_TYPE_THROWN = "Thrown";
 
 
+    public static String TUTORIAL_MORALE_TITLE = "Morale";
+    public static String TUTORIAL_MORALE_TEXT_1 = "This is Your Heroes' Morale. If This Hits Zero. The Game is Over!";
+    public static String TUTORIAL_MORALE_TEXT_2 = "Morale is Lost When Allied Forts are Damaged. Or If One of Your Heroes 'Faint'";
+
+    public static String TUTORIAL_ALLIED_STRUCTURE_TITLE = "Allied Structure";
+    public static String TUTORIAL_ALLIED_STRUCTURE_TEXT_1 = "These are Allied Structures";
+    public static String TUTORIAL_ALLIED_STRUCTURE_TEXT_2 = "If They Take Damage Your Heroes Lose Morale!";
+
+
     public static String TUTORIAL_PUSHING_TITLE = "Pushing";
     public static String TUTORIAL_PUSHING_TEXT_1 = "Pushing Enemies Can Cause Their Targets To Change Before The Next Turn";
     public static String TUTORIAL_PUSHING_TEXT_2 = "Pushing Enemies Into Walls Or Other Enemies Can Deal Extra Damage";
@@ -79,5 +91,14 @@ public class TextResource {
     public static String TUTORIAL_THROWN_ATTACK_TEXT_1 = "This Hero Has A Thrown Attack";
     public static String TUTORIAL_THROWN_ATTACK_TEXT_2 = "Thrown Attacks Can Travel OVER Objects But Can't Target ADJACENT Tiles";
 
+
+    public static String TUTORIAL_OBJECTIVES_TITLE = "Objectives";
+    public static String TUTORIAL_OBJECTIVES_TEXT_1 = "You Must Complete The Primary Objective To Win A Battle";
+    public static String TUTORIAL_OBJECTIVES_TEXT_2 = "Bonus Objectives Award Extra Rewards";
+
+
+    public static String TUTORIAL_END_TITLE = "Combat Training Complete";
+    public static String TUTORIAL_END_TEXT_1 = "You Will Now Be Returned To The Character Selection Screen";
+    public static String TUTORIAL_END_TEXT_2 = "Good Luck Out There";
 
 }

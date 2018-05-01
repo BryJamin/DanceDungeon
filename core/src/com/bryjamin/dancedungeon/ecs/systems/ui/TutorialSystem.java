@@ -101,12 +101,14 @@ public class TutorialSystem extends EntitySystem implements Observer{
 
     private Coordinates PLAYER_FIRST_MOVE_FINAL_COORDINATES = new Coordinates(3, 4);
     private Coordinates MELEE_PLAYER_START_COORDINATES = new Coordinates(0, 4);
+    private Coordinates THROWN_PLAYER_START_COORDINATES = new Coordinates(0, 2);
 
 
     private Coordinates RANGED_PLAYER_COORDINATES = new Coordinates(3, 4);
 
     private Coordinates MELEE_ENEMY_COORDINATES = new Coordinates(6, 2);
     private Coordinates MELEE_ENEMY_FIRST_MOVE_COORDINATES = new Coordinates(4, 1);
+    private Coordinates MELEE_ENEMY_SECOND_MOVE_COORDINATES = new Coordinates(4, 2);
 
     private Coordinates THIRD_ENEMY_FIRST_MOVE_COORDINATES = new Coordinates(5, 2);
 
@@ -117,10 +119,8 @@ public class TutorialSystem extends EntitySystem implements Observer{
 
     private Coordinates MIDDLE_ALLIED_STRUCTURE_COORDINATES = new Coordinates(4, 2);
 
-
-
     private Coordinates TUTORIAL_END_SPAWN_ONE = new Coordinates(6, 5);
-    private Coordinates TUTORIAL_END_SPAWN_TWO = new Coordinates(7, 4);
+    private Coordinates TUTORIAL_END_SPAWN_TWO = new Coordinates(7, 2);
     private Coordinates TUTORIAL_END_SPAWN_THREE = new Coordinates(7, 2);
 
     @Override
@@ -288,6 +288,7 @@ public class TutorialSystem extends EntitySystem implements Observer{
 
                     meleeEnemy = UnitLibrary.getEnemyUnit(world, UnitLibrary.MELEE_BLOB);
                     meleeEnemy.edit().remove(UtilityAiComponent.class);
+                    meleeEnemy.edit().add(new TutorialAIComponent());
                     meleeEnemy.getComponent(CoordinateComponent.class).coordinates.set(MELEE_ENEMY_COORDINATES);
                     createMovementActionForEnemyEntity(meleeEnemy, MELEE_ENEMY_FIRST_MOVE_COORDINATES);
                     createAttackActionForEnemyEntity(meleeEnemy, SkillLibrary.getSkill(SkillLibrary.ENEMY_SKILL_SWIPE), new Coordinates(MIDDLE_ALLIED_STRUCTURE_COORDINATES));
@@ -303,45 +304,63 @@ public class TutorialSystem extends EntitySystem implements Observer{
 
                 case THROWN_PLAYER_ARRIVES:
 
+
                     turnSystem.setUp(TurnSystem.TURN.ENEMY);
 
                     for(Entity e : this.getEntities()){
                         enemyIntentUISystem.releaseAttack(e);
                     }
 
+
                     tutorialEnemy3 = UnitLibrary.getEnemyUnit(world, UnitLibrary.MELEE_BLOB);
                     tutorialEnemy3.edit().remove(UtilityAiComponent.class);
+                    tutorialEnemy3.edit().add(new TutorialAIComponent());
                     tutorialEnemy3.getComponent(CoordinateComponent.class).coordinates.set(MELEE_ENEMY_COORDINATES);
 
                     createMovementActionForEnemyEntity(tutorialEnemy3, THIRD_ENEMY_FIRST_MOVE_COORDINATES);
                     createAttackActionForEnemyEntity(tutorialEnemy3, SkillLibrary.getSkill(SkillLibrary.ENEMY_SKILL_SWIPE), new Coordinates(MIDDLE_ALLIED_STRUCTURE_COORDINATES));
 
 
-                    createMovementActionForEnemyEntity(meleeEnemy, MELEE_ENEMY_FIRST_MOVE_COORDINATES);
-                    createAttackActionForEnemyEntity(meleeEnemy, SkillLibrary.getSkill(SkillLibrary.ENEMY_SKILL_SWIPE), new Coordinates(MIDDLE_ALLIED_STRUCTURE_COORDINATES));
+
+                    tutorialEnemy3 = UnitLibrary.getEnemyUnit(world, UnitLibrary.RANGED_BLASTER);
+                    tutorialEnemy3.edit().remove(UtilityAiComponent.class);
+                    tutorialEnemy3.edit().add(new TutorialAIComponent());
+                    tutorialEnemy3.getComponent(CoordinateComponent.class).coordinates.set(7, 4);
+
+                    createMovementActionForEnemyEntity(tutorialEnemy3, new Coordinates(5, 3));
+                    //createAttackActionForEnemyEntity(tutorialEnemy3, SkillLibrary.getSkill(SkillLibrary.ENEMY_SKILL_BLAST), new Coordinates(2, 5));
+
+
+
+                    createMovementActionForEnemyEntity(meleeEnemy, MELEE_ENEMY_SECOND_MOVE_COORDINATES);
+                    //createAttackActionForEnemyEntity(meleeEnemy, SkillLibrary.getSkill(SkillLibrary.ENEMY_SKILL_SWIPE), new Coordinates(MIDDLE_ALLIED_STRUCTURE_COORDINATES));
+
 
                     thrownPlayer = UnitLibrary.getPlayerUnit(world, UnitLibrary.CHARACTERS_FIRAS);
+                    thrownPlayer.getComponent(CoordinateComponent.class).coordinates.set(new Coordinates(THROWN_PLAYER_START_COORDINATES));
                     createTipWorldAction(thrownPlayer.getComponent(CenteringBoundComponent.class).bound, TutorialState.THROWN_PLAYER_ARRIVES);
 
                     tutorialState = TutorialState.OBJECTIVES;
+                    createTutorialStateTransferAction(TutorialState.OBJECTIVES);
 
                     break;
 
                 case OBJECTIVES:
 
+                    for(Entity e : this.getEntities()){
+                        e.edit().add(new UtilityAiComponent());
+                    }
+
 
                     Entity e = UnitLibrary.getEnemyUnit(world, UnitLibrary.MELEE_BLOB);
-                    e.getComponent(CoordinateComponent.class).coordinates = TUTORIAL_END_SPAWN_ONE;
+                    e.getComponent(CoordinateComponent.class).coordinates = new Coordinates(TUTORIAL_END_SPAWN_ONE);
                     e = UnitLibrary.getEnemyUnit(world, UnitLibrary.RANGED_BLASTER);
-                    e.getComponent(CoordinateComponent.class).coordinates = TUTORIAL_END_SPAWN_TWO;
-                    e = UnitLibrary.getEnemyUnit(world, UnitLibrary.RANGED_BLASTER);
-                    e.getComponent(CoordinateComponent.class).coordinates = TUTORIAL_END_SPAWN_THREE;
-
-
+                    e.getComponent(CoordinateComponent.class).coordinates = new Coordinates(TUTORIAL_END_SPAWN_TWO);
 
                     createTipWorldAction(new Rectangle(), TutorialState.OBJECTIVES);
 
                     tutorialState = TutorialState.END;
+
 
 
 
@@ -393,7 +412,7 @@ public class TutorialSystem extends EntitySystem implements Observer{
     private void createTipWorldAction(final Rectangle r, final TutorialState tutorialState){
 
 
-        actionQueueSystem.pushLastAction(rangedEnemy, new WorldConditionalAction() {
+        actionQueueSystem.pushLastAction(world.createEntity(), new WorldConditionalAction() {
 
             Table t;
 
@@ -409,6 +428,31 @@ public class TutorialSystem extends EntitySystem implements Observer{
 
         });
 
+    }
+
+
+    private void createTutorialStateTransferAction(final TutorialState tutorialStateChange){
+
+
+        actionQueueSystem.pushLastAction(rangedEnemy, new WorldConditionalAction() {
+
+            @Override
+            public boolean condition(World world, Entity entity) {
+                return true;
+            }
+
+            @Override
+            public void performAction(World world, Entity entity) {
+                tutorialState = tutorialStateChange;
+            }
+
+        });
+
+    }
+
+
+    public TutorialState getTutorialState() {
+        return tutorialState;
     }
 
     private WorldConditionalAction endTurnButton(){

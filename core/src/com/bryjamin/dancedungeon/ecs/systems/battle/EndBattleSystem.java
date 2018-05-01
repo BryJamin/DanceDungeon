@@ -5,9 +5,12 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.artemis.utils.Bag;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
+import com.bryjamin.dancedungeon.ecs.systems.ui.TutorialSystem;
+import com.bryjamin.dancedungeon.factories.map.event.TutorialEvent;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.utils.observer.Observer;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
@@ -31,6 +34,7 @@ public class EndBattleSystem extends EntitySystem implements Observer {
 
     private PlayerPartyManagementSystem playerPartyManagementSystem;
     private BattleScreenUISystem battleScreenUISystem;
+
     private BattleWorldInputHandlerSystem battleWorldInputHandlerSystem;
     private TurnSystem turnSystem;
     private ActionQueueSystem actionQueueSystem;
@@ -146,8 +150,12 @@ public class EndBattleSystem extends EntitySystem implements Observer {
 
             actionQueueSystem.observable.removeObserver(this);
 
-            battleScreenUISystem.createVictoryRewards(currentEvent, partyDetails);
-            battleWorldInputHandlerSystem.setState(BattleWorldInputHandlerSystem.State.ONLY_STAGE);
+            if(currentEvent instanceof TutorialEvent){
+                battleScreenUISystem.createTutorialWindow(new Rectangle(), TutorialSystem.TutorialState.END);
+            } else {
+                battleScreenUISystem.createVictoryRewards(currentEvent, partyDetails);
+                battleWorldInputHandlerSystem.setState(BattleWorldInputHandlerSystem.State.ONLY_STAGE);
+            }
 
         }
 
