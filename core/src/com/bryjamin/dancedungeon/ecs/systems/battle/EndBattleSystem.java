@@ -17,7 +17,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
-import com.bryjamin.dancedungeon.ecs.systems.action.BattleWorldInputHandlerSystem;
+import com.bryjamin.dancedungeon.ecs.systems.action.BattleScreenInputSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
@@ -35,7 +35,7 @@ public class EndBattleSystem extends EntitySystem implements Observer {
     private PlayerPartyManagementSystem playerPartyManagementSystem;
     private BattleScreenUISystem battleScreenUISystem;
 
-    private BattleWorldInputHandlerSystem battleWorldInputHandlerSystem;
+    private BattleScreenInputSystem battleScreenInputSystem;
     private TurnSystem turnSystem;
     private ActionQueueSystem actionQueueSystem;
 
@@ -153,7 +153,7 @@ public class EndBattleSystem extends EntitySystem implements Observer {
             } else {
                 actionQueueSystem.observable.removeObserver(this);
                 battleScreenUISystem.createVictoryRewards(currentEvent, partyDetails);
-                battleWorldInputHandlerSystem.setState(BattleWorldInputHandlerSystem.State.ONLY_STAGE);
+                battleScreenInputSystem.restrictInputToStage();
             }
 
         }

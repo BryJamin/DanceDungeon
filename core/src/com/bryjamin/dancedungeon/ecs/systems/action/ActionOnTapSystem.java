@@ -9,6 +9,11 @@ import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 
 /**
  * Created by BB on 20/10/2017.
+ *
+ * System that used to check input on entities with the ActionOnTapComponent and HitboxComponent.
+ *
+ * Performs the stored action of the entity.
+ *
  */
 
 public class ActionOnTapSystem extends EntitySystem {

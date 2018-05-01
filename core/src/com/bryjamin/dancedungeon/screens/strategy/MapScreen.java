@@ -24,7 +24,6 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.ScaleTransformationSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdateBoundPositionsSystem;
 import com.bryjamin.dancedungeon.ecs.systems.input.MapInputSystem;
-import com.bryjamin.dancedungeon.ecs.systems.music.MusicSystem;
 import com.bryjamin.dancedungeon.ecs.systems.strategy.MapNodeSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.InformationBannerSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.MapScreenUISystem;
@@ -53,6 +52,7 @@ public class MapScreen extends AbstractScreen {
         this.partyDetails = partyDetails;
         this.gameMap = gameMap;
         createWorld();
+        game.musicSystem.changeMix(MusicFiles.MAP_MUSIC);
     }
 
 
@@ -64,7 +64,7 @@ public class MapScreen extends AbstractScreen {
                         //Initialization Systems
                         new MapNodeSystem(game, gameMap, partyDetails),
 
-                        new MusicSystem(game, MusicFiles.MAP_MUSIC),
+                        game.musicSystem,
                         new PlayerPartyManagementSystem(partyDetails),
 
                         new MapInputSystem(game, gameport, 0, gameMap.getWidth() + Measure.units(20f)),
@@ -121,6 +121,7 @@ public class MapScreen extends AbstractScreen {
         world.getSystem(InformationBannerSystem.class).updateInformation();
         gameport.getCamera().position.set(world.getSystem(MapNodeSystem.class).getCurrentMapNode().getPosition().x,
                 gameport.getCamera().position.y, 0); //Center camera on the current node.
+        game.musicSystem.changeMix(MusicFiles.MAP_MUSIC);
     }
 
 }

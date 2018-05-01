@@ -54,7 +54,7 @@ import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComp
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UITargetingComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
 import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
-import com.bryjamin.dancedungeon.ecs.systems.action.BattleWorldInputHandlerSystem;
+import com.bryjamin.dancedungeon.ecs.systems.action.BattleScreenInputSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionQueueSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BattleDeploymentSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
@@ -94,7 +94,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
     private TurnSystem turnSystem;
     private ActionQueueSystem actionQueueSystem;
     private BattleDeploymentSystem battleDeploymentSystem;
-    private BattleWorldInputHandlerSystem battleWorldInputHandlerSystem;
+    private BattleScreenInputSystem battleScreenInputSystem;
     private StageUIRenderingSystem stageUIRenderingSystem;
     private PlayerPartyManagementSystem playerPartyManagementSystem;
     private RenderingSystem renderingSystem;
@@ -295,9 +295,9 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
             @Override
             public boolean act(float delta) {
                 if(areYouSureContainer.isVisible()){
-                    battleWorldInputHandlerSystem.setState(BattleWorldInputHandlerSystem.State.ONLY_STAGE);
+                    battleScreenInputSystem.restrictInputToStage();
                 } else {
-                    battleWorldInputHandlerSystem.setState(BattleWorldInputHandlerSystem.State.DEPLOYMENT);
+                    battleScreenInputSystem.unRestrictInput();
                     return true;
                 }
                 return false;

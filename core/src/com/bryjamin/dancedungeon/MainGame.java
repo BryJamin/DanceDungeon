@@ -4,7 +4,6 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -15,7 +14,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.bryjamin.dancedungeon.assets.FileStrings;
 import com.bryjamin.dancedungeon.assets.Fonts;
-import com.bryjamin.dancedungeon.ecs.systems.music.MusicSystem;
+import com.bryjamin.dancedungeon.ecs.systems.audio.MusicSystem;
 import com.bryjamin.dancedungeon.factories.enemy.UnitLibrary;
 import com.bryjamin.dancedungeon.factories.spells.SkillLibrary;
 import com.bryjamin.dancedungeon.screens.LoadingScreen;
@@ -42,73 +41,7 @@ public class MainGame extends Game {
 
     public SpriteBatch batch;
     public AssetManager assetManager = new AssetManager();
-    public Music music = new Music() {
-        @Override
-        public void play() {
-
-        }
-
-        @Override
-        public void pause() {
-
-        }
-
-        @Override
-        public void stop() {
-
-        }
-
-        @Override
-        public boolean isPlaying() {
-            return false;
-        }
-
-        @Override
-        public void setLooping(boolean isLooping) {
-
-        }
-
-        @Override
-        public boolean isLooping() {
-            return false;
-        }
-
-        @Override
-        public void setVolume(float volume) {
-
-        }
-
-        @Override
-        public float getVolume() {
-            return 0;
-        }
-
-        @Override
-        public void setPan(float pan, float volume) {
-
-        }
-
-        @Override
-        public void setPosition(float position) {
-
-        }
-
-        @Override
-        public float getPosition() {
-            return 0;
-        }
-
-        @Override
-        public void dispose() {
-
-        }
-
-        @Override
-        public void setOnCompletionListener(OnCompletionListener listener) {
-
-        }
-    };
-
+    public MusicSystem musicSystem = new MusicSystem();
 
     @Override
     public void create () {

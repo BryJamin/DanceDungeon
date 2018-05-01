@@ -1,18 +1,17 @@
-package com.bryjamin.dancedungeon.ecs.systems.music;
+package com.bryjamin.dancedungeon.ecs.systems.audio;
 
 import com.artemis.BaseSystem;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
-import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.utils.options.Settings;
 import com.bryjamin.dancedungeon.utils.sound.Mix;
 /**
- * Music System plays music based on what level you are on.
+ * Music System plays music and manages Changing Music Tracks
  *
- * Requires both the room Transition system and the ChangeLevelSystem to work when the game is running
+ * Due to static resources not being advised when using Android, This system is passed throughout the game
  *
- * Is also used in the Main Menu to play the menu theme.
+ * Similar to the Assetmanager
+ *
  *
  */
 public class MusicSystem extends BaseSystem {
@@ -36,61 +35,53 @@ public class MusicSystem extends BaseSystem {
         PLAYING, PAUSED, WAITING
     }
 
-    private MusicState musicState = MusicState.WAITING;
-    private MusicState prePuaseState = MusicState.WAITING;
+    private MusicState musicState = MusicState.WAITING; //Current
+    private MusicState prePuaseState = MusicState.WAITING; //State prior to being paused
 
-    private enum FadeState {
-        FADE_OUT, FADE_IN, NORMAL
+    private enum VolumeState {
+        FADING_OUT, FADING_IN, NORMAL
     }
 
-    private FadeState fadeState = FadeState.FADE_IN;
+    private VolumeState volumeState = VolumeState.FADING_IN;
 
 
-    public MusicSystem(MainGame game){
+    @Override
+    protected void initialize() {
         MUSIC_ON = Settings.isMusicOn();
-        this.currentMusic = game.music;
-    }
-
-    public MusicSystem(MainGame game, Mix startingMix){
-        MUSIC_ON = Settings.isMusicOn();
-        this.currentMusic = game.music;
-        changeMix(startingMix);
     }
 
     @Override
     protected void processSystem() {
 
-        System.out.println(musicState);
-
         switch(musicState){
 
-            case WAITING:
+            case WAITING: //Waiting for the next track to be loaded.
                 if(upComingMix != null){
                     changeTrack(upComingMix);
                     musicState = MusicState.PLAYING;
-                    fadeState = FadeState.FADE_IN;
+                    volumeState = VolumeState.FADING_IN;
                     upComingMix = null;
                 }
                 break;
 
-            case PLAYING:
+            case PLAYING: //Changes the volumes of the music based on which BV
 
                 float volume;
 
-                switch (fadeState) {
+                switch (volumeState) {
 
-                    case FADE_IN:
+                    case FADING_IN:
 
                         volume = currentMusic.getVolume() + currentMix.getVolume() * rateOfVolumeDecrease
                                 >= currentMix.getVolume() ? currentMix.getVolume() : currentMusic.getVolume() + currentMix.getVolume() * rateOfVolumeDecrease;
 
                         currentMusic.setVolume(volume * MASTER_VOLUME);
 
-                        if(currentMusic.getVolume() == currentMix.getVolume() * MASTER_VOLUME) fadeState = FadeState.NORMAL;
+                        if(currentMusic.getVolume() == currentMix.getVolume() * MASTER_VOLUME) volumeState = VolumeState.NORMAL;
 
                         break;
 
-                    case FADE_OUT:
+                    case FADING_OUT:
 
                         volume = currentMusic.getVolume() - currentMix.getVolume() * rateOfVolumeDecrease
                                 <= 0 ? 0 : currentMusic.getVolume() - currentMix.getVolume() * rateOfVolumeDecrease;
@@ -108,8 +99,8 @@ public class MusicSystem extends BaseSystem {
 
                 }
 
-                if((fadeState == FadeState.NORMAL || fadeState == FadeState.FADE_IN) && upComingMix != null){
-                    fadeState = FadeState.FADE_OUT;
+                if((volumeState == VolumeState.NORMAL || volumeState == VolumeState.FADING_IN) && upComingMix != null){
+                    volumeState = VolumeState.FADING_OUT;
                 }
 
         }
@@ -130,7 +121,7 @@ public class MusicSystem extends BaseSystem {
     private void changeTrack(Mix mix){
 
         if(mix.equals(currentMix)) return;
-        
+
         if(currentMusic != null){
             currentMusic.stop();
             currentMusic.dispose();
@@ -159,8 +150,9 @@ public class MusicSystem extends BaseSystem {
     }
 
     public void fadeOutMusic(){
-        fadeState = FadeState.FADE_OUT;
+        volumeState = VolumeState.FADING_OUT;
     }
+
 
 
     public void muteMusic(){
@@ -171,6 +163,9 @@ public class MusicSystem extends BaseSystem {
     }
 
 
+    /**
+     * Pauses The Music When Called
+     */
     public void pauseMusic(){
         if(currentMusic != null){
             currentMusic.pause();

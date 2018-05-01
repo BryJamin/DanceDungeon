@@ -8,6 +8,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.bryjamin.dancedungeon.MainGame;
+import com.bryjamin.dancedungeon.assets.music.MusicFiles;
 import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BattleDeploymentSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.EnemyIntentUISystem;
@@ -20,7 +21,7 @@ import com.bryjamin.dancedungeon.ecs.systems.MoveToTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ParentChildSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.ActionOnTapSystem;
-import com.bryjamin.dancedungeon.ecs.systems.action.BattleWorldInputHandlerSystem;
+import com.bryjamin.dancedungeon.ecs.systems.action.BattleScreenInputSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.ConditionalActionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionQueueSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BlinkOnHitSystem;
@@ -42,7 +43,6 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.HealthBarSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.ScaleTransformationSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdateBoundPositionsSystem;
-import com.bryjamin.dancedungeon.ecs.systems.ui.InformationBannerSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.TutorialSystem;
 import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
@@ -75,6 +75,7 @@ public class BattleScreen extends AbstractScreen {
         this.battleEvent = battleEvent;
         this.isTutorial = isTutorial;
         createWorld();
+        game.musicSystem.changeMix(MusicFiles.BATTLE_MUSIC);
     }
 
     private void createWorld(){
@@ -89,7 +90,9 @@ public class BattleScreen extends AbstractScreen {
                         new TutorialSystem(isTutorial),
                         new BattleDeploymentSystem(battleEvent, isTutorial),
 
-                        new BattleWorldInputHandlerSystem(gameport),
+                        game.musicSystem,
+
+                        new BattleScreenInputSystem(gameport),
 
                         //new InformationBannerSystem(game, gameport, InformationBannerSystem.State.BATTLE_SCREEN),
                         new BattleScreenUISystem(UIStage, game),

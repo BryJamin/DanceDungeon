@@ -193,6 +193,10 @@ public class BattleDeploymentSystem extends EntitySystem {
         return processingFlag;
     }
 
+    public boolean deploymentComplete(){
+        return processingFlag;
+    }
+
     public UnitData getDeployingUnit() {
         return playerPartyManagementSystem.getPartyDetails().getParty()[count];
     }
