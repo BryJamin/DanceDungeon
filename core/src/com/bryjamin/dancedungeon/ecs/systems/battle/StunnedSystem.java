@@ -7,7 +7,7 @@ import com.artemis.EntitySystem;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.utils.observer.Observer;
-import com.bryjamin.dancedungeon.ecs.components.battle.StunnedComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.StunnedComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.StoredSkillComponent;
 
 /**
@@ -20,7 +20,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.ai.StoredSkillComponent;
 public class StunnedSystem extends EntitySystem implements Observer{
 
 
-    private EnemyIntentUISystem enemyIntentUISystem;
+    private DisplayEnemyIntentUISystem displayEnemyIntentUISystem;
     private TurnSystem turnSystem;
 
     ComponentMapper<UnitComponent> unitM;
@@ -43,7 +43,7 @@ public class StunnedSystem extends EntitySystem implements Observer{
 
         if(storedSkillM.has(e)){
             e.edit().remove(StoredSkillComponent.class);
-            enemyIntentUISystem.updateIntent();
+            displayEnemyIntentUISystem.updateIntent();
         }
 
     }

@@ -5,26 +5,19 @@ import com.bryjamin.dancedungeon.factories.map.MapNode;
 
 /**
  * Created by BB on 07/01/2018.
+ *
+ * Used Within the MapNode System to keep track of which Nodes are loaded when an Entity is tapped on.
  */
 
 public class MapNodeComponent extends Component {
 
-    private enum Type {
-        BATTLE, SHOP, BOSS
-    }
-
-    private Type type;
-
     private MapNode node;
-
-    public boolean active;
 
     public MapNodeComponent(){
 
     };
 
     public MapNodeComponent(MapNode node){
-        type = Type.BATTLE;
         this.node = node;
     }
 
@@ -32,7 +25,4 @@ public class MapNodeComponent extends Component {
         return node;
     }
 
-    public Type getType() {
-        return type;
-    }
 }

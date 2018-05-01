@@ -9,11 +9,11 @@ import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.AvailableActionsCompnent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.StunnedComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.UnPushableComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.StunnedComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.UnPushableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationMapComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationStateComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
@@ -172,7 +172,7 @@ public class Skill {
 
     public boolean canCast(World world, Entity entity) {
 
-        TurnComponent turnComponent = entity.getComponent(TurnComponent.class);
+        AvailableActionsCompnent availableActionsCompnent = entity.getComponent(AvailableActionsCompnent.class);
 
         switch (spellCoolDown) {
             case Limited:
@@ -186,19 +186,19 @@ public class Skill {
 
         switch (actionType) {
             case UsesMoveAction:
-                return turnComponent.movementActionAvailable;
+                return availableActionsCompnent.movementActionAvailable;
             case UsesAttackAction:
-                return turnComponent.attackActionAvailable;
+                return availableActionsCompnent.attackActionAvailable;
             case UsesMoveAndAttackAction:
-                return turnComponent.hasActions();
+                return availableActionsCompnent.hasActions();
         }
 
         return true;
     }
 
     public void cast(World world, Entity caster, Coordinates target) {
-        TurnComponent turnComponent = caster.getComponent(TurnComponent.class);
-        setTurnComponentActionBoolean(actionType, turnComponent);
+        AvailableActionsCompnent availableActionsCompnent = caster.getComponent(AvailableActionsCompnent.class);
+        setTurnComponentActionBoolean(actionType, availableActionsCompnent);
 
 
         switch (spellCoolDown) {
@@ -462,18 +462,18 @@ public class Skill {
         return sellPrice;
     }
 
-    private void setTurnComponentActionBoolean(ActionType actionType, TurnComponent turnComponent) {
+    private void setTurnComponentActionBoolean(ActionType actionType, AvailableActionsCompnent availableActionsCompnent) {
 
         switch (actionType) {
             case UsesMoveAction:
-                turnComponent.movementActionAvailable = false;
+                availableActionsCompnent.movementActionAvailable = false;
                 break;
             case UsesAttackAction:
-                turnComponent.attackActionAvailable = false;
+                availableActionsCompnent.attackActionAvailable = false;
                 break;
             case UsesMoveAndAttackAction:
-                turnComponent.movementActionAvailable = false;
-                turnComponent.attackActionAvailable = false;
+                availableActionsCompnent.movementActionAvailable = false;
+                availableActionsCompnent.attackActionAvailable = false;
                 break;
         }
 

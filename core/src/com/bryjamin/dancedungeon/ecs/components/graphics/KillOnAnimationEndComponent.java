@@ -4,6 +4,8 @@ import com.artemis.Component;
 
 /**
  * Created by BB on 26/01/2018.
+ *
+ * Component that is used To Kill An Entity Once it's animation has been completed. 
  */
 
 public class KillOnAnimationEndComponent extends Component {

@@ -44,11 +44,11 @@ import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.FollowPositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
-import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.AvailableActionsCompnent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.StoredSkillComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
-import com.bryjamin.dancedungeon.ecs.components.graphics.ScaleTransformationComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.GrowAndShrinkTransformationComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UITargetingComponent;
@@ -707,8 +707,8 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
      * @param e
      */
     private void createMovementTiles(Entity e) {
-        TurnComponent turnComponent = e.getComponent(TurnComponent.class);
-        if (turnComponent.movementActionAvailable) {
+        AvailableActionsCompnent availableActionsCompnent = e.getComponent(AvailableActionsCompnent.class);
+        if (availableActionsCompnent.movementActionAvailable) {
             new TargetingFactory().createMovementTiles(world, e, e.getComponent(UnitComponent.class).getUnitData().getMovementRange());
         }
     }
@@ -906,7 +906,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
         Entity recticle = world.createEntity();
         recticle.edit().add(new PositionComponent())
-                .add(new ScaleTransformationComponent(1.05f))
+                .add(new GrowAndShrinkTransformationComponent(1.05f))
                 .add(new UITargetingComponent())
                 .add(new FollowPositionComponent(entity.getComponent(PositionComponent.class).position,
                         CenterMath.offsetX(centeringBoundComponent.bound.width, width),

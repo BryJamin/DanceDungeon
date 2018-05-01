@@ -4,7 +4,7 @@ import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.systems.EntityProcessingSystem;
-import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.AvailableActionsCompnent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.SelectedEntityComponent;
 import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
@@ -23,7 +23,7 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
     private BattleScreenUISystem battleScreenUISystem;
     private TileSystem tileSystem;
     private ComponentMapper<PlayerControlledComponent> playerControlledM;
-    private ComponentMapper<TurnComponent> turnMapper;
+    private ComponentMapper<AvailableActionsCompnent> turnMapper;
     private boolean processingFlag = false;
 
     public SelectedTargetSystem() {
@@ -32,7 +32,7 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
 
     @Override
     protected void process(Entity e) {
-        if (!e.getComponent(TurnComponent.class).hasActions()) {
+        if (!e.getComponent(AvailableActionsCompnent.class).hasActions()) {
             world.getSystem(BattleScreenUISystem.class).resetBottomContainer();
             e.edit().remove(SelectedEntityComponent.class);
         }
@@ -85,7 +85,7 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
 
             if(turnMapper.has(selected)) {
 
-                //if (selected.getComponent(TurnComponent.class).hasActions()) {//TODO you can't select a character if it has no actions left
+                //if (selected.getComponent(AvailableActionsCompnent.class).hasActions()) {//TODO you can't select a character if it has no actions left
                     world.getSystem(TileSystem.class).getOccupiedMap().getKey(c, false).edit().add(new SelectedEntityComponent());
                 //}
                 return true;
@@ -105,7 +105,7 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
 
         //Can't select a character with no actions
         if (playerControlledM.has(playableCharacter)) {
-            if (!playableCharacter.getComponent(TurnComponent.class).hasActions()) return;
+            if (!playableCharacter.getComponent(AvailableActionsCompnent.class).hasActions()) return;
         }
 
 

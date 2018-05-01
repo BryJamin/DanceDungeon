@@ -4,9 +4,11 @@ import com.artemis.Component;
 
 /**
  * Created by BB on 21/01/2018.
+ *
+ * Used to create a repeating 'Grow' and 'Shrink' effect on an Entity's drawable.
  */
 
-public class ScaleTransformationComponent extends Component {
+public class GrowAndShrinkTransformationComponent extends Component {
 
     public float maxScaleX;
     public float maxScaleY;
@@ -21,19 +23,19 @@ public class ScaleTransformationComponent extends Component {
 
     public float time;
 
-    public ScaleTransformationComponent(){}
+    public GrowAndShrinkTransformationComponent(){}
 
-    public ScaleTransformationComponent(float scaleXY){
+    public GrowAndShrinkTransformationComponent(float scaleXY){
         this.maxScaleX = scaleXY;
         this.maxScaleY = scaleXY;
     }
 
-    public ScaleTransformationComponent(float maxScaleX, float maxScaleY){
+    public GrowAndShrinkTransformationComponent(float maxScaleX, float maxScaleY){
         this.maxScaleX = maxScaleX;
         this.maxScaleY = maxScaleY;
     }
 
-    public ScaleTransformationComponent(float duration, float maxScaleX, float maxScaleY){
+    public GrowAndShrinkTransformationComponent(float duration, float maxScaleX, float maxScaleY){
         this.duration = duration;
         this.maxScaleX = maxScaleX;
         this.maxScaleY = maxScaleY;

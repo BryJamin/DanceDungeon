@@ -19,7 +19,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.StoredSkillComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
-import com.bryjamin.dancedungeon.ecs.components.graphics.ScaleTransformationComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.GrowAndShrinkTransformationComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyIntentUIComponent;
 import com.bryjamin.dancedungeon.factories.spells.TargetingFactory;
 import com.bryjamin.dancedungeon.utils.HitBox;
@@ -37,7 +37,7 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
  * Used to show enemy intent to players
  */
 
-public class EnemyIntentUISystem extends EntitySystem implements Observer{
+public class DisplayEnemyIntentUISystem extends EntitySystem implements Observer{
 
 
     TileSystem tileSystem;
@@ -52,7 +52,7 @@ public class EnemyIntentUISystem extends EntitySystem implements Observer{
 
     private boolean processingFlag = false;
 
-    public EnemyIntentUISystem() {
+    public DisplayEnemyIntentUISystem() {
         super(Aspect.all(StoredSkillComponent.class, CoordinateComponent.class));
     }
 
@@ -240,7 +240,7 @@ public class EnemyIntentUISystem extends EntitySystem implements Observer{
                                 .build()))
                 .add(new HitBoxComponent(new HitBox(r)))
                 .add(new CenteringBoundComponent())
-                .add(new ScaleTransformationComponent(1f, 1.3f, 1.3f))
+                .add(new GrowAndShrinkTransformationComponent(1f, 1.3f, 1.3f))
                 .add(new EnemyIntentUIComponent());
 
 

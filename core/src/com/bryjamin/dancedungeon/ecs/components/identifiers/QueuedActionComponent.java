@@ -1,4 +1,4 @@
-package com.bryjamin.dancedungeon.ecs.components.battle;
+package com.bryjamin.dancedungeon.ecs.components.identifiers;
 
 import com.artemis.Component;
 import com.badlogic.gdx.utils.Array;
@@ -7,9 +7,9 @@ import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditio
 /**
  * Created by BB on 23/12/2017.
  *
- * Used to pause the next action within the UsesAttackAction Camera System
+ * Used an identifier to see if an Entity has a queued Action or not.
  *
- * If an entity exists with this, the system will not continue processing
+ * For the {@link com.bryjamin.dancedungeon.ecs.systems.battle.ActionQueueSystem}
  *
  */
 

@@ -19,7 +19,7 @@ import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.UtilityAiComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.AvailableActionsCompnent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.StoredSkillComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
@@ -44,7 +44,7 @@ public class UtilityAiSystem extends EntitySystem {
     private TileSystem tileSystem;
 
     private ComponentMapper<UnitComponent> unitM;
-    private ComponentMapper<TurnComponent> turnM;
+    private ComponentMapper<AvailableActionsCompnent> turnM;
     private ComponentMapper<CoordinateComponent> coordsM;
     private ComponentMapper<TargetComponent> targetM;
     private ComponentMapper<FriendlyComponent> friendlyM;
@@ -58,7 +58,7 @@ public class UtilityAiSystem extends EntitySystem {
     private Array<Entity> targetsArray = new Array<>();
 
     public UtilityAiSystem() {
-        super(Aspect.all(UtilityAiComponent.class, UnitComponent.class, CoordinateComponent.class, TurnComponent.class, TargetComponent.class));
+        super(Aspect.all(UtilityAiComponent.class, UnitComponent.class, CoordinateComponent.class, AvailableActionsCompnent.class, TargetComponent.class));
     }
 
 
@@ -240,7 +240,7 @@ public class UtilityAiSystem extends EntitySystem {
                     entity.edit().add(new StoredSkillComponent(entity.getComponent(CoordinateComponent.class).coordinates,
                             chosen.attackScore.target, chosen.attackScore.attack));
 
-                    world.getSystem(EnemyIntentUISystem.class).updateIntent();
+                    world.getSystem(DisplayEnemyIntentUISystem.class).updateIntent();
 
                     //chosen.s.cast(world, entity, chosen.target);
                 }
@@ -248,9 +248,9 @@ public class UtilityAiSystem extends EntitySystem {
 
         }
 
-        TurnComponent turnComponent = turnM.get(e);
-        turnComponent.movementActionAvailable = false;
-        turnComponent.attackActionAvailable = false;
+        AvailableActionsCompnent availableActionsCompnent = turnM.get(e);
+        availableActionsCompnent.movementActionAvailable = false;
+        availableActionsCompnent.attackActionAvailable = false;
 
     }
 

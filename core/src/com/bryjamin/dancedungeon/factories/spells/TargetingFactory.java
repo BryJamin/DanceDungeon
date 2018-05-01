@@ -16,9 +16,9 @@ import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
+import com.bryjamin.dancedungeon.ecs.components.battle.AvailableActionsCompnent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UITargetingComponent;
@@ -385,7 +385,7 @@ public class TargetingFactory {
 
 
                 //pushLastAction
-                entity.getComponent(TurnComponent.class).movementActionAvailable = false;
+                entity.getComponent(AvailableActionsCompnent.class).movementActionAvailable = false;
 
                 //If no enemies are in range at the end of the potential movement, set attack action availiable to false
                 //TODO but what if you can use a skill surely this makes not sense right?
@@ -395,7 +395,7 @@ public class TargetingFactory {
 
 
 
-                    //entity.getComponent(TurnComponent.class).attackActionAvailable = false;
+                    //entity.getComponent(AvailableActionsCompnent.class).attackActionAvailable = false;
                 }
 
 
@@ -477,7 +477,7 @@ public class TargetingFactory {
                 .alpha(0.17f)
                 .minAlpha(0.15f)
                 .maxAlpha(0.55f)
-                .maximumTime(2.0f)));*/
+                .maximumDuration(2.0f)));*/
         e.edit().add(new CenteringBoundComponent());
         e.edit().add(new UITargetingComponent());
 

@@ -11,7 +11,7 @@ import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.assets.music.MusicFiles;
 import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BattleDeploymentSystem;
-import com.bryjamin.dancedungeon.ecs.systems.battle.EnemyIntentUISystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.DisplayEnemyIntentUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.StunnedSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.UtilityAiSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.ArchingTextureSystem;
@@ -24,7 +24,6 @@ import com.bryjamin.dancedungeon.ecs.systems.action.BattleScreenInputSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.ConditionalActionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionQueueSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BlinkOnHitSystem;
-import com.bryjamin.dancedungeon.ecs.systems.battle.BuffSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.DeathSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.EndBattleSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.GenerateTargetsSystem;
@@ -102,8 +101,6 @@ public class BattleScreen extends AbstractScreen {
                         new FollowPositionSystem(),
                         new UpdateBoundPositionsSystem(),
 
-                        new BuffSystem(),
-
                         new MoveToTargetSystem()
                 )
                 .with(WorldConfigurationBuilder.Priority.HIGH,
@@ -124,7 +121,7 @@ public class BattleScreen extends AbstractScreen {
                         new ArchingTextureSystem(),
 
                         new NoMoreActionsGreyScaleSystem(),
-                        new EnemyIntentUISystem(),
+                        new DisplayEnemyIntentUISystem(),
                         new UtilityAiSystem(),
                         new StunnedSystem(),
                         new AnimationSystem(game),

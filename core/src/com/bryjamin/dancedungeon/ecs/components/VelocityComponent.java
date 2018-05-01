@@ -5,6 +5,8 @@ import com.badlogic.gdx.math.Vector3;
 
 /**
  * Created by BB on 11/10/2017.
+ *
+ * Keeps track of the Velocity of an Entity
  */
 
 public class VelocityComponent extends Component {

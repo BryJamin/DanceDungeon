@@ -7,6 +7,12 @@ import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
 /**
  * Created by BB on 06/03/2018.
+ *
+ * Component that stores a Skill to be used within the 'INTENT' turn.
+ *
+ * Keeps track of current position of the Entity and where is the Skill is targeted towards.
+ *
+ * This information is used by the Skill
  */
 
 public class StoredSkillComponent extends Component {

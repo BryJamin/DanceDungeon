@@ -6,7 +6,7 @@ import com.artemis.Entity;
 import com.artemis.systems.EntityProcessingSystem;
 import com.bryjamin.dancedungeon.ecs.components.actions.OnDeathActionsComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
-import com.bryjamin.dancedungeon.ecs.components.battle.QueuedActionComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.QueuedActionComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
 /**
  * Created by BB on 15/10/2017.

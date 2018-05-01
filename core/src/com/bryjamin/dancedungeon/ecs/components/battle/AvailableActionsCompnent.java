@@ -5,25 +5,18 @@ import com.artemis.Component;
 
 /**
  * Created by BB on 21/10/2017.
+ *
+ * Used To Track if an Entity has Movement or Attack actions.
  */
 
-public class TurnComponent extends Component {
-
-
-    public enum State {
-        DECIDING, WAITING, END
-    }
-
-    public State state = State.DECIDING;
+public class AvailableActionsCompnent extends Component {
 
     public boolean movementActionAvailable = true;
     public boolean attackActionAvailable = true;
 
-
-    public TurnComponent(){}
+    public AvailableActionsCompnent(){}
 
     public void reset(){
-        state = State.DECIDING;
         movementActionAvailable = true;
         attackActionAvailable = true;
     }

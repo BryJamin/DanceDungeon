@@ -6,7 +6,7 @@ import com.artemis.Entity;
 import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.math.MathUtils;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
-import com.bryjamin.dancedungeon.ecs.components.graphics.ScaleTransformationComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.GrowAndShrinkTransformationComponent;
 
 /**
  * Created by BB on 21/01/2018.
@@ -17,15 +17,15 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.ScaleTransformationComp
 public class ScaleTransformationSystem extends EntityProcessingSystem {
 
     ComponentMapper<DrawableComponent> drawableMapper;
-    ComponentMapper<ScaleTransformationComponent> scaleM;
+    ComponentMapper<GrowAndShrinkTransformationComponent> scaleM;
 
     public ScaleTransformationSystem() {
-        super(Aspect.all(ScaleTransformationComponent.class));
+        super(Aspect.all(GrowAndShrinkTransformationComponent.class));
     }
 
     @Override
     protected void process(Entity e) {
-        ScaleTransformationComponent stc = scaleM.get(e);
+        GrowAndShrinkTransformationComponent stc = scaleM.get(e);
         stc.time += world.delta;
         stc.currentScaleX = calcSinePos(stc.duration, stc.time, stc.minScaleX, stc.maxScaleX);
         stc.currentScaleY = calcSinePos(stc.duration, stc.time, stc.minScaleY, stc.maxScaleY);
@@ -40,7 +40,7 @@ public class ScaleTransformationSystem extends EntityProcessingSystem {
         //Find out size of 1 degree in terms of duration
         float anglePct = duration / 360;
 
-        //Convert time into Angle
+        //Convert currentDuration into Angle
         float angle = time / anglePct;
 
         //Calculate position on Sine Graph Using Math Formula

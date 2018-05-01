@@ -15,11 +15,11 @@ import com.bryjamin.dancedungeon.ecs.components.actions.UtilityAiComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.AvailableActionsCompnent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.StoredSkillComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.TutorialAIComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.UsedByTutorialComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionQueueSystem;
-import com.bryjamin.dancedungeon.ecs.systems.battle.EnemyIntentUISystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.DisplayEnemyIntentUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
 import com.bryjamin.dancedungeon.factories.enemy.UnitLibrary;
@@ -39,7 +39,7 @@ public class TutorialSystem extends EntitySystem implements Observer{
 
     private ActionQueueSystem actionQueueSystem;
     private BattleScreenUISystem battleScreenUISystem;
-    private EnemyIntentUISystem enemyIntentUISystem;
+    private DisplayEnemyIntentUISystem displayEnemyIntentUISystem;
     private TileSystem tileSystem;
     private TurnSystem turnSystem;
 
@@ -61,7 +61,7 @@ public class TutorialSystem extends EntitySystem implements Observer{
 
 
     public TutorialSystem(boolean processing){
-        super(Aspect.all(TutorialAIComponent.class));
+        super(Aspect.all(UsedByTutorialComponent.class));
         this.processing = processing;
         System.out.println(processing);
     }
@@ -129,7 +129,7 @@ public class TutorialSystem extends EntitySystem implements Observer{
 
         rangedEnemy = UnitLibrary.getEnemyUnit(world, UnitLibrary.RANGED_BLASTER);
         rangedEnemy.edit().remove(UtilityAiComponent.class);
-        rangedEnemy.edit().add(new TutorialAIComponent());
+        rangedEnemy.edit().add(new UsedByTutorialComponent());
         rangedEnemy.getComponent(CoordinateComponent.class).coordinates.set(RANGED_ENEMY_PLACEMENT);
 
         //ACTIONS FOR MOVING ENTITY INTO POSITION
@@ -184,13 +184,13 @@ public class TutorialSystem extends EntitySystem implements Observer{
 
         if(o instanceof ActionQueueSystem){
 
-            TurnComponent tc;
+            AvailableActionsCompnent tc;
             Coordinates current;
 
             switch (tutorialState){
 
                 case PLAYER_FIRST_MOVE: //Checks Whether The Player Has Moved To The Current Sqaure
-                    tc = meleePlayer.getComponent(TurnComponent.class);
+                    tc = meleePlayer.getComponent(AvailableActionsCompnent.class);
                     current = coordsM.get(meleePlayer).coordinates;
 
                     if(!current.equals(PLAYER_FIRST_MOVE_FINAL_COORDINATES) && !current.equals(MELEE_PLAYER_START_COORDINATES)){
@@ -199,7 +199,7 @@ public class TutorialSystem extends EntitySystem implements Observer{
                         Vector3 v3 = tileSystem.getPositionUsingCoordinates(MELEE_PLAYER_START_COORDINATES, meleePlayer.getComponent(CenteringBoundComponent.class).bound);
                         posM.get(meleePlayer).setX(v3.x);
                         posM.get(meleePlayer).setY(v3.y);
-                        meleePlayer.getComponent(TurnComponent.class).movementActionAvailable = true;
+                        meleePlayer.getComponent(AvailableActionsCompnent.class).movementActionAvailable = true;
                         battleScreenUISystem.createTutorialWindow(tileSystem.createRectangleUsingCoordinates(PLAYER_FIRST_MOVE_FINAL_COORDINATES), TutorialState.MOVE_HERE_PROMPT);
 
 
@@ -231,7 +231,7 @@ public class TutorialSystem extends EntitySystem implements Observer{
 
                 case SKILLS:
 
-                    tc = meleePlayer.getComponent(TurnComponent.class);
+                    tc = meleePlayer.getComponent(AvailableActionsCompnent.class);
                     Coordinates enemyCurrent = coordsM.get(rangedEnemy).coordinates;
 
                     if(!enemyCurrent.equals(RANGED_ENEMY_PLACEMENT_AFTER_FIRST_ATTACK)){
@@ -274,7 +274,7 @@ public class TutorialSystem extends EntitySystem implements Observer{
                     turnSystem.setUp(TurnSystem.TURN.ENEMY);
 
                     for(Entity e : this.getEntities()){
-                        enemyIntentUISystem.releaseAttack(e);
+                        displayEnemyIntentUISystem.releaseAttack(e);
                     }
 
                     createMovementActionForEnemyEntity(rangedEnemy, RANGED_ENEMY_AFTER_NEXT_TURN);
@@ -282,7 +282,7 @@ public class TutorialSystem extends EntitySystem implements Observer{
 
                     meleeEnemy = UnitLibrary.getEnemyUnit(world, UnitLibrary.MELEE_BLOB);
                     meleeEnemy.edit().remove(UtilityAiComponent.class);
-                    meleeEnemy.edit().add(new TutorialAIComponent());
+                    meleeEnemy.edit().add(new UsedByTutorialComponent());
                     meleeEnemy.getComponent(CoordinateComponent.class).coordinates.set(MELEE_ENEMY_COORDINATES);
                     createMovementActionForEnemyEntity(meleeEnemy, MELEE_ENEMY_FIRST_MOVE_COORDINATES);
                     createAttackActionForEnemyEntity(meleeEnemy, SkillLibrary.getSkill(SkillLibrary.ENEMY_SKILL_SWIPE), new Coordinates(MIDDLE_ALLIED_STRUCTURE_COORDINATES));
@@ -302,13 +302,13 @@ public class TutorialSystem extends EntitySystem implements Observer{
                     turnSystem.setUp(TurnSystem.TURN.ENEMY);
 
                     for(Entity e : this.getEntities()){
-                        enemyIntentUISystem.releaseAttack(e);
+                        displayEnemyIntentUISystem.releaseAttack(e);
                     }
 
 
                     tutorialEnemy3 = UnitLibrary.getEnemyUnit(world, UnitLibrary.MELEE_BLOB);
                     tutorialEnemy3.edit().remove(UtilityAiComponent.class);
-                    tutorialEnemy3.edit().add(new TutorialAIComponent());
+                    tutorialEnemy3.edit().add(new UsedByTutorialComponent());
                     tutorialEnemy3.getComponent(CoordinateComponent.class).coordinates.set(MELEE_ENEMY_COORDINATES);
 
                     createMovementActionForEnemyEntity(tutorialEnemy3, THIRD_ENEMY_FIRST_MOVE_COORDINATES);
@@ -380,7 +380,7 @@ public class TutorialSystem extends EntitySystem implements Observer{
 
         Entity e = UnitLibrary.getEnemyUnit(world, unitID);
         e.edit().remove(UtilityAiComponent.class);
-        e.edit().add(new TutorialAIComponent());
+        e.edit().add(new UsedByTutorialComponent());
         e.getComponent(CoordinateComponent.class).coordinates.set(c);
 
         return e;
@@ -428,7 +428,7 @@ public class TutorialSystem extends EntitySystem implements Observer{
                 entity.edit().add(new StoredSkillComponent(entity.getComponent(CoordinateComponent.class).coordinates,
                         target, s));
 
-                world.getSystem(EnemyIntentUISystem.class).updateIntent();
+                world.getSystem(DisplayEnemyIntentUISystem.class).updateIntent();
             }
         });
 

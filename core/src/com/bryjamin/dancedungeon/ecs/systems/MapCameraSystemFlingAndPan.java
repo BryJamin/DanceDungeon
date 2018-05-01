@@ -111,7 +111,7 @@ public class MapCameraSystemFlingAndPan extends EntitySystem {
 
     /**
      * Deceelerates the camera after it has been flung.
-     * @param time - This variable references time that has passed since the camera was flung.
+     * @param time - This variable references currentDuration that has passed since the camera was flung.
      */
     public void flingDecelerate(float time) {
         if (this.cameraVelocityX != 0f || this.cameraVelocityY != 0f) {

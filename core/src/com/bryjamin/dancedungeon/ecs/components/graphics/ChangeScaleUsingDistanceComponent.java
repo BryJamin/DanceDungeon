@@ -4,7 +4,7 @@ import com.artemis.Component;
 import com.badlogic.gdx.math.Vector3;
 
 /**
- * Used for skills that go over objects. To give the illusion up and then back down.
+ * Used for skills that go over objects. To give the illusion of up and then back down.
  *
  * Takes in a starting point and endpoint and uses the distance from the stand the end
  *

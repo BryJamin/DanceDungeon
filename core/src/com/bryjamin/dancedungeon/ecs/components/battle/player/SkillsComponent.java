@@ -7,12 +7,12 @@ import com.bryjamin.dancedungeon.factories.spells.SkillLibrary;
 
 /**
  * Created by BB on 18/11/2017.
+ *
+ * Stores the Skills of an Entity
  */
 
 public class SkillsComponent extends Component {
 
-
-    private int maxSkills;
 
     public Array<Skill> skills = new Array<Skill>();
 

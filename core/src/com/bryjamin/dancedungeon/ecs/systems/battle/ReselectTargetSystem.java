@@ -4,7 +4,7 @@ import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
-import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.AvailableActionsCompnent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.ReselectEntityComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.SelectedEntityComponent;
@@ -25,12 +25,12 @@ public class ReselectTargetSystem extends EntitySystem {
 
     ActionQueueSystem actionQueueSystem;
 
-    private ComponentMapper<TurnComponent> tm;
+    private ComponentMapper<AvailableActionsCompnent> tm;
     private ComponentMapper<ReselectEntityComponent> rem;
 
 
     public ReselectTargetSystem() {
-        super(Aspect.all(ReselectEntityComponent.class, TurnComponent.class, PlayerControlledComponent.class));
+        super(Aspect.all(ReselectEntityComponent.class, AvailableActionsCompnent.class, PlayerControlledComponent.class));
     }
 
     @Override

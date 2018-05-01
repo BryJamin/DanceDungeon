@@ -9,22 +9,19 @@ import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.BuffComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.AvailableActionsCompnent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.DeploymentComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.DeploymentComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.UnPushableComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.UnPushableComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.AffectMoraleComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.FriendlyComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.SolidComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
@@ -103,7 +100,7 @@ public class UnitFactory {
                         .alpha(0.17f)
                         .minAlpha(0.15f)
                         .maxAlpha(0.55f)
-                        .maximumTime(1.5f)));*/
+                        .maximumDuration(1.5f)));*/
                 .add(new FadeComponent(
                         new FadeComponent.FadeBuilder()
                                 .fadeIn(true)
@@ -129,12 +126,11 @@ public class UnitFactory {
         e.edit().add(new MoveToComponent(Measure.units(unitData.getMapMovementSpeed())));
         e.edit().add(new VelocityComponent());
         e.edit().add(new TargetComponent());
-        e.edit().add(new BuffComponent());
 
         //Graphical
         e.edit().add(new BlinkOnHitComponent());
         e.edit().add(new SkillsComponent(unitData.getSkills()));
-        e.edit().add(new TurnComponent());
+        e.edit().add(new AvailableActionsCompnent());
 
 
         e.edit().add(new CenteringBoundComponent(size, size));

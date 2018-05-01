@@ -9,7 +9,6 @@ import com.artemis.Component;
  * from the world
  *
  */
-
 public class ExpireComponent extends Component {
 
     public float expiryTime;

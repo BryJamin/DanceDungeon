@@ -3,12 +3,12 @@ package com.bryjamin.dancedungeon.ecs.components.battle;
 import com.artemis.Component;
 
 /**
+ *
  * Created by BB on 11/10/2017.
  *
  * Used to track health of an entity as well as accumulated damage
  *
  */
-
 public class HealthComponent extends Component {
 
     public int health;

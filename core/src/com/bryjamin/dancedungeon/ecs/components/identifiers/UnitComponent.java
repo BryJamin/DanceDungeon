@@ -7,10 +7,7 @@ import com.bryjamin.dancedungeon.factories.player.UnitData;
 /**
  * Created by BB on 11/02/2018.
  *
- * Contains all information of Unit.
- *
- * Used to redraw unit ai and within different menus
- *
+ * Contains all information of a Unit.
  */
 
 public class UnitComponent extends Component {

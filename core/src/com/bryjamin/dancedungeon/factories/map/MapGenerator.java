@@ -328,7 +328,7 @@ public class MapGenerator {
 
                 //If two line segments end at the same point, that counts as an intersection
 
-                //This is the only time an intersection, is allowed within the Map.
+                //This is the only currentDuration an intersection, is allowed within the Map.
                 //The number of lines currently connected to a node, would be equivalent to it's children
 
                 //TODO it may be more prudent to generate the connected lines again within this method, instead

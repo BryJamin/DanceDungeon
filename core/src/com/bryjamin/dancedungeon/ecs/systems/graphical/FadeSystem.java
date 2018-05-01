@@ -33,30 +33,30 @@ public class FadeSystem extends EntityProcessingSystem {
             return;
         }
 
-        fc.time = fc.fadeIn ? fc.time + world.delta : fc.time - world.delta;
+        fc.currentDuration = fc.fadeIn ? fc.currentDuration + world.delta : fc.currentDuration - world.delta;
 
-        fc.alpha = Interpolation.fade.apply(((fc.time / fc.maximumTime) * (fc.maxAlpha - fc.minAlpha)) + fc.minAlpha);
+        fc.alpha = Interpolation.fade.apply(((fc.currentDuration / fc.maximumDuration) * (fc.maxAlpha - fc.minAlpha)) + fc.minAlpha);
         if (fc.alpha <= fc.minAlpha) {
             if (fc.isEndless || fc.count > 0) {
                 fc.fadeIn = true;
                 fc.alpha = fc.minAlpha;
                 fc.count--;
-                fc.time = fc.maximumTime * (fc.maxAlpha - fc.minAlpha);
+                fc.currentDuration = fc.maximumDuration * (fc.maxAlpha - fc.minAlpha);
 
             } else {
                 fc.alpha = fc.minAlpha;
-                //fc.time = fc.maximumTime * (fc.maxAlpha - fc.minAlpha);
+                //fc.currentDuration = fc.maximumDuration * (fc.maxAlpha - fc.minAlpha);
             }
         } else if (fc.alpha >= fc.maxAlpha) {
             if (fc.isEndless || fc.count > 0) {
                 fc.fadeIn = false;
                 fc.alpha = fc.maxAlpha;
                 fc.count--;
-                //fc.time = fc.maximumTime;
+                //fc.currentDuration = fc.maximumDuration;
 
             } else {
                 fc.alpha = fc.maxAlpha;
-                //fc.time = fc.maximumTime;
+                //fc.currentDuration = fc.maximumDuration;
             }
         }
 

@@ -14,7 +14,6 @@ import com.bryjamin.dancedungeon.utils.Measure;
  * until the Array is empty.
  *
  */
-
 public class MoveToComponent extends Component {
 
     public Array<Vector3> movementPositions = new Array<Vector3>();

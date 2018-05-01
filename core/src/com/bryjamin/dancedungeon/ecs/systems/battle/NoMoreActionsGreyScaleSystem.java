@@ -4,7 +4,7 @@ import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.systems.EntityProcessingSystem;
-import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.AvailableActionsCompnent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationMapComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.GreyScaleComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
@@ -31,18 +31,18 @@ public class NoMoreActionsGreyScaleSystem extends EntityProcessingSystem {
      *
      */
     public NoMoreActionsGreyScaleSystem() {
-        super(Aspect.all(PlayerControlledComponent.class, TurnComponent.class));
+        super(Aspect.all(PlayerControlledComponent.class, AvailableActionsCompnent.class));
     }
 
     @Override
     protected void process(Entity e) {
 
-        TurnComponent turnComponent = e.getComponent(TurnComponent.class);
+        AvailableActionsCompnent availableActionsCompnent = e.getComponent(AvailableActionsCompnent.class);
 
-        if(!turnComponent.hasActions() && !greyScaleMapper.has(e)){
+        if(!availableActionsCompnent.hasActions() && !greyScaleMapper.has(e)){
             e.edit().add(new GreyScaleComponent());
             e.edit().remove(SelectedEntityComponent.class);
-        } else if(greyScaleMapper.has(e) && turnComponent.hasActions()){
+        } else if(greyScaleMapper.has(e) && availableActionsCompnent.hasActions()){
             e.edit().remove(GreyScaleComponent.class);
         }
 

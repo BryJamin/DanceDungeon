@@ -10,12 +10,11 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.Queue;
 import com.bryjamin.dancedungeon.utils.observer.Observable;
-import com.bryjamin.dancedungeon.utils.observer.Observer;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.QueuedActionComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.QueuedActionComponent;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 
 import java.util.UUID;
@@ -403,7 +402,7 @@ public class ActionQueueSystem extends EntitySystem {
 
             @Override
             public void performAction(World world, Entity entity) {
-                world.getSystem(EnemyIntentUISystem.class).updateIntent();
+                world.getSystem(DisplayEnemyIntentUISystem.class).updateIntent();
             }
         });
     }
