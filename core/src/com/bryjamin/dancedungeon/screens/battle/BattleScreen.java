@@ -19,7 +19,6 @@ import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MoveToTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
-import com.bryjamin.dancedungeon.ecs.systems.ParentChildSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.ActionOnTapSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.BattleScreenInputSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.ConditionalActionSystem;
@@ -111,7 +110,6 @@ public class BattleScreen extends AbstractScreen {
                         new ConditionalActionSystem(),
                         new TurnSystem(),
                         new HealthSystem(),
-                        new ParentChildSystem(),
                         new BlinkOnHitSystem(),
                         new ExpireSystem(),
                         new EndBattleSystem(game, battleEvent, partyDetails)

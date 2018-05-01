@@ -194,7 +194,7 @@ public class BattleDeploymentSystem extends EntitySystem {
     }
 
     public boolean deploymentComplete(){
-        return processingFlag;
+        return !processingFlag;
     }
 
     public UnitData getDeployingUnit() {

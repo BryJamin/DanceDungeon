@@ -92,12 +92,13 @@ public class BattleScreenInputSystem extends BaseSystem implements Observer {
 
             //No Interaction Can Be Done on Entities When Actions Are Queued
             if (actionQueueSystem.isProcessing()) return false;
-            
+
             switch (state){
 
                 case DEPLOYMENT: //During Deployment There Are No Turns So Tapping is Unrestricted
                     if(actionOnTapSystem.touch(input.x, input.y))
                         return true;
+                    break;
 
                 case BATTLING: //During Battling Players Can Only Interact With Their Characters When it is Their Turn.
 
@@ -111,6 +112,7 @@ public class BattleScreenInputSystem extends BaseSystem implements Observer {
 
                         world.getSystem(BattleScreenUISystem.class).resetBottomContainer();
                     }
+                    break;
 
             }
             return false;

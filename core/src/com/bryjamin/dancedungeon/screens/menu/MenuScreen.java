@@ -11,7 +11,6 @@ import com.bryjamin.dancedungeon.assets.music.MusicFiles;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MoveToTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
-import com.bryjamin.dancedungeon.ecs.systems.ParentChildSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.ActionOnTapSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.ConditionalActionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.DeathSystem;
@@ -55,7 +54,6 @@ public class MenuScreen extends AbstractScreen {
                 )
                 .with(WorldConfigurationBuilder.Priority.HIGH,
                         new ConditionalActionSystem(),
-                        new ParentChildSystem(),
                         new ExpireSystem(),
                         new DeathSystem()
                 )

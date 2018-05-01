@@ -8,9 +8,6 @@ import com.bryjamin.dancedungeon.ecs.components.actions.OnDeathActionsComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.QueuedActionComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.ParentComponent;
-import com.bryjamin.dancedungeon.ecs.systems.ParentChildSystem;
-
 /**
  * Created by BB on 15/10/2017.
  *
@@ -21,12 +18,8 @@ import com.bryjamin.dancedungeon.ecs.systems.ParentChildSystem;
  */
 public class DeathSystem extends EntityProcessingSystem {
 
-
-    ComponentMapper<ParentComponent> parentMapper;
     ComponentMapper<OnDeathActionsComponent> onDeathActionsMapper;
     ComponentMapper<QueuedActionComponent> qacm;
-
-
 
     @SuppressWarnings("unchecked")
     public DeathSystem() {
@@ -54,27 +47,8 @@ public class DeathSystem extends EntityProcessingSystem {
             }
         }
 
-        if(parentMapper.has(e)){
-            killChildComponents(e.getComponent(ParentComponent.class));
-        }
-
         e.deleteFromWorld();
     };
-
-    public void killChildComponents(ParentComponent parentComponent){
-        for(Entity e : world.getSystem(ParentChildSystem.class).getChildren(parentComponent)){
-            kill(e);
-        };
-    }
-
-    public void killChildComponents(Entity e){
-        if(parentMapper.has(e)){
-            killChildComponents(e.getComponent(ParentComponent.class));
-        }
-    }
-
-
-
 
 
 }

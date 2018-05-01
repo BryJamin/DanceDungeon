@@ -9,6 +9,9 @@ import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
 
 /**
  * Created by BB on 11/10/2017.
+ *
+ * Adds the Velocity Component to the Position Component of an Entity.
+ *
  */
 
 public class MovementSystem extends EntityProcessingSystem {

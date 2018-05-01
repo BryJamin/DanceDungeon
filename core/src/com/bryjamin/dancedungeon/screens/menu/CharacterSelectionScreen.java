@@ -10,9 +10,7 @@ import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MoveToTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
-import com.bryjamin.dancedungeon.ecs.systems.ParentChildSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.ActionOnTapSystem;
-import com.bryjamin.dancedungeon.ecs.systems.action.ConditionalActionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.DeathSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.BoundsDrawingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.FadeSystem;
@@ -52,8 +50,6 @@ public class CharacterSelectionScreen extends AbstractScreen {
                         new MoveToTargetSystem()
                 )
                 .with(WorldConfigurationBuilder.Priority.HIGH,
-                        new ConditionalActionSystem(),
-                        new ParentChildSystem(),
                         new ExpireSystem(),
                         new DeathSystem()
                 )

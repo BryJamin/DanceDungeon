@@ -181,11 +181,6 @@ public class ActionQueueSystem extends EntitySystem {
             e.edit().add(new QueuedActionComponent());
             queuedActionMap.put(e, new Array<WorldConditionalAction>());
         }
-
-
-        System.out.println("qas " + queuedActionIds.size);
-        System.out.println("q id" + id);
-
         processingFlag = true; //Turns on the system
     }
 

@@ -12,7 +12,6 @@ import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MapCameraSystemFlingAndPan;
 import com.bryjamin.dancedungeon.ecs.systems.MoveToTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
-import com.bryjamin.dancedungeon.ecs.systems.ParentChildSystem;
 import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.ActionOnTapSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.ConditionalActionSystem;
@@ -81,7 +80,6 @@ public class MapScreen extends AbstractScreen {
                 )
                 .with(WorldConfigurationBuilder.Priority.HIGH,
                         new ConditionalActionSystem(),
-                        new ParentChildSystem(),
                         new ExpireSystem(),
                         new DeathSystem()
                 )
