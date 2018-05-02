@@ -25,6 +25,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
+import com.bryjamin.dancedungeon.assets.Colors;
 import com.bryjamin.dancedungeon.assets.Fonts;
 import com.bryjamin.dancedungeon.assets.NinePatches;
 import com.bryjamin.dancedungeon.assets.Padding;
@@ -70,6 +71,9 @@ public class MapScreenUISystem extends BaseSystem {
     private Table characterWindow;
     private Table viewInventoryAndQuickSaveTab;
     private Table selectCharacterButtonsTable;
+
+
+    private Table gameCompleteTable;
 
     private AreYouSureFrame areYouSureContainer;
 
@@ -120,6 +124,7 @@ public class MapScreenUISystem extends BaseSystem {
         container.setWidth(stage.getWidth());
         container.setHeight(stage.getHeight());
         container.align(Align.bottom);
+        container.addAction(setPositionOfContainerRelativeToCamera());
         container.row();
 
         //VIEW INVENTORY AND BOTTOM BUTTONS
@@ -255,15 +260,28 @@ public class MapScreenUISystem extends BaseSystem {
 
     @Override
     protected void processSystem() {
-
-        container.setPosition(CameraMath.getBtmLftX(gameport), CameraMath.getBtmY(gameport.getCamera()));
+        setPositionOfContainerRelativeToCamera(areYouSureContainer);
 
         if (characterWindowContainer.isVisible()) {
-            characterWindowContainer.setPosition(CameraMath.getBtmLftX(gameport), CameraMath.getBtmY(gameport.getCamera()));
+            setPositionOfContainerRelativeToCamera(characterWindowContainer);
         }
-
-        areYouSureContainer.setPosition(container.getX(), container.getY());
     }
+
+
+    private void setPositionOfContainerRelativeToCamera(Table table){
+        table.setPosition(CameraMath.getBtmLftX(gameport), CameraMath.getBtmY(gameport.getCamera()));
+    }
+
+    private Action setPositionOfContainerRelativeToCamera(){
+        return new Action() {
+            @Override
+            public boolean act(float delta) {
+                getActor().setPosition(CameraMath.getBtmLftX(gameport), CameraMath.getBtmY(gameport.getCamera()));
+                return false;
+            }
+        };
+    }
+
 
     //TODO messy?
     public void updateInformation() {
@@ -271,6 +289,7 @@ public class MapScreenUISystem extends BaseSystem {
         container.clear();
         initialize();
     }
+
 
 
 
@@ -555,6 +574,57 @@ public class MapScreenUISystem extends BaseSystem {
         characterWindowContainer.setVisible(false);
         world.getSystem(MapInputSystem.class).closedMenu();
     }
+
+
+
+    public void createGameCompletionTable(){
+
+        gameCompleteTable = stageUIRenderingSystem.createContainerTable();
+        stageUIRenderingSystem.stage.addActor(gameCompleteTable);
+
+        gameCompleteTable.setTouchable(Touchable.enabled);
+        gameCompleteTable.addListener(new ClickListener());
+        gameCompleteTable.addAction(setPositionOfContainerRelativeToCamera());
+
+
+        Table t = new Table(uiSkin);
+        t.setBackground(new NinePatchDrawable(NinePatches.getBorderPatch(renderingSystem.getAtlas(),0.85f)));
+        t.align(Align.center);
+        gameCompleteTable.add(t).width(Measure.units(97.5f)).height(Measure.units(55f));
+
+        String[] strings = {
+                TextResource.VICTORY_TEXT,
+                TextResource.VICTORY_TEXT_2,
+                TextResource.VICTORY_TEXT_3,
+                TextResource.VICTORY_TEXT_4
+        };
+
+        Label title = new Label(TextResource.VICTORY, uiSkin);
+        t.add(title).padTop(Padding.SMALL);
+        t.row();
+
+        for(String s : strings){
+            Label text = new Label(s, uiSkin);
+            t.add(text).padBottom(Padding.SMALL).expandY();
+            t.row();
+        }
+
+        TextButton textButton = new TextButton(TextResource.VICTORY_BACK_TO_MAIN_MENU, uiSkin);
+        t.add(textButton).height(Measure.units(7.5f)).padBottom(Padding.SMALL);
+
+        textButton.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.getScreen().dispose();
+                game.setScreen(new MenuScreen(game));
+            }
+        });
+
+    }
+
+
+
+
 
 
     /**

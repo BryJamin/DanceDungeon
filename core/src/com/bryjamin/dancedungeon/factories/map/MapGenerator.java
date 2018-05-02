@@ -45,9 +45,6 @@ public class MapGenerator {
 
 
 
-
-
-
     /**
      * Given the Set of MapSection sets up what each Node will be, Either a shop, a battle or a rest.
      * @param mapSections - Set of MapSections
@@ -77,7 +74,7 @@ public class MapGenerator {
         for(int i = 0; i < mapSections.size; i++){
             Array<MapNode> sectionNodes = mapSections.get(i).getMapNodes();
             for(int j = 0 ; j < sectionNodes.size; j++){
-                if(i == 0) setEventType(sectionNodes.get(j), MapEvent.EventType.REST);
+                if(i == 0) setEventType(sectionNodes.get(j), MapEvent.EventType.BATTLE);
                 else if(i == mapSections.size -1 ) sectionNodes.get(j).setEventType(MapEvent.EventType.BOSS);
                 else {
                     setEventType(sectionNodes.get(j), MapEvent.EventType.BATTLE);

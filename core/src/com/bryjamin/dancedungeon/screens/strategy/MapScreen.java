@@ -120,6 +120,11 @@ public class MapScreen extends AbstractScreen {
         gameport.getCamera().position.set(world.getSystem(MapNodeSystem.class).getCurrentMapNode().getPosition().x,
                 gameport.getCamera().position.y, 0); //Center camera on the current node.
         game.musicSystem.changeMix(MusicFiles.MAP_MUSIC);
+
+        //No More places To Go. Assume The Game Has Ended
+        if(gameMap.getCurrentMapNode().getSuccessors().size == 0){
+            world.getSystem(MapScreenUISystem.class).createGameCompletionTable();
+        }
     }
 
 }

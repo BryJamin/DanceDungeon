@@ -16,14 +16,14 @@ public class DevOptions {
 
     public static void toggleUtilityInfo(){
         Preferences preferences = Gdx.app.getPreferences(DEV_PREFS_KEY);
-        preferences.putBoolean(UTILITY_SCORE_DEBUG, !preferences.getBoolean(UTILITY_SCORE_DEBUG, true));
+        preferences.putBoolean(UTILITY_SCORE_DEBUG, !preferences.getBoolean(UTILITY_SCORE_DEBUG, false));
         preferences.flush();
     }
 
 
     public static boolean getUtilityScoreSetting(){
         Preferences preferences = Gdx.app.getPreferences(DEV_PREFS_KEY);
-        return preferences.getBoolean(UTILITY_SCORE_DEBUG, true);
+        return preferences.getBoolean(UTILITY_SCORE_DEBUG, false);
     }
 
 }

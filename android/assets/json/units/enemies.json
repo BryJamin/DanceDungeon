@@ -42,8 +42,8 @@
     "class": "com.bryjamin.dancedungeon.factories.player.UnitData",
     "id": "1e08e0ff-77ec-4a26-b75c-0eeca3ea86bd",
     "name": "Big Blaster",
-    "icon": "enemy/silverhead_standing",
-    "maxHealth": 2,
+    "icon": "enemy/boss/boss_blaster",
+    "maxHealth": 5,
     "movementRange": 3,
     "skillIds": [ "598cbfff-19b7-412c-9618-cde1db76617b"]
   }

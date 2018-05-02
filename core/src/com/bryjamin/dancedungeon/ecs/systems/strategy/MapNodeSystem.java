@@ -20,6 +20,7 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.GrowAndShrinkTransforma
 import com.bryjamin.dancedungeon.ecs.components.map.MapNodeComponent;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.factories.map.MapNode;
+import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
 import com.bryjamin.dancedungeon.factories.map.event.EventManager;
 import com.bryjamin.dancedungeon.factories.map.event.MapEvent;
 import com.bryjamin.dancedungeon.screens.battle.BattleScreen;
@@ -137,8 +138,18 @@ public class MapNodeSystem extends EntitySystem {
                         break;
 
                     default:
+                    case BOSS:
                     case BATTLE:
-                        game.setScreen(new BattleScreen(game, game.getScreen(), eventManager.getLevel1Event(mapNode.getEventId()).getEvent(), partyDetails));
+
+                        BattleEvent battleEvent;
+                        if(eventType == MapEvent.EventType.BOSS) {
+                            battleEvent = eventManager.bossBattle().getEvent();
+                        } else {
+                            battleEvent = eventManager.getLevel1Event(mapNode.getEventId()).getEvent();
+                        }
+
+
+                        game.setScreen(new BattleScreen(game, game.getScreen(), battleEvent, partyDetails));
                         break;
 
                 }

@@ -24,7 +24,7 @@ import com.bryjamin.dancedungeon.utils.observer.Observable;
  * <p>
  * It scans for deployment zones and cycles through all characters until every characrter has been deployed
  * <p>
- * It also deploys enemy characters initially so plays can see where they may want to best deploy their units
+ * It also deploys enemy characters initially so players can see where they may want to best deploy their units
  * <p>
  * //TODO this system will either rely on the TileSystem selected map, Or the map inserted into the constructor
  * //TODO this means this system MUST be placed beneath the TileSystem when used,
@@ -63,25 +63,42 @@ public class BattleDeploymentSystem extends EntitySystem {
 
         Array<Coordinates> spawningLocations = new Array<Coordinates>(tileSystem.getEnemySpawningLocations());
 
-        for (int i = 0; i < 3; i++) {
 
-            if (battleEvent.getEnemies().size == 0)
-                continue; //TODO this could be cleaner, if I fail to include enemies, an error should be printed. Or featured in a test?
+        if(battleEvent.getNumberOfWaves() > 0){
+            if(battleEvent.getWaves().size > 0){
+                Array<String> stringArray = battleEvent.getWaves().removeFirst();
+                for(String s : stringArray){
+                    if(s.equals(BattleEvent.RANDOM_POOLED_UNIT)){
+                        addEnemyUnit(spawningLocations, battleEvent.getEnemies().random());
+                    } else {
+                        addEnemyUnit(spawningLocations, s);
+                    }
+                }
+            } else {
 
-            Entity e = UnitLibrary.getEnemyUnit(world, battleEvent.getEnemies().random());
+                for (int i = 0; i < 3; i++) {
+                    if (battleEvent.getEnemies().size == 0)
+                        continue;
+                    addEnemyUnit(spawningLocations, battleEvent.getEnemies().random());
+                }
 
-            Coordinates selected = tileSystem.getEnemySpawningLocations().random();
-            spawningLocations.removeValue(selected, true);
-            e.getComponent(CoordinateComponent.class).coordinates.set(selected);
+
+            }
         }
 
+
         deploymentLocations = new Array<>(tileSystem.getAllySpawningLocations());
-
-
         calculateUnitToBeDeployed();
         createDeploymentLocations();
 
 
+    }
+
+    private void addEnemyUnit(Array<Coordinates> spawningLocations, String unitId){
+        Entity e = UnitLibrary.getEnemyUnit(world, unitId);
+        Coordinates selected = spawningLocations.random();
+        spawningLocations.removeValue(selected, true);
+        e.getComponent(CoordinateComponent.class).coordinates.set(selected);
     }
 
 

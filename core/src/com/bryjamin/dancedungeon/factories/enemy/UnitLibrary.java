@@ -120,6 +120,7 @@ public class UnitLibrary {
     public static final String MELEE_BLOB = "cf5db9a9-b053-4de8-ad17-4f56a1e008f6";
     public static final String RANGED_BLASTER = "7720994b-263a-439d-b83c-70586bb63777";
     public static final String RANGED_LOBBA = "925dcc29-c81c-4abc-9bd3-adee4b8e636a";
+    public static final String BIG_BLASTER_BOSS = "1e08e0ff-77ec-4a26-b75c-0eeca3ea86bd";
 
 
     public static final String CHARACTERS_SGT_SWORD = "2ade2064-eaf1-4a63-8ba4-1fd98b72c0dc";

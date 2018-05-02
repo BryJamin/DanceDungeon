@@ -134,4 +134,14 @@ public class TextResource {
     public static final String TUTORIAL_END_TEXT_1 = "You Will Now Be Returned To The Character Selection Screen";
     public static final String TUTORIAL_END_TEXT_2 = "Good Luck Out There";
 
+
+
+
+    public static final String VICTORY  = "Congratulations!";
+    public static final String VICTORY_TEXT = "You Managed To Beat The Game!";
+    public static final String VICTORY_TEXT_2 = "Unfortunately This Text Is Here To Test Ending The Game :(!";
+    public static final String VICTORY_TEXT_3 = "Hopefully You Feel Good About Getting This Far!";
+    public static final String VICTORY_TEXT_4 = "As That's All Your Getting.......Sorry.";
+    public static final String VICTORY_BACK_TO_MAIN_MENU = "Back To Main Menu?";
+
 }

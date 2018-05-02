@@ -109,6 +109,21 @@ public class EventManager {
 
 
 
+    public EventCommand bossBattle(){
+        return new EventCommand() {
+            @Override
+            public BattleEvent getEvent() {
+                return new BattleEvent.Builder(MapData.MAP_3)
+                        .addEnemyWave(UnitLibrary.BIG_BLASTER_BOSS, BattleEvent.RANDOM_POOLED_UNIT, BattleEvent.RANDOM_POOLED_UNIT)
+                        .enemyPool(UnitLibrary.RANGED_BLASTER, UnitLibrary.RANGED_LOBBA, UnitLibrary.MELEE_BLOB)
+                        .primaryObjective(new DefeatAllEnemiesObjective())
+                        .bonusObjective(new CompleteWithinObjective(AbstractObjective.Reward.MORALE, 3))
+                        .build();
+            }
+        };
+    }
+
+
 
 
 
