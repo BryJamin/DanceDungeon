@@ -31,6 +31,13 @@ public class TextureStrings {
     public static final String SKILLS_HEAL = "skills/Heal";
 
 
+    public static final String SETTINGS_MUSIC_ON = "icons/music";
+    public static final String SETTINGS_MUSIC_OFF = "icons/music_off";
+
+
+    public static final String SETTINGS_SOUND_ON = "icons/sound";
+    public static final String SETTINGS_SOUND_OFF = "icons/sound_off";
+
     public static final String ICON_COMBAT = "icons/icon_combat";
     public static final String ICON_REST = "icons/icon_rest";
     public static final String ICON_MONEY = "icons/icon_money";

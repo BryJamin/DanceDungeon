@@ -72,13 +72,6 @@ public class TurnSystem extends EntitySystem implements Observer{
         return turn;
     }
 
-
-    private enum AIState {
-        DECIDING, WAITING, END
-    }
-
-    private AIState aiState = AIState.DECIDING;
-
     @SuppressWarnings("unchecked")
     public TurnSystem() {
         super(Aspect.all(AvailableActionsCompnent.class, SkillsComponent.class, UnitComponent.class).one(UtilityAiComponent.class, PlayerControlledComponent.class));
@@ -128,13 +121,20 @@ public class TurnSystem extends EntitySystem implements Observer{
 
         IntBag bag = world.getAspectSubscriptionManager().get(builder).getEntities();
 
+        System.out.println("BAG SIZE " + turn + " " + bag.size());
+
         for(int i = 0; i < bag.size(); i++){
+
             Entity e = world.getEntity(bag.get(i));
 
             if(this.getEntities().contains(e)) {
+
+                System.out.println("IN HERE BUCKO");
+
                 skillMapper.get(e).endTurn();
                 turnMapper.get(e).reset();
                 currentTurnEntities.add(e);
+
             }
         }
 
@@ -147,15 +147,13 @@ public class TurnSystem extends EntitySystem implements Observer{
         currentTurnEntities.clear();
 
         if (turn == ENEMY) {
-            populateTurnEntities(Aspect.all(UtilityAiComponent.class, CoordinateComponent.class, EnemyComponent.class));
+            populateTurnEntities(Aspect.all(AvailableActionsCompnent.class, SkillsComponent.class, UnitComponent.class, EnemyComponent.class));
         } else if (turn == PLAYER) {
-            populateTurnEntities(Aspect.all(PlayerControlledComponent.class, CoordinateComponent.class));
+            populateTurnEntities(Aspect.all(AvailableActionsCompnent.class, SkillsComponent.class, UnitComponent.class, PlayerControlledComponent.class));
 
         }
         battleState = STATE.NEXT_TURN;
         processingFlag = true;
-
-
     }
 
 
@@ -247,18 +245,22 @@ public class TurnSystem extends EntitySystem implements Observer{
      */
     private void calculateAiTurn(AvailableActionsCompnent availableActionsCompnent){
 
-        switch (aiState) {
+
+
+        switch (availableActionsCompnent.aiState) {
 
             case DECIDING:
 
                 UnitData unitData = unitM.get(currentEntity).getUnitData();
 
                 if(unitData.stun > 0){
-                    aiState = AIState.END;
+                    availableActionsCompnent.aiState = AvailableActionsCompnent.AIState.TURN_END;
                 } else if (!availableActionsCompnent.hasActions()) {
-                    aiState = AIState.END;
+                    System.out.println("NO ACTIONS");
+
+                    availableActionsCompnent.aiState = AvailableActionsCompnent.AIState.TURN_END;
                 } else {
-                    aiState = AIState.WAITING;
+                    availableActionsCompnent.aiState = AvailableActionsCompnent.AIState.WAITING;
                     utilityAiSystem.calculateMove(currentEntity);
                 }
 
@@ -268,12 +270,15 @@ public class TurnSystem extends EntitySystem implements Observer{
 
                 //Before making a decision check it see if an action is currently playing
                 if (!world.getSystem(ActionQueueSystem.class).isProcessing()) {
-                    aiState = AIState.DECIDING;
+                    availableActionsCompnent.aiState = AvailableActionsCompnent.AIState.DECIDING;
                 }
 
                 break;
 
-            case END: //Once the turn is over set the turn State to the Next Turn
+            case TURN_END: //Once the turn is over set the turn State to the Next Turn
+
+                System.out.println("TURN END");
+
                 battleState = STATE.NEXT_TURN;
                 break;
         }

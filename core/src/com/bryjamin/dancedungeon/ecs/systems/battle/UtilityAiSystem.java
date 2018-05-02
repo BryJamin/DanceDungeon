@@ -248,6 +248,8 @@ public class UtilityAiSystem extends EntitySystem {
 
         }
 
+        System.out.println("Move Calculated");
+
         AvailableActionsCompnent availableActionsCompnent = turnM.get(e);
         availableActionsCompnent.movementActionAvailable = false;
         availableActionsCompnent.attackActionAvailable = false;

@@ -14,7 +14,9 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.bryjamin.dancedungeon.assets.FileStrings;
 import com.bryjamin.dancedungeon.assets.Fonts;
+import com.bryjamin.dancedungeon.assets.music.SoundFiles;
 import com.bryjamin.dancedungeon.ecs.systems.audio.MusicSystem;
+import com.bryjamin.dancedungeon.ecs.systems.audio.SoundSystem;
 import com.bryjamin.dancedungeon.factories.enemy.UnitLibrary;
 import com.bryjamin.dancedungeon.factories.spells.SkillLibrary;
 import com.bryjamin.dancedungeon.screens.LoadingScreen;
@@ -86,6 +88,8 @@ public class MainGame extends Game {
         title.fontParameters.magFilter = Texture.TextureFilter.Linear;
         assetManager.load(Fonts.LARGE, BitmapFont.class, title);
 
+
+        SoundFiles.loadSoundsToManager(assetManager);
 
 
         //LOAD IN DATA FROM JSON

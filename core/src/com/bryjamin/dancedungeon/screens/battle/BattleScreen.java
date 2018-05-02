@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.assets.music.MusicFiles;
 import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
+import com.bryjamin.dancedungeon.ecs.systems.audio.SoundSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BattleDeploymentSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.DisplayEnemyIntentUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.StunnedSystem;
@@ -89,6 +90,7 @@ public class BattleScreen extends AbstractScreen {
                         new BattleDeploymentSystem(battleEvent, isTutorial),
 
                         game.musicSystem,
+                        new SoundSystem(assetManager),
 
                         new BattleScreenInputSystem(gameport),
 

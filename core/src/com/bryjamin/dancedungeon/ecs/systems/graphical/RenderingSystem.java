@@ -25,7 +25,6 @@ import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.GreyScaleComponent;
-import com.bryjamin.dancedungeon.ecs.components.graphics.HighLightTextComponent;
 import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.texture.DrawableDescription;
@@ -47,7 +46,6 @@ public class RenderingSystem extends EntitySystem {
     private ComponentMapper<CenteringBoundComponent> boundm;
     private ComponentMapper<DrawableComponent> drawablem;
     private ComponentMapper<BlinkOnHitComponent> blinkOnHitm;
-    private ComponentMapper<HighLightTextComponent> highlightM;
     private ComponentMapper<HealthComponent> healthM;
 
     private ComponentMapper<GreyScaleComponent> greyScaleMapper;
@@ -207,8 +205,6 @@ public class RenderingSystem extends EntitySystem {
                 bitmapFontCache.addText(glyphLayout, positionComponent.getX(),
                         positionComponent.getY() + glyphLayout.height + CenterMath.offsetY(bc.bound.height, glyphLayout.height) + textDescription.getOffsetY());
 
-                applyHighlightToText(e, bitmapFontCache, textDescription.getText());
-
                 bitmapFontCache.draw(batch);
 
             } else {
@@ -220,7 +216,6 @@ public class RenderingSystem extends EntitySystem {
                 bitmapFontCache.addText(glyphLayout, positionComponent.getX(),
                         positionComponent.getY() + glyphLayout.height + CenterMath.offsetY(textDescription.getHeight(), glyphLayout.height) + textDescription.getOffsetY());
 
-                applyHighlightToText(e, bitmapFontCache, textDescription.getText());
 
                 bitmapFontCache.draw(batch);
 
@@ -242,22 +237,6 @@ public class RenderingSystem extends EntitySystem {
 
         return true;
     }
-
-
-    private void applyHighlightToText(Entity e, BitmapFontCache cache, String text) {
-
-        if (highlightM.has(e)) {
-
-            HighLightTextComponent hltc = highlightM.get(e);
-            for (Highlight h : hltc.highLights) {
-                if (text.length() > h.start && text.length() > h.end) //TODO Bit Redundant, might be better to throw an error earlier
-                    cache.setColors(h.color, h.start, h.end);
-            }
-        }
-
-
-    }
-
 
     private void removeShader() {
         batch.end();

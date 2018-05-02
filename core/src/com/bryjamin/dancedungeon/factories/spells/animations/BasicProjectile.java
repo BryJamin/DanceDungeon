@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.bryjamin.dancedungeon.assets.Colors;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
+import com.bryjamin.dancedungeon.assets.music.SoundFiles;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
@@ -17,6 +18,7 @@ import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditio
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
+import com.bryjamin.dancedungeon.ecs.systems.audio.SoundSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionQueueSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
@@ -95,6 +97,9 @@ public class BasicProjectile implements SpellAnimation {
                skill.castSpellOnTargetLocation(skill.getSkillId(), world, caster, casterCoordinates, target);
            }
        }));
+
+
+       world.getSystem(SoundSystem.class).playRandomSound(SoundFiles.enemyFireMegaMix);
 
 
    }

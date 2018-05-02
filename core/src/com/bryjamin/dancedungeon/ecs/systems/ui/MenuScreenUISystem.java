@@ -5,14 +5,19 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
+import com.bryjamin.dancedungeon.assets.FileStrings;
 import com.bryjamin.dancedungeon.assets.Fonts;
 import com.bryjamin.dancedungeon.assets.Padding;
 import com.bryjamin.dancedungeon.assets.Skins;
@@ -20,6 +25,8 @@ import com.bryjamin.dancedungeon.assets.TextResource;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
+import com.bryjamin.dancedungeon.ecs.systems.audio.MusicSystem;
+import com.bryjamin.dancedungeon.ecs.systems.audio.SoundSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
@@ -30,6 +37,7 @@ import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.options.DevOptions;
 import com.bryjamin.dancedungeon.utils.options.PlayerSave;
 import com.bryjamin.dancedungeon.utils.options.QuickSave;
+import com.bryjamin.dancedungeon.utils.options.Settings;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
@@ -41,6 +49,11 @@ public class MenuScreenUISystem extends BaseSystem {
     private static int PARTY_SIZE = 3;
 
     private static final float BOTTOM_BUTTON_WIDTH = Measure.units(30f);
+
+
+    private static final float BUTTON_WIDTH = Measure.units(30f);
+    private static final float BUTTON_HEIGHT = Measure.units(7.5f);
+    private static final float SETTINGS_BUTTON_SIZE = Measure.units(7.5f);
 
     private StageUIRenderingSystem stageUIRenderingSystem;
     private RenderingSystem renderingSystem;
@@ -119,11 +132,60 @@ public class MenuScreenUISystem extends BaseSystem {
 
         container.row();
         bottomContainer = new Table(uiSkin);
+        bottomContainer.setWidth(stage.getWidth());
         bottomContainer.setDebug(true);
-        container.add(bottomContainer).height(Measure.units(10f));
+        container.add(bottomContainer).height(Measure.units(10f)).width(stage.getWidth());
+
+        populateBottomContainer();
 
 
 
+
+
+    }
+
+    private void populateBottomContainer(){
+
+        bottomContainer.clear();
+        bottomContainer.align(Align.right);
+
+        //Music Button
+
+        final Button music = new Button(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.SETTINGS_MUSIC_ON)),
+                null,
+                new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.SETTINGS_MUSIC_OFF)
+                ));
+
+        music.setChecked(!Settings.isMusicOn());
+
+        music.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Settings.toggleMusic();
+                music.setChecked(!Settings.isMusicOn());
+            }
+        });
+
+        bottomContainer.add(music).size(SETTINGS_BUTTON_SIZE).padRight(Padding.MEDIUM);
+
+        final Button sounds = new Button(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.SETTINGS_SOUND_ON)),
+                null,
+                new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.SETTINGS_SOUND_OFF)
+                ));
+
+        sounds.setChecked(!Settings.isSoundOn());
+
+        sounds.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Settings.toggleSound();
+                SoundSystem.SOUNDON = Settings.isSoundOn();
+                sounds.setChecked(!Settings.isSoundOn());
+            }
+        });
+
+
+        bottomContainer.add(sounds).size(SETTINGS_BUTTON_SIZE).padRight(Padding.MEDIUM);;
 
 
     }
@@ -154,7 +216,7 @@ public class MenuScreenUISystem extends BaseSystem {
                         }
                     });
 
-                    startButtonContainer.add(textBtn1).width(Measure.units(20f)).padBottom(Padding.MEDIUM);
+                    startButtonContainer.add(textBtn1).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).padBottom(Padding.MEDIUM);
                     startButtonContainer.row();
                 }
 
@@ -179,15 +241,19 @@ public class MenuScreenUISystem extends BaseSystem {
                     }
                 });
 
-                startButtonContainer.add(textBtn1).width(Measure.units(20f)).padBottom(Padding.MEDIUM);
+                startButtonContainer.add(textBtn1).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).padBottom(Padding.MEDIUM);
                 startButtonContainer.row();
-                startButtonContainer.add(textBtn2).width(Measure.units(20f));
+                startButtonContainer.add(textBtn2).width(BUTTON_WIDTH).height(BUTTON_HEIGHT);
 
                 break;
 
 
             case OPTIONS:
 
+
+                Table optionsTable = new Table();
+                ScrollPane optionsPane = new ScrollPane(optionsTable);
+                startButtonContainer.add(optionsPane).fill();
 
                 String text = DevOptions.getUtilityScoreSetting() ?
                         TextResource.SCREEN_MENU_SHOW_MOVEMENT_SCORE_ON : TextResource.SCREEN_MENU_SHOW_MOVEMENT_SCORE_OFF;
@@ -228,19 +294,28 @@ public class MenuScreenUISystem extends BaseSystem {
                     }
                 });
 
-                startButtonContainer.add(toggleScore).padBottom(Padding.MEDIUM);;
-                startButtonContainer.row();
-                startButtonContainer.add(toggleTutorial).padBottom(Padding.MEDIUM);;
-                startButtonContainer.row();
-                startButtonContainer.add(back);
+                addButtonToTable(optionsTable, back);
+                addButtonToTable(optionsTable, toggleScore);
+                addButtonToTable(optionsTable, toggleTutorial);
 
                 break;
 
 
         }
 
+    }
 
+    private void addButtonToTable(Table table, Button button){
 
+        switch (menuState){
+            case OPTIONS:
+                table.add(button).width(BUTTON_WIDTH + Measure.units(25f)).height(BUTTON_HEIGHT).padBottom(Padding.MEDIUM);
+                break;
+            case MAIN:
+                table.add(button).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).padBottom(Padding.MEDIUM);
+        }
+
+        table.row();
     }
 
 }

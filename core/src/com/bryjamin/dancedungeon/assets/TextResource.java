@@ -69,39 +69,53 @@ public class TextResource {
     public static final String SKILL_TYPE_RANGED = "Ranged";
     public static final String SKILL_TYPE_THROWN = "Thrown";
 
+    public static final String TUTORIAL_CLICK_TO_DISMISS = "(Tap to dismiss)";
 
-    public static String TUTORIAL_MORALE_TITLE = "Morale";
-    public static String TUTORIAL_MORALE_TEXT_1 = "This is Your Heroes' Morale. If This Hits Zero. The Game is Over!";
-    public static String TUTORIAL_MORALE_TEXT_2 = "Morale is Lost When Allied Forts are Damaged. Or If One of Your Heroes 'Faint'";
+    public static final String TUTORIAL_MORALE_TITLE = "Morale";
+    public static final String TUTORIAL_MORALE_TEXT_1 = "This is Your Heroes' Morale. If This Hits Zero. The Game is Over!";
+    public static final String TUTORIAL_MORALE_TEXT_2 = "Morale is Lost When Allied Forts are Damaged. Or If One of Your Heroes 'Faint'";
 
-    public static String TUTORIAL_ALLIED_STRUCTURE_TITLE = "Allied Structure";
-    public static String TUTORIAL_ALLIED_STRUCTURE_TEXT_1 = "These are Allied Structures";
-    public static String TUTORIAL_ALLIED_STRUCTURE_TEXT_2 = "If They Take Damage Your Heroes Lose Morale!";
+    public static final String TUTORIAL_ALLIED_STRUCTURE_TITLE = "Allied Structure";
+    public static final String TUTORIAL_ALLIED_STRUCTURE_TEXT_1 = "These are Allied Structures";
+    public static final String TUTORIAL_ALLIED_STRUCTURE_TEXT_2 = "If They Take Damage Your Heroes Lose Morale!";
 
+    public static final String TUTORIAL_ENEMIES_TITLE = "Enemies";
+    public static final String TUTORIAL_ENEMIES_TEXT_1 = "This is An Enemy";
+    public static final String TUTORIAL_ENEMIES_TEXT_2 = "Enemies Indicate Their Next Attacks";
+    public static final String TUTORIAL_ENEMIES_TEXT_3 = "Tap On Enemies To View Their Attack Details";
 
-    public static String TUTORIAL_PUSHING_TITLE = "Pushing";
-    public static String TUTORIAL_PUSHING_TEXT_1 = "Pushing Enemies Can Cause Their Targets To Change Before The Next Turn";
-    public static String TUTORIAL_PUSHING_TEXT_2 = "Pushing Enemies Into Walls Or Other Enemies Can Deal Extra Damage";
+    public static final String TUTORIAL_HEROES_TITLE = "Heroes";
+    public static final String TUTORIAL_HEROES_TEXT_1 = "This is A Hero Unit";
+    public static final String TUTORIAL_HEROES_TEXT_2 = "Tap On This Unit And Move It Next To The Enemy";
 
-
-
-    public static String TUTORIAL_RANGED_ATTACK_TITLE = "Ranged Attack";
-    public static String TUTORIAL_RANGED_ATTACK_TEXT_1 = "This Hero Has A Ranged Attack";
-    public static String TUTORIAL_RANGED_ATTACK_TEXT_2 = "Ranged Attacks Travel In A Straight Line Until Blocked";
-
-
-    public static String TUTORIAL_THROWN_ATTACK = "Thrown Attack";
-    public static String TUTORIAL_THROWN_ATTACK_TEXT_1 = "This Hero Has A Thrown Attack";
-    public static String TUTORIAL_THROWN_ATTACK_TEXT_2 = "Thrown Attacks Can Travel OVER Objects But Can't Target ADJACENT Tiles";
+    public static final String TUTORIAL_MOVE_HERE = "Move Here";
 
 
-    public static String TUTORIAL_OBJECTIVES_TITLE = "Objectives";
-    public static String TUTORIAL_OBJECTIVES_TEXT_1 = "You Must Complete The Primary Objective To Win A Battle";
-    public static String TUTORIAL_OBJECTIVES_TEXT_2 = "Bonus Objectives Award Extra Rewards";
+    public static final String TUTORIAL_SKILLS_TITLE = "Skills";
+    public static final String TUTORIAL_SKILLS_TEXT_1 = "These Are Your Hero's Skills";
+    public static final String TUTORIAL_SKILLS_TEXT_2 = "Tap On The Skill Icon To Highlight Where You Can Attack";
+    public static final String TUTORIAL_SKILLS_TEXT_3 = "You Can Not Move After Using A Skill";
+
+    public static final String TUTORIAL_PUSHING_TITLE = "Pushing";
+    public static final String TUTORIAL_PUSHING_TEXT_1 = "Pushing Enemies Can Cause Their Targets To Change Before The Next Turn";
+    public static final String TUTORIAL_PUSHING_TEXT_2 = "Pushing Enemies Into Walls Or Other Enemies Can Deal Extra Damage";
 
 
-    public static String TUTORIAL_END_TITLE = "Combat Training Complete";
-    public static String TUTORIAL_END_TEXT_1 = "You Will Now Be Returned To The Character Selection Screen";
-    public static String TUTORIAL_END_TEXT_2 = "Good Luck Out There";
+
+    public static final String TUTORIAL_RANGED_ATTACK_TITLE = "Ranged Attack";
+    public static final String TUTORIAL_RANGED_ATTACK_TEXT_1 = "This Hero Has A Ranged Attack";
+    public static final String TUTORIAL_RANGED_ATTACK_TEXT_2 = "Ranged Attacks Travel In A Straight Line Until Blocked";
+
+    public static final String TUTORIAL_THROWN_ATTACK = "Thrown Attack";
+    public static final String TUTORIAL_THROWN_ATTACK_TEXT_1 = "This Hero Has A Thrown Attack";
+    public static final String TUTORIAL_THROWN_ATTACK_TEXT_2 = "Thrown Attacks Can Travel OVER Objects But Can't Target ADJACENT Tiles";
+
+    public static final String TUTORIAL_OBJECTIVES_TITLE = "Objectives";
+    public static final String TUTORIAL_OBJECTIVES_TEXT_1 = "You Must Complete The Primary Objective To Win A Battle";
+    public static final String TUTORIAL_OBJECTIVES_TEXT_2 = "Bonus Objectives Award Extra Rewards";
+
+    public static final String TUTORIAL_END_TITLE = "Combat Training Complete";
+    public static final String TUTORIAL_END_TEXT_1 = "You Will Now Be Returned To The Character Selection Screen";
+    public static final String TUTORIAL_END_TEXT_2 = "Good Luck Out There";
 
 }
