@@ -38,6 +38,7 @@ import com.bryjamin.dancedungeon.assets.Fonts;
 import com.bryjamin.dancedungeon.assets.NinePatches;
 import com.bryjamin.dancedungeon.assets.Padding;
 import com.bryjamin.dancedungeon.assets.Skins;
+import com.bryjamin.dancedungeon.assets.Styles;
 import com.bryjamin.dancedungeon.assets.TextResource;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
@@ -644,7 +645,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
             Stack stack = new Stack();
             Drawable drawable = new TextureRegionDrawable(atlas.findRegion(skill.getIcon()));
-            final Button btn = new Button(uiSkin, "inventory");
+            final Button btn = new Button(uiSkin, Styles.BUTTON_STYLE_TOGGLE);
             btn.setChecked(true);
             btn.setTouchable(Touchable.disabled);
 
@@ -736,7 +737,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
         Stack stack = new Stack();
 
         Drawable drawable = new TextureRegionDrawable(atlas.findRegion(skill.getIcon()));
-        final Button btn = new Button(uiSkin, "inventory");
+        final Button btn = new Button(uiSkin, Styles.BUTTON_STYLE_TOGGLE);
 
         btn.addListener(new ClickListener(){
 

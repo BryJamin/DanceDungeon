@@ -64,6 +64,13 @@ public class TextResource {
     public static final String SCREEN_MAP_ARE_YOU_SURE = "Are You Sure You Want To Save and Quit The Game?";
     public static final String SCREEN_MAP_INVENTORY_DRAG_TIP = "Inventory (Drag and Drop to Equip)";
 
+    public static final String REST_SCREEN_WECLOME = "You've Reached a Rest Site";
+    public static final String REST_SCREEN_REST = "Rest";
+    public static final String REST_SCREEN_REST_DESCRIPTION = "Restore 1 HP to All Party Members";
+    public static final String REST_SCREEN_MORALE = "Boost Morale";
+    public static final String REST_SCREEN_MORALE_DESCRIPTION = "Restore Morale By 1";
+    public static final String REST_SCREEN_LEAVE = "Leave";
+
     public static final String BATTLE_NO_ENEMY_ATTACK = "This Enemy is Not Attacking";
 
 

@@ -292,7 +292,7 @@ public class MapScreenUISystem extends BaseSystem {
             t.setTouchable(Touchable.disabled);
             t.add(new Image(renderingSystem.getAtlas().findRegion(unit.icon))).size(Measure.units(5f));
 
-            final Button button = new Button(uiSkin, "inventory");
+            final Button button = new Button(uiSkin, Styles.BUTTON_STYLE_TOGGLE);
 
             stack.add(button);
             stack.add(t);

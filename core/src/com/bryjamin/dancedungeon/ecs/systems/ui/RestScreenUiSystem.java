@@ -3,16 +3,24 @@ package com.bryjamin.dancedungeon.ecs.systems.ui;
 import com.artemis.BaseSystem;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
+import com.bryjamin.dancedungeon.assets.Fonts;
 import com.bryjamin.dancedungeon.assets.Skins;
+import com.bryjamin.dancedungeon.assets.Styles;
+import com.bryjamin.dancedungeon.assets.TextResource;
 import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
@@ -30,6 +38,8 @@ public class RestScreenUiSystem extends BaseSystem {
     private RenderingSystem renderingSystem;
     private PlayerPartyManagementSystem partyManagementSystem;
 
+    private static final float BUTTON_WIDTH = Measure.units(75f);
+    private static final float BUTTON_HEIGHT = Measure.units(7.5f);
 
     private Table container;
 
@@ -51,86 +61,90 @@ public class RestScreenUiSystem extends BaseSystem {
         Stage stage = stageUIRenderingSystem.stage;
 
         container = new Table();
-        container.setDebug(true);
+        container.setDebug(StageUIRenderingSystem.DEBUG);
         container.setWidth(stage.getWidth());
         container.setHeight(stage.getHeight());
 
         container.align(Align.top);
 
-        Label label = new Label("You've Reached a Rest Site", uiSkin);
-        container.add(label).padTop(Measure.units(10f)).expandX();
+        Label label = new Label(TextResource.REST_SCREEN_WECLOME, uiSkin);
+        container.add(label).padTop(Measure.units(12.5f)).expandX();
         container.row();
 
-
-        Label actionsLabel = new Label("Please Select An Action to Take", uiSkin);
-        container.add(actionsLabel).expandX();
-        container.row();
-
-        //Table actionsTable = new Table(uiSkin);
-
-        //container.add(actionsTable);
-
-        final TextButton restButton = new TextButton("Rest (Restore 1 hp to all party members)", uiSkin);
-        container.add(restButton).width(stage.getWidth()).expandX().expandY();
-
-        restButton.addListener(new ChangeListener() {
+        Stack rest = createRestStack(TextResource.REST_SCREEN_REST, TextResource.REST_SCREEN_REST_DESCRIPTION, new ClickListener() {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
-
+            public void clicked(InputEvent event, float x, float y) {
                 for(UnitData unitData : partyManagementSystem.getPartyDetails().getParty()){
                     unitData.changeHealth(1);
                 }
+                returnToMapScreen();
 
-                Screen menu = restScreen.getPreviousScreen();
-                game.getScreen().dispose();
-                game.setScreen(menu);
-                ((MapScreen) menu).battleVictory();
-
-
-                restButton.setDisabled(true);
             }
         });
 
-        container.row();
 
-        TextButton boostMoraleButton = new TextButton("Boost Morale (Restore 1 to your party's morale)", uiSkin);
-
-        boostMoraleButton.addListener(new ChangeListener() {
+        Stack morale = createRestStack(TextResource.REST_SCREEN_MORALE, TextResource.REST_SCREEN_MORALE_DESCRIPTION, new ClickListener() {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
-
+            public void clicked(InputEvent event, float x, float y) {
                 partyManagementSystem.editMorale(1);
-                Screen menu = restScreen.getPreviousScreen();
-                game.getScreen().dispose();
-                game.setScreen(menu);
-                ((MapScreen) menu).battleVictory();
+                returnToMapScreen();
             }
         });
 
 
-        container.add(boostMoraleButton).width(stage.getWidth()).expandX().expandY();
 
+        container.add(rest).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).expandY();
         container.row();
 
-        TextButton leaveRestArea = new TextButton("Leave", uiSkin);
+        container.add(morale).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).expandY();
+        container.row();
+
+        TextButton leaveRestArea = new TextButton(TextResource.REST_SCREEN_LEAVE, uiSkin);
         leaveRestArea.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                Screen menu = restScreen.getPreviousScreen();
-                game.getScreen().dispose();
-                game.setScreen(menu);
-                ((MapScreen) menu).battleVictory();
+                returnToMapScreen();
             }
         });
 
-        container.add(leaveRestArea).width(stage.getWidth()).expandY();
-
+        container.add(leaveRestArea).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).expandY();
 
         stage.addActor(container);
 
+    }
 
+    private void returnToMapScreen(){
+        Screen menu = restScreen.getPreviousScreen();
+        game.getScreen().dispose();
+        game.setScreen(menu);
+        ((MapScreen) menu).battleVictory();
+    }
+
+
+    private Stack createRestStack(String title, String description, ClickListener buttonListener){
+
+        Button b = new Button(uiSkin, Styles.BUTTON_STYLE_TOGGLE);
+        b.addListener(buttonListener);
+
+        Table wrapper = new Table(uiSkin);
+        wrapper.setTouchable(Touchable.disabled);
+        Label titleLabel = new Label(title, uiSkin);
+        titleLabel.setAlignment(Align.center);
+        wrapper.add(titleLabel);
+        wrapper.row();
+
+        Label desLabel = new Label(description, uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
+        desLabel.setAlignment(Align.center);
+        wrapper.add(desLabel);
+
+        Stack stack = new Stack();
+        stack.add(b);
+        stack.add(wrapper);
+
+        return stack;
 
     }
+
 
     @Override
     protected void processSystem() {
