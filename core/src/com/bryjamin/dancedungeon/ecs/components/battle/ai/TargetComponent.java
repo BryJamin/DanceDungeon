@@ -9,6 +9,10 @@ import com.badlogic.gdx.utils.Array;
 
 /**
  * Created by BB on 17/11/2017.
+ *
+ * Used To Store Builders that represent the targets of an Entity.
+ *
+ * The {@link com.bryjamin.dancedungeon.ecs.systems.battle.GenerateTargetsSystem} sets up the builder for the Entity.
  */
 
 public class TargetComponent extends Component {
@@ -21,6 +25,9 @@ public class TargetComponent extends Component {
     }
 
 
+    /**
+     * Uses the Enemy Builder to return Targets of this Entity
+     */
     public Array<Entity> getTargets(World world){
 
         Array<Entity> entityArray = new Array<Entity>();
@@ -35,6 +42,9 @@ public class TargetComponent extends Component {
 
     }
 
+    /**
+     * Uses the Ally Builder to return Allies of this Entity
+     */
     public Array<Entity> getAllies(World world){
 
         Array<Entity> entityArray = new Array<Entity>();

@@ -22,8 +22,9 @@ public class SurviveObjective extends AbstractObjective {
     }
 
     @Override
-    public void onNotify() {
+    public void update(Object o) {
         rounds--;
-        super.onNotify();
+        super.update(o);
     }
+
 }

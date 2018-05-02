@@ -8,6 +8,5 @@ import com.artemis.Component;
  * Entities affected by this component will be shaded greyscale
  *
  */
-
 public class GreyScaleComponent extends Component{
 }

@@ -6,6 +6,10 @@ import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditio
 
 /**
  * Created by BB on 01/11/2017.
+ *
+ * Component, when attached to an Entity. The Conditional Actions will be performed.
+ *
+ * A condition is checked first and then the action is performed.
  */
 
 public class ConditionalActionsComponent extends Component {

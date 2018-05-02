@@ -6,6 +6,8 @@ import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 
 /**
  * Created by BB on 01/11/2017.
+ *
+ * Component for allowing an Entity to perform an Action upon being deleted via the DeathSystem
  */
 
 public class OnDeathActionsComponent extends Component {

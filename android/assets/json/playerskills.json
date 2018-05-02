@@ -10,12 +10,14 @@
     "spellAnimation": "Slash",
     "attackType": "Damage"
   },
+
   "d92aa63f-1f4d-40bf-9dca-344cebd78d31": {
     "class": "com.bryjamin.dancedungeon.factories.spells.Skill",
     "name": "Heavier Strike",
     "description": "Deals 2 damage. Pushes a target 2 tiles",
     "icon": "icons/units/warrior",
     "push": 2,
+    "storePrice": 3,
     "baseDamage": 2,
     "targeting": "Melee",
     "spellAnimation": "Slash",
@@ -55,7 +57,10 @@
     "baseDamage": 1,
     "targeting": "Melee",
     "spellAnimation": "Slash",
-    "attackType": "Damage"
+    "attackType": "Damage",
+
+    "storePrice": 2
+
   },
 
   "1e3e7778-14e1-4466-b1fb-b24a01723155": {
@@ -65,12 +70,15 @@
     "icon": "skills/Fire",
     "baseDamage": 1,
     "targeting": "Melee",
-    "spellAnimation": "Projectile",
+    "spellAnimation": "Thrown",
     "minRange": 2,
-    "maxRange": 5,
+    "maxRange": 11,
     "attackType": "Damage",
+    "storePrice": 3,
+
     "affectedAreaSkill": {
       "push": 1,
+      "baseDamage": 0,
       "spellAnimation": "Projectile"
     },
     "affectedAreas": [

@@ -6,18 +6,11 @@ package com.bryjamin.dancedungeon.assets;
 
 public class Fonts {
 
-
+    public static final String LARGE = "large.ttf";
     public static final String MEDIUM = "font.ttf";
-
     public static final String SMALL = "small.ttf";
-
     public static final String SMALL_FONT_STYLE_NAME = "myfont36";
-
-
-    public static final String SMALL_FONT_NAME = "small";
-
-
-
-
+    public static final String LARGE_FONT_STYLE_NAME = "myfont99";
+    public static final String LABEL_STYLE_SMALL_FONT = "small";
 
 }

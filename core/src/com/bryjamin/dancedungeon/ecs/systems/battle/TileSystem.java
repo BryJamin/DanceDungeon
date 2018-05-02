@@ -9,15 +9,15 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.Queue;
 import com.bryjamin.dancedungeon.assets.MapData;
-import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
@@ -48,6 +48,7 @@ public class TileSystem extends EntitySystem {
 
 
     private ComponentMapper<PlayerControlledComponent> pcm;
+    private ComponentMapper<CoordinateComponent> cm;
     private ComponentMapper<SolidComponent> sm;
     private ComponentMapper<EnemyComponent> enemym;
 
@@ -55,35 +56,34 @@ public class TileSystem extends EntitySystem {
     private BattleEvent battleEvent;
 
 
-    private float width = Measure.units(60f);
-    private float height = Measure.units(35f);
+    private static final float originX = Measure.units(7.5f);
+    private static final float originY = Measure.units(14.5f);
 
-    private float originX = Measure.units(7.5f);
-    private float originY = Measure.units(15f);
+    private static final int rows = 6;
+    private static final int columns = 8;
 
-    private int rows = 6;
-    private int columns = 8;
+    private static final float width = columns * Measure.units(6.5f);
+    private static final float height = rows * Measure.units(6.5f);
 
     private int maxX;
     private int maxY;
 
-    private float tileWidthSize;
-    private float tileHeightSize;
+    private static final float tileWidthSize = width / columns;;
+    private static final float tileHeightSize = height / rows;
 
-
-    private Array<Rectangle> movementRectangles = new Array<Rectangle>();
+    public static final float CELL_SIZE = tileWidthSize;
 
     private Array<Coordinates> enemySpawningLocations = new Array<Coordinates>();
     private Array<Coordinates> allySpawningLocations = new Array<Coordinates>();
 
     //Map for all spaces
-    private OrderedMap<Coordinates, Array<Entity>> coordinateMap = new OrderedMap<Coordinates, Array<Entity>>();
+    private OrderedMap<Coordinates, Array<Entity>> coordinateMap = new OrderedMap<>();
 
     private OrderedMap<Entity, Coordinates> playerControlledMap = new OrderedMap<Entity, Coordinates>();
     private OrderedMap<Entity, Coordinates> enemyMap = new OrderedMap<Entity, Coordinates>();
 
     //Map used to show if a space is occupied
-    private OrderedMap<Entity, Coordinates> occupiedMap = new OrderedMap<Entity, Coordinates>();
+    private ArrayMap<Entity, Coordinates> occupiedMap = new ArrayMap<>();
 
     private OrderedMap<Coordinates, Rectangle> rectangleMap = new OrderedMap<Coordinates, Rectangle>();
 
@@ -93,43 +93,37 @@ public class TileSystem extends EntitySystem {
 
     @SuppressWarnings("unchecked")
     public TileSystem(BattleEvent battleEvent) {
-        super(Aspect.all(CoordinateComponent.class, CenteringBoundaryComponent.class, PositionComponent.class));
+        super(Aspect.all(CoordinateComponent.class, CenteringBoundComponent.class, PositionComponent.class));
         this.battleEvent = battleEvent;
     }
 
     @Override
     protected void initialize() {
 
-        tileWidthSize = width / columns;
-        tileHeightSize = height / rows;
-
         this.maxX = columns;
         this.maxY = rows;
 
         map = new TmxMapLoader(new InternalFileHandleResolver()).load(battleEvent.getMapLocation());
 
-
-        TiledMapTileLayer objects =  (TiledMapTileLayer) map.getLayers().get("Object");
-        TiledMapTileLayer background =  (TiledMapTileLayer) map.getLayers().get("Background");
+        TiledMapTileLayer objects =  (TiledMapTileLayer) map.getLayers().get(MapData.OBJECT_LAYER_KEY);
 
         UnitFactory unitFactory = new UnitFactory();
 
         for(int i = 0; i < objects.getWidth(); i++){
-
             for(int j = 0; j < objects.getHeight(); j++){
-
                 if(objects.getCell(i, j) != null) {
-
                     TiledMapTile tile = objects.getCell(i, j).getTile();
-                    if (tile.getProperties().containsKey("Type")) {
-                        String property = (String) tile.getProperties().get("Type");
-                        if (property.equals("Wall")) {
-                            unitFactory.baseTileBag(world, new Coordinates(i, j));
-                        } else if (property.equals("Ally")) {
-                            unitFactory.baseAlliedTileBag(world, new Coordinates(i, j));
+                    if (tile.getProperties().containsKey(MapData.OBJECT_LAYER_TILE_INFO_PROPERTY)) {
+                        String property = (String) tile.getProperties().get(MapData.OBJECT_LAYER_TILE_INFO_PROPERTY);
+                        switch (property){
+                            case MapData.OBJECTS_TILE_WALL:
+                                unitFactory.baseTileBag(world, new Coordinates(i, j));
+                                break;
+                            case MapData.OBJECTS_ALLIED_STRUCTURE:
+                                unitFactory.baseAlliedTileBag(world, new Coordinates(i, j));
+                                break;
                         }
                     }
-
                 } else { //Create a deployment zone depending on
 
                     if(i < 3) {
@@ -179,7 +173,7 @@ public class TileSystem extends EntitySystem {
 
 
 
-    public OrderedMap<Entity, Coordinates> getOccupiedMap() {
+    public ArrayMap<Entity, Coordinates> getOccupiedMap() {
         return occupiedMap;
     }
 
@@ -195,7 +189,6 @@ public class TileSystem extends EntitySystem {
         occupiedMap.clear();
         playerControlledMap.clear();
         enemyMap.clear();
-
 
         for(Coordinates c : coordinateMap.keys()){
             coordinateMap.get(c).clear();
@@ -231,17 +224,20 @@ public class TileSystem extends EntitySystem {
     }
 
 
+    /**
+     * Adds a given entity to the relevant maps.
+     */
     private void addEntityToMaps(Entity e, Coordinates coordinates) {
 
-        if(sm.has(e)) {
+        if(sm.has(e)) { //'Solid' entities are tracked in the occupied map
             occupiedMap.put(e, coordinates);
         }
 
-        if(coordinateMap.get(coordinates) != null) {
+        if(coordinateMap.get(coordinates) != null) {//Coordinate map tracks all entities in the coordinate
             coordinateMap.get(coordinates).add(e);
         }
 
-        if (pcm.has(e)) playerControlledMap.put(e, coordinates);
+        if (pcm.has(e)) playerControlledMap.put(e, coordinates); //Player and Enemy maps
         if (enemym.has(e)) enemyMap.put(e, coordinates);
 
     }
@@ -252,37 +248,38 @@ public class TileSystem extends EntitySystem {
 
         CoordinateComponent coordinateComponent = e.getComponent(CoordinateComponent.class);
 
-        if (occupiedMap.containsValue(e.getComponent(CoordinateComponent.class).coordinates, false) || !coordinateMap.containsKey(coordinateComponent.coordinates)) {
-            if (!relocateEntity(e))
-                e.deleteFromWorld(); //TODO decide what to do if a there is no space to place something
+
+        if(sm.has(e)){ //If the entity is 'solid' it can not be placed on top up another entity.
+            if (occupiedMap.containsValue(e.getComponent(CoordinateComponent.class).coordinates, false) || !coordinateMap.containsKey(coordinateComponent.coordinates)) {
+                if (!relocateEntity(e))
+                    e.deleteFromWorld(); //TODO decide what to do if a there is no space to place something
+            } else {
+                addEntityToMaps(e, coordinateComponent.coordinates);
+            }
         } else {
             addEntityToMaps(e, coordinateComponent.coordinates);
         }
 
         if (!coordinateComponent.freePlacement) {
-            placeUsingCoordinates(e.getComponent(CoordinateComponent.class).coordinates, e.getComponent(PositionComponent.class), e.getComponent(CenteringBoundaryComponent.class));
+            placeUsingCoordinates(e.getComponent(CoordinateComponent.class).coordinates, e.getComponent(PositionComponent.class), e.getComponent(CenteringBoundComponent.class));
         }
     }
 
 
-    public void updateCoordinates(Entity e) {
+    /**
+     * Uses the bounds of an entity to update their co-ordinates
+     * @param e
+     */
+    private void updateCoordinates(Entity e) {
 
-        CoordinateComponent coordinateComponent = e.getComponent(CoordinateComponent.class);
+        CoordinateComponent coordinateComponent = cm.get(e);
+        CenteringBoundComponent centeringBoundComponent = e.getComponent(CenteringBoundComponent.class);
 
-/*
-        occupiedMap.remove(coordinateComponent.coordinates);
-        coordinateMap.get(coordinateComponent.coordinates).removeValue(e, true);
-
-        if (pcm.has(e)) playerControlledMap.remove(coordinateComponent.coordinates);
-        if(enemym.has(e)) enemyMap.remove(coordinateComponent.coordinates);*/
-
-        CenteringBoundaryComponent centeringBoundaryComponent = e.getComponent(CenteringBoundaryComponent.class);
-
-        //coordinateComponent.coordinates = getCoordinatesUsingPosition(centeringBoundaryComponent.bound);
+        Vector2 center = centeringBoundComponent.bound.getCenter(new Vector2());
 
         coordinateComponent.coordinates = getCoordinatesUsingPosition(
-                centeringBoundaryComponent.bound.getCenter(new Vector2()).x,
-                centeringBoundaryComponent.bound.getCenter(new Vector2()).y);
+                center.x,
+                center.y);
 
         addEntityToMaps(e, coordinateComponent.coordinates);
     }
@@ -295,7 +292,7 @@ public class TileSystem extends EntitySystem {
      * @param pc          - Position Component of Entity
      * @param bc          - Bound Component
      */
-    public void placeUsingCoordinates(Coordinates coordinates, PositionComponent pc, CenteringBoundaryComponent bc) {
+    public void placeUsingCoordinates(Coordinates coordinates, PositionComponent pc, CenteringBoundComponent bc) {
 
         float x = originX + ((coordinates.getX()) * tileWidthSize);
         float y = originY + ((coordinates.getY()) * tileHeightSize);
@@ -319,7 +316,7 @@ public class TileSystem extends EntitySystem {
 
     }
 
-    public Vector3 getPositionUsingCoordinates(int cX, int cY, Rectangle rectangle) {
+    private Vector3 getPositionUsingCoordinates(int cX, int cY, Rectangle rectangle) {
 
         float x = originX + (cX * tileWidthSize);
         float y = originY + (cY * tileHeightSize);
@@ -371,12 +368,31 @@ public class TileSystem extends EntitySystem {
 
     }
 
-    public boolean findShortestPath(Entity e, Queue<Coordinates> fillQueue, Coordinates c, int maxDistance) {
+    public boolean findShortestPath(Entity e, Queue<Coordinates> fillQueue, Coordinates target, int maxDistance) {
+
+        Array<Coordinates> coordinatesArray = new Array<>();
+        coordinatesArray.add(target);
+        return findShortestPath(e, fillQueue, coordinatesArray, maxDistance);
+    }
+
+
+
+/*
+    public OrderedMap<Coordinates, Queue<Coordinates>> findPathsToAllCoordinates(Entity e, Coordinates start) {
+
+        OrderedMap<Coordinates, Queue<Coordinates>> queueOrderedMap = new OrderedMap<>();
+
+
+
+
 
         Array<Coordinates> coordinatesArray = new Array<Coordinates>();
         coordinatesArray.add(c);
         return findShortestPath(e, fillQueue, coordinatesArray, maxDistance);
     }
+*/
+
+
 
     public boolean findShortestPath(Entity e, Queue<Coordinates> fillQueue, Array<Coordinates> targets, int maxDistance) {
 
@@ -387,7 +403,6 @@ public class TileSystem extends EntitySystem {
                     playerControlledMap.values().toArray());
 
         } else { //TODO what to with walls and etc? If there even are walls.
-
 
             aStarPathCalculator = new AStarPathCalculator(
                     coordinateMap.keys().toArray(),
@@ -443,7 +458,7 @@ public class TileSystem extends EntitySystem {
 
                 if(om.get(shotCoords) == null){
                     break;
-                } else if (om.get(shotCoords).size > 0) {
+                } else if (om.get(shotCoords).size > 0 && occupiedMap.containsValue(shotCoords, false)) {
                     coordinatesArray.add(shotCoords);
                     break;
                 } else {
@@ -467,6 +482,15 @@ public class TileSystem extends EntitySystem {
         return coordinatesArray;
 
     }
+
+
+/*    public Array<Coordinates> getUnoccupiedCoordinates(){
+
+        Array<Coordinates> unoccupiedCoordinates = new Array<>();
+
+
+
+    }*/
 
 
     public OrderedMap<Entity, Coordinates> getPlayerControlledMap() {
@@ -494,11 +518,21 @@ public class TileSystem extends EntitySystem {
     }
 
 
+
+    public Rectangle getCellDimensions(){
+        return new Rectangle(0,0, tileWidthSize, tileHeightSize);
+    }
+
+    public float getMinimumCellSize(){
+        return tileHeightSize > tileWidthSize ? tileWidthSize : tileHeightSize;
+    }
+
+
     public Array<Coordinates> getEnemySpawningLocations() {
         return enemySpawningLocations;
     }
 
     public Array<Coordinates> getAllySpawningLocations() {
-        return allySpawningLocations;
+        return new Array<>(allySpawningLocations);
     }
 }

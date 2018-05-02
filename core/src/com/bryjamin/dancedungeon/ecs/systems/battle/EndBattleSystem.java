@@ -5,18 +5,21 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.artemis.utils.Bag;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.MainGame;
-import com.bryjamin.dancedungeon.Observer;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
+import com.bryjamin.dancedungeon.ecs.systems.ui.TutorialSystem;
+import com.bryjamin.dancedungeon.factories.map.event.TutorialEvent;
+import com.bryjamin.dancedungeon.factories.player.UnitData;
+import com.bryjamin.dancedungeon.utils.observer.Observer;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
-import com.bryjamin.dancedungeon.ecs.systems.action.BattleWorldInputHandlerSystem;
+import com.bryjamin.dancedungeon.ecs.systems.action.BattleScreenInputSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
-import com.bryjamin.dancedungeon.factories.map.MapNode;
 import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
 import com.bryjamin.dancedungeon.factories.map.event.objectives.AbstractObjective;
 import com.bryjamin.dancedungeon.screens.battle.BattleScreen;
@@ -31,11 +34,13 @@ public class EndBattleSystem extends EntitySystem implements Observer {
 
     private PlayerPartyManagementSystem playerPartyManagementSystem;
     private BattleScreenUISystem battleScreenUISystem;
-    private BattleWorldInputHandlerSystem battleWorldInputHandlerSystem;
+
+    private BattleScreenInputSystem battleScreenInputSystem;
     private TurnSystem turnSystem;
-    private ActionCameraSystem actionCameraSystem;
+    private ActionQueueSystem actionQueueSystem;
 
     private ComponentMapper<EnemyComponent> enemyMapper;
+    private ComponentMapper<UnitComponent> uMapper;
     private ComponentMapper<PlayerControlledComponent> pcMapper;
 
 
@@ -64,7 +69,7 @@ public class EndBattleSystem extends EntitySystem implements Observer {
 
     @Override
     protected void initialize() {
-        actionCameraSystem.observerArray.add(this);
+        actionQueueSystem.observable.addObserver(this);
 
 
         Array<AbstractObjective> abstractObjectives = new Array<AbstractObjective>();
@@ -76,7 +81,7 @@ public class EndBattleSystem extends EntitySystem implements Observer {
             for(int j = 0; j < abstractObjectives.get(i).getUpdateOnArray().length; j++){
                 switch (abstractObjectives.get(i).getUpdateOnArray()[j]){
                     case END_TURN:
-                        turnSystem.addNextTurnObserver(abstractObjectives.get(i));
+                        turnSystem.addPlayerTurnObserver(abstractObjectives.get(i));
                         break;
                 }
             }
@@ -117,36 +122,36 @@ public class EndBattleSystem extends EntitySystem implements Observer {
 
 
     @Override
-    public void onNotify() {
-        //TODO, decide if notify is appropriate. Also, there is not really a reason for the state change,
-
-        //UNTIL I CAN FIX TEH ACTION CAMERA SYSTEM IN REGARDS TO THE SIMULTANEOUS ATTACKS HAPPENS
-        //ON DIFFERENT PARTS OF THE MAP I NEED TO ADD A CHECK FOR IF THE FLAG IS FALSE
-        //OTHERWISE THIS WILL CRASH
+    public void update(Object o) {
 
         if(!processingFlag) return;
 
 
-        if(playerPartyManagementSystem.getPartyDetails().morale == 0) {
-            ((BattleScreen) game.getScreen()).defeat();
+        if(playerPartyManagementSystem.getPartyDetails().getMorale() == 0 || playerPartyManagementSystem.getPartyDetails().isEveryoneDefeated()) {
+            battleScreenUISystem.createDefeatScreen();
+            turnSystem.setEnabled(false);
+            battleScreenInputSystem.restrictInputToStage();
 
-            actionCameraSystem.observerArray.removeValue(this, true);
+            actionQueueSystem.observable.removeObserver(this);
         }
 
         if (currentEvent.isComplete(world)) {
 
             for(Entity e : playerBag){
                 HealthComponent hc = e.getComponent(HealthComponent.class);
-                StatComponent statComponent = e.getComponent(StatComponent.class);
+                UnitData unitData = uMapper.get(e).getUnitData();
 
-                statComponent.health = (int) hc.health;
-                statComponent.maxHealth = (int) hc.maxHealth;
+                unitData.setHealth(hc.health);
+                unitData.setMaxHealth(hc.maxHealth);
             }
 
-            actionCameraSystem.observerArray.removeValue(this, true);
-
-            battleScreenUISystem.createVictoryRewards(currentEvent, partyDetails);
-            battleWorldInputHandlerSystem.setState(BattleWorldInputHandlerSystem.State.VICTORY);
+            if(currentEvent instanceof TutorialEvent){
+                battleScreenUISystem.createTutorialWindow(new Rectangle(), TutorialSystem.TutorialState.END);
+            } else {
+                actionQueueSystem.observable.removeObserver(this);
+                battleScreenUISystem.createVictoryRewards(currentEvent, partyDetails);
+                battleScreenInputSystem.restrictInputToStage();
+            }
 
         }
 

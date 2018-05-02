@@ -5,9 +5,8 @@ import com.artemis.Component;
 /**
  * Created by BB on 05/03/2018.
  *
- * Used to determine if a unit 'Occupies' a space on the tile map
+ * Used by TileSystem to decide if Entity should be placed within the occupied Map.
  *
  */
-
 public class SolidComponent extends Component {
 }

@@ -5,33 +5,28 @@ import com.artemis.World;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
-import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
-import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
-import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
-import com.bryjamin.dancedungeon.ecs.components.battle.BuffComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.AvailableActionsCompnent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.DeploymentComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.DeploymentComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.UnPushableComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.UnPushableComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.AffectMoraleComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.FriendlyComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.SolidComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
+import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
-import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
@@ -41,6 +36,10 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
  */
 
 public class UnitFactory {
+
+
+
+    private static final float UNIT_BOUNDS_SIZE = Measure.units(4.5f);
 
     public Entity baseTileBag(World world, Coordinates c){
 
@@ -52,10 +51,10 @@ public class UnitFactory {
                 .add(new CoordinateComponent(c))
                 .add(new MoveToComponent())
                 .add(new VelocityComponent())
-                .add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE, new TextureDescription.Builder(TextureStrings.BLOCK)
+                .add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE, new TextureDescription.Builder(TextureStrings.WALL)
                         //.offsetX()
-                        .size(Measure.units(5f)).build()))
-                .add(new CenteringBoundaryComponent(new Rectangle(0, 0, Measure.units(5f), Measure.units(5f))));
+                        .size(Measure.units(4f)).build()))
+                .add(new CenteringBoundComponent(new Rectangle(0, 0, Measure.units(4f), Measure.units(4f))));
 
         return e;
 
@@ -68,7 +67,14 @@ public class UnitFactory {
         e.edit().add(new HealthComponent(2));
         e.edit().add(new AffectMoraleComponent());
         e.edit().add(new FriendlyComponent());
-        e.edit().add(new StatComponent(new StatComponent.StatBuilder().healthAndMax(1)));
+        e.edit().add(new BlinkOnHitComponent());
+
+
+        UnitData unitData = new UnitData();
+        unitData.setHealth(2);
+        unitData.setHealth(2);
+
+        e.edit().add(new UnitComponent(unitData));
         e.getComponent(DrawableComponent.class).drawables.getColor().set(new Color(Color.ORANGE));
         return e;
     }
@@ -94,7 +100,7 @@ public class UnitFactory {
                         .alpha(0.17f)
                         .minAlpha(0.15f)
                         .maxAlpha(0.55f)
-                        .maximumTime(1.5f)));*/
+                        .maximumDuration(1.5f)));*/
                 .add(new FadeComponent(
                         new FadeComponent.FadeBuilder()
                                 .fadeIn(true)
@@ -105,60 +111,40 @@ public class UnitFactory {
         return e;
     }
 
+    public Entity baseUnitBag(World world, UnitData unitData){
 
+        float size = TileSystem.CELL_SIZE * unitData.getDrawScale();
 
+        Entity e = world.createEntity();
 
-    public ComponentBag baseUnitBag(UnitData unitData){
+        e.edit().add(new PositionComponent());
+        e.edit().add(new UnitComponent(unitData));
+        e.edit().add(new SolidComponent());
 
-        ComponentBag bag = new ComponentBag();
-        bag.add(new PositionComponent());
-        bag.add(new UnitComponent(unitData));
-        bag.add(new SolidComponent());
-
-        bag.add(new HealthComponent(unitData.statComponent.health, unitData.statComponent.maxHealth));
-        bag.add(new CoordinateComponent());
-        bag.add(new MoveToComponent(Measure.units(60f))); //TODO speed should be based on the class
-        bag.add(new VelocityComponent());
-        bag.add(new TargetComponent());
-        bag.add(new BuffComponent());
+        e.edit().add(new HealthComponent(unitData.getHealth(), unitData.getMaxHealth()));
+        e.edit().add(new CoordinateComponent());
+        e.edit().add(new MoveToComponent(Measure.units(unitData.getMapMovementSpeed())));
+        e.edit().add(new VelocityComponent());
+        e.edit().add(new TargetComponent());
 
         //Graphical
-        bag.add(new BlinkOnHitComponent());
-        bag.add(unitData.statComponent);
-        bag.add(new TurnComponent());
+        e.edit().add(new BlinkOnHitComponent());
+        e.edit().add(new SkillsComponent(unitData.getSkills()));
+        e.edit().add(new AvailableActionsCompnent());
 
-        return bag;
+
+        e.edit().add(new CenteringBoundComponent(size, size));
+        e.edit().add(new HitBoxComponent(new HitBox(size, size)));
+
+        e.edit().add(new DrawableComponent(Layer.PLAYER_LAYER_MIDDLE,
+                new TextureDescription.Builder(unitData.icon)
+                        .size(size)
+                        .build()));
+
+
+        return e;
 
     }
-
-
-    public ComponentBag basePlayerUnitBag(UnitData unitData){
-        ComponentBag bag = baseUnitBag(unitData);
-        bag.add(new PlayerControlledComponent());
-        return bag;
-    }
-
-    public ComponentBag baseAllyUnitBag(UnitData unitData){
-        ComponentBag bag = baseUnitBag(unitData);
-        bag.add(new PlayerControlledComponent());
-        return bag;
-    }
-
-    public ComponentBag baseEnemyUnitBag(UnitData unitData){
-        ComponentBag bag = baseUnitBag(unitData);
-        bag.add(new EnemyComponent());
-        return bag;
-    }
-
-
-
-
-
-
-
-
-
-
 
 
 }

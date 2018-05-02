@@ -7,7 +7,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.bryjamin.dancedungeon.assets.Colors;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
-import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
+import com.bryjamin.dancedungeon.assets.music.SoundFiles;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.ConditionalActionsComponent;
@@ -17,7 +18,8 @@ import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditio
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
-import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
+import com.bryjamin.dancedungeon.ecs.systems.audio.SoundSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.ActionQueueSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.utils.Measure;
@@ -62,7 +64,7 @@ public class BasicProjectile implements SpellAnimation {
        projectile.edit().add(new PositionComponent(x, y));
 
        //TODO move this into the new Action Camera System
-       world.getSystem(ActionCameraSystem.class).createDeathWaitAction(projectile); //Wait for the projectile to die. To remove the action
+       world.getSystem(ActionQueueSystem.class).createDeathWaitAction(projectile); //Wait for the projectile to die. To remove the action
 
        projectile.edit().add(new MoveToComponent(speed, new Vector3(
                CenterMath.centerOnPositionX(width, targetCenter.x),
@@ -73,7 +75,7 @@ public class BasicProjectile implements SpellAnimation {
 
 
        projectile.edit().add(new VelocityComponent());
-       projectile.edit().add(new CenteringBoundaryComponent(width, height));
+       projectile.edit().add(new CenteringBoundComponent(width, height));
 
        projectile.edit().add(new ConditionalActionsComponent(new WorldConditionalAction() {
            @Override
@@ -92,9 +94,12 @@ public class BasicProjectile implements SpellAnimation {
        projectile.edit().add(new OnDeathActionsComponent(new WorldAction() {
            @Override
            public void performAction(World world, Entity entity) {
-               skill.castSpellOnTargetLocation(world, caster, casterCoordinates, target);
+               skill.castSpellOnTargetLocation(skill.getSkillId(), world, caster, casterCoordinates, target);
            }
        }));
+
+
+       world.getSystem(SoundSystem.class).playRandomSound(SoundFiles.enemyFireMegaMix);
 
 
    }

@@ -16,10 +16,11 @@ import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
-import com.bryjamin.dancedungeon.ecs.components.graphics.ScaleTransformationComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.GrowAndShrinkTransformationComponent;
 import com.bryjamin.dancedungeon.ecs.components.map.MapNodeComponent;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.factories.map.MapNode;
+import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
 import com.bryjamin.dancedungeon.factories.map.event.EventManager;
 import com.bryjamin.dancedungeon.factories.map.event.MapEvent;
 import com.bryjamin.dancedungeon.screens.battle.BattleScreen;
@@ -38,7 +39,6 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 public class MapNodeSystem extends EntitySystem {
 
     private ComponentMapper<ActionOnTapComponent> actionOnTapMapper;
-    private EventGenerationSystem eventGenerationSystem;
 
     private EventManager eventManager = new EventManager(); //TODO how does one determine the level?
 
@@ -138,8 +138,18 @@ public class MapNodeSystem extends EntitySystem {
                         break;
 
                     default:
+                    case BOSS:
                     case BATTLE:
-                        game.setScreen(new BattleScreen(game, game.getScreen(), eventManager.getLevel1Event(mapNode.getEventId()).getEvent(), partyDetails));
+
+                        BattleEvent battleEvent;
+                        if(eventType == MapEvent.EventType.BOSS) {
+                            battleEvent = eventManager.bossBattle().getEvent();
+                        } else {
+                            battleEvent = eventManager.getLevel1Event(mapNode.getEventId()).getEvent();
+                        }
+
+
+                        game.setScreen(new BattleScreen(game, game.getScreen(), battleEvent, partyDetails));
                         break;
 
                 }
@@ -212,7 +222,7 @@ public class MapNodeSystem extends EntitySystem {
      * Edits a MapNode to one that is 'unreachable' this means a player can not click on it
      */
     private void createUnreachableNode(Entity e) {
-        e.edit().remove(ScaleTransformationComponent.class)
+        e.edit().remove(GrowAndShrinkTransformationComponent.class)
                 .remove(ActionOnTapComponent.class);
         e.getComponent(DrawableComponent.class).setColor(new Color(grey));
     }
@@ -226,7 +236,7 @@ public class MapNodeSystem extends EntitySystem {
      */
     private void createActiveNode(Entity e) {
         e.edit().add(new ActionOnTapComponent(selectNodeAction(e.getComponent(MapNodeComponent.class).getNode())))
-                .add(new ScaleTransformationComponent(1.2f, 1.2f));
+                .add(new GrowAndShrinkTransformationComponent(1.2f, 1.2f));
         e.getComponent(DrawableComponent.class).setColor(new Color(Color.WHITE));
     }
 
@@ -236,7 +246,7 @@ public class MapNodeSystem extends EntitySystem {
      * Edits a MapNode to one that is 'unreachable' this means a player can not click on it
      */
     private void createCompletedNode(Entity e) {
-        e.edit().remove(ScaleTransformationComponent.class)
+        e.edit().remove(GrowAndShrinkTransformationComponent.class)
                 .remove(ActionOnTapComponent.class);
         e.getComponent(DrawableComponent.class).setColor(new Color(Color.GREEN));
     }
@@ -265,5 +275,7 @@ public class MapNodeSystem extends EntitySystem {
 
     }
 
-
+    public MapNode getCurrentMapNode() {
+        return gameMap.getCurrentMapNode();
+    }
 }

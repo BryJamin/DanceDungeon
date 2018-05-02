@@ -3,6 +3,9 @@ package com.bryjamin.dancedungeon.screens.battle;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
+import com.bryjamin.dancedungeon.factories.spells.SkillLibrary;
+
+import java.util.Arrays;
 
 
 /**
@@ -15,20 +18,16 @@ public class PartyDetails {
     public static int MAX_INVENTORY = 4;
     public static int PARTY_SIZE = 3;
 
-    public int money = 10;
-    public int grenades;
-    public int medicalSupplies;
+    private int money = 3;
     public int skillPoints;
-    public int morale = 5;
+    private int morale = 7;
 
     private UnitData[] party = new UnitData[PARTY_SIZE];
 
 
     private Array<Skill> skillInventory = new Array<Skill>();
 
-    public PartyDetails(){
-       // skillInventory.add(new StunStrike());
-    }
+    public PartyDetails(){}
 
     public void addPartyMember(UnitData unitData, int position){
         if(position - 1 > party.length) throw new RuntimeException("Not place for the party member");
@@ -69,7 +68,7 @@ public class PartyDetails {
         skillInventory.removeValue(s, true);
 
         for(UnitData unitData : party){
-            unitData.getSkillsComponent().skills.removeValue(s, true);
+            unitData.getSkills().removeValue(s, true);
         }
     }
 
@@ -82,11 +81,63 @@ public class PartyDetails {
         Array<Skill> equipped = new Array<Skill>();
 
         for(UnitData unitData : party){
-            equipped.addAll(unitData.getSkillsComponent().skills);
+            equipped.addAll(unitData.getSkills());
         }
 
         return equipped;
 
     }
 
+
+    /**
+     * Used to swap character skills with skills in inventory.
+     * @param character - The party member
+     */
+    public void swapCharacterSkillWithInventorySkill(UnitData character, Skill characterSkill, Skill inventorySkill){
+
+        Array<Skill> characterSkills = character.getSkills();
+
+        if(characterSkill != null && !characterSkills.contains(characterSkill, true)) return;
+        if(inventorySkill != null && !skillInventory.contains(inventorySkill, true)) return;
+
+        if(characterSkill != null && inventorySkill != null){//Swap if both slots have Skills
+            characterSkills.set(characterSkills.indexOf(characterSkill, true), inventorySkill);
+            skillInventory.set(skillInventory.indexOf(inventorySkill, true), characterSkill);
+        } else if(characterSkill == null && inventorySkill != null){//Remove if only one slot has a skill and add to the other.
+            characterSkills.add(inventorySkill);
+            skillInventory.removeValue(inventorySkill, true);
+        } else if(characterSkill != null && inventorySkill == null){
+            skillInventory.add(characterSkill);
+            characterSkills.removeValue(characterSkill, true);
+        }
+    }
+
+
+    public int getMoney() {
+        return money;
+    }
+
+
+    /**
+     * Checks if the party has been defeated. This is determined if All party memeber's health is zero.
+     */
+    public boolean isEveryoneDefeated(){
+
+        for(UnitData u : party){
+            if(u.getHealth() > 0){
+                return false;
+            }
+        }
+
+        return true;
+
+    }
+
+    public int getSkillPoints() {
+        return skillPoints;
+    }
+
+    public int getMorale() {
+        return morale;
+    }
 }

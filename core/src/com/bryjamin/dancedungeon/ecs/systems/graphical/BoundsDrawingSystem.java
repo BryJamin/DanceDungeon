@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
-import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.utils.BoundsDrawer;
 import com.bryjamin.dancedungeon.utils.HitBox;
@@ -20,7 +20,7 @@ import com.bryjamin.dancedungeon.utils.HitBox;
 public class BoundsDrawingSystem extends EntitySystem {
 
     ComponentMapper<HitBoxComponent> hitboxm;
-    ComponentMapper<CenteringBoundaryComponent> boundm;
+    ComponentMapper<CenteringBoundComponent> boundm;
 
     private boolean isDrawing = false;
 
@@ -32,7 +32,7 @@ public class BoundsDrawingSystem extends EntitySystem {
 
 
     public BoundsDrawingSystem(SpriteBatch batch) {
-        super(Aspect.one(HitBoxComponent.class, CenteringBoundaryComponent.class));
+        super(Aspect.one(HitBoxComponent.class, CenteringBoundComponent.class));
         this.batch = batch;
     }
 

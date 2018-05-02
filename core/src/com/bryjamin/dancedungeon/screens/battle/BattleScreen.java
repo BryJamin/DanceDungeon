@@ -8,31 +8,28 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.bryjamin.dancedungeon.MainGame;
+import com.bryjamin.dancedungeon.assets.music.MusicFiles;
 import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
+import com.bryjamin.dancedungeon.ecs.systems.audio.SoundSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BattleDeploymentSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.DisplayEnemyIntentUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.StunnedSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.UtilityAiSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.ArchingTextureSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MoveToTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
-import com.bryjamin.dancedungeon.ecs.systems.ParentChildSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.ActionOnTapSystem;
-import com.bryjamin.dancedungeon.ecs.systems.action.BattleWorldInputHandlerSystem;
+import com.bryjamin.dancedungeon.ecs.systems.action.BattleScreenInputSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.ConditionalActionSystem;
-import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
-import com.bryjamin.dancedungeon.ecs.systems.battle.BattleMessageSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.ActionQueueSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BlinkOnHitSystem;
-import com.bryjamin.dancedungeon.ecs.systems.battle.BuffSystem;
-import com.bryjamin.dancedungeon.ecs.systems.battle.BulletSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.DeathSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.EndBattleSystem;
-import com.bryjamin.dancedungeon.ecs.systems.battle.EnemyIntentSystem;
-import com.bryjamin.dancedungeon.ecs.systems.battle.ExplosionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.GenerateTargetsSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.HealthSystem;
-import com.bryjamin.dancedungeon.ecs.systems.battle.NoMoreActionsSystem;
-import com.bryjamin.dancedungeon.ecs.systems.battle.PlayerControlledSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.NoMoreActionsGreyScaleSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ReselectTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.SelectedTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
@@ -42,13 +39,11 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.BoundsDrawingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.FadeSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.FollowPositionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.HealthBarSystem;
-import com.bryjamin.dancedungeon.ecs.systems.graphical.PlayerGraphicalTargetingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.ScaleTransformationSystem;
-import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
-import com.bryjamin.dancedungeon.ecs.systems.ui.InformationBannerSystem;
+import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdateBoundPositionsSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
-import com.bryjamin.dancedungeon.factories.map.GameMap;
+import com.bryjamin.dancedungeon.ecs.systems.ui.TutorialSystem;
 import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
 import com.bryjamin.dancedungeon.screens.AbstractScreen;
 import com.bryjamin.dancedungeon.screens.menu.DefeatScreen;
@@ -66,13 +61,20 @@ public class BattleScreen extends AbstractScreen {
 
     private Screen previousScreen;
     private World world;
+    private boolean isTutorial;
 
     public BattleScreen(MainGame game, Screen previousScreen, BattleEvent battleEvent, PartyDetails partyDetails) {
+        this(game, previousScreen, battleEvent, partyDetails, false);
+    }
+
+    public BattleScreen(MainGame game, Screen previousScreen, BattleEvent battleEvent, PartyDetails partyDetails, boolean isTutorial) {
         super(game);
         this.previousScreen = previousScreen;
         this.partyDetails = partyDetails;
         this.battleEvent = battleEvent;
+        this.isTutorial = isTutorial;
         createWorld();
+        game.musicSystem.changeMix(MusicFiles.BATTLE_MUSIC);
     }
 
     private void createWorld(){
@@ -84,47 +86,45 @@ public class BattleScreen extends AbstractScreen {
 
                         //Initialize Tiles
                         new TileSystem(battleEvent),
-                        new BattleDeploymentSystem(game, battleEvent),
+                        new TutorialSystem(isTutorial),
+                        new BattleDeploymentSystem(battleEvent, isTutorial),
 
-                        new BattleWorldInputHandlerSystem(gameport),
+                        game.musicSystem,
+                        new SoundSystem(assetManager),
+
+                        new BattleScreenInputSystem(gameport),
+
+                        //new InformationBannerSystem(game, gameport, InformationBannerSystem.State.BATTLE_SCREEN),
                         new BattleScreenUISystem(UIStage, game),
 
                         new PlayerPartyManagementSystem(partyDetails),
-                        new InformationBannerSystem(game, gameport),
 
                         new MovementSystem(),
                         new FollowPositionSystem(),
-                        new UpdatePositionSystem(),
-
-                        new BuffSystem(),
+                        new UpdateBoundPositionsSystem(),
 
                         new MoveToTargetSystem()
                 )
                 .with(WorldConfigurationBuilder.Priority.HIGH,
                         new ConditionalActionSystem(),
-                        new ExplosionSystem(),
-                        new BulletSystem(),
                         new TurnSystem(),
                         new HealthSystem(),
-                        new ParentChildSystem(),
                         new BlinkOnHitSystem(),
                         new ExpireSystem(),
-                        new PlayerControlledSystem(game),
                         new EndBattleSystem(game, battleEvent, partyDetails)
                 )
                 .with(WorldConfigurationBuilder.Priority.LOWEST,
                         new ActionOnTapSystem(),
-                        new ActionCameraSystem(),
+                        new ActionQueueSystem(),
 
                         //Rendering Effects
                         new FadeSystem(),
                         new ScaleTransformationSystem(),
                         new ArchingTextureSystem(),
 
-                        new NoMoreActionsSystem(),
-                        new PlayerGraphicalTargetingSystem(),
-                        new BattleMessageSystem(gameport),
-                        new EnemyIntentSystem(),
+                        new NoMoreActionsGreyScaleSystem(),
+                        new DisplayEnemyIntentUISystem(),
+                        new UtilityAiSystem(),
                         new StunnedSystem(),
                         new AnimationSystem(game),
                         new RenderingSystem(game, gameport),

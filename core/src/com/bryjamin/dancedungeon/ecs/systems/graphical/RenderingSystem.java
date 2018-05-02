@@ -19,12 +19,12 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.assets.FileStrings;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
-import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.GreyScaleComponent;
-import com.bryjamin.dancedungeon.ecs.components.graphics.HighLightTextComponent;
 import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.texture.DrawableDescription;
@@ -43,10 +43,10 @@ import java.util.Comparator;
 public class RenderingSystem extends EntitySystem {
 
     private ComponentMapper<PositionComponent> positionm;
-    private ComponentMapper<CenteringBoundaryComponent> boundm;
+    private ComponentMapper<CenteringBoundComponent> boundm;
     private ComponentMapper<DrawableComponent> drawablem;
     private ComponentMapper<BlinkOnHitComponent> blinkOnHitm;
-    private ComponentMapper<HighLightTextComponent> highlightM;
+    private ComponentMapper<HealthComponent> healthM;
 
     private ComponentMapper<GreyScaleComponent> greyScaleMapper;
 
@@ -70,6 +70,11 @@ public class RenderingSystem extends EntitySystem {
 
     public TextureAtlas getAtlas() {
         return atlas;
+    }
+
+
+    public TextureRegion getRegion(String region) {
+        return atlas.findRegion(region);
     }
 
     /**
@@ -192,15 +197,13 @@ public class RenderingSystem extends EntitySystem {
 
 
             if (boundm.has(e)) {
-                CenteringBoundaryComponent bc = boundm.get(e);
+                CenteringBoundComponent bc = boundm.get(e);
                 glyphLayout.setText(bmf, textDescription.getText(), drawableDescription.getColor(), bc.bound.width, textDescription.getAlign(), false);
 
                 BitmapFontCache bitmapFontCache = new BitmapFontCache(bmf);
 
                 bitmapFontCache.addText(glyphLayout, positionComponent.getX(),
                         positionComponent.getY() + glyphLayout.height + CenterMath.offsetY(bc.bound.height, glyphLayout.height) + textDescription.getOffsetY());
-
-                applyHighlightToText(e, bitmapFontCache, textDescription.getText());
 
                 bitmapFontCache.draw(batch);
 
@@ -213,7 +216,6 @@ public class RenderingSystem extends EntitySystem {
                 bitmapFontCache.addText(glyphLayout, positionComponent.getX(),
                         positionComponent.getY() + glyphLayout.height + CenterMath.offsetY(textDescription.getHeight(), glyphLayout.height) + textDescription.getOffsetY());
 
-                applyHighlightToText(e, bitmapFontCache, textDescription.getText());
 
                 bitmapFontCache.draw(batch);
 
@@ -228,24 +230,13 @@ public class RenderingSystem extends EntitySystem {
         if (shaderOn) removeShader();
 
 
-        return true;
-    }
-
-
-    private void applyHighlightToText(Entity e, BitmapFontCache cache, String text) {
-
-        if (highlightM.has(e)) {
-
-            HighLightTextComponent hltc = highlightM.get(e);
-            for (Highlight h : hltc.highLights) {
-                if (text.length() > h.start && text.length() > h.end) //TODO Bit Redundant, might be better to throw an error earlier
-                    cache.setColors(h.color, h.start, h.end);
-            }
+        if(healthM.has(e)){
+            world.getSystem(HealthBarSystem.class).process(e);
         }
 
 
+        return true;
     }
-
 
     private void removeShader() {
         batch.end();

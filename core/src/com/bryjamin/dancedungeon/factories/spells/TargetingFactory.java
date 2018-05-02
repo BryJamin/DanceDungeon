@@ -8,32 +8,29 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.Queue;
+import com.bryjamin.dancedungeon.assets.Colors;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
-import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
+import com.bryjamin.dancedungeon.ecs.components.battle.AvailableActionsCompnent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
-import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
-import com.bryjamin.dancedungeon.ecs.components.graphics.UITargetingComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyIntentComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.UITargetingComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyIntentUIComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.ReselectEntityComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.SelectedEntityComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
+import com.bryjamin.dancedungeon.ecs.systems.battle.ActionQueueSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
-import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
-import com.bryjamin.dancedungeon.utils.bag.BagToEntity;
-import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
-import com.bryjamin.dancedungeon.utils.enums.Direction;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.math.CoordinateMath;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
@@ -50,6 +47,10 @@ public class TargetingFactory {
     //Melee Component
 
     //Range Targeting
+
+
+    private static final int TILE_LAYER = Layer.ENEMY_LAYER_MIDDLE;
+    private static final int TILE_LINE_LAYER = Layer.ENEMY_LAYER_MIDDLE + 1;
 
 
     /**
@@ -118,97 +119,23 @@ public class TargetingFactory {
     }
 
 
-    public Array<Entity> createAdjacentTiles(World world, final Entity player, final Skill spell, int range) {
-
-        Array<Entity> entityArray = new Array<Entity>();
-
-        TileSystem tileSystem = world.getSystem(TileSystem.class);
-
-        for (Coordinates c : CoordinateMath.getCoordinatesInLine(player.getComponent(CoordinateComponent.class).coordinates, range)) {
-
-            if(tileSystem.getCoordinateMap().containsKey(c)) {
-                entityArray.add(createTargetingBox(world, player, c, spell, true));
-            }
-        }
-
-        return entityArray;
-    }
-
     public Entity createTargetingBox(World world, final Entity player, final Coordinates coordinates, final Skill skill, boolean isRed){
 
         TileSystem tileSystem = world.getSystem(TileSystem.class);
 
-        Entity redBox = BagToEntity.bagToEntity(world.createEntity(), highlightBox(tileSystem.createRectangleUsingCoordinates(coordinates), isRed ? new Color(Color.RED) : new Color(Color.CYAN)));
+        Entity redBox = highlightBox(world, tileSystem.createRectangleUsingCoordinates(coordinates), isRed ? new Color(Colors.UI_ATTACK_TILE_COLOR) : new Color(Color.CYAN));
 
         redBox.edit().add(new ActionOnTapComponent(new WorldAction() {
             @Override
             public void performAction(World world, final Entity e) {
                 skill.cast(world, player, coordinates);
-                world.getSystem(BattleScreenUISystem.class).reset();
+                world.getSystem(BattleScreenUISystem.class).resetBottomContainer();
             }
         }));
 
         return redBox;
 
     }
-
-    public Array<Entity> createStraightShotTargetTiles(World world, Entity player, Skill skill) {
-
-        Array<Entity> entityArray = new Array<Entity>();
-
-        Coordinates current = player.getComponent(CoordinateComponent.class).coordinates;
-
-        OrderedMap<Coordinates, Array<Entity>> om = world.getSystem(TileSystem.class).getCoordinateMap();
-
-        //Most Left
-        Direction[] d = {Direction.DOWN, Direction.UP, Direction.LEFT, Direction.RIGHT};
-
-
-        for(int i = 0; i < d.length; i++) {
-
-            Coordinates shotCoords = new Coordinates(current);
-            increaseCoordinatesByOneUsingDirection(d[i], shotCoords, current);
-
-            Coordinates future = new Coordinates();
-
-
-            while (true) {
-
-                if(om.get(shotCoords) == null){
-                    break;
-                } else if (om.get(shotCoords).size > 0) {
-                    entityArray.add(createTargetingBox(world, player, shotCoords, skill, true));
-                    break;
-                } else {
-
-                    increaseCoordinatesByOneUsingDirection(d[i], future, shotCoords);
-
-                    if (!om.containsKey(future)) {
-
-                        boolean b = (d[i] == Direction.DOWN || d[i] == Direction.UP) ? Math.abs(future.getY() - current.getY()) > 1 : Math.abs(future.getX() - current.getX()) > 1;
-
-                        if (b) {
-                            entityArray.add(createTargetingBox(world, player, shotCoords, skill, true));
-                        }
-                        break;
-                    } else {
-                        entityArray.add(whiteSquareMarker(world, shotCoords));
-                        shotCoords.set(future);
-                    }
-
-                }
-
-            }
-
-        }
-
-
-        return entityArray;
-
-
-
-    }
-
 
 
     public Array<Entity> createWhiteTargetingMarkers(World world, Coordinates unitCoords, Coordinates target){
@@ -279,40 +206,6 @@ public class TargetingFactory {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-    public void increaseCoordinatesByOneUsingDirection(Direction d, Coordinates c1, Coordinates c2){
-
-        switch (d) {
-            case DOWN:
-                c1.set(c2.getX(), c2.getY() - 1);
-                break;
-            case UP:
-                c1.set(c2.getX(), c2.getY() + 1);
-                break;
-            case LEFT:
-                c1.set(c2.getX() - 1, c2.getY());
-                break;
-            case RIGHT:
-                c1.set(c2.getX() + 1, c2.getY());
-                break;
-        }
-
-
-    }
-
-
-
     //You want MovementTile to Move, And then You want to also generate the attack tiles based on
     //All possible squares as well as the square you stand on
 
@@ -358,26 +251,119 @@ public class TargetingFactory {
         final OrderedMap<Coordinates, Queue<Coordinates>> coordinatesWithPathMap = createPathsToCoordinatesInMovementRange(tileSystem, player,
                 coordinateComponent.coordinates, movementRange);
 
-        for(final Coordinates c : coordinatesWithPathMap.keys()){
+
+
+
+
+
+
+        for(final Coordinates c : coordinatesWithPathMap.orderedKeys()){
 
             Rectangle r = tileSystem.createRectangleUsingCoordinates(c);
 
-            Entity box = BagToEntity.bagToEntity(world.createEntity(), highlightBox(r, new Color(Color.WHITE)));
+            Entity box = highlightBox(world, r, new Color(Colors.UI_MOVEMENT_TILE_COLOR));
             entityArray.add(box);
             box.edit().add(new ActionOnTapComponent(new WorldAction() {
                 @Override
                 public void performAction(World world, Entity entity) {
-                    world.getSystem(BattleScreenUISystem.class).reset();
+                    world.getSystem(BattleScreenUISystem.class).resetBottomContainer();
                     player.edit().add(new ReselectEntityComponent());
                     player.edit().remove(SelectedEntityComponent.class);
-                    world.getSystem(ActionCameraSystem.class).pushLastAction(player, createMovementAction(player, coordinatesWithPathMap.get(c)));
-                    world.getSystem(ActionCameraSystem.class).createIntentAction(world.createEntity());
+                    world.getSystem(ActionQueueSystem.class).pushLastAction(player, createMovementAction(player, coordinatesWithPathMap.get(c)));
+                    world.getSystem(ActionQueueSystem.class).createUpdateIntentAction(world.createEntity());
                 }
             }));
+
+            //Create the line Borders for the Movement Tiles
+
+            Coordinates c2 = new Coordinates();
+            c2.set(c.getX() + 1, c.getY()); //Right Line
+
+            float LINE_THICKNESS = Measure.units(0.5f);
+
+            Color lineColor = new Color(Colors.UI_MOVEMENT_TILE_BORDER_COLOR);
+
+            //Right Line
+            if(!coordinatesWithPathMap.containsKey(c2)){
+
+                float y = r.y;
+                float height = r.getHeight();
+
+                if(coordinatesWithPathMap.containsKey(new Coordinates(c.getX(), c.getY() + 1)))
+                    height += LINE_THICKNESS;
+
+                if(coordinatesWithPathMap.containsKey(new Coordinates(c.getX(), c.getY() - 1))) {
+                    y -= LINE_THICKNESS;
+                    height += LINE_THICKNESS;
+                }
+
+                createLineEntity(world, r.x + r.getWidth() - LINE_THICKNESS, y, LINE_THICKNESS, height, lineColor);
+
+            }
+
+            c2.set(c.getX() - 1, c.getY());
+
+            //Left Line
+            if(!coordinatesWithPathMap.containsKey(c2)){
+
+                float y = r.y;
+                float height = r.getHeight();
+
+                if(coordinatesWithPathMap.containsKey(new Coordinates(c.getX(), c.getY() + 1)))
+                    height += LINE_THICKNESS;
+
+                if(coordinatesWithPathMap.containsKey(new Coordinates(c.getX(), c.getY() - 1))) {
+                    y -= LINE_THICKNESS;
+                    height += LINE_THICKNESS;
+                }
+
+
+                createLineEntity(world, r.x, y, LINE_THICKNESS, height, lineColor);
+            }
+
+
+            c2.set(c.getX(), c.getY() + 1);
+            //Top Line
+            if(!coordinatesWithPathMap.containsKey(c2)){
+                createLineEntity(world, r.x, r.y + r.getHeight() - LINE_THICKNESS, r.getWidth(), LINE_THICKNESS, lineColor);
+            }
+
+
+            c2.set(c.getX(), c.getY() - 1);
+            //Bottom Line
+            if(!coordinatesWithPathMap.containsKey(c2)){
+                createLineEntity(world, r.x, r.y, r.getWidth(), LINE_THICKNESS, lineColor);
+            }
+
+
+
+
+
+
+
+
+
+
+
         }
 
         coordinatesWithPathMap.put(coordinateComponent.coordinates, new Queue<Coordinates>());
         return entityArray;
+
+    }
+
+
+    private void createLineEntity(World world, float x, float y, float width, float height, Color color){
+
+        Entity e = world.createEntity();
+        e.edit().add(new UITargetingComponent());
+        e.edit().add(new PositionComponent(x, y));
+        e.edit().add(new DrawableComponent(TILE_LINE_LAYER,
+                new TextureDescription.Builder(TextureStrings.BLOCK)
+                        .color(color)
+                        .width(width)
+                        .height(height)
+                        .build()));
 
     }
 
@@ -394,22 +380,22 @@ public class TargetingFactory {
                 for (Coordinates c : coordinatesQueue) {
                     entity.getComponent(MoveToComponent.class).movementPositions.add(
                             world.getSystem(TileSystem.class).getPositionUsingCoordinates(
-                                    c, entity.getComponent(CenteringBoundaryComponent.class).bound));
+                                    c, entity.getComponent(CenteringBoundComponent.class).bound));
                 }
 
 
                 //pushLastAction
-                entity.getComponent(TurnComponent.class).movementActionAvailable = false;
+                entity.getComponent(AvailableActionsCompnent.class).movementActionAvailable = false;
 
                 //If no enemies are in range at the end of the potential movement, set attack action availiable to false
                 //TODO but what if you can use a skill surely this makes not sense right?
                 //TODO
                 if (new TargetingFactory().getTargetsInRange(world, coordinatesQueue.last(), entity.getComponent(TargetComponent.class).getTargets(world),
-                        entity.getComponent(StatComponent.class).attackRange).size <= 0) {
+                        entity.getComponent(UnitComponent.class).getUnitData().getAttackRange()).size <= 0) {
 
 
 
-                    //entity.getComponent(TurnComponent.class).attackActionAvailable = false;
+                    //entity.getComponent(AvailableActionsCompnent.class).attackActionAvailable = false;
                 }
 
 
@@ -451,40 +437,36 @@ public class TargetingFactory {
     }
 
 
-    public ComponentBag highlightBox(Rectangle r, Color color) {
-        ComponentBag bag = new ComponentBag();
+    public Entity highlightBox(World world, Rectangle r, Color color) {
 
-        bag.add(new PositionComponent(r.x, r.y));
-        bag.add(new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE,
-                new TextureDescription.Builder(TextureStrings.BLOCK)
-                        .color(color)
-                        .width(r.getWidth())
-                        .height(r.getHeight())
-                        .build()));
-        bag.add(new FadeComponent(new FadeComponent.FadeBuilder()
-                .fadeIn(true)
-                .alpha(0.17f)
-                .minAlpha(0.15f)
-                .maxAlpha(0.55f)
-                .maximumTime(1.5f)));
-        bag.add(new HitBoxComponent(new HitBox(r)));
-        bag.add(new CenteringBoundaryComponent());
-        bag.add(new UITargetingComponent());
+        Entity e = world.createEntity();
 
-        return bag;
+        e.edit().add(new PositionComponent(r.x, r.y));
+        e.edit().add(new DrawableComponent(TILE_LAYER,
+                 new TextureDescription.Builder(TextureStrings.BLOCK)
+                         .color(color)
+                         .width(r.getWidth())
+                         .height(r.getHeight())
+                         .build()));
+        e.edit().add(new HitBoxComponent(new HitBox(r)));
+        e.edit().add(new CenteringBoundComponent());
+        e.edit().add(new UITargetingComponent());
+
+        return e;
     }
 
 
-    public ComponentBag whiteMarkerBox(Rectangle r, Color c) {
-        ComponentBag bag = new ComponentBag();
+    public Entity whiteMarkerBox(World world, Rectangle r, Color c) {
 
-        float size = Measure.units(2.5f);
+        Entity e = world.createEntity();
+
+        float size = Measure.units(1.5f);
 
         Vector2 center = r.getCenter(new Vector2());
 
-        bag.add(new PositionComponent(CenterMath.centerOnPositionX(size, center.x),
+        e.edit().add(new PositionComponent(CenterMath.centerOnPositionX(size, center.x),
                 CenterMath.centerOnPositionY(size, center.y)));
-        bag.add(new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE,
+        e.edit().add(new DrawableComponent(Layer.FOREGROUND_LAYER_MIDDLE,
                 new TextureDescription.Builder(TextureStrings.BLOCK)
                         .color(c)
                         .width(size)
@@ -495,11 +477,11 @@ public class TargetingFactory {
                 .alpha(0.17f)
                 .minAlpha(0.15f)
                 .maxAlpha(0.55f)
-                .maximumTime(2.0f)));*/
-        bag.add(new CenteringBoundaryComponent());
-        bag.add(new UITargetingComponent());
+                .maximumDuration(2.0f)));*/
+        e.edit().add(new CenteringBoundComponent());
+        e.edit().add(new UITargetingComponent());
 
-        return bag;
+        return e;
     }
 
 
@@ -507,7 +489,7 @@ public class TargetingFactory {
 
         TileSystem tileSystem = world.getSystem(TileSystem.class);
 
-        Entity redBox = BagToEntity.bagToEntity(world.createEntity(), whiteMarkerBox(tileSystem.createRectangleUsingCoordinates(coordinates), new Color(Color.WHITE)));
+        Entity redBox = whiteMarkerBox(world,tileSystem.createRectangleUsingCoordinates(coordinates), new Color(Color.WHITE));
 
         return redBox;
     }
@@ -516,11 +498,10 @@ public class TargetingFactory {
 
         TileSystem tileSystem = world.getSystem(TileSystem.class);
 
-        Entity redBox = BagToEntity.bagToEntity(world.createEntity(), whiteMarkerBox(tileSystem.createRectangleUsingCoordinates(coordinates),
-                new Color(Color.RED)));
+        Entity redBox = whiteMarkerBox(world, tileSystem.createRectangleUsingCoordinates(coordinates), new Color(Color.RED));
 
         redBox.edit().remove(UITargetingComponent.class);
-        redBox.edit().add(new EnemyIntentComponent());
+        redBox.edit().add(new EnemyIntentUIComponent());
 
         return redBox;
 

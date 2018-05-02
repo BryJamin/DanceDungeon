@@ -5,6 +5,8 @@ import com.badlogic.gdx.math.Vector3;
 
 /**
  * Created by BB on 18/12/2017.
+ *
+ * Component for Entities that follow the give position
  */
 
 public class FollowPositionComponent extends Component {

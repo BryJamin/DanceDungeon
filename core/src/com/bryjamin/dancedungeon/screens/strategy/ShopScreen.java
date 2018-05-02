@@ -11,7 +11,6 @@ import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.ecs.systems.ExpireSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MoveToTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.MovementSystem;
-import com.bryjamin.dancedungeon.ecs.systems.ParentChildSystem;
 import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.ActionOnTapSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.ConditionalActionSystem;
@@ -21,10 +20,9 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.FadeSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.FollowPositionSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.ScaleTransformationSystem;
-import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdatePositionSystem;
+import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdateBoundPositionsSystem;
 import com.bryjamin.dancedungeon.ecs.systems.input.BasicInputSystemWithStage;
 import com.bryjamin.dancedungeon.ecs.systems.ui.InformationBannerSystem;
-import com.bryjamin.dancedungeon.ecs.systems.ui.RestScreenUiSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.ShopScreenUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
 import com.bryjamin.dancedungeon.screens.AbstractScreen;
@@ -59,12 +57,11 @@ public class ShopScreen extends AbstractScreen {
                         //Positional Systems
                         new MovementSystem(),
                         new FollowPositionSystem(),
-                        new UpdatePositionSystem(),
+                        new UpdateBoundPositionsSystem(),
                         new MoveToTargetSystem()
                 )
                 .with(WorldConfigurationBuilder.Priority.HIGH,
                         new ConditionalActionSystem(),
-                        new ParentChildSystem(),
                         new ExpireSystem(),
                         new DeathSystem()
                 )

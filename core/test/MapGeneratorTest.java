@@ -18,14 +18,11 @@ public class MapGeneratorTest extends GameTest {
     public void simpleMapGenerationTest() throws Exception {
 
         int generations = 100000;
-
-        MapGenerator mapGenerator = new MapGenerator();
-
         float failCount = 0;
 
         for(int i = 0; i < generations; i++){
             try {
-                mapGenerator = new MapGenerator();
+                MapGenerator mapGenerator = new MapGenerator();
                 mapGenerator.generateGameMap();
             } catch(Exception e) {
                 failCount++;

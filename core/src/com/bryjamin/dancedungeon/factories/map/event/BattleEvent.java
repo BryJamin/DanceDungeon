@@ -2,6 +2,7 @@ package com.bryjamin.dancedungeon.factories.map.event;
 
 import com.artemis.World;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Queue;
 import com.bryjamin.dancedungeon.assets.MapData;
 import com.bryjamin.dancedungeon.factories.map.event.objectives.AbstractObjective;
 import com.bryjamin.dancedungeon.factories.map.event.objectives.CompleteWithinObjective;
@@ -13,13 +14,19 @@ import com.bryjamin.dancedungeon.factories.map.event.objectives.DefeatAllEnemies
 
 public class BattleEvent extends MapEvent {
 
+    public static final String RANDOM_POOLED_UNIT = "random_pooled_unit";
+
     private String id = "unidentified";
     private String mapLocation = MapData.MAP_1;
+
+    private int numberOfWaves;
 
     private AbstractObjective primaryObjective = new DefeatAllEnemiesObjective();
     private AbstractObjective[] bonusObjectives = new AbstractObjective[]{new CompleteWithinObjective(7)};
 
     private Array<String> enemies = new Array<String>();
+    private Queue<Array<String>> waves = new Queue<>();
+
 
     public BattleEvent(String... enemies){
         this.enemies.addAll(enemies);
@@ -31,6 +38,8 @@ public class BattleEvent extends MapEvent {
         this.primaryObjective = b.primaryObjective;
         this.bonusObjectives = b.bonusObjectives;
         this.enemies = b.enemyPool;
+        this.waves = b.presetWaves;
+        this.numberOfWaves = b.numberOfWaves;
     }
 
 
@@ -38,6 +47,9 @@ public class BattleEvent extends MapEvent {
         return enemies;
     }
 
+    public Queue<Array<String>> getWaves() {
+        return waves;
+    }
 
     public AbstractObjective getPrimaryObjective() {
         return primaryObjective;
@@ -69,6 +81,9 @@ public class BattleEvent extends MapEvent {
 
         private final String mapLocation;
 
+        private int numberOfWaves = 1;
+
+        private Queue<Array<String>> presetWaves = new Queue<>();
         private Array<String> enemyPool = new Array<String>();
         private AbstractObjective primaryObjective = new DefeatAllEnemiesObjective();
         private AbstractObjective[] bonusObjectives = new AbstractObjective[]{};
@@ -82,12 +97,28 @@ public class BattleEvent extends MapEvent {
             this.enemyPool.addAll(val); return this;
         }
 
+
+        public Builder addEnemyWave(String... val) {
+            Array<String> strings = new Array<>();
+            strings.addAll(val);
+            presetWaves.addLast(strings);
+            return this;
+        }
+
+
+        public Builder numberOfWaves(int val) {
+            this.numberOfWaves = val;
+            return this;
+        }
+
+
+
         public Builder primaryObjective(AbstractObjective val)
         { this.primaryObjective = val; return this; }
 
         public Builder bonusObjective(AbstractObjective... val)
         { this.bonusObjectives = val;
-            System.out.println("BONUS OBJECTIVE LENGTH IS" + this.bonusObjectives.length);
+
 
         return this; }
 
@@ -95,7 +126,15 @@ public class BattleEvent extends MapEvent {
             return new BattleEvent(this);
         }
 
+    }
 
+
+    public int getNumberOfWaves() {
+        return numberOfWaves;
+    }
+
+    public void decreaseNumberOfWaves(){
+        numberOfWaves--;
     }
 
 

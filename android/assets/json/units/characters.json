@@ -1,0 +1,33 @@
+[
+
+  {
+    "class": "com.bryjamin.dancedungeon.factories.player.UnitData",
+    "id": "2ade2064-eaf1-4a63-8ba4-1fd98b72c0dc",
+    "name": "Sgt. Sword",
+    "icon": "player/sgt_sword",
+    "maxHealth": 3,
+    "movementRange": 3,
+    "skillIds": [ "a5f2cd73-7ade-4577-8d7b-862299baf774"]
+  },
+
+  {
+    "class": "com.bryjamin.dancedungeon.factories.player.UnitData",
+    "id": "98be151b-d019-49c3-9514-defb59f26d0c",
+    "name": "Bolas",
+    "icon": "player/phi_walk",
+    "maxHealth": 3,
+    "movementRange": 3,
+    "skillIds": [ "0ccac808-557a-4956-b77b-e696d849da68"]
+  },
+
+  {
+    "class": "com.bryjamin.dancedungeon.factories.player.UnitData",
+    "id": "b0a19b01-cf75-4b77-b6e5-0cb7dcb5afe9",
+    "name": "Firas",
+    "icon": "player/block_walk",
+    "maxHealth": 2,
+    "movementRange": 3,
+    "skillIds": [ "1e3e7778-14e1-4466-b1fb-b24a01723155"]
+  }
+
+]

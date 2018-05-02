@@ -4,14 +4,11 @@ import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
-import com.bryjamin.dancedungeon.Observer;
-import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.StunnedComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
+import com.bryjamin.dancedungeon.factories.player.UnitData;
+import com.bryjamin.dancedungeon.utils.observer.Observer;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.StunnedComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.StoredSkillComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyIntentComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 
 /**
  * System used to track when a unit gets stunned.
@@ -23,21 +20,21 @@ import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComp
 public class StunnedSystem extends EntitySystem implements Observer{
 
 
-    private EnemyIntentSystem enemyIntentSystem;
+    private DisplayEnemyIntentUISystem displayEnemyIntentUISystem;
     private TurnSystem turnSystem;
 
-    ComponentMapper<StatComponent> statM;
+    ComponentMapper<UnitComponent> unitM;
     private ComponentMapper<StoredSkillComponent> storedSkillM;
 
     boolean processingFlag = false;
 
     public StunnedSystem() {
-        super(Aspect.all(StatComponent.class, StunnedComponent.class));
+        super(Aspect.all(UnitComponent.class, StunnedComponent.class));
     }
 
     @Override
     protected void initialize() {
-        turnSystem.addNextTurnObserver(this);
+        turnSystem.addPlayerTurnObserver(this);
     }
 
     @Override
@@ -46,7 +43,7 @@ public class StunnedSystem extends EntitySystem implements Observer{
 
         if(storedSkillM.has(e)){
             e.edit().remove(StoredSkillComponent.class);
-            enemyIntentSystem.updateIntent();
+            displayEnemyIntentUISystem.updateIntent();
         }
 
     }
@@ -67,29 +64,20 @@ public class StunnedSystem extends EntitySystem implements Observer{
         return super.checkProcessing();
     }
 
+
     @Override
-    public void onNotify() {
-
-/*
-        if(this.getEntities().size() == 0) {
-            processingFlag = false;
-            return;
-        }
-*/
-
+    public void update(Object o) {
         for(Entity e : this.getEntities()){
-            StatComponent statComponent = e.getComponent(StatComponent.class);
-            statComponent.stun--;
 
-            System.out.println("STUN: " + statComponent.stun);
+            UnitData unitData = unitM.get(e).getUnitData();
 
-            if(statComponent.stun <= 0){
+            unitData.stun--;
+
+            if(unitData.stun <= 0){
                 e.edit().remove(StunnedComponent.class);
             }
 
         }
-
-
-
     }
+
 }

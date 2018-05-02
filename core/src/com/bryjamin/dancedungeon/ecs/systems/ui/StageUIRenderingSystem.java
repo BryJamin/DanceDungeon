@@ -14,6 +14,8 @@ public class StageUIRenderingSystem extends BaseSystem {
     public Stage stage;
     public Skin uiSkin;
 
+    public static final Boolean DEBUG = false;
+
     public StageUIRenderingSystem(Stage stage){
         this.stage = stage;
     }
@@ -33,7 +35,7 @@ public class StageUIRenderingSystem extends BaseSystem {
         Table table = new Table();
         table.setWidth(stage.getWidth());
         table.setHeight(stage.getHeight());
-        table.setDebug(true);
+        table.setDebug(DEBUG);
         return table;
     }
 

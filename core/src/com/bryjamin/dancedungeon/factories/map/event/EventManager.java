@@ -3,15 +3,11 @@ package com.bryjamin.dancedungeon.factories.map.event;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.bryjamin.dancedungeon.assets.MapData;
-import com.bryjamin.dancedungeon.factories.enemy.EnemyFactory;
+import com.bryjamin.dancedungeon.factories.enemy.UnitLibrary;
 import com.bryjamin.dancedungeon.factories.map.event.objectives.AbstractObjective;
 import com.bryjamin.dancedungeon.factories.map.event.objectives.CompleteWithinObjective;
 import com.bryjamin.dancedungeon.factories.map.event.objectives.DefeatAllEnemiesObjective;
-import com.bryjamin.dancedungeon.utils.bag.ComponentBag;
-import com.bryjamin.dancedungeon.utils.random.WeightedObject;
-import com.bryjamin.dancedungeon.utils.random.WeightedRoll;
-
-import java.util.Map;
+import com.bryjamin.dancedungeon.factories.player.UnitData;
 
 public class EventManager {
 
@@ -22,6 +18,7 @@ public class EventManager {
     private int eventCount;
 
     public EventManager() { //All events require IDs as each
+        put("64f80f4a-e313-401c-91bb-981c9f623eb8", mageBlobEvent());
         put("64f80f4a-e313-401c-91bb-981c9f623eb8", battleEvent1());
         put("e1f0cfc1-fdc0-44fb-ad6e-dadd764061e2", battleEvent2());
         put("a5b45152-2ff8-4ff4-a358-ea1ae9df7366", enemyBattle());
@@ -59,7 +56,7 @@ public class EventManager {
             @Override
             public BattleEvent getEvent() {
                 return new BattleEvent.Builder(MapData.MAP_1)
-                        .enemyPool(EnemyFactory.FAST_BLOB, EnemyFactory.MAGE_BLOB)
+                        .enemyPool(UnitLibrary.RANGED_BLASTER, UnitLibrary.RANGED_LOBBA, UnitLibrary.MELEE_BLOB)
                         .primaryObjective(new DefeatAllEnemiesObjective())
                         .bonusObjective(new CompleteWithinObjective(AbstractObjective.Reward.MORALE, 3))
                         .build();
@@ -68,12 +65,27 @@ public class EventManager {
     }
 
 
+    private EventCommand mageBlobEvent(){
+        return new EventCommand() {
+            @Override
+            public BattleEvent getEvent() {
+                return new BattleEvent.Builder(MapData.MAP_1)
+                        .enemyPool(UnitLibrary.RANGED_BLASTER, UnitLibrary.RANGED_LOBBA, UnitLibrary.MELEE_BLOB)
+                        .primaryObjective(new DefeatAllEnemiesObjective())
+                        .bonusObjective(new CompleteWithinObjective(AbstractObjective.Reward.MORALE, 3))
+                        .build();
+            }
+        };
+    }
+
+
+
     private EventCommand battleEvent2(){
         return new EventCommand() {
             @Override
             public BattleEvent getEvent() {
                 return new BattleEvent.Builder(MapData.MAP_2)
-                        .enemyPool(EnemyFactory.SPITTER_BLOB, EnemyFactory.FAST_BLOB)
+                        .enemyPool(UnitLibrary.RANGED_BLASTER, UnitLibrary.RANGED_LOBBA, UnitLibrary.MELEE_BLOB)
                         .primaryObjective(new DefeatAllEnemiesObjective())
                         .bonusObjective(new CompleteWithinObjective(AbstractObjective.Reward.MORALE, 3))
                         .build();
@@ -87,14 +99,29 @@ public class EventManager {
             @Override
             public BattleEvent getEvent() {
                 return new BattleEvent.Builder(MapData.MAP_3)
-                        .enemyPool()
+                        .enemyPool(UnitLibrary.RANGED_BLASTER, UnitLibrary.RANGED_LOBBA, UnitLibrary.MELEE_BLOB)
                         .primaryObjective(new DefeatAllEnemiesObjective())
-                        .bonusObjective(new CompleteWithinObjective(AbstractObjective.Reward.MORALE, 99))
+                        .bonusObjective(new CompleteWithinObjective(AbstractObjective.Reward.MORALE, 3))
                         .build();
             }
         };
     }
 
+
+
+    public EventCommand bossBattle(){
+        return new EventCommand() {
+            @Override
+            public BattleEvent getEvent() {
+                return new BattleEvent.Builder(MapData.MAP_3)
+                        .addEnemyWave(UnitLibrary.BIG_BLASTER_BOSS, BattleEvent.RANDOM_POOLED_UNIT, BattleEvent.RANDOM_POOLED_UNIT)
+                        .enemyPool(UnitLibrary.RANGED_BLASTER, UnitLibrary.RANGED_LOBBA, UnitLibrary.MELEE_BLOB)
+                        .primaryObjective(new DefeatAllEnemiesObjective())
+                        .bonusObjective(new CompleteWithinObjective(AbstractObjective.Reward.MORALE, 3))
+                        .build();
+            }
+        };
+    }
 
 
 

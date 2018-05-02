@@ -10,9 +10,10 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.map.MapNodeComponent;
-import com.bryjamin.dancedungeon.ecs.systems.FixedToCameraPanAndFlingSystem;
+import com.bryjamin.dancedungeon.ecs.systems.MapCameraSystemFlingAndPan;
 import com.bryjamin.dancedungeon.ecs.systems.action.ActionOnTapSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
+import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CameraMath;
 
@@ -34,7 +35,7 @@ public class MapInputSystem extends EntitySystem {
 
     private boolean disable = false;
 
-    private enum State {
+    public enum State {
         MENU_OPEN, MENU_CLOSED
     }
 
@@ -87,7 +88,7 @@ public class MapInputSystem extends EntitySystem {
 
         @Override
         public boolean touchDown(float x, float y, int pointer, int button) {
-            world.getSystem(FixedToCameraPanAndFlingSystem.class).stopFling();
+            world.getSystem(MapCameraSystemFlingAndPan.class).stopFling();
             return false;
         }
 
@@ -121,7 +122,7 @@ public class MapInputSystem extends EntitySystem {
 
         @Override
         public boolean fling(float velocityX, float velocityY, int button) {
-            world.getSystem(FixedToCameraPanAndFlingSystem.class).flingCamera(-velocityX, velocityY);
+            world.getSystem(MapCameraSystemFlingAndPan.class).flingCamera(-velocityX, velocityY);
             return false;
         }
     }

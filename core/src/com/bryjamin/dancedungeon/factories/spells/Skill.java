@@ -7,29 +7,32 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
-import com.bryjamin.dancedungeon.ecs.components.CenteringBoundaryComponent;
+import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.AvailableActionsCompnent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.StatComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.StunnedComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.TurnComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.UnPushableComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.StunnedComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.UnPushableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationMapComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationStateComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.KillOnAnimationEndComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.SolidComponent;
-import com.bryjamin.dancedungeon.ecs.systems.battle.ActionCameraSystem;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
+import com.bryjamin.dancedungeon.ecs.systems.battle.ActionQueueSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.factories.spells.animations.BasicProjectile;
 import com.bryjamin.dancedungeon.factories.spells.animations.BasicSlashAnimation;
+import com.bryjamin.dancedungeon.factories.spells.animations.BasicThrown;
 import com.bryjamin.dancedungeon.utils.enums.Direction;
 import com.bryjamin.dancedungeon.utils.math.CoordinateMath;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 import com.bryjamin.dancedungeon.utils.texture.HighlightedText;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
+
+import java.util.UUID;
 
 /**
  * Created by BB on 18/11/2017.
@@ -38,12 +41,39 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 public class Skill {
 
     public enum Targeting {Ally, Melee, Self, FreeAim, StraightShot}
-
     public enum ActionType {UsesMoveAndAttackAction, UsesAttackAction, UsesMoveAction, Free}
-
-    public enum SpellAnimation {Projectile, Slash, Glitter}
-
+    public enum SpellAnimation {Projectile, Slash, Glitter, Thrown}
     public enum AttackType {Heal, HealOverTime, Damage, Burn}
+    public enum SpellCoolDown {NoCoolDown, OverTime, Limited}
+    private transient String skillId = UUID.randomUUID().toString();
+    private String name = "N/A";
+    private String description = "N/A";
+    private String icon = TextureStrings.BLOCK;
+    private int uses = 2;
+    private int coolDown = 2;
+    private int coolDownTracker = 0;
+    private int push = 0;
+    private int stun = 0;
+    private int storePrice = 1;
+    private int sellPrice = 1;
+    private boolean purchasable = true;
+    private int baseDamage = 1;
+    //Min and Max Range only affects certain skills
+    private int minRange = 1;
+    private int maxRange = 1;
+    public Skill affectedAreaSkill;
+    public Coordinates[] affectedAreas = new Coordinates[]{};
+
+
+
+    public static final int MAX_MAX_RANGE = 10; //Maximum range possible for a skill. To avoid counting
+
+    private Targeting targeting = Targeting.Melee;
+    private ActionType actionType = ActionType.UsesMoveAndAttackAction;
+    private SpellAnimation spellAnimation = SpellAnimation.Projectile;
+    private AttackType attackType = AttackType.Damage;
+    private SpellCoolDown spellCoolDown = SpellCoolDown.NoCoolDown;
+    private SpellEffect[] spellEffects;
 
     public enum SpellEffect {
         Stun, OnFire, Dodge, Armor;
@@ -63,57 +93,7 @@ public class Skill {
 
     }
 
-    public enum SpellCoolDown {NoCoolDown, OverTime, Limited}
-
-
-    private String name = "N/A";
-    private String description = "N/A1";
-    private String icon = TextureStrings.BLOCK;
-    private int uses = 2;
-    private int coolDown = 2;
-    private int coolDownTracker = 0;
-    private int push = 0;
-    private int stun = 0;
-
-    private int storePrice = 1;
-
-    private boolean purchasable = true;
-
-    private int baseDamage = 1;
-
-    //Min and Max Range only affects certain skills
-    private int minRange = 1;
-    private int maxRange = 1;
-
-    public Skill affectedAreaSkill;
-    public Coordinates[] affectedAreas = new Coordinates[]{};
-
-    public static final int MAX_MAX_RANGE = 10; //Maximum range possible for a skill. To avoid counting
-
-    private Targeting targeting = Targeting.Melee;
-    private ActionType actionType = ActionType.UsesMoveAndAttackAction;
-    private SpellAnimation spellAnimation = SpellAnimation.Projectile;
-    private AttackType attackType = AttackType.Damage;
-    private SpellCoolDown spellCoolDown = SpellCoolDown.NoCoolDown;
-    private SpellEffect[] spellEffects;
-
-    public Skill(){
-
-        name = "N/A";
-        description = "N/A";
-        icon = TextureStrings.BLOCK;
-        targeting = Targeting.StraightShot;
-        actionType = ActionType.UsesMoveAndAttackAction;
-        spellAnimation = SpellAnimation.Projectile;
-        attackType = AttackType.Burn;
-        spellEffects = new SpellEffect[]{};
-        spellCoolDown = SpellCoolDown.NoCoolDown;
-        this.coolDown = 1;
-        push = 0;
-        baseDamage = 1;
-        minRange = 1;
-        maxRange = 1;
-    }
+    public Skill(){ }
 
     public Skill (Skill s){
         this.name = s.name;
@@ -192,7 +172,7 @@ public class Skill {
 
     public boolean canCast(World world, Entity entity) {
 
-        TurnComponent turnComponent = entity.getComponent(TurnComponent.class);
+        AvailableActionsCompnent availableActionsCompnent = entity.getComponent(AvailableActionsCompnent.class);
 
         switch (spellCoolDown) {
             case Limited:
@@ -206,19 +186,19 @@ public class Skill {
 
         switch (actionType) {
             case UsesMoveAction:
-                return turnComponent.movementActionAvailable;
+                return availableActionsCompnent.movementActionAvailable;
             case UsesAttackAction:
-                return turnComponent.attackActionAvailable;
+                return availableActionsCompnent.attackActionAvailable;
             case UsesMoveAndAttackAction:
-                return turnComponent.hasActions();
+                return availableActionsCompnent.hasActions();
         }
 
         return true;
     }
 
     public void cast(World world, Entity caster, Coordinates target) {
-        TurnComponent turnComponent = caster.getComponent(TurnComponent.class);
-        setTurnComponentActionBoolean(actionType, turnComponent);
+        AvailableActionsCompnent availableActionsCompnent = caster.getComponent(AvailableActionsCompnent.class);
+        setTurnComponentActionBoolean(actionType, availableActionsCompnent);
 
 
         switch (spellCoolDown) {
@@ -233,9 +213,9 @@ public class Skill {
 
         createSpellEffects(world, caster, caster.getComponent(CoordinateComponent.class).coordinates, target);
 
-        if(spellAnimation != SpellAnimation.Projectile) {
+/*        if(spellAnimation != SpellAnimation.Projectile) {
             castSpellOnTargetLocation(world, caster, caster.getComponent(CoordinateComponent.class).coordinates, target);
-        }
+        }*/
 
     }
 
@@ -265,7 +245,7 @@ public class Skill {
                         .add(new AnimationStateComponent(GLITTER_ANIMATION_ID))
                         .add(new AnimationMapComponent().put(GLITTER_ANIMATION_ID, TextureStrings.SKILLS_HEAL, 0.2f, Animation.PlayMode.NORMAL))
                         .add(new KillOnAnimationEndComponent(GLITTER_ANIMATION_ID));
-                world.getSystem(ActionCameraSystem.class).createDeathWaitAction(heal);
+                world.getSystem(ActionQueueSystem.class).createDeathWaitAction(heal);
 
 
                 break;
@@ -273,18 +253,21 @@ public class Skill {
             case Slash:
                 new BasicSlashAnimation().cast(world, entity, this, castCoordinates, target);
                 break;
-
             case Projectile:
                 new BasicProjectile().cast(world, entity, this, castCoordinates, target);
+                break;
+            case Thrown:
+                new BasicThrown().cast(world, entity, this, castCoordinates, target);
                 break;
         }
     }
 
 
+    public String getSkillId() {
+        return skillId;
+    }
 
-
-
-    public void castSpellOnTargetLocation(World world, Entity caster, Coordinates casterCoords, Coordinates target) {
+    public void castSpellOnTargetLocation(String id, World world, Entity caster, Coordinates casterCoords, Coordinates target) {
 
         Array<Entity> entityArray = world.getSystem(TileSystem.class).getCoordinateMap().get(target);
         //If a coordinate is selected outside of map coordinates
@@ -293,7 +276,7 @@ public class Skill {
         for (Entity e : world.getSystem(TileSystem.class).getCoordinateMap().get(target)) {
 
             if(stun > 0){
-                e.getComponent(StatComponent.class).stun = stun;
+                e.getComponent(UnitComponent.class).getUnitData().stun = stun;
                 e.edit().add(new StunnedComponent());
             }
 
@@ -349,34 +332,32 @@ public class Skill {
 
                         //Check if coordinate is off the side of the map. If it is, look back to the previous coordinate.
                         if (!tileSystem.getCoordinateMap().containsKey(pushCoords)) {
-                            world.getSystem(ActionCameraSystem.class).createMovementAction(e,
-                                    tileSystem.getPositionUsingCoordinates(prev, e.getComponent(CenteringBoundaryComponent.class).bound));
-                            world.getSystem(ActionCameraSystem.class).createIntentAction(e);
+                            world.getSystem(ActionQueueSystem.class).createMovementAction(e, skillId,
+                                    tileSystem.getPositionUsingCoordinates(prev, e.getComponent(CenteringBoundComponent.class).bound));
+
                             break;
                         }
 
                         if (tileSystem.getOccupiedMap().containsValue(pushCoords, false)) { //Pretend move but bounce back
-                            world.getSystem(ActionCameraSystem.class).createMovementAction(e,
-                                    tileSystem.getPositionUsingCoordinates(pushCoords, e.getComponent(CenteringBoundaryComponent.class).bound)
+
+                            world.getSystem(ActionQueueSystem.class).createMovementAction(e, skillId,
+                                    tileSystem.getPositionUsingCoordinates(pushCoords, e.getComponent(CenteringBoundComponent.class).bound),
+                                    tileSystem.getPositionUsingCoordinates(prev, e.getComponent(CenteringBoundComponent.class).bound)
                             );
 
-                            world.getSystem(ActionCameraSystem.class).createMovementAction(e,
-                                    tileSystem.getPositionUsingCoordinates(prev, e.getComponent(CenteringBoundaryComponent.class).bound)
-                            );
+                            //System.out.println(skillId);
 
-                            world.getSystem(ActionCameraSystem.class).createDamageApplicationAction(e, 1); //Push damage is one.
-                            System.out.println("Push coords is: " + pushCoords);
-                            world.getSystem(ActionCameraSystem.class).createDamageApplicationAction(tileSystem.getOccupiedMap().findKey(pushCoords, false), 1);
+                            world.getSystem(ActionQueueSystem.class).createDamageApplicationAction(e, 1); //Push damage is one.
+                            world.getSystem(ActionQueueSystem.class).createDamageApplicationAction(tileSystem.getOccupiedMap().getKey(pushCoords, false), 1);
 
-                            world.getSystem(ActionCameraSystem.class).createIntentAction(e);
                             break;
                         }
                         ;
 
                         if (i == pushCoordinateArray.length - 1) { //Final loop
-                            world.getSystem(ActionCameraSystem.class).createMovementAction(e,
-                                    tileSystem.getPositionUsingCoordinates(pushCoords, e.getComponent(CenteringBoundaryComponent.class).bound));
-                            world.getSystem(ActionCameraSystem.class).createIntentAction(e);
+                            world.getSystem(ActionQueueSystem.class).createMovementAction(e, skillId,
+                                    tileSystem.getPositionUsingCoordinates(pushCoords, e.getComponent(CenteringBoundComponent.class).bound));
+
                         }
 
                         //Check if end of coordinate array
@@ -391,13 +372,17 @@ public class Skill {
 
         if(affectedAreas.length > 0){
 
+            affectedAreaSkill.setSkillId(getSkillId());
+
             for(Coordinates c : affectedAreas){
                 Coordinates affected = new Coordinates(target.getX() + c.getX(), target.getY() + c.getY());
 
-                if(affectedAreaSkill.spellAnimation != SpellAnimation.Projectile) {
-                    affectedAreaSkill.castSpellOnTargetLocation(world, caster, target, affected);
-                }
+
                 affectedAreaSkill.createSpellEffects(world, caster, target, affected);
+
+                if(affectedAreaSkill.spellAnimation != SpellAnimation.Projectile) {
+                    affectedAreaSkill.castSpellOnTargetLocation(id, world, caster, target, affected);
+                }
             }
 
         }
@@ -406,6 +391,10 @@ public class Skill {
 
 
     ;
+
+    public void setSkillId(String skillId) {
+        this.skillId = skillId;
+    }
 
     public void endTurnUpdate() {
         switch (spellCoolDown) {
@@ -469,18 +458,22 @@ public class Skill {
         return storePrice;
     }
 
-    private void setTurnComponentActionBoolean(ActionType actionType, TurnComponent turnComponent) {
+    public int getSellPrice() {
+        return sellPrice;
+    }
+
+    private void setTurnComponentActionBoolean(ActionType actionType, AvailableActionsCompnent availableActionsCompnent) {
 
         switch (actionType) {
             case UsesMoveAction:
-                turnComponent.movementActionAvailable = false;
+                availableActionsCompnent.movementActionAvailable = false;
                 break;
             case UsesAttackAction:
-                turnComponent.attackActionAvailable = false;
+                availableActionsCompnent.attackActionAvailable = false;
                 break;
             case UsesMoveAndAttackAction:
-                turnComponent.movementActionAvailable = false;
-                turnComponent.attackActionAvailable = false;
+                availableActionsCompnent.movementActionAvailable = false;
+                availableActionsCompnent.attackActionAvailable = false;
                 break;
         }
 

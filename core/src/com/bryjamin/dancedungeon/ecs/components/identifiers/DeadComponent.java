@@ -11,5 +11,4 @@ import com.artemis.Component;
  *
  */
 
-public class DeadComponent extends Component {
-}
+public class DeadComponent extends Component {}

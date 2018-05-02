@@ -4,6 +4,10 @@ import com.artemis.Component;
 
 /**
  * Created by BB on 28/10/2017.
+ *
+ * Used to create a 'Fading' Effect for an Entity's drawable
+ *
+ * Can Fade In or Out or Endlessly.
  */
 
 public class FadeComponent extends Component {
@@ -11,38 +15,38 @@ public class FadeComponent extends Component {
     public float minAlpha = 0;
     public float maxAlpha = 1;
 
-    public float time = 0;
-    public float maximumTime;
+    public float currentDuration = 0;
+    public float maximumDuration;
 
     public float alpha = 1;
 
     public boolean fadeIn;
     public boolean flicker;
 
-    public int count;
+    public int count; //How many times should an Entity fade in or out.
 
-    public boolean isEndless = true;
+    public boolean isEndless = true; //Overrides count
 
     public FadeComponent() {
         isEndless = true;
-        maximumTime = 1;
+        maximumDuration = 1;
     }
 
 
-    public FadeComponent(boolean fadeIn, float maximumTime, boolean isEndless) {
+    public FadeComponent(boolean fadeIn, float maximumDuration, boolean isEndless) {
         this.fadeIn = fadeIn;
-        this.maximumTime = maximumTime;
+        this.maximumDuration = maximumDuration;
         this.isEndless = isEndless;
 
         this.alpha = fadeIn ? 0 : 1;
-        this.time = fadeIn ? 0 : maximumTime;
+        this.currentDuration = fadeIn ? 0 : maximumDuration;
     }
 
     public FadeComponent(FadeBuilder fb){
         this.minAlpha = fb.minAlpha;
         this.maxAlpha = fb.maxAlpha;
-        this.time = fb.time;
-        this.maximumTime = fb.maximumTime;
+        this.currentDuration = fb.time;
+        this.maximumDuration = fb.maximumTime;
         this.alpha = fb.alpha;
         this.fadeIn = fb.fadeIn;
         this.flicker = fb.flicker;
@@ -51,7 +55,7 @@ public class FadeComponent extends Component {
         this.isEndless = fb.isEndless;
 
         this.alpha = fadeIn ? fb.minAlpha : fb.maxAlpha;
-        this.time = fadeIn ? 0 : maximumTime;
+        this.currentDuration = fadeIn ? 0 : maximumDuration;
     }
 
 

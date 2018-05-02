@@ -14,6 +14,11 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.bryjamin.dancedungeon.assets.FileStrings;
 import com.bryjamin.dancedungeon.assets.Fonts;
+import com.bryjamin.dancedungeon.assets.music.SoundFiles;
+import com.bryjamin.dancedungeon.ecs.systems.audio.MusicSystem;
+import com.bryjamin.dancedungeon.ecs.systems.audio.SoundSystem;
+import com.bryjamin.dancedungeon.factories.enemy.UnitLibrary;
+import com.bryjamin.dancedungeon.factories.spells.SkillLibrary;
 import com.bryjamin.dancedungeon.screens.LoadingScreen;
 import com.bryjamin.dancedungeon.utils.Measure;
 
@@ -38,7 +43,7 @@ public class MainGame extends Game {
 
     public SpriteBatch batch;
     public AssetManager assetManager = new AssetManager();
-
+    public MusicSystem musicSystem = new MusicSystem();
 
     @Override
     public void create () {
@@ -59,7 +64,7 @@ public class MainGame extends Game {
         size1Params.fontFileName = FileStrings.DEFAULT_FONT_FILE;
         size1Params.fontParameters.size = (int) Measure.units(3f);
         size1Params.fontParameters.borderColor = new Color(Color.BLACK);
-        size1Params.fontParameters.borderWidth = 0;
+        size1Params.fontParameters.borderWidth = Measure.units(0.25f);
         size1Params.fontParameters.minFilter = Texture.TextureFilter.Linear;
         size1Params.fontParameters.magFilter = Texture.TextureFilter.Linear;
         assetManager.load(Fonts.MEDIUM, BitmapFont.class, size1Params);
@@ -74,6 +79,22 @@ public class MainGame extends Game {
         small.fontParameters.minFilter = Texture.TextureFilter.Linear;
         small.fontParameters.magFilter = Texture.TextureFilter.Linear;
         assetManager.load(Fonts.SMALL, BitmapFont.class, small);
+
+
+        FreetypeFontLoader.FreeTypeFontLoaderParameter title = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
+        title.fontFileName = FileStrings.DEFAULT_FONT_FILE;
+        title.fontParameters.size = (int) Measure.units(7.5f);
+        title.fontParameters.minFilter = Texture.TextureFilter.Linear;
+        title.fontParameters.magFilter = Texture.TextureFilter.Linear;
+        assetManager.load(Fonts.LARGE, BitmapFont.class, title);
+
+
+        SoundFiles.loadSoundsToManager(assetManager);
+
+
+        //LOAD IN DATA FROM JSON
+        SkillLibrary.loadFromJSON();
+        UnitLibrary.loadFromJSON();
 
         setScreen(new LoadingScreen(this));
     }

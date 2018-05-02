@@ -30,7 +30,7 @@ public class FloorFactory  {
         float tileHeightSize = height / rows;
 
 
-        TextureDescription.Builder descriptionBuilder = new TextureDescription.Builder(TextureStrings.FLOOR_TEXTURE_BRICK)
+        TextureDescription.Builder descriptionBuilder = new TextureDescription.Builder(TextureStrings.GRASS_TILE)
                 .height(tileHeightSize)
                 .width(tileWidthSize);
 
@@ -49,7 +49,7 @@ public class FloorFactory  {
                         .add(new PositionComponent(x, y))
                         .add(new DrawableComponent(Layer.BACKGROUND_LAYER_FAR, descriptionBuilder
                                 //.index(i % 2 != 0 ? index1 : index2)
-                                .index(MathUtils.random(11))
+                                .index(MathUtils.random(4))
                                 .offsetX(i * tileWidthSize)
                                 .offsetY(j * tileHeightSize)
                                 .color(new Color(Color.WHITE))

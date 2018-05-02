@@ -23,9 +23,9 @@ import java.util.Random;
 
 public class MapGenerator {
 
-    private float mapSectionWidth = Measure.units(9f);
+    private float mapSectionWidth = Measure.units(10f);
     private float mapSectionHeight = Measure.units(32.5f);
-    private float mapSectionGap = Measure.units(22.5f);
+    private float mapSectionGap = Measure.units(25f);
 
     private float mapStartX = Measure.units(5f);
     private float mapStartY = Measure.units(12.5f);
@@ -42,9 +42,6 @@ public class MapGenerator {
         setupMapEventTypes(mapSections);
         return new GameMap(mapSections);
     }
-
-
-
 
 
 
@@ -77,7 +74,7 @@ public class MapGenerator {
         for(int i = 0; i < mapSections.size; i++){
             Array<MapNode> sectionNodes = mapSections.get(i).getMapNodes();
             for(int j = 0 ; j < sectionNodes.size; j++){
-                if(i == 0) setEventType(sectionNodes.get(j), MapEvent.EventType.SHOP);
+                if(i == 0) setEventType(sectionNodes.get(j), MapEvent.EventType.BATTLE);
                 else if(i == mapSections.size -1 ) sectionNodes.get(j).setEventType(MapEvent.EventType.BOSS);
                 else {
                     setEventType(sectionNodes.get(j), MapEvent.EventType.BATTLE);
@@ -328,7 +325,7 @@ public class MapGenerator {
 
                 //If two line segments end at the same point, that counts as an intersection
 
-                //This is the only time an intersection, is allowed within the Map.
+                //This is the only currentDuration an intersection, is allowed within the Map.
                 //The number of lines currently connected to a node, would be equivalent to it's children
 
                 //TODO it may be more prudent to generate the connected lines again within this method, instead

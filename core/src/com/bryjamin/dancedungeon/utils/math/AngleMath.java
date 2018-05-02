@@ -14,7 +14,6 @@ public class AngleMath {
         return Math.toDegrees(Math.atan2(endY - startY, endX - startX));
     }
 
-
     public static double normalizeAngle(double angle)
     {
         double newAngle = angle;

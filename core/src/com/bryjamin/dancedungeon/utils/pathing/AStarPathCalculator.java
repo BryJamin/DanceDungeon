@@ -14,19 +14,16 @@ import java.util.Comparator;
 
 public class AStarPathCalculator {
 
-
-    public OrderedMap<CoordinateComponent, Node> componentNodeOrderedMap = new OrderedMap<CoordinateComponent, Node>();
-
     public Array<Coordinates> unavailableCoordinates = new Array<Coordinates>();
-
-    public Array<Coordinates> availableCoordinates = new Array<Coordinates>();
+    public Array<Coordinates> availableCoordinates = new Array<>();
 
     //Coordinates occupied by allies
     public Array<Coordinates> alliedCoordinates = new Array<Coordinates>();
 
     private static final int HORIZONTAL_COST = 10;
 
-    private boolean strictMaxRange;
+    private boolean strictMaxRange; //If this variable is true, if the path is greater than the movement range,
+    //the path returns false
 
     public void setStrictMaxRange(boolean strictMaxRange) {
         this.strictMaxRange = strictMaxRange;
@@ -48,6 +45,8 @@ public class AStarPathCalculator {
         this.availableCoordinates = availableCoordinates;
         this.unavailableCoordinates = unavailableCoordinates;
     }
+
+
 
     public AStarPathCalculator(Array<Coordinates> availableCoordinates, Array<Coordinates> unavailableCoordinates, Array<Coordinates> alliedCoordinates){
         this.availableCoordinates = availableCoordinates;
@@ -87,7 +86,7 @@ public class AStarPathCalculator {
         queueArray.sort(new Comparator<Queue<Coordinates>>() {
             @Override
             public int compare(Queue<Coordinates> q1, Queue<Coordinates> q2) {
-                return q1.size < q2.size ? -1 : q1.size == q2.size ? 0 : 1;
+                return Integer.compare(q1.size, q2.size);
             }
         });
 
@@ -104,6 +103,14 @@ public class AStarPathCalculator {
 
     public boolean findShortestPath(Queue<Coordinates> fillQueue, Coordinates start, Coordinates end, int maxRange){
 
+/*
+        if(start == end){
+            fillQueue.addLast(start);
+            return true;
+        }
+*/
+
+
         Array<Node> openList = new Array<Node>();
         Array<Node> closedList = new Array<Node>();
 
@@ -114,7 +121,7 @@ public class AStarPathCalculator {
         closedList.add(allNodeMap.get(start));
 
         //Could place this inside the Node set up.
-        for(Node n: allNodeMap.values().toArray()) n.setHeuristic(n.coordinates, end);
+        for(Node n: allNodeMap.values().toArray()) n.setHeuristic(end);
 
         //If the final coordinate is occupied by either an ally or enemy return false
         if(unavailableCoordinates.contains(end, false) || alliedCoordinates.contains(end, false)) {
@@ -305,14 +312,14 @@ public class AStarPathCalculator {
             fValue = gValue + hValue;
         }
 
-        private void setHeuristic(Coordinates start, Coordinates goal) {
+        private void setHeuristic(Coordinates goal) {
 
-            int dx = Math.abs(start.getX() - goal.getX());
-            int dy = Math.abs(start.getY() - goal.getY());
+            int distX = Math.abs(coordinates.getX() - goal.getX());
+            int distY = Math.abs(coordinates.getY() - goal.getY());
 
             int D = 1;
 
-            this.hValue = D * (dx + dy);
+            this.hValue = D * (distX + distY);
 
         }
 

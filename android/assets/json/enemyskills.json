@@ -18,7 +18,20 @@
     "description": "Ranged Attack, Deals 1 damage",
     "icon": "skills/LaserScope",
     "baseDamage": 1,
-    "targeting": "Melee",
+    "targeting": "StraightShot",
+    "spellAnimation": "Projectile",
+    "attackType": "Damage",
+    "purchasable": false
+  },
+
+
+  "598cbfff-19b7-412c-9618-cde1db76617b": {
+    "class": "com.bryjamin.dancedungeon.factories.spells.Skill",
+    "name": "Big Blast",
+    "description": "Ranged Attack, Deals 2 damage",
+    "icon": "skills/LaserScope",
+    "baseDamage": 2,
+    "targeting": "StraightShot",
     "spellAnimation": "Projectile",
     "attackType": "Damage",
     "purchasable": false
@@ -34,8 +47,8 @@
     "baseDamage": 1,
     "targeting": "Melee",
     "minRange": 1,
-    "maxRange": 3,
-    "spellAnimation": "Projectile",
+    "maxRange": 4,
+    "spellAnimation": "Thrown",
     "attackType": "Damage",
     "purchasable": false
   }

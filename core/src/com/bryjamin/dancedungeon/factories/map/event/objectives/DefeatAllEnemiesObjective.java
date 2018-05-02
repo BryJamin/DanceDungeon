@@ -26,7 +26,8 @@ public class DefeatAllEnemiesObjective extends AbstractObjective {
     }
 
     @Override
-    public void onNotify() {
-
+    public void update(Object o) {
+        super.update(o);
     }
+
 }
