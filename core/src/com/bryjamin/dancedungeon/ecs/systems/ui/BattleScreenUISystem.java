@@ -29,6 +29,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.bryjamin.dancedungeon.MainGame;
@@ -70,6 +71,7 @@ import com.bryjamin.dancedungeon.factories.spells.TargetingFactory;
 import com.bryjamin.dancedungeon.screens.battle.BattleScreen;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
 import com.bryjamin.dancedungeon.screens.menu.CharacterSelectionScreen;
+import com.bryjamin.dancedungeon.screens.menu.MenuScreen;
 import com.bryjamin.dancedungeon.screens.strategy.MapScreen;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.AngleMath;
@@ -523,8 +525,6 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
                 break;
         }
 
-        System.out.println(nextTurnBanner.getColor());
-
         float height = Measure.units(7.5f);
         float width = stage.getWidth() + Measure.units(20f);
 
@@ -538,9 +538,6 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
         final Action a = Actions.fadeOut(1.25f, Interpolation.smoother);
 
         nextTurnBanner.addAction(a);
-
-
-        System.out.println("SIZE OF QUEUE WHEN BANNER CALLED " + actionQueueSystem.getSizeOfQueue());
 
         actionQueueSystem.pushLastAction(actionQueueEntity, new WorldConditionalAction() {
             @Override
@@ -843,6 +840,11 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
     }
 
 
+
+
+
+
+
     private void populateRewardTable(Table rewardTable, AbstractObjective abstractObjective, PartyDetails partyDetails){
 
         rewardTable.align(Align.top);
@@ -882,6 +884,53 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
     }
 
+
+    public void createDefeatScreen() {
+
+        Table gameCompleteTable = stageUIRenderingSystem.createContainerTable();
+        stageUIRenderingSystem.stage.addActor(gameCompleteTable);
+
+        gameCompleteTable.setTouchable(Touchable.enabled);
+        gameCompleteTable.addListener(new ClickListener());
+
+
+
+        Table t = new Table(uiSkin);
+        t.setBackground(new NinePatchDrawable(NinePatches.getBorderPatch(renderingSystem.getAtlas(),
+                new Color(Colors.ENEMY_BULLET_COLOR.r, Colors.ENEMY_BULLET_COLOR.g, Colors.ENEMY_BULLET_COLOR.b, 0.75f))));
+        t.align(Align.center);
+
+        gameCompleteTable.add(t).width(Measure.units(85f)).height(Measure.units(45f));
+
+        String[] strings = {
+                TextResource.DEFEAT_TEXT,
+                TextResource.DEFEAT_TEXT_2,
+                TextResource.DEFEAT_TEXT_3
+        };
+
+        Label title = new Label(TextResource.DEFEAT, uiSkin);
+        t.add(title).padTop(Padding.SMALL);
+        t.row();
+
+        for(String s : strings){
+            Label text = new Label(s, uiSkin);
+            t.add(text).padBottom(Padding.SMALL).expandY();
+            t.row();
+        }
+
+        TextButton textButton = new TextButton(TextResource.DEFEAT_BACK_TO_MAIN_MENU, uiSkin);
+        textButton.setBackground(new NinePatchDrawable(NinePatches.getBorderPatch(renderingSystem.getAtlas(), new Color(Colors.ENEMY_BULLET_COLOR))));
+        t.add(textButton).height(Measure.units(7.5f)).padBottom(Padding.SMALL);
+
+        textButton.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.getScreen().dispose();
+                game.setScreen(new MenuScreen(game));
+            }
+        });
+
+    }
 
 
     /**

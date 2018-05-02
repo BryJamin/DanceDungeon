@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.Queue;
+import com.bryjamin.dancedungeon.assets.MapData;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
@@ -104,8 +105,7 @@ public class TileSystem extends EntitySystem {
 
         map = new TmxMapLoader(new InternalFileHandleResolver()).load(battleEvent.getMapLocation());
 
-        TiledMapTileLayer objects =  (TiledMapTileLayer) map.getLayers().get("Object");
-        TiledMapTileLayer background =  (TiledMapTileLayer) map.getLayers().get("Background");
+        TiledMapTileLayer objects =  (TiledMapTileLayer) map.getLayers().get(MapData.OBJECT_LAYER_KEY);
 
         UnitFactory unitFactory = new UnitFactory();
 
@@ -113,13 +113,13 @@ public class TileSystem extends EntitySystem {
             for(int j = 0; j < objects.getHeight(); j++){
                 if(objects.getCell(i, j) != null) {
                     TiledMapTile tile = objects.getCell(i, j).getTile();
-                    if (tile.getProperties().containsKey("Type")) {
-                        String property = (String) tile.getProperties().get("Type");
+                    if (tile.getProperties().containsKey(MapData.OBJECT_LAYER_TILE_INFO_PROPERTY)) {
+                        String property = (String) tile.getProperties().get(MapData.OBJECT_LAYER_TILE_INFO_PROPERTY);
                         switch (property){
-                            case "Wall":
+                            case MapData.OBJECTS_TILE_WALL:
                                 unitFactory.baseTileBag(world, new Coordinates(i, j));
                                 break;
-                            case "Ally":
+                            case MapData.OBJECTS_ALLIED_STRUCTURE:
                                 unitFactory.baseAlliedTileBag(world, new Coordinates(i, j));
                                 break;
                         }

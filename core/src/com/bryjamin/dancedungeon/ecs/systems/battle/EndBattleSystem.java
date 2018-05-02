@@ -123,17 +123,14 @@ public class EndBattleSystem extends EntitySystem implements Observer {
 
     @Override
     public void update(Object o) {
-        //TODO, decide if notify is appropriate. Also, there is not really a reason for the state change,
-
-        //UNTIL I CAN FIX TEH ACTION CAMERA SYSTEM IN REGARDS TO THE SIMULTANEOUS ATTACKS HAPPENS
-        //ON DIFFERENT PARTS OF THE MAP I NEED TO ADD A CHECK FOR IF THE FLAG IS FALSE
-        //OTHERWISE THIS WILL CRASH
 
         if(!processingFlag) return;
 
 
-        if(playerPartyManagementSystem.getPartyDetails().getMorale() == 0) {
-            ((BattleScreen) game.getScreen()).defeat();
+        if(playerPartyManagementSystem.getPartyDetails().getMorale() == 0 || playerPartyManagementSystem.getPartyDetails().isEveryoneDefeated()) {
+            battleScreenUISystem.createDefeatScreen();
+            turnSystem.setEnabled(false);
+            battleScreenInputSystem.restrictInputToStage();
 
             actionQueueSystem.observable.removeObserver(this);
         }

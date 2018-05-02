@@ -117,6 +117,22 @@ public class PartyDetails {
         return money;
     }
 
+
+    /**
+     * Checks if the party has been defeated. This is determined if All party memeber's health is zero.
+     */
+    public boolean isEveryoneDefeated(){
+
+        for(UnitData u : party){
+            if(u.getHealth() > 0){
+                return false;
+            }
+        }
+
+        return true;
+
+    }
+
     public int getSkillPoints() {
         return skillPoints;
     }

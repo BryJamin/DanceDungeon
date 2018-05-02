@@ -144,4 +144,11 @@ public class TextResource {
     public static final String VICTORY_TEXT_4 = "As That's All Your Getting.......Sorry.";
     public static final String VICTORY_BACK_TO_MAIN_MENU = "Back To Main Menu?";
 
+
+    public static final String DEFEAT  = "Defeat...";
+    public static final String DEFEAT_TEXT = "Your Party Can No Longer Carry On";
+    public static final String DEFEAT_TEXT_2 = "Don't Worry Though!";
+    public static final String DEFEAT_TEXT_3 = "There's Always The Next Time!";
+    public static final String DEFEAT_BACK_TO_MAIN_MENU = "Back To Main Menu";
+
 }
