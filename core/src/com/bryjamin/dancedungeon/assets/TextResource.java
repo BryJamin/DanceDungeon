@@ -48,6 +48,12 @@ public class TextResource {
     public static final String SCREEN_CHARACTER_START = "Start Expedition";
     public static final String SCREEN_CHARACTER_HEROES = "Change Heroes";
     public static final String SCREEN_CHARACTER_BACK = "Back";
+    public static final String SCREEN_CHARACTER_SELECT = "Select";
+
+
+    public static final String SCREEN_CHARACTER_SQUAD_NAME_1 = "The Defaults";
+    public static final String SCREEN_CHARACTER_SQUAD_NAME_2 = "The Overpowered";
+    public static final String SCREEN_CHARACTER_SQUAD_NAME_3 = "The Defectors";
 
 
 

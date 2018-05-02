@@ -72,9 +72,17 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
 
     private Array<UnitData> availableMembers;
 
-    private Array<Array<String>> heroSquads = new Array<>();
+    private Array<HeroSquad> heroSquads = new Array<>();
 
     private Array<String> partyMembers = new Array<>();
+
+
+    private enum State {
+        START_EXPEDITION, CHANGE_HEROES
+    }
+
+    private State state = State.START_EXPEDITION;
+
 
     public CharacterSelectionScreenInitilization(MainGame game, Viewport gameport) {
         this.gameport = gameport;
@@ -87,25 +95,47 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
         this.uiSkin = Skins.DEFAULT_SKIN(game.assetManager);
 
 
-        heroSquads.add(new Array<>(new String[]{
+        heroSquads.add(new HeroSquad(TextResource.SCREEN_CHARACTER_SQUAD_NAME_1,
                 UnitLibrary.CHARACTERS_SGT_SWORD,
                 UnitLibrary.CHARACTERS_BOLAS,
-                UnitLibrary.CHARACTERS_FIRAS}));
+                UnitLibrary.CHARACTERS_FIRAS
+        ));
 
 
-        heroSquads.add(new Array<>(new String[]{
+        heroSquads.add(new HeroSquad(TextResource.SCREEN_CHARACTER_SQUAD_NAME_2,
+                UnitLibrary.CHARACTERS_SGT_SWORD,
+                UnitLibrary.CHARACTERS_BOLAS,
+                UnitLibrary.CHARACTERS_FIRAS
+        ));
+
+        heroSquads.add(new HeroSquad(TextResource.SCREEN_CHARACTER_SQUAD_NAME_3,
                 UnitLibrary.MELEE_BLOB,
-                UnitLibrary.MELEE_BLOB,
-                UnitLibrary.MELEE_BLOB}));
+                UnitLibrary.RANGED_LOBBA,
+                UnitLibrary.RANGED_BLASTER
+        ));
+
+        partyMembers = heroSquads.get(0).unitIds;
+
+    }
+
+    private class HeroSquad {
+
+        private String name;
+        private Array<String> unitIds = new Array<>();
+
+        public HeroSquad(String name, String unit1, String unit2, String unit3){
+            this.name = name;
+            unitIds.addAll(unit1, unit2, unit3);
+        }
 
 
-        heroSquads.add(new Array<>(new String[]{
-                UnitLibrary.MELEE_BLOB,
-                UnitLibrary.MELEE_BLOB,
-                UnitLibrary.MELEE_BLOB}));
+        public String getName() {
+            return name;
+        }
 
-        partyMembers = heroSquads.get(0);
-
+        public Array<String> getUnitIds() {
+            return unitIds;
+        }
     }
 
 
@@ -181,9 +211,7 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
         tutorialTable = new Table();
         tutorialTable.setWidth(stage.getWidth());
         tutorialTable.setHeight(stage.getHeight());
-
         tutorialTable.setVisible(false);
-
         stage.addActor(tutorialTable);
 
     }
@@ -197,42 +225,80 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
         bottomContainer.clear();
         bottomContainer.setDebug(StageUIRenderingSystem.DEBUG);
 
-        startExpedition = new TextButton(TextResource.SCREEN_CHARACTER_START, uiSkin);
 
-        startExpedition.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
+        switch (state) {
 
-                game.getScreen().dispose();
+            case START_EXPEDITION:
 
-                if(!PlayerSave.isFirstTimePlayer()) {
-                    goToMapScreen();
-                } else {
-                    openTutorialTable();
-                }
-            }
-        });
+                startExpedition = new TextButton(TextResource.SCREEN_CHARACTER_START, uiSkin);
 
-        bottomContainer.add(startExpedition).width(BOTTOM_BUTTON_WIDTH).height(BOTTOM_BUTTON_HEIGHT).padRight(Padding.SMALL).expandX();
+                startExpedition.addListener(new ChangeListener() {
+                    @Override
+                    public void changed(ChangeEvent event, Actor actor) {
+
+                        game.getScreen().dispose();
+
+                        if(!PlayerSave.isFirstTimePlayer()) {
+                            goToMapScreen();
+                        } else {
+                            openTutorialTable();
+                        }
+                    }
+                });
+
+                bottomContainer.add(startExpedition).width(BOTTOM_BUTTON_WIDTH).height(BOTTOM_BUTTON_HEIGHT).padRight(Padding.SMALL).expandX();
 
 
-        TextButton whatever = new TextButton(TextResource.SCREEN_CHARACTER_HEROES, uiSkin);
-        bottomContainer.add(whatever).width(BOTTOM_BUTTON_WIDTH).height(BOTTOM_BUTTON_HEIGHT).padRight(Padding.SMALL).expandX();
+                TextButton changeHeroes = new TextButton(TextResource.SCREEN_CHARACTER_HEROES, uiSkin);
+                bottomContainer.add(changeHeroes).width(BOTTOM_BUTTON_WIDTH).height(BOTTOM_BUTTON_HEIGHT).padRight(Padding.SMALL).expandX();
+                changeHeroes.addListener(new ClickListener(){
+
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        state = State.CHANGE_HEROES;
+                        populateBottomContainer();
+                        populateCharacterTable();
+                    }
+
+                });
 
 
 
-        TextButton backToMainMenu = new TextButton(TextResource.SCREEN_CHARACTER_BACK, uiSkin);
+                TextButton backToMainMenu = new TextButton(TextResource.SCREEN_CHARACTER_BACK, uiSkin);
 
-        backToMainMenu.addListener(new ClickListener(){
+                backToMainMenu.addListener(new ClickListener(){
 
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.getScreen().dispose();
-                game.setScreen(new MenuScreen(game));
-            }
-        });
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        game.getScreen().dispose();
+                        game.setScreen(new MenuScreen(game));
+                    }
+                });
 
-        bottomContainer.add(backToMainMenu).width(BOTTOM_BUTTON_WIDTH).height(BOTTOM_BUTTON_HEIGHT).padRight(Padding.SMALL).expandX();
+                bottomContainer.add(backToMainMenu).width(BOTTOM_BUTTON_WIDTH).height(BOTTOM_BUTTON_HEIGHT).padRight(Padding.SMALL).expandX();
+
+                break;
+
+            case CHANGE_HEROES:
+
+                TextButton back = new TextButton(TextResource.SCREEN_CHARACTER_BACK, uiSkin);
+
+                back.addListener(new ClickListener(){
+
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        state = State.START_EXPEDITION;
+                        populateCharacterTable();
+                        populateBottomContainer();
+                    }
+                });
+
+                bottomContainer.add(back).width(BOTTOM_BUTTON_WIDTH).height(BOTTOM_BUTTON_HEIGHT).padRight(Padding.SMALL).expandX();
+
+                break;
+
+
+        }
 
 
     }
@@ -243,48 +309,108 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
 
         characterTable.clear();
 
-        for(int i = 0; i < partyMembers.size; i++){
 
-            Table partyMemberContainer = new Table(uiSkin);
+        switch (state){
 
-            NinePatchDrawable ninePatchDrawable = NinePatches.getDefaultNinePatch(renderingSystem.getAtlas());
-            ninePatchDrawable.getPatch().getColor().a = 0.5f;
+            case START_EXPEDITION:
 
-            partyMemberContainer.setBackground(ninePatchDrawable);
+                for(int i = 0; i < partyMembers.size; i++){
+
+                    Table partyMemberContainer = new Table(uiSkin);
+
+                    NinePatchDrawable ninePatchDrawable = NinePatches.getDefaultNinePatch(renderingSystem.getAtlas());
+                    ninePatchDrawable.getPatch().getColor().a = 0.5f;
+
+                    partyMemberContainer.setBackground(ninePatchDrawable);
+                    partyMemberContainer.align(Align.center);
+                    characterTable.add(partyMemberContainer).width(container.getWidth() - Measure.units(2.5f)).padBottom(Padding.SMALL).expandY();
+
+                    UnitData unitData = UnitLibrary.getUnitData(partyMembers.get(i));
+                    partyMemberContainer.add(new Label(unitData.name, uiSkin)).width(Measure.units(15f)).align(Align.left).colspan(4).padLeft(Padding.SMALL);
+                    partyMemberContainer.row();
+
+                    //Character Image
+                    Table imgContainer = new Table();
+                    imgContainer.add(new Image(renderingSystem.getAtlas().findRegion(unitData.icon))).size(Measure.units(7.5f));
+                    partyMemberContainer.add(imgContainer).size(Measure.units(7.5f)).padRight(Padding.MEDIUM).padBottom(Padding.SMALL).padLeft(Padding.SMALL);
+
+                    imgContainer = new Table();
+                    imgContainer.setBackground(NinePatches.getDefaultNinePatch(renderingSystem.getAtlas()));
+                    imgContainer.add(new Image(renderingSystem.getAtlas().findRegion(unitData.getSkills().first().getIcon()))).size(Measure.units(4f));
+
+                    partyMemberContainer.add(imgContainer).width(Measure.units(5f));
+                    partyMemberContainer.add(new Label(unitData.getSkills().first().getName(), uiSkin)).expandX();
+
+                    Label description = new Label(unitData.getSkills().first().getDescription(), uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
+                    description.setWrap(true);
+                    description.setAlignment(Align.center);
+                    partyMemberContainer.add(description).width(Measure.units(50f));
+
+                    characterTable.row();
+
+                }
 
 
-            partyMemberContainer.align(Align.center);
-            characterTable.add(partyMemberContainer).width(container.getWidth() - Measure.units(2.5f)).padBottom(Padding.SMALL).expandY();
-
-            UnitData unitData = UnitLibrary.getUnitData(partyMembers.get(i));
-
-            partyMemberContainer.add(new Label(unitData.name, uiSkin)).width(Measure.units(15f)).align(Align.left).colspan(4).padLeft(Padding.SMALL);
-            partyMemberContainer.row();
+                break;
 
 
-            Image border = new Image(NinePatches.getDefaultNinePatch(renderingSystem.getAtlas()));
-            Table imgContainer = new Table();
-            imgContainer.add(new Image(renderingSystem.getAtlas().findRegion(unitData.icon))).size(Measure.units(7.5f));
-            //characterPortraitContainer.row();
-            partyMemberContainer.add(imgContainer).size(Measure.units(7.5f)).padRight(Padding.MEDIUM).padBottom(Padding.SMALL).padLeft(Padding.SMALL);
-
-            imgContainer = new Table();
-            imgContainer.setBackground(NinePatches.getDefaultNinePatch(renderingSystem.getAtlas()));
-            imgContainer.add(new Image(renderingSystem.getAtlas().findRegion(unitData.getSkills().first().getIcon()))).size(Measure.units(4f));
-
-            partyMemberContainer.add(imgContainer).width(Measure.units(5f));
-            partyMemberContainer.add(new Label(unitData.getSkills().first().getName(), uiSkin)).expandX();
-
-            Label description = new Label(unitData.getSkills().first().getDescription(), uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
-            description.setWrap(true);
-            description.setAlignment(Align.center);
-            partyMemberContainer.add(description).width(Measure.units(50f));
+            case CHANGE_HEROES:
 
 
+                for(int i = 0; i < heroSquads.size; i++) {
 
-            characterTable.row();
+                    Table partyMemberContainer = new Table(uiSkin);
+
+                    NinePatchDrawable ninePatchDrawable = NinePatches.getDefaultNinePatch(renderingSystem.getAtlas());
+                    ninePatchDrawable.getPatch().getColor().a = 0.5f;
+
+                    partyMemberContainer.setBackground(ninePatchDrawable);
+                    partyMemberContainer.align(Align.center);
+                    characterTable.add(partyMemberContainer).width(container.getWidth() - Measure.units(2.5f)).padBottom(Padding.SMALL).expandY();
+
+                    partyMemberContainer.add(new Label(heroSquads.get(i).getName(), uiSkin)).expandX().align(Align.center).colspan(4);
+                    partyMemberContainer.row();
+
+
+                    for(String s : heroSquads.get(i).unitIds) {
+
+                        UnitData unitData = UnitLibrary.getUnitData(s);
+
+                        //Character Image
+                        Table imgContainer = new Table();
+                        imgContainer.setDebug(true);
+                        imgContainer.add(new Image(renderingSystem.getAtlas().findRegion(unitData.icon))).size(Measure.units(5f));
+                        imgContainer.add(new Label(unitData.name, uiSkin,Fonts.LABEL_STYLE_SMALL_FONT)).width(Measure.units(7.5f)).padLeft(Padding.SMALL);
+                        partyMemberContainer.add(imgContainer).width(Measure.units(15f)).height(Measure.units(7.5f)).padRight(Padding.MEDIUM).padBottom(Padding.SMALL).padLeft(Padding.SMALL);
+                        //partyMemberContainer.add()
+                    }
+
+                    final int j = i;
+
+                    TextButton selectButton = new TextButton(TextResource.SCREEN_CHARACTER_SELECT, uiSkin);
+                    selectButton.addListener(new ClickListener(){
+                        @Override
+                        public void clicked(InputEvent event, float x, float y) {
+                            partyMembers = heroSquads.get(j).unitIds;
+                            state = State.START_EXPEDITION;
+                            populateBottomContainer();
+                            populateCharacterTable();
+                        }
+                    });
+
+                    partyMemberContainer.add(selectButton).width(Measure.units(15f)).height(Measure.units(7.5f)).padBottom(Padding.SMALL);
+
+                    characterTable.row();
+
+
+                }
+
+
+                break;
+
 
         }
+
 
     }
 
