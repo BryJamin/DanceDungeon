@@ -65,20 +65,16 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
     private Table bottomContainer;
     private TextButton startExpedition;
 
-    private PartyDetails partyDetails;
-
-
     private Table tutorialTable;
-
 
     private Viewport gameport;
     private MainGame game;
 
     private Array<UnitData> availableMembers;
 
-    private Array<Array<UnitData>> heroSquads = new Array<>();
+    private Array<Array<String>> heroSquads = new Array<>();
 
-    private Array<UnitData> partyMembers = new Array<UnitData>(PARTY_SIZE);
+    private Array<String> partyMembers = new Array<>();
 
     public CharacterSelectionScreenInitilization(MainGame game, Viewport gameport) {
         this.gameport = gameport;
@@ -91,38 +87,41 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
         this.uiSkin = Skins.DEFAULT_SKIN(game.assetManager);
 
 
-        heroSquads.add(new Array<>(new UnitData[]{
-                UnitLibrary.getUnitData(UnitLibrary.CHARACTERS_SGT_SWORD),
-                UnitLibrary.getUnitData(UnitLibrary.CHARACTERS_BOLAS),
-                UnitLibrary.getUnitData(UnitLibrary.CHARACTERS_FIRAS)}));
+        heroSquads.add(new Array<>(new String[]{
+                UnitLibrary.CHARACTERS_SGT_SWORD,
+                UnitLibrary.CHARACTERS_BOLAS,
+                UnitLibrary.CHARACTERS_FIRAS}));
 
 
-        heroSquads.add(new Array<>(new UnitData[]{
-                UnitLibrary.getUnitData(UnitLibrary.MELEE_BLOB),
-                UnitLibrary.getUnitData(UnitLibrary.MELEE_BLOB),
-                UnitLibrary.getUnitData(UnitLibrary.MELEE_BLOB)}));
+        heroSquads.add(new Array<>(new String[]{
+                UnitLibrary.MELEE_BLOB,
+                UnitLibrary.MELEE_BLOB,
+                UnitLibrary.MELEE_BLOB}));
 
 
-        heroSquads.add(new Array<>(new UnitData[]{
-                UnitLibrary.getUnitData(UnitLibrary.MELEE_BLOB),
-                UnitLibrary.getUnitData(UnitLibrary.MELEE_BLOB),
-                UnitLibrary.getUnitData(UnitLibrary.MELEE_BLOB)}));
+        heroSquads.add(new Array<>(new String[]{
+                UnitLibrary.MELEE_BLOB,
+                UnitLibrary.MELEE_BLOB,
+                UnitLibrary.MELEE_BLOB}));
 
         partyMembers = heroSquads.get(0);
 
+    }
 
-        partyDetails = new PartyDetails();
+
+    private PartyDetails createPartyDetails(){
+
+        PartyDetails partyDetails = new PartyDetails();
 
         for (int i = 0; i < PARTY_SIZE; i++) {
             try {
-                partyDetails.addPartyMember(partyMembers.get(i), i);
+                partyDetails.addPartyMember(UnitLibrary.getUnitData(partyMembers.get(i)), i);
             } catch (IndexOutOfBoundsException e) {
                 partyDetails.addPartyMember(null, i);
             }
         }
 
-
-
+        return partyDetails;
 
     }
 
@@ -257,7 +256,7 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
             partyMemberContainer.align(Align.center);
             characterTable.add(partyMemberContainer).width(container.getWidth() - Measure.units(2.5f)).padBottom(Padding.SMALL).expandY();
 
-            UnitData unitData = partyMembers.get(i);
+            UnitData unitData = UnitLibrary.getUnitData(partyMembers.get(i));
 
             partyMemberContainer.add(new Label(unitData.name, uiSkin)).width(Measure.units(15f)).align(Align.left).colspan(4).padLeft(Padding.SMALL);
             partyMemberContainer.row();
@@ -330,7 +329,7 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
         yes.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new BattleScreen(game, game.getScreen(), new TutorialEvent(), partyDetails, true));
+                game.setScreen(new BattleScreen(game, game.getScreen(), new TutorialEvent(), createPartyDetails(), true));
             }
         });
 
@@ -356,7 +355,7 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
 
 
     private void goToMapScreen(){
-        game.setScreen(new MapScreen(game, new MapGenerator().generateGameMap(), partyDetails));
+        game.setScreen(new MapScreen(game, new MapGenerator().generateGameMap(), createPartyDetails()));
     }
 
 }

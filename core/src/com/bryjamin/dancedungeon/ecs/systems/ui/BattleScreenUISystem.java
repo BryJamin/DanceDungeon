@@ -635,6 +635,8 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
         if(!storedm.has(enemy)){
             skillDescriptionTable.clear();
             skillDescriptionTable.add(new Label(TextResource.BATTLE_NO_ENEMY_ATTACK, uiSkin, Fonts.LABEL_STYLE_SMALL_FONT));
+
+
             tableForSkillButtons.setVisible(false);
         } else {
 
@@ -1183,7 +1185,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
                         TextResource.TUTORIAL_OBJECTIVES_TEXT_2
                         );
 
-                buildTutorialArrow(tutorialArrowTable, tutorialInformationWindow, rectangleToCenterOn);
+                buildTutorialArrow(tutorialArrowTable, tutorialInformationWindow, objTableRect);
 
                 break;
 
@@ -1213,6 +1215,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
                     public void clicked(InputEvent event, float x, float y) {
                         Screen menu = ((BattleScreen) game.getScreen()).getPreviousScreen();
                         game.getScreen().dispose();
+                        menu.dispose();;
                         game.setScreen(menu);
                         PlayerSave.turnOffFirstTimePlayer();
                     }
