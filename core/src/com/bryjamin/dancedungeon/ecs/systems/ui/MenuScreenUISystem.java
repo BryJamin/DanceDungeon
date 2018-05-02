@@ -133,7 +133,6 @@ public class MenuScreenUISystem extends BaseSystem {
         container.row();
         bottomContainer = new Table(uiSkin);
         bottomContainer.setWidth(stage.getWidth());
-        bottomContainer.setDebug(true);
         container.add(bottomContainer).height(Measure.units(10f)).width(stage.getWidth());
 
         populateBottomContainer();
@@ -150,6 +149,24 @@ public class MenuScreenUISystem extends BaseSystem {
         bottomContainer.align(Align.right);
 
         //Music Button
+
+
+        if(menuState == MenuState.OPTIONS){
+
+            TextButton back = new TextButton(TextResource.SCREEN_MENU_BACK, uiSkin);
+
+            back.addListener(new ClickListener(){
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    menuState = MenuState.MAIN;
+                    populateMiddleContainer();
+                    populateBottomContainer();
+                }
+            });
+
+            bottomContainer.add(back).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).padBottom(Padding.MEDIUM).expandX().align(Align.left).padLeft(Padding.SMALL);
+        }
+
 
         final Button music = new Button(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.SETTINGS_MUSIC_ON)),
                 null,
@@ -238,6 +255,7 @@ public class MenuScreenUISystem extends BaseSystem {
                     public void clicked(InputEvent event, float x, float y) {
                         menuState = MenuState.OPTIONS;
                         populateMiddleContainer();
+                        populateBottomContainer();
                     }
                 });
 
@@ -268,33 +286,18 @@ public class MenuScreenUISystem extends BaseSystem {
                     }
                 });
 
-
-                text = PlayerSave.isFirstTimePlayer() ?
-                        TextResource.SCREEN_MENU_TUTORIAL_ON : TextResource.SCREEN_MENU_TUTORIAL_OFF;
-
-                TextButton toggleTutorial = new TextButton(text, uiSkin);
+                TextButton toggleTutorial = new TextButton(TextResource.SCREEN_MENU_TUTORIAL_ON, uiSkin);
                 toggleTutorial.addListener(new ClickListener() {
 
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
-                        PlayerSave.toggleFirstTimePlayer();
+                        PlayerSave.turnOnFirstTimePlayer();
                         populateMiddleContainer();
                     }
                 });
 
 
 
-                TextButton back = new TextButton(TextResource.SCREEN_CHARACTER_BACK, uiSkin);
-                back.addListener(new ClickListener() {
-
-                    @Override
-                    public void clicked(InputEvent event, float x, float y) {
-                        menuState = MenuState.MAIN;
-                        populateMiddleContainer();
-                    }
-                });
-
-                addButtonToTable(optionsTable, back);
                 addButtonToTable(optionsTable, toggleScore);
                 addButtonToTable(optionsTable, toggleTutorial);
 
@@ -309,7 +312,7 @@ public class MenuScreenUISystem extends BaseSystem {
 
         switch (menuState){
             case OPTIONS:
-                table.add(button).width(BUTTON_WIDTH + Measure.units(25f)).height(BUTTON_HEIGHT).padBottom(Padding.MEDIUM);
+                table.add(button).width(BUTTON_WIDTH + Measure.units(27.5f)).height(BUTTON_HEIGHT).padBottom(Padding.MEDIUM);
                 break;
             case MAIN:
                 table.add(button).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).padBottom(Padding.MEDIUM);

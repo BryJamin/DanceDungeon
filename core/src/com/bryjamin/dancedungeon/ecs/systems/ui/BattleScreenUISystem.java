@@ -71,6 +71,7 @@ import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
 import com.bryjamin.dancedungeon.screens.menu.CharacterSelectionScreen;
 import com.bryjamin.dancedungeon.screens.strategy.MapScreen;
 import com.bryjamin.dancedungeon.utils.Measure;
+import com.bryjamin.dancedungeon.utils.math.AngleMath;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.observer.Observer;
 import com.bryjamin.dancedungeon.utils.options.PlayerSave;
@@ -131,6 +132,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
     private AreYouSureFrame areYouSureContainer;
 
     private Table tutorialInformationWindow;
+    private Table tutorialArrowTable;
 
 
 
@@ -277,7 +279,13 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
             }
         });
 
+        tutorialArrowTable = new Table(uiSkin);
+        tutorialArrowTable.setVisible(false);
+
         stage.addActor(nextTurnBanner);
+
+        //Tutorial TABLES
+        stage.addActor(tutorialArrowTable);
         stage.addActor(tutorialInformationWindow);
 
 
@@ -969,25 +977,29 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
                         TextResource.TUTORIAL_MORALE_TEXT_2
                 );
 
+                buildTutorialArrow(tutorialArrowTable, tutorialInformationWindow, centerRect);
+
                 break;
 
 
             case ALLIED_STRUCTURE:
 
-                width = Measure.units(40f);
-                height = Measure.units(25f);
+                width = Measure.units(55f);
+                height = Measure.units(21f);
 
                 buildDefaultTutorialWindow(tutorialInformationWindow,
                         rectangleToCenterOn,
                         width,
                         height,
                         0,
-                        -Measure.units(15),
+                        -Measure.units(17.5f),
                         TextResource.TUTORIAL_ALLIED_STRUCTURE_TITLE,
                         TextResource.TUTORIAL_ALLIED_STRUCTURE_TEXT_1,
                         TextResource.TUTORIAL_ALLIED_STRUCTURE_TEXT_2
                 );
 
+
+                buildTutorialArrow(tutorialArrowTable, tutorialInformationWindow, rectangleToCenterOn);
 
                 break;
 
@@ -1010,24 +1022,28 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
                         TextResource.TUTORIAL_ENEMIES_TEXT_3
                 );
 
+                buildTutorialArrow(tutorialArrowTable, tutorialInformationWindow, rectangleToCenterOn);
+
                 break;
 
             case HERO_EXPLANATION_AND_PLAYER_FIRST_MOVE:
 
 
-                width = Measure.units(35f);
+                width = Measure.units(42.5f);
                 height = Measure.units(25f);
 
                 buildDefaultTutorialWindow(tutorialInformationWindow,
                         rectangleToCenterOn,
                         width,
                         height,
-                        Measure.units(22.5f),
+                        Measure.units(27.5f),
                         0,
                         TextResource.TUTORIAL_HEROES_TITLE,
                         TextResource.TUTORIAL_HEROES_TEXT_1,
                         TextResource.TUTORIAL_HEROES_TEXT_2
                 );
+
+                buildTutorialArrow(tutorialArrowTable, tutorialInformationWindow, rectangleToCenterOn);
 
                 break;
 
@@ -1050,6 +1066,8 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
                 text1 = new Label(TextResource.TUTORIAL_MOVE_HERE, uiSkin, Fonts.LABEL_STYLE_SMALL_FONT);
                 tutorialInformationWindow.add(text1).expandX().align(Align.center);
 
+
+
                 break;
 
 
@@ -1062,8 +1080,10 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
                 width = Measure.units(45f);
                 height = Measure.units(27.5f);
 
+                Rectangle skillsTableRectangle =  new Rectangle(pos.x, pos.y, tableForSkillButtons.getWidth(), tableForSkillButtons.getHeight());
+
                 buildDefaultTutorialWindow(tutorialInformationWindow,
-                        new Rectangle(pos.x, pos.y, tableForSkillButtons.getWidth(), tableForSkillButtons.getHeight()),
+                        skillsTableRectangle,
                         width,
                         height,
                         0,
@@ -1071,8 +1091,9 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
                         TextResource.TUTORIAL_SKILLS_TITLE,
                         TextResource.TUTORIAL_SKILLS_TEXT_1,
                         TextResource.TUTORIAL_SKILLS_TEXT_2,
-                        TextResource.TUTORIAL_SKILLS_TEXT_3
-                );
+                        TextResource.TUTORIAL_SKILLS_TEXT_3);
+
+                buildTutorialArrow(tutorialArrowTable, tutorialInformationWindow, skillsTableRectangle);
 
                 break;
 
@@ -1094,6 +1115,9 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
                         TextResource.TUTORIAL_PUSHING_TEXT_2
                 );
 
+
+                buildTutorialArrow(tutorialArrowTable, tutorialInformationWindow, rectangleToCenterOn);
+
                 break;
 
             case RANGED_PLAYER_ARRIVES:
@@ -1112,25 +1136,28 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
                         TextResource.TUTORIAL_RANGED_ATTACK_TEXT_2
                 );
 
+                buildTutorialArrow(tutorialArrowTable, tutorialInformationWindow, rectangleToCenterOn);
 
                 break;
 
 
             case THROWN_PLAYER_ARRIVES:
 
-                width = Measure.units(45f);
-                height = Measure.units(27.5f);
+                width = Measure.units(50f);
+                height = Measure.units(22.5f);
 
                 buildDefaultTutorialWindow(tutorialInformationWindow,
                         rectangleToCenterOn,
                         width,
                         height,
-                        Measure.units(25f),
+                        Measure.units(32.5f),
                         0,
                         TextResource.TUTORIAL_THROWN_ATTACK,
                         TextResource.TUTORIAL_THROWN_ATTACK_TEXT_1,
                         TextResource.TUTORIAL_THROWN_ATTACK_TEXT_2
                 );
+
+                buildTutorialArrow(tutorialArrowTable, tutorialInformationWindow, rectangleToCenterOn);
 
                 break;
 
@@ -1143,9 +1170,10 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
                 width = Measure.units(55f);
                 height = Measure.units(22.5f);
 
+                Rectangle objTableRect = new Rectangle(pos.x, pos.y, objectivesTable.getWidth(), objectivesTable.getHeight());
 
                 buildDefaultTutorialWindow(tutorialInformationWindow,
-                        new Rectangle(pos.x, pos.y, objectivesTable.getWidth(), objectivesTable.getHeight()),
+                        objTableRect,
                         width,
                         height,
                         -Measure.units(47.5f),
@@ -1154,6 +1182,8 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
                         TextResource.TUTORIAL_OBJECTIVES_TEXT_1,
                         TextResource.TUTORIAL_OBJECTIVES_TEXT_2
                         );
+
+                buildTutorialArrow(tutorialArrowTable, tutorialInformationWindow, rectangleToCenterOn);
 
                 break;
 
@@ -1230,6 +1260,74 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
         table.add(clickToDismiss).width(width);
     }
 
+
+
+    private void buildTutorialArrow(Table arrowTable, Table fromTable, Rectangle to){
+        buildTutorialArrow(arrowTable, fromTable, to, 0);
+    }
+
+
+    private void buildTutorialArrow(final Table arrowTable, final Table fromTable, Rectangle to, float sizeOffset){
+
+        arrowTable.clear();
+        arrowTable.getActions().clear();
+
+        Vector2 fromCenter = new Rectangle(fromTable.getX(), fromTable.getY(), fromTable.getWidth(), fromTable.getHeight()).getCenter(new Vector2()); ;
+
+       // System.out.println(fromCenter);
+        Vector2 toCenter = to.getCenter(new Vector2());
+
+        float size = fromCenter.dst(toCenter);
+        float barWidth = Measure.units(1f);
+
+
+        int rotation = (int) AngleMath.angleOfTravelInDegrees(fromCenter.x, fromCenter.y, toCenter.x, toCenter.y) - 90;
+
+        float minus;
+
+        switch (rotation){
+            default:
+            case 0:
+            case 180:
+                minus = to.height / 2;
+                break;
+            case 90:
+            case -90:
+                minus = to.width / 2;
+        }
+
+
+        arrowTable.setHeight(size - minus + sizeOffset);
+        arrowTable.setWidth(barWidth);
+        arrowTable.setPosition(CenterMath.centerOnPositionX(arrowTable.getWidth(), fromCenter.x), fromCenter.y);
+        arrowTable.add(new Image(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.BLOCK))
+                .tint(new Color(Colors.TUTORIAL_TABLE_OUTLINE)))).width(barWidth).height(arrowTable.getHeight());
+
+
+
+        arrowTable.setTransform(true);
+        arrowTable.setOrigin(arrowTable.getWidth() / 2, 0);
+        arrowTable.setRotation((float) rotation);
+
+        arrowTable.setVisible(true);
+
+
+        arrowTable.addAction(new Action() {
+            @Override
+            public boolean act(float delta) {
+
+                if(!fromTable.isVisible()){
+                    getActor().setVisible(false);
+                    return true;
+                }
+
+                return false;
+            }
+        });
+        //tutorialInformationWindow.setVisible(false);
+
+
+    }
 
 
 

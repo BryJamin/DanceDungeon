@@ -25,6 +25,12 @@ public class PlayerSave {
         preferences.flush();
     }
 
+    public static void turnOnFirstTimePlayer(){
+        Preferences preferences = Gdx.app.getPreferences(PLAYER_SAVE_PREFS_KEY);
+        preferences.putBoolean(FIRST_TIME_PLAYER, true);
+        preferences.flush();
+    }
+
 
     public void getFirstTimePlayer(){
         Preferences preferences = Gdx.app.getPreferences(PLAYER_SAVE_PREFS_KEY);

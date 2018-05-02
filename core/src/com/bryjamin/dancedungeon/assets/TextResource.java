@@ -36,17 +36,26 @@ public class TextResource {
     public static final String SCREEN_MENU_CONTINUE = "Continue";
     public static final String SCREEN_MENU_NEW_GAME = "New Game";
     public static final String SCREEN_MENU_OPTIONS = "Options";
+    public static final String SCREEN_MENU_BACK = "Back";
 
     public static final String SCREEN_MENU_SHOW_MOVEMENT_SCORE_ON = "(DEV) Show Movement Score: ON";
     public static final String SCREEN_MENU_SHOW_MOVEMENT_SCORE_OFF = "(DEV) Show Movement Score: OFF";
 
-    public static final String SCREEN_MENU_TUTORIAL_ON = "(DEV) Tutorial: ON";
+    public static final String SCREEN_MENU_TUTORIAL_ON = "Reset Tutorial";
     public static final String SCREEN_MENU_TUTORIAL_OFF = "(DEV) Tutorial: OFF";
 
 
     public static final String SCREEN_CHARACTER_START = "Start Expedition";
     public static final String SCREEN_CHARACTER_HEROES = "Change Heroes";
     public static final String SCREEN_CHARACTER_BACK = "Back";
+
+
+
+    public static final String SCREEN_CHARACTER_TUTORIALS_TITLE = "Combat Training";
+    public static final String SCREEN_CHARACTER_TUTORIALS_QUESTION_1 = "This Is Your First Time Playing";
+    public static final String SCREEN_CHARACTER_TUTORIALS_QUESTION_2 = "Would You Like To Run Through a Combat Training Scenario?";
+    public static final String SCREEN_CHARACTER_TUTORIALS_YES = "Yes";
+    public static final String SCREEN_CHARACTER_TUTORIALS_NO = "No";
 
 
     public static final String SCREEN_MAP_VIEW_INVENTORY = "View Inventory";

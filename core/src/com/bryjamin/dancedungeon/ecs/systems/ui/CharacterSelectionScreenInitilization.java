@@ -4,6 +4,8 @@ import com.artemis.BaseSystem;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -38,6 +40,7 @@ import com.bryjamin.dancedungeon.screens.menu.MenuScreen;
 import com.bryjamin.dancedungeon.screens.strategy.MapScreen;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
+import com.bryjamin.dancedungeon.utils.options.DevOptions;
 import com.bryjamin.dancedungeon.utils.options.PlayerSave;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
 import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
@@ -61,6 +64,11 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
     private Table characterTable;
     private Table bottomContainer;
     private TextButton startExpedition;
+
+    private PartyDetails partyDetails;
+
+
+    private Table tutorialTable;
 
 
     private Viewport gameport;
@@ -102,12 +110,25 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
 
         partyMembers = heroSquads.get(0);
 
+
+        partyDetails = new PartyDetails();
+
+        for (int i = 0; i < PARTY_SIZE; i++) {
+            try {
+                partyDetails.addPartyMember(partyMembers.get(i), i);
+            } catch (IndexOutOfBoundsException e) {
+                partyDetails.addPartyMember(null, i);
+            }
+        }
+
+
+
+
     }
 
     private void createWorldMap() {
 
         float size = gameport.getWorldHeight() * 2f;
-
 
         world.createEntity().edit().add(new PositionComponent(CenterMath.centerOnPositionX(size, MainGame.GAME_WIDTH / 2),
                 CenterMath.centerOnPositionY(size, MainGame.GAME_HEIGHT / 2)))
@@ -116,6 +137,8 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
                                 .height(size)
                                 .width(size)
                                 .build()));
+
+
     }
 
 
@@ -156,6 +179,14 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
         populateCharacterTable();
         populateBottomContainer();
 
+        tutorialTable = new Table();
+        tutorialTable.setWidth(stage.getWidth());
+        tutorialTable.setHeight(stage.getHeight());
+
+        tutorialTable.setVisible(false);
+
+        stage.addActor(tutorialTable);
+
     }
 
 
@@ -175,20 +206,10 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
 
                 game.getScreen().dispose();
 
-                PartyDetails partyDetails = new PartyDetails();
-
-                for (int i = 0; i < PARTY_SIZE; i++) {
-                    try {
-                        partyDetails.addPartyMember(partyMembers.get(i), i);
-                    } catch (IndexOutOfBoundsException e) {
-                        partyDetails.addPartyMember(null, i);
-                    }
-                }
-
                 if(!PlayerSave.isFirstTimePlayer()) {
-                    game.setScreen(new MapScreen(game, new MapGenerator().generateGameMap(), partyDetails));
+                    goToMapScreen();
                 } else {
-                    game.setScreen(new BattleScreen(game, game.getScreen(), new TutorialEvent(), partyDetails, true));
+                    openTutorialTable();
                 }
             }
         });
@@ -269,5 +290,73 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
     }
 
 
+
+    private void openTutorialTable(){
+
+        tutorialTable.setVisible(true);
+        tutorialTable.clear();
+        tutorialTable.setTouchable(Touchable.enabled);
+        tutorialTable.addListener(new ClickListener()); //Prevents buttons being pushed outside the window
+
+        Table innerTable = new Table();
+        innerTable.align(Align.center);
+        innerTable.setBackground(NinePatches.getDefaultNinePatch(renderingSystem.getAtlas()));
+
+        float width = Measure.units(85f);
+
+        tutorialTable.add(innerTable).width(width).height(Measure.units(50f));
+
+        Label label = new Label(TextResource.SCREEN_CHARACTER_TUTORIALS_TITLE, uiSkin);
+        innerTable.add(label).colspan(2).padTop(Padding.LARGE);
+        innerTable.row();
+
+
+        Label text1 = new Label(TextResource.SCREEN_CHARACTER_TUTORIALS_QUESTION_1, uiSkin);
+        text1.setWrap(true);
+        text1.setAlignment(Align.center);
+        innerTable.add(text1).colspan(2).width(width).expandY();
+        innerTable.row();
+
+
+        Label text2 = new Label(TextResource.SCREEN_CHARACTER_TUTORIALS_QUESTION_2, uiSkin);
+        text2.setWrap(true);
+        text2.setAlignment(Align.center);
+        innerTable.add(text2).colspan(2).width(width - Measure.units(10f)).expandY().align(Align.center);
+        innerTable.row();
+
+
+
+        TextButton yes = new TextButton(TextResource.SCREEN_CHARACTER_TUTORIALS_YES, uiSkin);
+        yes.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new BattleScreen(game, game.getScreen(), new TutorialEvent(), partyDetails, true));
+            }
+        });
+
+
+
+        TextButton no = new TextButton(TextResource.SCREEN_CHARACTER_TUTORIALS_NO, uiSkin);
+        no.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                goToMapScreen();
+                PlayerSave.turnOffFirstTimePlayer();
+            }
+        });
+
+        float bWidth = Measure.units(25f);
+        float bHeight = Measure.units(10f);
+
+        innerTable.add(yes).size(bWidth, bHeight).padBottom(Padding.LARGE);
+        innerTable.add(no).size(bWidth, bHeight).padBottom(Padding.LARGE);
+
+    }
+
+
+
+    private void goToMapScreen(){
+        game.setScreen(new MapScreen(game, new MapGenerator().generateGameMap(), partyDetails));
+    }
 
 }
