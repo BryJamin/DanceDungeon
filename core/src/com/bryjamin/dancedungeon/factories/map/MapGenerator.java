@@ -23,6 +23,8 @@ import java.util.Random;
 
 public class MapGenerator {
 
+    private static final int MAX_GENERATOR_RERUNS = 4;
+
     private float mapSectionWidth = Measure.units(10f);
     private float mapSectionHeight = Measure.units(32.5f);
     private float mapSectionGap = Measure.units(25f);
@@ -31,7 +33,7 @@ public class MapGenerator {
     private float mapStartY = Measure.units(12.5f);
     private float minimumSpacing = Measure.units(7.5f);
 
-    private static final int numberOfSections = 14;
+    private static final int numberOfSections = 15;
 
     private static final int NUMBER_OF_REST_EVENTS = 5;
     private static final int NUMBER_OF_SHOP_EVENTS = 5;
@@ -53,7 +55,7 @@ public class MapGenerator {
 
         int count = 0;
 
-        while(count < 5) { //Generates the map a maximum of 5 times if it fails
+        while(count < MAX_GENERATOR_RERUNS) { //Generates the map a maximum of 5 times if it fails
 
             Array<MapSection> mapSections = new Array<>();
 
