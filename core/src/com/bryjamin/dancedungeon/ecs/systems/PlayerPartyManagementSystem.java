@@ -41,6 +41,11 @@ public class PlayerPartyManagementSystem extends BaseSystem {
         notifyObservers();
     }
 
+    public void editReputation(int money){
+        partyDetails.changeRep(money);
+        notifyObservers();
+    }
+
     public void notifyObservers(){
         observable.notifyObservers(this);
     }

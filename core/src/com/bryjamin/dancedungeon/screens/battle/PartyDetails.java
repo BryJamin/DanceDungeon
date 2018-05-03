@@ -19,7 +19,7 @@ public class PartyDetails {
     public static int PARTY_SIZE = 3;
 
     private int money = 3;
-    public int skillPoints;
+    private int reputation;
     private int morale = 7;
 
     private UnitData[] party = new UnitData[PARTY_SIZE];
@@ -53,6 +53,15 @@ public class PartyDetails {
         this.money += money;
 
         if(this.money < 0) this.money = 0;
+        //if(this.morale > ) this.morale = MAX_MORALE;
+
+    }
+
+
+    public void changeRep(int reputation){
+
+        this.reputation += reputation;
+        if(this.reputation < 0) this.reputation = 0;
         //if(this.morale > ) this.morale = MAX_MORALE;
 
     }
@@ -133,11 +142,11 @@ public class PartyDetails {
 
     }
 
-    public int getSkillPoints() {
-        return skillPoints;
-    }
-
     public int getMorale() {
         return morale;
+    }
+
+    public int getReputation() {
+        return reputation;
     }
 }

@@ -95,6 +95,10 @@ import java.util.Locale;
 
 public class BattleScreenUISystem extends BaseSystem implements Observer {
 
+    private static final int REP_REWARD = 1000;
+    private static final int REP_BONUS_REWARD = 1500;
+
+
     private TurnSystem turnSystem;
     private ActionQueueSystem actionQueueSystem;
     private BattleDeploymentSystem battleDeploymentSystem;
@@ -400,11 +404,11 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
         objectivesTable.add(new Label(battleEvent.getPrimaryObjective().getDescription(), uiSkin)).padBottom(Padding.SMALL);;
         objectivesTable.row();
 
-        if(battleEvent.getBonusObjective().length > 0) {
+        if(battleEvent.getBonusObjectives().length > 0) {
             objectivesTable.add(new Label(TextResource.BATTLE_BONUS, uiSkin)).padBottom(Padding.SMALL);
             ;
 
-            for (AbstractObjective o : battleEvent.getBonusObjective()) {
+            for (AbstractObjective o : battleEvent.getBonusObjectives()) {
                 objectivesTable.row();
                 objectivesTable.add(new Label(o.getDescription(), uiSkin, Fonts.SMALL_FONT_STYLE_NAME,
                         o.isFailed(world) ? new Color(Color.GRAY) : new Color(Color.WHITE)
@@ -776,52 +780,71 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
         //TODO maybe clear and disable other parts of the system? Handling it here is quite hidden
         endTurn.setDisabled(true); //Disabled button functionality
 
-        Table container = stageUIRenderingSystem.createContainerTable();
-        container.setBackground(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.BLOCK)).tint(new Color(0,0,0,0.6f)));
 
-        stage.addActor(container);
-        Table victoryContainer = new Table(uiSkin);
-        victoryContainer.align(Align.top);
+        Table victoryTable = stageUIRenderingSystem.createContainerTable();
+        stageUIRenderingSystem.stage.addActor(victoryTable);
 
-        container.add(victoryContainer).width(Measure.units(40f)).height(Measure.units(40f));
-
-
-        //TITLE
-        Label victory = new Label("Victory", uiSkin);
-        victoryContainer.add(victory).height(Measure.units(5f)).padTop(Padding.SMALL);
-        victoryContainer.row();
+        victoryTable.setTouchable(Touchable.enabled);
+        victoryTable.addListener(new ClickListener());
 
 
 
+        Table t = new Table(uiSkin);
+        t.setBackground(new NinePatchDrawable(NinePatches.getBorderPatch(renderingSystem.getAtlas(),
+                new Color(Colors.TUTORIAL_TABLE_OUTLINE.r, Colors.TUTORIAL_TABLE_OUTLINE.g, Colors.TUTORIAL_TABLE_OUTLINE.b, 0.75f))));
+        t.align(Align.center);
 
-        //PRIMARY OBJECTIVE
-        Table rewardTable = new Table(uiSkin);
-        victoryContainer.add(rewardTable).height(Measure.units(5f));
-        populateRewardTable(rewardTable, battleEvent.getPrimaryObjective(), partyDetails);
-        victoryContainer.row();
+        victoryTable.add(t).width(Measure.units(85f)).height(Measure.units(45f));
 
-        //SECONDARY OBEJECTIVE
-        Label bonus = new Label("Bonus", uiSkin);
-        victoryContainer.add(bonus);
+        Label title = new Label(TextResource.BATTLE_VICTORY, uiSkin);
+        t.add(title).padTop(Padding.SMALL).colspan(12);
+        t.row();
 
-        for(AbstractObjective bonusObjective : battleEvent.getBonusObjective()) {
-            victoryContainer.row();
+        int money = 0;
+        int morale = 0;
+        int reputation = REP_REWARD;
 
-            Table bonusObjectiveTable = new Table(uiSkin);
-            populateRewardTable(bonusObjectiveTable, bonusObjective, partyDetails);
-            victoryContainer.add(bonusObjectiveTable);
+        switch (battleEvent.getPrimaryObjective().getReward()){
+            case MONEY: money++;
+            break;
+            case MORALE: morale++;
+            break;
         }
 
+        createRewardLine(t, TextResource.BATTLE_VICTORY_REWARD, money, morale, reputation);
 
-        victoryContainer.row();
+        money = 0;
+        morale = 0;
+        reputation = 0;
 
-        //victoryContainer.align(Align.bottom);
+        for(AbstractObjective bonusObjective : battleEvent.getBonusObjectives()) {
 
-        TextButton textButton = new TextButton("Continue", uiSkin);
-        textButton.addListener(new ChangeListener() {
+            switch (bonusObjective.getReward()) {
+                case MONEY:
+                    money++;
+                    break;
+                case MORALE:
+                    morale++;
+                    break;
+            }
+
+            reputation += REP_BONUS_REWARD;
+
+        }
+
+        if(battleEvent.getBonusObjectives().length > 0){
+            createRewardLine(t, TextResource.BATTLE_VICTORY_BONUS, money, morale, reputation);
+        }
+
+        t.row();
+
+        TextButton textButton = new TextButton(TextResource.BATTLE_VICTORY_CONTINUE, uiSkin);
+        textButton.setBackground(new NinePatchDrawable(NinePatches.getBorderPatch(renderingSystem.getAtlas(), new Color(Colors.ENEMY_BULLET_COLOR))));
+        t.add(textButton).height(Measure.units(7.5f)).width(Measure.units(20f)).padBottom(Padding.SMALL).colspan(12);
+
+        textButton.addListener(new ClickListener(){
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
-
+            public void clicked(InputEvent event, float x, float y) {
 
                 Screen menu = ((BattleScreen) game.getScreen()).getPreviousScreen();
 
@@ -833,54 +856,40 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
                     game.setScreen(menu);
                     ((MapScreen) menu).battleVictory();
                 }
+
             }
         });
 
-        victoryContainer.add(textButton).height(Measure.units(5f)).bottom().expandX().expandY().fillX();
+
+
+
     }
 
 
+    private void createRewardLine(Table t, String title, int money, int morale, int reputation){
 
 
+        Label reward = new Label(title + ":", uiSkin);
+        t.add(reward).pad(Padding.MEDIUM);
 
+        if(money > 0) {
 
-
-    private void populateRewardTable(Table rewardTable, AbstractObjective abstractObjective, PartyDetails partyDetails){
-
-        rewardTable.align(Align.top);
-
-        AbstractObjective.Reward reward = abstractObjective.getReward();
-
-        switch (reward){
-            case MONEY:
-
-                Label goldLabel = new Label("Gold", uiSkin);
-                rewardTable.add(goldLabel);
-
-                Label goldIncrease = new Label(" +" + reward.getValue(), uiSkin);
-                rewardTable.add(goldIncrease);
-
-                partyDetails.changeMoney(reward.getValue());
-                break;
-            case MORALE:
-                Label gold = new Label("Morale", uiSkin);
-                rewardTable.add(gold);
-                Label reputationIncrease = new Label(" +" + reward.getValue(), uiSkin);
-                rewardTable.add(reputationIncrease);
-                partyDetails.changeMorale(reward.getValue());
-                break;
-            case SKILL_POINT:
-
-                Label skill_point = new Label("Skill Point", uiSkin);
-                rewardTable.add(skill_point);
-
-                Label skillPointIncrease = new Label(" +" + reward.getValue(), uiSkin);
-                rewardTable.add(skillPointIncrease);
-
-                partyDetails.skillPoints += reward.getValue();
+            Table iconTextRight = new Table();
+            iconTextRight.add(new Image(new TextureRegionDrawable(renderingSystem.getAtlas().findRegion(TextureStrings.ICON_MONEY)))).size(Measure.units(5f));
+            iconTextRight.add(new Label("" + money, uiSkin)).padRight(Padding.MEDIUM);
+            t.add(iconTextRight);
         }
 
-        rewardTable.row();
+        if(morale > 0)
+            t.add(new Label(TextResource.PARTY_MORALE + " +" + morale, uiSkin)).padRight(Padding.MEDIUM);
+
+        t.add(new Label(TextResource.PARTY_REPUTATION + " +" + reputation, uiSkin)).padRight(Padding.MEDIUM);
+
+        t.row();
+
+        playerPartyManagementSystem.editMoney(money);
+        playerPartyManagementSystem.editMorale(morale);
+        playerPartyManagementSystem.editReputation(reputation);
 
     }
 

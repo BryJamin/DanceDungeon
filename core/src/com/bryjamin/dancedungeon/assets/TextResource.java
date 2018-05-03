@@ -17,6 +17,10 @@ public class TextResource {
     public static final String CONFIRM_YES = "Yes";
     public static final String CONFIRM_NO = "No";
 
+    public static final String PARTY_MORALE = "Morale";
+    public static final String PARTY_GOLD = "Money";
+    public static final String PARTY_REPUTATION = "Rep";
+    public static final String PARTY_REPUTATION_FULL = "Reputation";
 
     public static final String BATTLE_OBJECTIVES = "Objectives";
     public static final String BATTLE_BONUS = "Bonus";
@@ -25,6 +29,12 @@ public class TextResource {
 
     public static final String BATTLE_ENEMY_TURN = "Enemy Turn";
     public static final String BATTLE_ALLY_TURN = "Player Turn";
+
+    public static final String BATTLE_VICTORY = "Victory";
+    public static final String BATTLE_VICTORY_REWARD = "Reward";
+    public static final String BATTLE_VICTORY_BONUS = "Bonus";
+    public static final String BATTLE_VICTORY_MORALE = "Morale";
+    public static final String BATTLE_VICTORY_CONTINUE = "Continue";
 
 
     public static final String SHOP_BUY = "Buy";
