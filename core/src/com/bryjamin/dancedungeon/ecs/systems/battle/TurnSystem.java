@@ -9,7 +9,7 @@ import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.ecs.components.battle.AvailableActionsCompnent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
 import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
-import com.bryjamin.dancedungeon.factories.player.UnitData;
+import com.bryjamin.dancedungeon.factories.unit.UnitData;
 import com.bryjamin.dancedungeon.utils.observer.Observable;
 import com.bryjamin.dancedungeon.utils.observer.Observer;
 import com.bryjamin.dancedungeon.ecs.components.actions.UtilityAiComponent;
@@ -158,7 +158,7 @@ public class TurnSystem extends EntitySystem implements Observer{
         return processingFlag;
     }
 
-    //TODO organise, as it is quite messy
+
     @Override
     protected void processSystem() {
 

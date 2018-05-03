@@ -12,17 +12,14 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 /**
  * Created by BB on 18/10/2017.
+ *
+ * Used to create the floor on the BattleScreen
  */
 
 public class FloorFactory  {
 
-
-
-
     public FloorFactory() {
     }
-
-
 
     public void createFloor(World world, float x, float y, float width, float height, int rows, int columns){
 
@@ -38,12 +35,6 @@ public class FloorFactory  {
 
             for(int j = 0; j < rows; j++){
 
-                Color color1 = j % 2 != 0 ? new Color(Color.LIGHT_GRAY) : new Color(Color.SKY);
-                Color color2 = j % 2 != 0 ? new Color(Color.SKY) : new Color(Color.LIGHT_GRAY);
-
-
-                int index1 = j % 2 != 0 ? 0 : 6;
-                int index2 = j % 2 != 0 ? 6 : 0;
                 final int e = world.create();
                 world.edit(e)
                         .add(new PositionComponent(x, y))

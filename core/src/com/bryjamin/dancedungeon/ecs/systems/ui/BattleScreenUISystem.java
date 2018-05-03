@@ -66,7 +66,7 @@ import com.bryjamin.dancedungeon.ecs.systems.battle.UtilityAiSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
 import com.bryjamin.dancedungeon.factories.map.event.objectives.AbstractObjective;
-import com.bryjamin.dancedungeon.factories.player.UnitData;
+import com.bryjamin.dancedungeon.factories.unit.UnitData;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.factories.spells.TargetingFactory;
 import com.bryjamin.dancedungeon.screens.battle.BattleScreen;

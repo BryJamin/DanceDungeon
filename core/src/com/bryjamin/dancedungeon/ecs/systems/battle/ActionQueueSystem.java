@@ -33,9 +33,6 @@ import java.util.UUID;
 
 public class ActionQueueSystem extends EntitySystem {
 
-
-   // private OrderedMap<WorldConditionalAction, Entity> queuedActionMap = new OrderedMap<WorldConditionalAction, Entity>();
-
     private OrderedMap<Entity, Array<WorldConditionalAction>> queuedActionMap = new OrderedMap<>();
 
 

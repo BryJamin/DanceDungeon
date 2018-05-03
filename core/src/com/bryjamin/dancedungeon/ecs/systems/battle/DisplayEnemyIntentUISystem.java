@@ -91,9 +91,9 @@ public class DisplayEnemyIntentUISystem extends EntitySystem implements Observer
                     Array<Coordinates> coordinatesArray = tileSystem.getFreeCoordinateInAGivenDirection(coordinates, new Direction[]{
                                 CoordinateMath.getDirectionOfCoordinate(stored, storedTarget)});
 
-                    Rectangle currentR1 = tileSystem.getRectangleUsingCoordinates(coordinates);
+                    Rectangle currentR1 = tileSystem.createRectangleUsingCoordinates(coordinates);
 
-                    enemyIntentBox(tileSystem.getRectangleUsingCoordinates(coordinatesArray.peek()));
+                    enemyIntentBox(tileSystem.createRectangleUsingCoordinates(coordinatesArray.peek()));
                     storedSkillComponent.storedTargetCoordinates = coordinatesArray.peek();
                     storedSkillComponent.storedCoordinates = coordinates;
 
@@ -126,11 +126,10 @@ public class DisplayEnemyIntentUISystem extends EntitySystem implements Observer
                         storedSkillComponent.storedCoordinates.set(coordinates);
                     }
 
-                    Rectangle r = tileSystem.getRectangleUsingCoordinates(storedSkillComponent.storedTargetCoordinates);
-                    Rectangle currentR = tileSystem.getRectangleUsingCoordinates(storedSkillComponent.storedCoordinates);
+                    Rectangle r = tileSystem.createRectangleUsingCoordinates(storedSkillComponent.storedTargetCoordinates);
+                    Rectangle currentR = tileSystem.createRectangleUsingCoordinates(storedSkillComponent.storedCoordinates);
 
                     if(r != null && currentR != null){ //This exists incase an enemies intent is pushed outside the bounds of the maps
-                        //TODO decide what to do in this situation.
                         Entity highlight = enemyIntentBox(r);
                         entityUIArrow(currentR, CoordinateMath.getDirectionOfCoordinate(storedSkillComponent.storedCoordinates, storedSkillComponent.storedTargetCoordinates));
                     }
@@ -208,6 +207,9 @@ public class DisplayEnemyIntentUISystem extends EntitySystem implements Observer
     }
 
 
+    /**
+     * Creates the arrow that points in the direction of an attack.
+     */
     private Entity entityUIArrow(Rectangle r, Direction d){
 
         float arrowSize = tileSystem.getMinimumCellSize() * 0.25f;

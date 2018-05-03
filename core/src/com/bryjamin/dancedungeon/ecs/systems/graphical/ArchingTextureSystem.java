@@ -12,6 +12,8 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
  * Used for creating an 'arching' effect for some spell animations.
  *
  * This system requires the spell cast to be fired in a straight line.
+ *
+ * Used mainly on Aerial skills
  */
 public class ArchingTextureSystem extends EntityProcessingSystem {
 
@@ -37,11 +39,12 @@ public class ArchingTextureSystem extends EntityProcessingSystem {
         float scaleX;
         float scaleY;
 
-        if(currentDistance < midPoint){
+
+        if(currentDistance < midPoint){//From start to mid-point increase to max scale.
             float ratio = (currentDistance / midPoint);
             scaleX = atc.minScaleX + ((atc.maxScaleX - atc.minScaleX) * ratio);
             scaleY = atc.mixScaleY + ((atc.maxScaleY - atc.mixScaleY) *ratio);
-        } else {
+        } else {//From mid-point to destination decrease to minimum scale
             float ratio = 1 - ((currentDistance - midPoint) / midPoint);
             scaleX = atc.minScaleX + ((atc.maxScaleX - atc.minScaleX) * ratio);
             scaleY = atc.mixScaleY + ((atc.maxScaleY - atc.mixScaleY) * ratio);

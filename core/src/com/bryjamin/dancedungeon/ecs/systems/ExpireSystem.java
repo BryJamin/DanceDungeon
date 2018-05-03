@@ -9,6 +9,8 @@ import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
 
 /**
  * Created by BB on 15/10/2017.
+ *
+ * Keeps tracks of when an entity should expire.
  */
 
 public class ExpireSystem extends EntityProcessingSystem {

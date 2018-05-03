@@ -272,6 +272,7 @@ public class AStarPathCalculator {
 
 
 
+
     private Array<Coordinates> returnSurroundingCoordinates(Coordinates coordinates){
 
         Array<Coordinates> array = new Array<Coordinates>();
@@ -312,7 +313,7 @@ public class AStarPathCalculator {
             fValue = gValue + hValue;
         }
 
-        private void setHeuristic(Coordinates goal) {
+        private void setHeuristic(Coordinates goal) { //Uses the 'Manhattan Distance' to set Heuristic
 
             int distX = Math.abs(coordinates.getX() - goal.getX());
             int distY = Math.abs(coordinates.getY() - goal.getY());

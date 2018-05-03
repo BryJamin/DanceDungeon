@@ -2,6 +2,11 @@ package com.bryjamin.dancedungeon.utils.observer;
 
 import com.badlogic.gdx.utils.Array;
 
+/**
+ * Custom implementation of observer pattern.
+ *
+ * This class keeps track of an array of observers
+ */
 public class Observable {
 
 

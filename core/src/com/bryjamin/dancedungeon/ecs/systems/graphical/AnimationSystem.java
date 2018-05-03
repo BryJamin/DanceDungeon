@@ -69,27 +69,25 @@ public class AnimationSystem extends EntityProcessingSystem {
         DrawableComponent dc = drawm.get(e);
 
         AnimationStateComponent.AnimationState sc = asc.animationState;
-
-
         sc.stateTime += world.delta;
 
         int state;
 
         if (sc.getStateQueue().size != 0) {
 
-            state = sc.getStateQueue().first();
+            state = sc.getStateQueue().first(); //Gets the first animation queued.
             boolean canRemove = true;
 
-            if (ac.animations.containsKey(state)) {
+            if (ac.animations.containsKey(state)) { //Checks if the state exists in animations and if animation is complete
                 canRemove = (ac.animations.get(state).getAnimation().isAnimationFinished(sc.stateTime)) && state == sc.getCurrentState();
             }
 
-            if (canRemove) {
+            if (canRemove) {//Removes queued animation and returns Entity to default animation
                 state = sc.getDefaultState();
                 sc.getStateQueue().removeFirst();
             }
 
-        } else {
+        } else { //No animations queued, return to default animation.
             state = sc.getDefaultState();
         }
 
@@ -97,7 +95,7 @@ public class AnimationSystem extends EntityProcessingSystem {
             sc.setCurrentState(state);
         }
 
-        if (ac.animations.containsKey(sc.getCurrentState())) {
+        if (ac.animations.containsKey(sc.getCurrentState())) { //Checks current animation is in the animation map and then edits Texture Description
             TextureDescription td = (TextureDescription) dc.drawables;
             td.setRegion(ac.animations.get(sc.getCurrentState()).getAnimationRegion());
             td.setIndex(ac.animations.get(sc.getCurrentState()).getAnimation().getKeyFrameIndex(sc.stateTime));

@@ -12,6 +12,8 @@ import com.bryjamin.dancedungeon.utils.math.CameraMath;
 
 /**
  * Created by BB on 18/01/2018.
+ *
+ * Used to create the fling and pan effect for the world map.
  */
 
 public class MapCameraSystemFlingAndPan extends EntitySystem {

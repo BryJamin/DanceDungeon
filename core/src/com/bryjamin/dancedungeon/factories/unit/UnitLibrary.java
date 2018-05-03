@@ -1,4 +1,4 @@
-package com.bryjamin.dancedungeon.factories.enemy;
+package com.bryjamin.dancedungeon.factories.unit;
 
 import com.artemis.Entity;
 import com.artemis.World;
@@ -12,9 +12,12 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationMapComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationStateComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
-import com.bryjamin.dancedungeon.factories.player.UnitData;
-import com.bryjamin.dancedungeon.factories.player.UnitFactory;
 
+/**
+ * Library for loading in all units in the game. Both player and enemy units.
+ *
+ * Also converts UnitData into Entities.
+ */
 public class UnitLibrary {
 
     private static final String ENEMY_UNITS_FILE = "json/units/enemies.json";

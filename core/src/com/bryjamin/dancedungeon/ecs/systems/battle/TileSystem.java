@@ -25,7 +25,7 @@ import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComp
 import com.bryjamin.dancedungeon.ecs.components.identifiers.SolidComponent;
 import com.bryjamin.dancedungeon.factories.decor.FloorFactory;
 import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
-import com.bryjamin.dancedungeon.factories.player.UnitFactory;
+import com.bryjamin.dancedungeon.factories.unit.UnitFactory;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.enums.Direction;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
@@ -41,9 +41,6 @@ import com.bryjamin.dancedungeon.utils.pathing.AStarPathCalculator;
  * <p>
  * Is also used to place and locate entities using their co-ordinates
  */
-
-//TODO make this an oberver for the turn system. Once a turn has been completed, this should be Notified and make updates to what is and isn't occupied
-
 public class TileSystem extends EntitySystem {
 
 

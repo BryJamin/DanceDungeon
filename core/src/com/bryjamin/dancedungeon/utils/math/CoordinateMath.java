@@ -42,16 +42,12 @@ public class CoordinateMath {
     }
 
 
-    public static boolean isWithinSqaureRange(Coordinates c1, Coordinates c2, int range){
-
-        boolean isWithinXRange = Math.abs(c1.getX() - c2.getX()) <= range;
-        boolean isWithinYRange = Math.abs(c1.getY() - c2.getY()) <= range;
-
-        return isWithinXRange && isWithinYRange;
-
-    }
-
-
+    /**
+     * Returns an array of coordinates within the range given.
+     *
+     * The range used here assumes 1 coordinate step is equal to 1 range
+     *
+     */
     public static Array<Coordinates> getCoordinatesInMovementRange(Coordinates coordinates, int range){
 
         OrderedSet<Coordinates> coordinatesArray = new OrderedSet<Coordinates>();
@@ -77,6 +73,11 @@ public class CoordinateMath {
     }
 
 
+    /**
+     * Square Range assumes 1 range is within 1 square of the given co-ordinate.
+     *
+     * This means for (0,0) (1,1) is included in the square range.
+     */
     public static Array<Coordinates> getCoordinatesInSquareRange(Coordinates coordinates, int range){
 
         OrderedSet<Coordinates> coordinatesArray = new OrderedSet<Coordinates>();
@@ -100,24 +101,18 @@ public class CoordinateMath {
 
     }
 
+
     public static Array<Coordinates> getCoordinatesInLine(Coordinates coordinates, int range){
-
-        OrderedSet<Coordinates> coordinatesArray = new OrderedSet<Coordinates>();
-        if(range <= 0) return coordinatesArray.orderedItems();
-
-        for(int i = 1; i <= range; i++){
-
-            coordinatesArray.add(new Coordinates(coordinates.getX() + i, coordinates.getY()));
-            coordinatesArray.add(new Coordinates(coordinates.getX() - i, coordinates.getY()));
-            coordinatesArray.add(new Coordinates(coordinates.getX(), coordinates.getY() + i));
-            coordinatesArray.add(new Coordinates(coordinates.getX(), coordinates.getY() - i));
-
-        }
-
-        return coordinatesArray.orderedItems();
+        return getCoordinatesInLine(coordinates, 0, range);
 
     }
 
+    /**
+     * Gets co-ordinates in line with the given co-ordinate based on the range
+     *
+     * For(0,0), Coordinates (5,0) (0,5) and (-5, 0) would all be inline.
+     *
+     */
     public static Array<Coordinates> getCoordinatesInLine(Coordinates coordinates, int minRange, int maxRange){
 
         OrderedSet<Coordinates> coordinatesArray = new OrderedSet<Coordinates>();
@@ -137,7 +132,9 @@ public class CoordinateMath {
     }
 
 
-
+    /**
+     * Based on the direction increases the coordinate of c2 by one and sets c1, to those coordinates.
+     */
     public static void increaseCoordinatesByOneUsingDirection(Direction d, Coordinates c1, Coordinates c2){
 
         switch (d) {

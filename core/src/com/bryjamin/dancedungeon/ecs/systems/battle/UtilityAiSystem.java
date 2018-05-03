@@ -27,7 +27,7 @@ import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyIntentUICompone
 import com.bryjamin.dancedungeon.ecs.components.identifiers.FriendlyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UITargetingComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
-import com.bryjamin.dancedungeon.factories.player.UnitData;
+import com.bryjamin.dancedungeon.factories.unit.UnitData;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
@@ -38,6 +38,9 @@ import com.bryjamin.dancedungeon.utils.texture.TextDescription;
 
 import java.util.Comparator;
 
+/**
+ * System used or calculating the next turn of Entities with the UtilityAIComponent
+ */
 public class UtilityAiSystem extends EntitySystem {
 
     private ActionQueueSystem actionQueueSystem;
@@ -203,7 +206,7 @@ public class UtilityAiSystem extends EntitySystem {
 
 
     /**
-     * Calculates
+     * Calculates the decision and Entity will makes and adds those decision to the action queue.
      * @param e
      */
     public void calculateMove(Entity e){
@@ -225,7 +228,7 @@ public class UtilityAiSystem extends EntitySystem {
         //System.out.println(pathsMap.get(chosen.coordinates).last().equals(chosen.coordinates));
 
         //Checks if the character is at the correct coordinate to attack. And that the attack is not null.
-        // (Null Skills exist if skills can't target anything on a particulat coordinate)
+        // (Null Skills exist if skills can't target anything on a particular coordinate)
         if((pathsMap.get(chosen.coordinates).last().equals(chosen.coordinates)) && chosen.attackScore.attack != null) {
 
             actionQueueSystem.pushLastAction(e, new WorldConditionalAction() {
@@ -284,8 +287,9 @@ public class UtilityAiSystem extends EntitySystem {
     }
 
 
-
-
+    /**
+     * Class for tracking the score an attack would have at a coordinate.
+     */
     private class AttackScore {
 
         public float score;

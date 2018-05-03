@@ -1,8 +1,8 @@
 package com.bryjamin.dancedungeon.ecs.components.identifiers;
 
 import com.artemis.Component;
-import com.bryjamin.dancedungeon.factories.enemy.UnitLibrary;
-import com.bryjamin.dancedungeon.factories.player.UnitData;
+import com.bryjamin.dancedungeon.factories.unit.UnitLibrary;
+import com.bryjamin.dancedungeon.factories.unit.UnitData;
 
 /**
  * Created by BB on 11/02/2018.

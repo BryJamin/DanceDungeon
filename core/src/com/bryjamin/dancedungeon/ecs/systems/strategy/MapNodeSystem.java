@@ -34,13 +34,15 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 /**
  * Created by BB on 18/12/2017.
+ *
+ * Tracks which nodes have been selected, visited and are active.
  */
 
 public class MapNodeSystem extends EntitySystem {
 
     private ComponentMapper<ActionOnTapComponent> actionOnTapMapper;
 
-    private EventManager eventManager = new EventManager(); //TODO how does one determine the level?
+    private EventManager eventManager = new EventManager();
 
     private float width = Measure.units(6.5f);
     private float height = Measure.units(6.5f);

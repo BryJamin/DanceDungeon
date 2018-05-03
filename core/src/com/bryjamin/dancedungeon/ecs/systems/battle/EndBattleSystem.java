@@ -11,7 +11,7 @@ import com.bryjamin.dancedungeon.MainGame;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
 import com.bryjamin.dancedungeon.ecs.systems.ui.TutorialSystem;
 import com.bryjamin.dancedungeon.factories.map.event.TutorialEvent;
-import com.bryjamin.dancedungeon.factories.player.UnitData;
+import com.bryjamin.dancedungeon.factories.unit.UnitData;
 import com.bryjamin.dancedungeon.utils.observer.Observer;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
@@ -27,6 +27,8 @@ import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
 
 /**
  * Created by BB on 28/11/2017.
+ *
+ * System used to track when a battle has ended.
  */
 
 public class EndBattleSystem extends EntitySystem implements Observer {
