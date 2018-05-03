@@ -11,18 +11,21 @@ import org.mockito.Mockito;
 /**
  * Created by BB on 21/12/2017.
  *
- * This code is required in order to get Unit
+ * This code is required in order to get Mock Tests for LibGDX
+ *
+ * Without extending from this class, Tests such as SkillLibrary and UnitLibrary do not appear to work.
+ * As the libgdx libraries are not loaded in
+ *
+ * Credits to 'http://manabreak.eu/java/2016/10/21/unittesting-libgdx.html'
  *
  */
 
 public class GameTest {
-    // This is our "test" application
+
     private static Application application;
 
-    // Before running any tests, initialize the application with the headless backend
     @BeforeClass
     public static void init() {
-        // Note that we don't need to implement any of the listener's methods
 
         application = new HeadlessApplication(new ApplicationListener() {
             @Override public void create() {}
@@ -33,15 +36,12 @@ public class GameTest {
             @Override public void dispose() {}
         });
 
-        // Use Mockito to mock the OpenGL methods since we are running headlessly
         Gdx.gl20 = Mockito.mock(GL20.class);
         Gdx.gl = Gdx.gl20;
     }
 
-    // After we are done, clean up the application
     @AfterClass
     public static void cleanUp() {
-        // Exit the application first
         application.exit();
         application = null;
     }

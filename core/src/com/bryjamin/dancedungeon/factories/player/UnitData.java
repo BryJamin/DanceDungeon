@@ -21,7 +21,7 @@ public class UnitData implements Json.Serializable {
     public static int MAXIMUM_SKILLS = 2;
 
     public String id = UnitLibrary.MELEE_BLOB;
-    public String icon = TextureStrings.CLASS_CYRONAUT;
+    public String icon = TextureStrings.BLOCK;
     public String name = "Jeff";
 
     //STATS

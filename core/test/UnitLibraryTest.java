@@ -8,7 +8,7 @@ import com.bryjamin.dancedungeon.factories.spells.SkillLibrary;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class UnitLibraryTest {
+public class UnitLibraryTest  extends GameTest {
 
     @Test
     public void testLoadingLibraryData() {

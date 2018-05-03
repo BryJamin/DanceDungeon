@@ -30,7 +30,7 @@ public class FloorFactory  {
         float tileHeightSize = height / rows;
 
 
-        TextureDescription.Builder descriptionBuilder = new TextureDescription.Builder(TextureStrings.GRASS_TILE)
+        TextureDescription.Builder descriptionBuilder = new TextureDescription.Builder(TextureStrings.ROCK_TILE)
                 .height(tileHeightSize)
                 .width(tileWidthSize);
 

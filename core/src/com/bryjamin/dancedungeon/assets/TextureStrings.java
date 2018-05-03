@@ -1,5 +1,7 @@
 package com.bryjamin.dancedungeon.assets;
 
+import com.badlogic.gdx.utils.Array;
+
 /**
  * Created by BB on 10/10/2017.
  */
@@ -7,50 +9,67 @@ package com.bryjamin.dancedungeon.assets;
 @SuppressWarnings("HardCodedStringLiteral")
 public class TextureStrings {
 
-    public static final String BLOCK = "blocktiny";
-    public static final String PLAYER = "player/block_walk";
-    public static final String WARRIOR = "player/sgt_sword";
-    public static final String ARCHER = "player/phi_walk";
-    public static final String BLOB = "enemy/blob";
-    public static final String BIGGABLOBBA = "enemy/boss/biggablobba";
-    public static final String BLASTER_BOSS = "enemy/boss/boss_blaster";
-    public static final String SPITTER = "enemy/silverhead_standing";
-    public static final String TARGETING = "player/targeting";
-    public static final String END_TURN_BUTTON = "player/end_turn";
-    public static final String FLOOR_TEXTURE_BRICK = "backgrounds/brick_floor";
-    public static final String WALL = "decor/wall";
-    public static final String GRASS_TILE = "decor/rock";
+    private static final Array<String> allTextures = new Array<>();
 
-    public static final String BORDER = "border";
+    static {
 
-    public static final String WORLD_MAP = "map";
+        BLOCK = add("blocktiny");
+        TARGETING = add("player/targeting");
 
+        WALL = add("decor/wall");
+        ROCK_TILE = add("decor/rock");
 
+        BORDER = add("border");
 
-    public static final String SKILLS_SLASH = "skills/slash";
-    public static final String SKILLS_HEAL = "skills/Heal";
+        WORLD_MAP = add("map");
 
+        SKILLS_SLASH = add("skills/slash");
+        SKILLS_HEAL = add("skills/Heal");
 
-    public static final String SETTINGS_MUSIC_ON = "icons/music";
-    public static final String SETTINGS_MUSIC_OFF = "icons/music_off";
+        SETTINGS_MUSIC_ON = add("icons/music");
+        SETTINGS_MUSIC_OFF = add("icons/music_off");
+
+        SETTINGS_SOUND_ON = add("icons/sound");
+        SETTINGS_SOUND_OFF = add("icons/sound_off");
 
 
-    public static final String SETTINGS_SOUND_ON = "icons/sound";
-    public static final String SETTINGS_SOUND_OFF = "icons/sound_off";
-
-    public static final String ICON_COMBAT = "icons/icon_combat";
-    public static final String ICON_REST = "icons/icon_rest";
-    public static final String ICON_MONEY = "icons/icon_money";
-    public static final String ICON_ARROW = "icons/arrow";
+        ICON_COMBAT = add("icons/icon_combat");
+        ICON_REST = add("icons/icon_rest");
+        ICON_MONEY = add("icons/icon_money");
+        ICON_ARROW = add("icons/arrow");
+        ICON_WARNING = add("icons/warning");
 
 
-    public static final String ICON_WARNING = "icons/warning";
+    }
+
+    private static String add(String id){
+        allTextures.add(id);
+        return id;
+    }
+
+    public static final String BLOCK;
+    public static final String TARGETING;
+    public static final String WALL;
+    public static final String ROCK_TILE;
+    public static final String BORDER;
+    public static final String WORLD_MAP;
+    public static final String SKILLS_SLASH;
+    public static final String SKILLS_HEAL;
 
 
-    public static final String CLASS_MAGE = "icons/units/mage";
-    public static final String CLASS_WARRIOR = "icons/units/warrior";
-    public static final String CLASS_CYRONAUT = "icons/units/cyronaut";
-    public static final String CLASS_BOW_SPEICALIST = "icons/units/bow_specialist";
+    public static final String SETTINGS_MUSIC_ON;
+    public static final String SETTINGS_MUSIC_OFF;
 
+    public static final String SETTINGS_SOUND_ON;
+    public static final String SETTINGS_SOUND_OFF;
 
+    public static final String ICON_COMBAT;
+    public static final String ICON_REST;
+    public static final String ICON_MONEY;
+    public static final String ICON_ARROW;
+    public static final String ICON_WARNING;
+
+    public static Array<String> getAllTextures() {
+        return allTextures;
+    }
 }
