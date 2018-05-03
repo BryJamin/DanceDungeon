@@ -340,7 +340,7 @@ public class ActionQueueSystem extends EntitySystem {
 
 
 
-    public void createDamageApplicationAction(Entity entity, final int damage){ //TODO check if it has health component
+    public void createDamageApplicationAction(Entity entity, final int damage){
 
         if(!mtcMapper.has(entity)) return;
 

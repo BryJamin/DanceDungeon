@@ -63,7 +63,7 @@ public class BasicProjectile implements SpellAnimation {
        Entity projectile = world.createEntity();
        projectile.edit().add(new PositionComponent(x, y));
 
-       //TODO move this into the new Action Camera System
+
        world.getSystem(ActionQueueSystem.class).createDeathWaitAction(projectile); //Wait for the projectile to die. To remove the action
 
        projectile.edit().add(new MoveToComponent(speed, new Vector3(

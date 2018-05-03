@@ -411,10 +411,6 @@ public class Skill {
         return name;
     }
 
-    //TODO Based on the description, one may need to change the description due to player stats.
-    //TODO however, in future it may be better to have two different descirptionf or the store and for
-    //TODO the player.
-
     public String getDescription(World world, Entity entity) {
         return description;
     }

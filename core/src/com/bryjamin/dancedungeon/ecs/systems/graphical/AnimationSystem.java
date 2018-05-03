@@ -29,7 +29,7 @@ public class AnimationSystem extends EntityProcessingSystem {
     ComponentMapper<AnimationMapComponent> aMapm;
     ComponentMapper<DrawableComponent> drawm;
 
-    ComponentMapper<KillOnAnimationEndComponent> killOnAnimationEndM; //TODO needs testing as this is pretty unclean, as does the whole drawable solution
+    ComponentMapper<KillOnAnimationEndComponent> killOnAnimationEndM;
 
 
     public AnimationSystem(MainGame game) {

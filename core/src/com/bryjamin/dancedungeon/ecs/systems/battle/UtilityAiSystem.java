@@ -86,7 +86,7 @@ public class UtilityAiSystem extends EntitySystem {
 
         for(Coordinates c : tileSystem.getCoordinateMap().orderedKeys()){
             Queue<Coordinates> queue = new Queue<>();
-            if(tileSystem.findShortestPath(e, queue, c, unitData.getMovementRange())){//TODO change maxDistance
+            if(tileSystem.findShortestPath(e, queue, c, unitData.getMovementRange())){
                 pathsMap.put(c, queue);
                 scoreMap.put(c, new CoordinateScore(c, 0));
             }
@@ -141,7 +141,7 @@ public class UtilityAiSystem extends EntitySystem {
 
             if(affectedCoords.contains(targetCoordinate, false)){
                 //Affected coordinates with 'Friendly' targets e.g bases. Are ranked higher
-                score = friendlyM.has(targetsArray.get(i)) ? 20 : 10; //TODO If Ally AI was introduced, what would they prioritize?
+                score = friendlyM.has(targetsArray.get(i)) ? 20 : 10;
             };
 
             if(attackScore.score < score) { //Finds the highest scoring Attack and stores the Skill and Coordinate of Target

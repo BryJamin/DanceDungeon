@@ -388,8 +388,6 @@ public class TargetingFactory {
                 entity.getComponent(AvailableActionsCompnent.class).movementActionAvailable = false;
 
                 //If no enemies are in range at the end of the potential movement, set attack action availiable to false
-                //TODO but what if you can use a skill surely this makes not sense right?
-                //TODO
                 if (new TargetingFactory().getTargetsInRange(world, coordinatesQueue.last(), entity.getComponent(TargetComponent.class).getTargets(world),
                         entity.getComponent(UnitComponent.class).getUnitData().getAttackRange()).size <= 0) {
 
@@ -424,7 +422,6 @@ public class TargetingFactory {
             Coordinates targetCoordinates = e.getComponent(CoordinateComponent.class).coordinates;
             //Checks if the Map contains the target
 
-            //TODO maybe change occupied Map to a different check, (Like just check the entity is there)
             if (tileSystem.getOccupiedMap().containsKey(e)
                     && CoordinateMath.isWithinRange(startCoordinates, targetCoordinates, range)) {
                 entityArray.add(e);

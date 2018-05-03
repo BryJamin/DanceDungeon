@@ -16,8 +16,6 @@ import com.bryjamin.dancedungeon.ecs.components.identifiers.SelectedEntityCompon
  * Tracks when a player unit Entity is out of actions and adds a GreyScaleComponent to it.
  */
 
-
-//TODO should be turned into an Observer. To listen to the actionQueueSystem
 public class NoMoreActionsGreyScaleSystem extends EntityProcessingSystem {
 
     private ComponentMapper<AnimationMapComponent> amc;
