@@ -96,8 +96,8 @@ import java.util.Locale;
 
 public class BattleScreenUISystem extends BaseSystem implements Observer {
 
-    private static final int REP_REWARD = 1000;
-    private static final int REP_BONUS_REWARD = 1500;
+    private static final int REP_REWARD = 100;
+    private static final int REP_BONUS_REWARD = 200;
 
 
     private TurnSystem turnSystem;
@@ -239,12 +239,26 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
         nextTurnBanner = new Table(uiSkin);
 
 
+        skillDescriptionTable = new Table(uiSkin);
+        skillDescriptionTable.setVisible(false);
+
         attackIndicatorTable = new Table(uiSkin);
         attackIndicatorTable.setBackground(NinePatches.getBorderNinePatchDrawable(renderingSystem.getAtlas(),
                 new Color(Colors.ENEMY_BULLET_COLOR),
                 0.35f
         ));
         attackIndicatorTable.setVisible(false);
+        attackIndicatorTable.addAction(new Action() {
+            @Override
+            public boolean act(float delta) {
+
+                if(!skillDescriptionTable.isVisible()){
+                    attackIndicatorTable.setVisible(false);
+                }
+
+                return false;
+            }
+        });
 
         bottomContainer.setSkin(uiSkin);
         bottomContainer.setWidth(stage.getWidth());
@@ -470,7 +484,8 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
 
                 //Table used to show Skill Information. Is hidden until a skill is pressed.
-                skillDescriptionTable = new Table(uiSkin);
+                skillDescriptionTable.clear();
+                skillDescriptionTable.setDebug(true);
                 applyNinePatchToTable(skillDescriptionTable);
                 skillDescriptionTable.setDebug(StageUIRenderingSystem.DEBUG);
                 skillDescriptionTable.setVisible(false);
@@ -664,7 +679,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
             skillDescriptionTable.clear();
             skillDescriptionTable.setVisible(true);
-            skillDescriptionTable.add(new Label(TextResource.BATTLE_ENEMY_ATTACK, uiSkin, Fonts.LABEL_STYLE_SMALL_FONT));
+            skillDescriptionTable.add(new Label(TextResource.BATTLE_ENEMY_ATTACK, uiSkin, Fonts.LABEL_STYLE_SMALL_FONT)).expandY();
             tableForSkillButtons.setVisible(false);
 
             StoredSkillComponent storedSkillComponent = storedm.get(enemy);
@@ -682,7 +697,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
                         attackIndicatorTable.setVisible(true);
 
-                        attackIndicatorTable.clear();
+                        attackIndicatorTable.clearChildren();
                         attackIndicatorTable.add(new Label("" + storedSkillComponent.skill.getBaseDamage(), uiSkin, Fonts.LABEL_STYLE_SMALL_FONT));
 
                         Vector2 center = tileSystem.getRectangleUsingCoordinates(storedSkillComponent.storedTargetCoordinates).getCenter(new Vector2());
