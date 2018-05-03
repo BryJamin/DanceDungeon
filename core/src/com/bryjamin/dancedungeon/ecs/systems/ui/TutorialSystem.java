@@ -266,7 +266,7 @@ public class TutorialSystem extends EntitySystem implements Observer{
                     createAttackActionForEnemyEntity(tutorialEnemyNumber3, SkillLibrary.getSkill(SkillLibrary.ENEMY_SKILL_SWIPE), new Coordinates(MIDDLE_ALLIED_STRUCTURE_COORDINATES));
 
 
-                    //Melee Enemy Moves Back to Underneath the allied structure
+                    //Default Enemy Moves Back to Underneath the allied structure
                     createMovementActionForEnemyEntity(meleeEnemy, new Coordinates(MELEE_ENEMY_FIRST_MOVE_COORDINATES));
                     //Retargets the Structure
                     createAttackActionForEnemyEntity(meleeEnemy, SkillLibrary.getSkill(SkillLibrary.ENEMY_SKILL_SWIPE), new Coordinates(MIDDLE_ALLIED_STRUCTURE_COORDINATES));

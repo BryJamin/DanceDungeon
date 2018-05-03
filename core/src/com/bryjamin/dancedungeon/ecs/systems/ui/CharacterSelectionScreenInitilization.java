@@ -53,6 +53,8 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
 
     private static int PARTY_SIZE = 3;
 
+    private static int SQUAD_CHOICE = 0;
+
     private static final float BOTTOM_BUTTON_WIDTH = Measure.units(30f);
     private static final float BOTTOM_BUTTON_HEIGHT = Measure.units(7.5f);
 
@@ -103,9 +105,9 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
 
 
         heroSquads.add(new HeroSquad(TextResource.SCREEN_CHARACTER_SQUAD_NAME_2,
-                UnitLibrary.CHARACTERS_SGT_SWORD,
-                UnitLibrary.CHARACTERS_BOLAS,
-                UnitLibrary.CHARACTERS_FIRAS
+                UnitLibrary.CHARACTERS_SWITCH,
+                UnitLibrary.CHARACTERS_WANDA,
+                UnitLibrary.CHARACTERS_HIRAN
         ));
 
         heroSquads.add(new HeroSquad(TextResource.SCREEN_CHARACTER_SQUAD_NAME_3,
@@ -114,7 +116,7 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
                 UnitLibrary.RANGED_BLASTER
         ));
 
-        partyMembers = heroSquads.get(0).unitIds;
+        partyMembers = heroSquads.get(SQUAD_CHOICE).unitIds;
 
     }
 
@@ -378,7 +380,6 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
 
                         //Character Image
                         Table imgContainer = new Table();
-                        imgContainer.setDebug(true);
                         imgContainer.add(new Image(renderingSystem.getAtlas().findRegion(unitData.icon))).size(Measure.units(5f));
                         imgContainer.add(new Label(unitData.name, uiSkin,Fonts.LABEL_STYLE_SMALL_FONT)).width(Measure.units(7.5f)).padLeft(Padding.SMALL);
                         partyMemberContainer.add(imgContainer).width(Measure.units(15f)).height(Measure.units(7.5f)).padRight(Padding.MEDIUM).padBottom(Padding.SMALL).padLeft(Padding.SMALL);
@@ -392,6 +393,7 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
                         @Override
                         public void clicked(InputEvent event, float x, float y) {
                             partyMembers = heroSquads.get(j).unitIds;
+                            SQUAD_CHOICE = j;
                             state = State.START_EXPEDITION;
                             populateBottomContainer();
                             populateCharacterTable();

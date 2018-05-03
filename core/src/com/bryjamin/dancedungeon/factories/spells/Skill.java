@@ -40,7 +40,7 @@ import java.util.UUID;
 
 public class Skill {
 
-    public enum Targeting {Ally, Melee, Self, FreeAim, StraightShot}
+    public enum Targeting {Ally, Normal, Self, StraightShot}
     public enum ActionType {UsesMoveAndAttackAction, UsesAttackAction, UsesMoveAction, Free}
     public enum SpellAnimation {Projectile, Slash, Glitter, Thrown}
     public enum AttackType {Heal, HealOverTime, Damage, Burn}
@@ -68,7 +68,7 @@ public class Skill {
 
     public static final int MAX_MAX_RANGE = 10; //Maximum range possible for a skill. To avoid counting
 
-    private Targeting targeting = Targeting.Melee;
+    private Targeting targeting = Targeting.Normal;
     private ActionType actionType = ActionType.UsesMoveAndAttackAction;
     private SpellAnimation spellAnimation = SpellAnimation.Projectile;
     private AttackType attackType = AttackType.Damage;
@@ -127,7 +127,7 @@ public class Skill {
         Array<Coordinates> coordinatesArray = new Array<Coordinates>();
 
         switch (targeting) {
-            case Melee:
+            case Normal:
                 coordinatesArray = CoordinateMath.getCoordinatesInLine(coordinates, minRange, maxRange);
                 break;
             case StraightShot:
@@ -148,7 +148,7 @@ public class Skill {
         Array<Entity> entityArray = new Array<Entity>();
 
         switch (targeting) {
-            case Melee:
+            case Normal:
             case StraightShot:
                 for (Coordinates c : getAffectedCoordinates(world, player.getComponent(CoordinateComponent.class).coordinates)) {
                     entityArray.add(new TargetingFactory().createTargetingBox(world, player, c, this, true));

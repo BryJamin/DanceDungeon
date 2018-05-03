@@ -28,6 +28,38 @@
     "maxHealth": 2,
     "movementRange": 3,
     "skillIds": [ "1e3e7778-14e1-4466-b1fb-b24a01723155"]
+  },
+
+
+  {
+    "class": "com.bryjamin.dancedungeon.factories.player.UnitData",
+    "id": "72b24678-2468-4394-9ff5-cd5dc0d08922",
+    "name": "Switch",
+    "icon": "player/switch",
+    "maxHealth": 2,
+    "movementRange": 4,
+    "skillIds": [ "29ba0cf5-1d07-4906-8dff-eeac727d6dd8"]
+  },
+
+
+  {
+    "class": "com.bryjamin.dancedungeon.factories.player.UnitData",
+    "id": "dda34ab5-b1ba-4e6c-bf5f-1d6c349cf888",
+    "name": "Wanda",
+    "icon": "player/wanda_standing",
+    "maxHealth": 3,
+    "movementRange": 3,
+    "skillIds": [ "cd8ced23-790b-41cd-99dd-f884abccc003"]
+  },
+
+  {
+    "class": "com.bryjamin.dancedungeon.factories.player.UnitData",
+    "id": "d33c5918-461c-48fd-9005-d9f2713434d9",
+    "name": "Jack",
+    "icon": "player/jack",
+    "maxHealth": 3,
+    "movementRange": 3,
+    "skillIds": [ "1c7611bb-a5b5-4194-9888-05a68e1dcd83"]
   }
 
 ]

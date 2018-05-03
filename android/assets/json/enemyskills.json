@@ -6,7 +6,6 @@
     "description": "Deals 1 damage",
     "icon": "skills/LaserScope",
     "baseDamage": 1,
-    "targeting": "Melee",
     "spellAnimation": "Slash",
     "attackType": "Damage",
     "purchasable": false
@@ -45,7 +44,6 @@
       "description": "Thrown Attack, Deals 1 damage",
     "icon": "skills/LaserScope",
     "baseDamage": 1,
-    "targeting": "Melee",
     "minRange": 1,
     "maxRange": 4,
     "spellAnimation": "Thrown",

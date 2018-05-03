@@ -51,6 +51,8 @@ public class TextResource {
     public static final String SCREEN_MENU_SHOW_MOVEMENT_SCORE_ON = "(DEV) Show Movement Score: ON";
     public static final String SCREEN_MENU_SHOW_MOVEMENT_SCORE_OFF = "(DEV) Show Movement Score: OFF";
 
+
+    public static final String SCREEN_MENU_CLEAR_DATA = "Clear QuickSave Data";
     public static final String SCREEN_MENU_TUTORIAL_ON = "Reset Tutorial";
     public static final String SCREEN_MENU_TUTORIAL_OFF = "(DEV) Tutorial: OFF";
 

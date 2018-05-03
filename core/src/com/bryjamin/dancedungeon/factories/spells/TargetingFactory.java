@@ -44,7 +44,7 @@ import com.bryjamin.dancedungeon.utils.texture.TextureDescription;
 
 public class TargetingFactory {
 
-    //Melee Component
+    //Default Component
 
     //Range Targeting
 

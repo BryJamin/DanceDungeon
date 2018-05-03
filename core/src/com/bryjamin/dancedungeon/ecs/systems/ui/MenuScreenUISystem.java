@@ -208,7 +208,9 @@ public class MenuScreenUISystem extends BaseSystem {
     }
 
 
-
+    /**
+     * Populates the middle Container With buttons depending on which state the menu is in.
+     */
     public void populateMiddleContainer(){
 
         startButtonContainer.clear();
@@ -296,10 +298,19 @@ public class MenuScreenUISystem extends BaseSystem {
                     }
                 });
 
+                TextButton clearData = new TextButton(TextResource.SCREEN_MENU_CLEAR_DATA, uiSkin);
+                clearData.addListener(new ClickListener() {
+
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        QuickSave.clear();
+                    }
+                });
 
 
                 addButtonToTable(optionsTable, toggleScore);
                 addButtonToTable(optionsTable, toggleTutorial);
+                addButtonToTable(optionsTable, clearData);
 
                 break;
 
