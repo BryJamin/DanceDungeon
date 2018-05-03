@@ -1313,10 +1313,8 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
-                        Screen menu = ((BattleScreen) game.getScreen()).getPreviousScreen();
                         game.getScreen().dispose();
-                        menu.dispose();;
-                        game.setScreen(menu);
+                        game.setScreen(new CharacterSelectionScreen(game));
                         PlayerSave.turnOffFirstTimePlayer();
                     }
 

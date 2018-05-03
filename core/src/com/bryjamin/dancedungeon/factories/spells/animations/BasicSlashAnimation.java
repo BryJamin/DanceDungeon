@@ -5,11 +5,13 @@ import com.artemis.World;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Rectangle;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
+import com.bryjamin.dancedungeon.assets.music.SoundFiles;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationMapComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationStateComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.KillOnAnimationEndComponent;
+import com.bryjamin.dancedungeon.ecs.systems.audio.SoundSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionQueueSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
@@ -46,6 +48,8 @@ public class BasicSlashAnimation implements SpellAnimation {
 
         world.getSystem(ActionQueueSystem.class).createDeathWaitAction(slash, skill.getSkillId());
         skill.castSpellOnTargetLocation(skill.getSkillId(), world, caster, casterCoordinates, target);
+
+        world.getSystem(SoundSystem.class).playRandomSound(SoundFiles.playerFireMegaMix);
 
 
     }
