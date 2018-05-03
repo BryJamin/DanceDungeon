@@ -345,8 +345,6 @@ public class Skill {
                                     tileSystem.getPositionUsingCoordinates(prev, e.getComponent(CenteringBoundComponent.class).bound)
                             );
 
-                            //System.out.println(skillId);
-
                             world.getSystem(ActionQueueSystem.class).createDamageApplicationAction(e, 1); //Push damage is one.
                             world.getSystem(ActionQueueSystem.class).createDamageApplicationAction(tileSystem.getOccupiedMap().getKey(pushCoords, false), 1);
 
@@ -429,6 +427,10 @@ public class Skill {
         return null;
     }
 
+
+    public int getBaseDamage() {
+        return baseDamage;
+    }
 
     public SpellAnimation getSpellAnimation() {
         return spellAnimation;

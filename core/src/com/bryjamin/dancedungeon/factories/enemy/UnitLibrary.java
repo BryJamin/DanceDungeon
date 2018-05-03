@@ -3,7 +3,6 @@ package com.bryjamin.dancedungeon.factories.enemy;
 import com.artemis.Entity;
 import com.artemis.World;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
@@ -23,6 +22,30 @@ public class UnitLibrary {
 
 
     private static final OrderedMap<String, UnitData> enemies = new OrderedMap<>();
+
+    private static final Array<String> unitIdList = new Array<>();
+
+
+    static {
+
+        //Enemies
+        MELEE_BLOB = add("cf5db9a9-b053-4de8-ad17-4f56a1e008f6");
+        RANGED_BLASTER = add("7720994b-263a-439d-b83c-70586bb63777");
+        RANGED_LOBBA = add("925dcc29-c81c-4abc-9bd3-adee4b8e636a");
+        BIG_BLASTER_BOSS = add("1e08e0ff-77ec-4a26-b75c-0eeca3ea86bd");
+
+        CHARACTERS_SGT_SWORD = add("2ade2064-eaf1-4a63-8ba4-1fd98b72c0dc");
+        CHARACTERS_BOLAS = add("98be151b-d019-49c3-9514-defb59f26d0c");
+        CHARACTERS_FIRAS = add("b0a19b01-cf75-4b77-b6e5-0cb7dcb5afe9");
+
+    }
+
+
+    private static String add(String id){
+        unitIdList.add(id);
+        return id;
+    }
+
 
     public static void loadFromJSON(){
 
@@ -117,15 +140,19 @@ public class UnitLibrary {
 
     }
 
-    public static final String MELEE_BLOB = "cf5db9a9-b053-4de8-ad17-4f56a1e008f6";
-    public static final String RANGED_BLASTER = "7720994b-263a-439d-b83c-70586bb63777";
-    public static final String RANGED_LOBBA = "925dcc29-c81c-4abc-9bd3-adee4b8e636a";
-    public static final String BIG_BLASTER_BOSS = "1e08e0ff-77ec-4a26-b75c-0eeca3ea86bd";
+    public static Array<String> getUnitIdList() {
+        return unitIdList;
+    }
+
+    public static final String MELEE_BLOB;
+    public static final String RANGED_BLASTER;
+    public static final String RANGED_LOBBA;
+    public static final String BIG_BLASTER_BOSS;
 
 
-    public static final String CHARACTERS_SGT_SWORD = "2ade2064-eaf1-4a63-8ba4-1fd98b72c0dc";
-    public static final String CHARACTERS_BOLAS = "98be151b-d019-49c3-9514-defb59f26d0c";
-    public static final String CHARACTERS_FIRAS = "b0a19b01-cf75-4b77-b6e5-0cb7dcb5afe9";
+    public static final String CHARACTERS_SGT_SWORD;
+    public static final String CHARACTERS_BOLAS;
+    public static final String CHARACTERS_FIRAS;
 
 
 

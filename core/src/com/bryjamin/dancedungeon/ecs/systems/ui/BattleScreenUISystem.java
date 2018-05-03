@@ -47,6 +47,7 @@ import com.bryjamin.dancedungeon.ecs.components.FollowPositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.AvailableActionsCompnent;
+import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.StoredSkillComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
@@ -111,6 +112,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
     private ComponentMapper<PlayerControlledComponent> pcm;
     private ComponentMapper<EnemyComponent> em;
+    private ComponentMapper<HealthComponent> hm;
     private ComponentMapper<StoredSkillComponent> storedm;
 
     private static final float SKILL_BUTTON_SIZE = Measure.units(7.5f);
@@ -156,6 +158,8 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
     private Table nextTurnBanner;
 
+
+    private Table attackIndicatorTable;
 
     private ButtonGroup<Button> skillButtonButtonGroup = new ButtonGroup<>();
 
@@ -220,8 +224,8 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
             public void changed(ChangeEvent event, Actor actor) {
                 areYouSureContainer.setVisible(false);
             }
-        }, uiSkin, "Some Units Still Have Actions Remaining",
-                "Are You Sure You Want To End Your Turn?"
+        }, uiSkin, TextResource.BATTLE_ACTIONS_REMAINING_TEXT_1,
+                TextResource.BATTLE_ACTIONS_REMAINING_TEXT_2
         );
 
         areYouSureContainer.setDebug(StageUIRenderingSystem.DEBUG);
@@ -234,18 +238,26 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
         nextTurnBanner = new Table(uiSkin);
 
+
+        attackIndicatorTable = new Table(uiSkin);
+        attackIndicatorTable.setBackground(NinePatches.getBorderNinePatchDrawable(renderingSystem.getAtlas(),
+                new Color(Colors.ENEMY_BULLET_COLOR),
+                0.35f
+        ));
+        attackIndicatorTable.setVisible(false);
+
         bottomContainer.setSkin(uiSkin);
         bottomContainer.setWidth(stage.getWidth());
         bottomContainer.setHeight(BOTTOM_TABLE_HEIGHT);
         bottomContainer.align(Align.bottomLeft);
         bottomContainer.setTransform(false);
         bottomContainer.setVisible(false);
-        applyNinePathToTable(bottomContainer);
+        applyNinePatchToTable(bottomContainer);
         bottomContainer.add(characterProfileTable).padBottom(Padding.SMALL);
 
 
         tableForSkillButtons = new Table(uiSkin);
-        applyNinePathToTable(tableForSkillButtons);
+        applyNinePatchToTable(tableForSkillButtons);
         tableForSkillButtons.setDebug(StageUIRenderingSystem.DEBUG);
 
         populateBottomContainer();
@@ -257,7 +269,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
         rightSideContainer.setPosition(stage.getWidth() - Measure.units(37.5f), Measure.units(22.5f));
 
         moraleTable = new Table(uiSkin);
-        moraleTable.setBackground(NinePatches.getBorderNinePatch(atlas, Colors.AMOEBA_FAST_PURPLE));
+        moraleTable.setBackground(NinePatches.getBorderNinePatchDrawable(atlas, Colors.AMOEBA_FAST_PURPLE));
         moraleTable.setDebug(StageUIRenderingSystem.DEBUG);
 
         populateRightSideContainer();
@@ -271,12 +283,13 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
         stage.addActor(rightSideContainer);
         stage.addActor(bottomContainer);
+        stage.addActor(attackIndicatorTable);
         stage.addActor(areYouSureContainer);
 
         tutorialInformationWindow = new Table(uiSkin);
         tutorialInformationWindow.setVisible(false);
         //tutorialInformationWindow.setDebug(true);
-        tutorialInformationWindow.setBackground(NinePatches.getBorderNinePatch(renderingSystem.getAtlas(), Colors.TUTORIAL_TABLE_OUTLINE));
+        tutorialInformationWindow.setBackground(NinePatches.getBorderNinePatchDrawable(renderingSystem.getAtlas(), Colors.TUTORIAL_TABLE_OUTLINE));
         tutorialInformationWindow.setTouchable(Touchable.enabled);
         tutorialInformationWindow.addListener(new ClickListener(){
 
@@ -366,6 +379,9 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
     }
 
 
+    /**
+     * Action for The End Turn Button. It hides itself when actions are Queued or when it is not the player's turn.
+     */
     private Action endTurnButtonAction(){
         return new Action() {
             @Override
@@ -381,13 +397,13 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
     }
 
 
+
     private void populateMoraleTable(){
 
         moraleTable.clear();
-        Label morale = new Label(String.format(Locale.ENGLISH,"Morale: %d/%d", playerPartyManagementSystem.getPartyDetails().getMorale(), PartyDetails.MAX_MORALE), uiSkin);
+        Label morale = new Label(String.format(Locale.ENGLISH,TextResource.PARTY_MORALE + ": %d/%d", playerPartyManagementSystem.getPartyDetails().getMorale(), PartyDetails.MAX_MORALE), uiSkin);
         morale.setAlignment(Align.center);
         moraleTable.add(morale).fill().align(Align.center);
-
 
     }
 
@@ -434,7 +450,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
                 bottomContainer.setVisible(true);
                 deploymentTable.setSkin(uiSkin);
-                bottomContainer.add(deploymentTable).width(stage.getWidth()).height(BOTTOM_TABLE_HEIGHT);
+                bottomContainer.add(deploymentTable).width(stage.getWidth() - Measure.units(5f)).height(BOTTOM_TABLE_HEIGHT);
                 populateDeploymentTable();
 
                 break;
@@ -445,7 +461,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
                 bottomContainer.setBackground((Drawable) null);
                 //Table for displaying the characters name and profiles
                 characterProfileTable = new Table(uiSkin);
-                applyNinePathToTable(characterProfileTable);
+                applyNinePatchToTable(characterProfileTable);
                 bottomContainer.add(characterProfileTable).width(Measure.units(20f)).height(BOTTOM_TABLE_HEIGHT).padRight(Padding.MEDIUM).expandX().fillX();
 
                 //Table for Skill buttons.
@@ -455,11 +471,10 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
                 //Table used to show Skill Information. Is hidden until a skill is pressed.
                 skillDescriptionTable = new Table(uiSkin);
-                applyNinePathToTable(skillDescriptionTable);
+                applyNinePatchToTable(skillDescriptionTable);
                 skillDescriptionTable.setDebug(StageUIRenderingSystem.DEBUG);
                 skillDescriptionTable.setVisible(false);
-                bottomContainer.add(skillDescriptionTable).width(Measure.units(45f)).height(BOTTOM_TABLE_HEIGHT).expandY();
-
+                bottomContainer.add(skillDescriptionTable).width(Measure.units(45f)).height(BOTTOM_TABLE_HEIGHT).expandY().expandX();
 
                 break;
 
@@ -469,6 +484,10 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
     }
 
 
+    /**
+     * Used within the Deployment Phase To display which hero will be deployed when a play presses
+     * a highlighted square
+     */
     private void populateDeploymentTable(){
 
         if (deploymentTable.hasChildren()) {
@@ -476,14 +495,9 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
         }
 
         UnitData unitData = battleDeploymentSystem.getDeployingUnit();
-
-        // deploymentTable.setDebug(true);
         deploymentTable.setWidth(stageUIRenderingSystem.stage.getWidth());
 
-        //NinePatch patch = new NinePatch(renderingSystem.getAtlas().findRegion(TextureStrings.BORDER), 4, 4, 4, 4);
-        //deploymentTable.setBackground(new NinePatchDrawable(NinePatches.getDefaultBorderPatch(renderingSystem.getAtlas())));
-
-        Label deployingLabel = new Label("Please Select Where To Deploy: ", uiSkin);
+        Label deployingLabel = new Label(TextResource.BATTLE_DEPLOYMENT + ": ", uiSkin);
 
         deploymentTable.add(deployingLabel).pad(Padding.SMALL);
 
@@ -494,7 +508,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
 
 
-    private void applyNinePathToTable(Table table){
+    private void applyNinePatchToTable(Table table){
         table.setBackground(NinePatches.getDefaultNinePatch(renderingSystem.getAtlas()));
     }
 
@@ -507,7 +521,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
 
 
-    public void createNextTurnBanner(TurnSystem.TURN turn){
+    private void createNextTurnBanner(TurnSystem.TURN turn){
 
         nextTurnBanner.reset();
         //nextTurnBanner.getActions().clear();
@@ -519,13 +533,14 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
             default:
             case ENEMY:
             case INTENT:
+
                 text = TextResource.BATTLE_ENEMY_TURN;
-                nextTurnBanner.setBackground(NinePatches.getBorderNinePatch(renderingSystem.getAtlas(), new Color(Color.RED)));
+                nextTurnBanner.setBackground(NinePatches.getBorderNinePatchDrawable(renderingSystem.getAtlas(), new Color(Color.RED)));
                 break;
 
             case PLAYER:
                 text = TextResource.BATTLE_ALLY_TURN;
-                nextTurnBanner.setBackground(NinePatches.getBorderNinePatch(renderingSystem.getAtlas(), new Color(Colors.TABLE_BORDER_COLOR)));
+                nextTurnBanner.setBackground(NinePatches.getBorderNinePatchDrawable(renderingSystem.getAtlas(), new Color(Colors.TABLE_BORDER_COLOR)));
                 break;
         }
 
@@ -562,7 +577,6 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
     /**
      * Populates the bottom of the scene with a HUD that displays the selected character's name and skills.
      * You can interact with the skills to view what they do and show where they will target on the battle map.
-     * @param e
      */
     public void setUpSelectedCharacterHUD(Entity e) {
 
@@ -596,6 +610,10 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
                 tableForSkillButtons.setTouchable(Touchable.enabled);
                 tableForSkillButtons.addListener(new ClickListener(){}); //Empty click listener to avoid menu closing, if a player misses tapping a skill
 
+
+                characterProfileTable.setBackground(NinePatches.getDefaultNinePatch(atlas));
+                skillDescriptionTable.setBackground(NinePatches.getDefaultNinePatch(atlas));
+
                 skillButtonButtonGroup.clear();
                 SkillsComponent skillsComponent = e.getComponent(SkillsComponent.class);
                 for (int i = 0; i < skillsComponent.skills.size; i++) {
@@ -611,7 +629,10 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
                 characterProfileTable.add(name).height(Measure.units(5f)).center().expandX();
                 characterProfileTable.row();
                 characterProfileTable.add(new Image(new TextureRegionDrawable(atlas.findRegion(unitData.icon)))).size(PROFILE_PICTURE_SIZE).expandY();
-                skillDescriptionTable.setVisible(true);
+
+                characterProfileTable.setBackground(NinePatches.getBorderNinePatchDrawable(atlas, new Color(Colors.ENEMY_BULLET_COLOR)));
+                skillDescriptionTable.setBackground(NinePatches.getBorderNinePatchDrawable(atlas, new Color(Colors.ENEMY_BULLET_COLOR)));
+
                 populateSkillInformationTableForEnemies(e);
                 break;
 
@@ -636,32 +657,46 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
         if(!storedm.has(enemy)){
             skillDescriptionTable.clear();
-            skillDescriptionTable.add(new Label(TextResource.BATTLE_NO_ENEMY_ATTACK, uiSkin, Fonts.LABEL_STYLE_SMALL_FONT));
-
-
+            skillDescriptionTable.setVisible(false);
+            //skillDescriptionTable.add(new Label(TextResource.BATTLE_NO_ENEMY_ATTACK, uiSkin, Fonts.LABEL_STYLE_SMALL_FONT));
             tableForSkillButtons.setVisible(false);
         } else {
 
-            Skill skill = storedm.get(enemy).skill;
+            skillDescriptionTable.clear();
+            skillDescriptionTable.setVisible(true);
+            skillDescriptionTable.add(new Label(TextResource.BATTLE_ENEMY_ATTACK, uiSkin, Fonts.LABEL_STYLE_SMALL_FONT));
+            tableForSkillButtons.setVisible(false);
 
-            Stack stack = new Stack();
-            Drawable drawable = new TextureRegionDrawable(atlas.findRegion(skill.getIcon()));
-            final Button btn = new Button(uiSkin, Styles.BUTTON_STYLE_TOGGLE);
-            btn.setChecked(true);
-            btn.setTouchable(Touchable.disabled);
+            StoredSkillComponent storedSkillComponent = storedm.get(enemy);
 
-            Table table = new Table();
-            Image image = new Image(drawable);
-            image.setTouchable(Touchable.disabled);
-            table.add(image).size(SKILL_BUTTON_SIZE - Padding.SMALL);
+            attackIndicatorTable.setWidth(tileSystem.getMinimumCellSize() * 0.4f);
+            attackIndicatorTable.setHeight(tileSystem.getMinimumCellSize() * 0.4f);
+
+            //Checks whether to display the damage a unit will deal to an area.
+            if(tileSystem.getCoordinateMap().containsKey(storedSkillComponent.storedTargetCoordinates)){
+
+                for(Entity e : tileSystem.getCoordinateMap().get(storedSkillComponent.storedTargetCoordinates)){
 
 
-            stack.add(btn);
-            stack.add(table);
-            tableForSkillButtons.add(stack).width(SKILL_BUTTON_SIZE).height(SKILL_BUTTON_SIZE).pad(Measure.units(1.5f)).center().expandX().expandY();
+                    if(hm.has(e)){
 
-            updateSkillText(enemy, skill);
+                        attackIndicatorTable.setVisible(true);
 
+                        attackIndicatorTable.clear();
+                        attackIndicatorTable.add(new Label("" + storedSkillComponent.skill.getBaseDamage(), uiSkin, Fonts.LABEL_STYLE_SMALL_FONT));
+
+                        Vector2 center = tileSystem.getRectangleUsingCoordinates(storedSkillComponent.storedTargetCoordinates).getCenter(new Vector2());
+
+                        attackIndicatorTable.setPosition(CenterMath.centerOnPositionX(attackIndicatorTable.getWidth(), center.x),
+                                CenterMath.centerOnPositionY(attackIndicatorTable.getHeight(), center.y)
+                                );
+
+                        break;
+                    }
+
+                }
+
+            }
 
         }
 
@@ -775,18 +810,14 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
 
     public void createVictoryRewards(BattleEvent battleEvent, PartyDetails partyDetails){
-        Stage stage = stageUIRenderingSystem.stage;
 
-        //TODO maybe clear and disable other parts of the system? Handling it here is quite hidden
-        endTurn.setDisabled(true); //Disabled button functionality
-
+        endTurn.setDisabled(true);
 
         Table victoryTable = stageUIRenderingSystem.createContainerTable();
         stageUIRenderingSystem.stage.addActor(victoryTable);
 
         victoryTable.setTouchable(Touchable.enabled);
         victoryTable.addListener(new ClickListener());
-
 
 
         Table t = new Table(uiSkin);
@@ -902,8 +933,6 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
         gameCompleteTable.setTouchable(Touchable.enabled);
         gameCompleteTable.addListener(new ClickListener());
 
-
-
         Table t = new Table(uiSkin);
         t.setBackground(new NinePatchDrawable(NinePatches.getBorderPatch(renderingSystem.getAtlas(),
                 new Color(Colors.ENEMY_BULLET_COLOR.r, Colors.ENEMY_BULLET_COLOR.g, Colors.ENEMY_BULLET_COLOR.b, 0.75f))));
@@ -1009,9 +1038,6 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
         tutorialInformationWindow.clearChildren();
         tutorialInformationWindow.align(Align.center);
-
-
-        System.out.println(tutorialState);
 
         switch (tutorialState){
 
@@ -1336,7 +1362,6 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
         Vector2 fromCenter = new Rectangle(fromTable.getX(), fromTable.getY(), fromTable.getWidth(), fromTable.getHeight()).getCenter(new Vector2()); ;
 
-       // System.out.println(fromCenter);
         Vector2 toCenter = to.getCenter(new Vector2());
 
         float size = fromCenter.dst(toCenter);

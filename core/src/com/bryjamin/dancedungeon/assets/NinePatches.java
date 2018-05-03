@@ -19,6 +19,12 @@ public class NinePatches {
         return ninePatch;
     }
 
+    public static NinePatch getBorderPatch(TextureAtlas atlas, Color c, float alpha){
+        NinePatch ninePatch = new NinePatch(atlas.findRegion(TextureStrings.BORDER), 16, 16, 16, 16);
+        ninePatch.setColor(new Color(c.r, c.g, c.b, alpha));
+        return ninePatch;
+    }
+
     public static NinePatch getBorderPatch(TextureAtlas atlas, float alpha){
 
         Color c = new Color(Colors.TABLE_BORDER_COLOR);
@@ -31,9 +37,13 @@ public class NinePatches {
         return new NinePatchDrawable(getDefaultBorderPatch(atlas));
     }
 
-    public static NinePatchDrawable getBorderNinePatch(TextureAtlas atlas, Color c){
+    public static NinePatchDrawable getBorderNinePatchDrawable(TextureAtlas atlas, Color c){
         return new NinePatchDrawable(getBorderPatch(atlas, c));
     }
 
+
+    public static NinePatchDrawable getBorderNinePatchDrawable(TextureAtlas atlas, Color c, float alpha){
+        return new NinePatchDrawable(getBorderPatch(atlas, c, alpha));
+    }
 
 }

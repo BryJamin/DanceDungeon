@@ -42,25 +42,6 @@ public class CoordinateMathTest extends GameTest {
             System.out.println(i);
         }
 
-
-/*
-
-
-
-
-        Vector2 vector2 = new Vector2();
-        System.out.println(Intersector.intersectSegments(0, -2, 0,-1, 0,0, 1, 0, vector2));
-
-        System.out.println(vector2);
-*/
-
-
-        System.out.println(Skill.SpellEffect.Dodge.value(10) == (Skill.SpellEffect.Dodge.value(5)));
-
-
-
-
-
     }
 
 

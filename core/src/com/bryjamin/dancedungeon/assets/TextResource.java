@@ -87,13 +87,17 @@ public class TextResource {
     public static final String REST_SCREEN_MORALE_DESCRIPTION = "Restore Morale By 1";
     public static final String REST_SCREEN_LEAVE = "Leave";
 
-    public static final String BATTLE_NO_ENEMY_ATTACK = "This Enemy is Not Attacking";
+    public static final String BATTLE_NO_ENEMY_ATTACK = "This Enemy is NOT Attacking";
+    public static final String BATTLE_ENEMY_ATTACK = "This Enemy is Attacking!";
+    public static final String BATTLE_DEPLOYMENT = "Tap On A Blue Square To Deploy Your Hero";
+    public static final String BATTLE_ACTIONS_REMAINING_TEXT_1 = "Some Heroes Still Have Actions Remaining!";
+    public static final String BATTLE_ACTIONS_REMAINING_TEXT_2 = "Are You Sure You Want To End Your Turn?";
 
 
 
 
     public static final String TUTORIAL_BATTLE_SCENARIO_1 = "It Appears This is Your First Time Playing. Would You Like To Do a Training Battle?";
-    public static final String TUTORIAL_BATTLE_SCENARIO_2 = "Would You Like To Do a Training Battle?";
+    public static final String TUTORIAL_BATTLE_SCENARIO_2 = "Are You Sure You Want To End Your Turn?";
 
 
 

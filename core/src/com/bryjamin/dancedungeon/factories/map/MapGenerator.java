@@ -154,12 +154,10 @@ public class MapGenerator {
 
         for(MapNode child : node.getSuccessors()){
             secondaryNodeSize += child.getSuccessors().size;
-           // System.out.println("childe size " + child.getSuccessors().size);
         }
 
         for(MapNode parent : node.getParents()){
             secondaryNodeSize += parent.getParents().size;
-          //  System.out.println("p size " + parent.getParents().size);
         }
 
         float number;
