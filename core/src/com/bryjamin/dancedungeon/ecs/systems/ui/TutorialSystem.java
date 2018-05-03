@@ -63,7 +63,6 @@ public class TutorialSystem extends EntitySystem implements Observer{
     public TutorialSystem(boolean processing){
         super(Aspect.all(UsedByTutorialComponent.class));
         this.processing = processing;
-        System.out.println(processing);
     }
 
 
@@ -165,8 +164,6 @@ public class TutorialSystem extends EntitySystem implements Observer{
 
             AvailableActionsCompnent tc;
             Coordinates current;
-
-            System.out.println(tutorialState);
 
             switch (tutorialState){
 

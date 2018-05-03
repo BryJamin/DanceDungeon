@@ -248,9 +248,6 @@ public class UtilityAiSystem extends EntitySystem {
 
         }
 
-        System.out.println("Move Calculated");
-        System.out.println("Path Movement Size " + pathsMap.size);
-
         AvailableActionsCompnent availableActionsCompnent = turnM.get(e);
         availableActionsCompnent.movementActionAvailable = false;
         availableActionsCompnent.attackActionAvailable = false;

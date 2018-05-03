@@ -19,7 +19,7 @@ public class BattleEvent extends MapEvent {
     private String id = "unidentified";
     private String mapLocation = MapData.MAP_1;
 
-    private int numberOfWaves;
+    private int numberOfWaves = 0;
 
     private AbstractObjective primaryObjective = new DefeatAllEnemiesObjective();
     private AbstractObjective[] bonusObjectives = new AbstractObjective[]{new CompleteWithinObjective(7)};
@@ -55,7 +55,7 @@ public class BattleEvent extends MapEvent {
         return primaryObjective;
     }
 
-    public AbstractObjective[] getBonusObjective() {
+    public AbstractObjective[] getBonusObjectives() {
         return bonusObjectives;
     }
 

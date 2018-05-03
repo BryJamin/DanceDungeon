@@ -22,7 +22,6 @@ import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
 import com.bryjamin.dancedungeon.factories.map.event.objectives.AbstractObjective;
-import com.bryjamin.dancedungeon.screens.battle.BattleScreen;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
 
 
@@ -74,7 +73,7 @@ public class EndBattleSystem extends EntitySystem implements Observer {
 
         Array<AbstractObjective> abstractObjectives = new Array<AbstractObjective>();
         abstractObjectives.add(currentEvent.getPrimaryObjective());
-        abstractObjectives.addAll(currentEvent.getBonusObjective());
+        abstractObjectives.addAll(currentEvent.getBonusObjectives());
 
 
         for(int i = 0; i < abstractObjectives.size; i++) {

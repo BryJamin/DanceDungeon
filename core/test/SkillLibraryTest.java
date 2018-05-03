@@ -3,50 +3,49 @@ import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.assets.FileStrings;
 import com.bryjamin.dancedungeon.factories.enemy.UnitLibrary;
 import com.bryjamin.dancedungeon.factories.player.UnitData;
+import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.factories.spells.SkillLibrary;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
-public class UnitLibraryTest  extends GameTest {
+public class SkillLibraryTest extends GameTest {
+
 
     @Test
-    public void testLoadingLibraryData() {
+    public void testLoadingLibraryData() throws Exception {
         SkillLibrary.loadFromJSON();
-        UnitLibrary.loadFromJSON();
     }
 
 
 
     @Test
-    public void getEnemiesFromLoadedData() throws Exception {
+    public void getSkillsFromLoadedData() throws Exception {
 
         SkillLibrary.loadFromJSON();
-        UnitLibrary.loadFromJSON();
 
-        for(String s : UnitLibrary.getUnitIdList()){
-            UnitLibrary.getUnitData(s);
+        for(String s : SkillLibrary.getSkillIDList()){
+            SkillLibrary.getSkill(s);
         }
     }
 
 
     @Test
-    public void verifyUnitIconsExist() throws Exception {
+    public void verifySkillIconsExist() throws Exception {
 
         SkillLibrary.loadFromJSON();
-        UnitLibrary.loadFromJSON();
 
         TextureAtlas textureAtlas = new TextureAtlas(FileStrings.SPRITE_ATLAS_FILE);
 
         Array<String> errors = new Array<>();
 
+        for(String s : SkillLibrary.getSkillIDList()){
 
-        for(String s : UnitLibrary.getUnitIdList()){
+            Skill skill = SkillLibrary.getSkill(s);
 
-            UnitData unitData = UnitLibrary.getUnitData(s);
-
-            if(textureAtlas.findRegion(unitData.icon) == null){
-                errors.add("Icon: " + unitData.icon + "not found. \nUnit name: " + unitData.getName()  + "\nUnit ID: " + unitData.getId());
+            if(textureAtlas.findRegion(skill.getIcon()) == null){
+                errors.add("Icon: " + skill.getIcon() + "not found. \nSkill name: " + skill.getName());
             };
 
         }
@@ -59,7 +58,4 @@ public class UnitLibraryTest  extends GameTest {
 
     }
 
-
-
 }
-

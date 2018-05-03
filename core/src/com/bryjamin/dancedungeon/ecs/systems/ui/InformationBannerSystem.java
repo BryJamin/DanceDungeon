@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bryjamin.dancedungeon.MainGame;
+import com.bryjamin.dancedungeon.assets.TextResource;
 import com.bryjamin.dancedungeon.utils.observer.Observer;
 import com.bryjamin.dancedungeon.assets.Skins;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
@@ -89,11 +90,11 @@ public class InformationBannerSystem extends BaseSystem implements Observer {
 
         infoTable.add(tableForMoneyIconAndText).width(width);
 
-        label = new Label(String.format(Locale.ENGLISH,"Morale: %d/%d", partyDetails.getMorale(), PartyDetails.MAX_MORALE), uiSkin);
+        label = new Label(String.format(Locale.ENGLISH,TextResource.PARTY_MORALE + ": %d/%d", partyDetails.getMorale(), PartyDetails.MAX_MORALE), uiSkin);
         label.setAlignment(Align.center);
         infoTable.add(label).width(width).align(Align.center);
 
-        label = new Label("Reputation: " + partyDetails.skillPoints, uiSkin);
+        label = new Label(TextResource.PARTY_REPUTATION_FULL + ": " + partyDetails.getReputation(), uiSkin);
         label.setAlignment(Align.center);
         infoTable.add(label).width(width).align(Align.center);
 

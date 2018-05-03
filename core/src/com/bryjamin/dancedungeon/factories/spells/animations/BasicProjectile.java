@@ -43,8 +43,8 @@ public class BasicProjectile implements SpellAnimation {
         DEFAULT, MISSLE, TRAIN
     }
 
-    private float width = Measure.units(5f);
-    private float height = Measure.units(5f);
+    private float width = Measure.units(4f);
+    private float height = Measure.units(4f);
     private float speed = Measure.units(80f);
 
     private Drawable drawable = Drawable.DEFAULT;

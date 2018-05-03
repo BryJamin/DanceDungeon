@@ -29,7 +29,6 @@ public class ScaleTransformationSystem extends EntityProcessingSystem {
         stc.time += world.delta;
         stc.currentScaleX = calcSinePos(stc.duration, stc.time, stc.minScaleX, stc.maxScaleX);
         stc.currentScaleY = calcSinePos(stc.duration, stc.time, stc.minScaleY, stc.maxScaleY);
-        //System.out.println(stc.currentScaleX);
 
         applyScale(e, stc.currentScaleX, stc.currentScaleY);
     }

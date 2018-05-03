@@ -10,7 +10,7 @@ import org.junit.Test;
  * Created by BB on 21/12/2017.
  */
 
-public class CoordinateMathTest extends GameTest {
+public class CoordinateMathTest {
 
 
     @Test
@@ -20,52 +20,6 @@ public class CoordinateMathTest extends GameTest {
         Assert.assertTrue(CoordinateMath.isWithinRange(new Coordinates(0,0), new Coordinates(2,0), 2));
         Assert.assertTrue(CoordinateMath.isWithinRange(new Coordinates(0,0), new Coordinates(-3,-3), 6));
     }
-
-
-    @Test
-    public void intersectTest() throws Exception {
-
-        Queue<Integer> test = new Queue<Integer>();
-        test.addFirst(1);
-        test.addFirst(1);
-        test.addFirst(5);
-        test.addFirst(1);
-        test.addFirst(5);
-        test.addFirst(1);
-        test.addFirst(5);
-
-        for(Integer i : test){
-            test.removeValue(1, true);
-        }
-
-        for(Integer i : test){
-            System.out.println(i);
-        }
-
-
-/*
-
-
-
-
-        Vector2 vector2 = new Vector2();
-        System.out.println(Intersector.intersectSegments(0, -2, 0,-1, 0,0, 1, 0, vector2));
-
-        System.out.println(vector2);
-*/
-
-
-        System.out.println(Skill.SpellEffect.Dodge.value(10) == (Skill.SpellEffect.Dodge.value(5)));
-
-
-
-
-
-    }
-
-
-
-
 
 
 }

@@ -17,6 +17,10 @@ public class TextResource {
     public static final String CONFIRM_YES = "Yes";
     public static final String CONFIRM_NO = "No";
 
+    public static final String PARTY_MORALE = "Morale";
+    public static final String PARTY_GOLD = "Money";
+    public static final String PARTY_REPUTATION = "Rep";
+    public static final String PARTY_REPUTATION_FULL = "Reputation";
 
     public static final String BATTLE_OBJECTIVES = "Objectives";
     public static final String BATTLE_BONUS = "Bonus";
@@ -25,6 +29,12 @@ public class TextResource {
 
     public static final String BATTLE_ENEMY_TURN = "Enemy Turn";
     public static final String BATTLE_ALLY_TURN = "Player Turn";
+
+    public static final String BATTLE_VICTORY = "Victory";
+    public static final String BATTLE_VICTORY_REWARD = "Reward";
+    public static final String BATTLE_VICTORY_BONUS = "Bonus";
+    public static final String BATTLE_VICTORY_MORALE = "Morale";
+    public static final String BATTLE_VICTORY_CONTINUE = "Continue";
 
 
     public static final String SHOP_BUY = "Buy";
@@ -48,6 +58,12 @@ public class TextResource {
     public static final String SCREEN_CHARACTER_START = "Start Expedition";
     public static final String SCREEN_CHARACTER_HEROES = "Change Heroes";
     public static final String SCREEN_CHARACTER_BACK = "Back";
+    public static final String SCREEN_CHARACTER_SELECT = "Select";
+
+
+    public static final String SCREEN_CHARACTER_SQUAD_NAME_1 = "The Defaults";
+    public static final String SCREEN_CHARACTER_SQUAD_NAME_2 = "The Overpowered";
+    public static final String SCREEN_CHARACTER_SQUAD_NAME_3 = "The Defectors";
 
 
 
@@ -71,13 +87,17 @@ public class TextResource {
     public static final String REST_SCREEN_MORALE_DESCRIPTION = "Restore Morale By 1";
     public static final String REST_SCREEN_LEAVE = "Leave";
 
-    public static final String BATTLE_NO_ENEMY_ATTACK = "This Enemy is Not Attacking";
+    public static final String BATTLE_NO_ENEMY_ATTACK = "This Enemy is NOT Attacking";
+    public static final String BATTLE_ENEMY_ATTACK = "This Enemy is Attacking!";
+    public static final String BATTLE_DEPLOYMENT = "Tap On A Blue Square To Deploy Your Hero";
+    public static final String BATTLE_ACTIONS_REMAINING_TEXT_1 = "Some Heroes Still Have Actions Remaining!";
+    public static final String BATTLE_ACTIONS_REMAINING_TEXT_2 = "Are You Sure You Want To End Your Turn?";
 
 
 
 
     public static final String TUTORIAL_BATTLE_SCENARIO_1 = "It Appears This is Your First Time Playing. Would You Like To Do a Training Battle?";
-    public static final String TUTORIAL_BATTLE_SCENARIO_2 = "Would You Like To Do a Training Battle?";
+    public static final String TUTORIAL_BATTLE_SCENARIO_2 = "Are You Sure You Want To End Your Turn?";
 
 
 
@@ -122,9 +142,9 @@ public class TextResource {
     public static final String TUTORIAL_RANGED_ATTACK_TEXT_1 = "This Hero Has A Ranged Attack";
     public static final String TUTORIAL_RANGED_ATTACK_TEXT_2 = "Ranged Attacks Travel In A Straight Line Until Blocked";
 
-    public static final String TUTORIAL_THROWN_ATTACK = "Aerial Attacks";
-    public static final String TUTORIAL_THROWN_ATTACK_TEXT_1 = "This Hero Has An Aerial Attack";
-    public static final String TUTORIAL_THROWN_ATTACK_TEXT_2 = "Aerial Attacks Can Travel OVER Objects But Can't Target ADJACENT Tiles";
+    public static final String TUTORIAL_AERIAL_ATTACK = "Aerial Attacks";
+    public static final String TUTORIAL_AERIAL_ATTACK_TEXT_1 = "This Hero Has An Aerial Attack";
+    public static final String TUTORIAL_AERIAL_ATTACK_TEXT_2 = "Aerial Attacks Can Travel OVER Objects But Can't Target ADJACENT Tiles";
 
     public static final String TUTORIAL_OBJECTIVES_TITLE = "Objectives";
     public static final String TUTORIAL_OBJECTIVES_TEXT_1 = "You Must Complete The Primary Objective To Win A Battle";

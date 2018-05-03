@@ -121,15 +121,11 @@ public class TurnSystem extends EntitySystem implements Observer{
 
         IntBag bag = world.getAspectSubscriptionManager().get(builder).getEntities();
 
-        System.out.println("BAG SIZE " + turn + " " + bag.size());
-
         for(int i = 0; i < bag.size(); i++){
 
             Entity e = world.getEntity(bag.get(i));
 
             if(this.getEntities().contains(e)) {
-
-                System.out.println("IN HERE BUCKO");
 
                 skillMapper.get(e).endTurn();
                 turnMapper.get(e).reset();
@@ -256,8 +252,6 @@ public class TurnSystem extends EntitySystem implements Observer{
                 if(unitData.stun > 0){
                     availableActionsCompnent.aiState = AvailableActionsCompnent.AIState.TURN_END;
                 } else if (!availableActionsCompnent.hasActions()) {
-                    System.out.println("NO ACTIONS");
-
                     availableActionsCompnent.aiState = AvailableActionsCompnent.AIState.TURN_END;
                 } else {
                     availableActionsCompnent.aiState = AvailableActionsCompnent.AIState.WAITING;
@@ -276,9 +270,6 @@ public class TurnSystem extends EntitySystem implements Observer{
                 break;
 
             case TURN_END: //Once the turn is over set the turn State to the Next Turn
-
-                System.out.println("TURN END");
-
                 battleState = STATE.NEXT_TURN;
                 break;
         }

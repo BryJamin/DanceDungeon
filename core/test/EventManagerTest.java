@@ -11,7 +11,6 @@ public class EventManagerTest extends GameTest {
     public void testEventCount() throws Exception {
 
         EventManager eventManager = new EventManager();
-
         Assert.assertTrue("Number of events does not match the number of keys, Possible Duplicate Keys", eventManager.getKeys().size == eventManager.getEventCount());
     }
 
