@@ -11,7 +11,7 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.GrowAndShrinkTransforma
 /**
  * Created by BB on 21/01/2018.
  * <p>
- * Used for the 'Scale Effect'
+ * Used for the 'Scale Transform' effect seen on active MapNodes.
  */
 
 public class ScaleTransformationSystem extends EntityProcessingSystem {

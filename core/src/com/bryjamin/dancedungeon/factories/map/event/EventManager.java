@@ -3,11 +3,10 @@ package com.bryjamin.dancedungeon.factories.map.event;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.bryjamin.dancedungeon.assets.MapData;
-import com.bryjamin.dancedungeon.factories.enemy.UnitLibrary;
+import com.bryjamin.dancedungeon.factories.unit.UnitLibrary;
 import com.bryjamin.dancedungeon.factories.map.event.objectives.AbstractObjective;
 import com.bryjamin.dancedungeon.factories.map.event.objectives.CompleteWithinObjective;
 import com.bryjamin.dancedungeon.factories.map.event.objectives.DefeatAllEnemiesObjective;
-import com.bryjamin.dancedungeon.factories.player.UnitData;
 
 public class EventManager {
 

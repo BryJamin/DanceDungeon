@@ -1,7 +1,7 @@
 [
 
   {
-    "class": "com.bryjamin.dancedungeon.factories.player.UnitData",
+    "class": "com.bryjamin.dancedungeon.factories.unit.UnitData",
     "id": "7720994b-263a-439d-b83c-70586bb63777",
     "name": "Blaster",
     "icon": "enemy/boss/biggablobba",
@@ -12,7 +12,7 @@
 
 
   {
-    "class": "com.bryjamin.dancedungeon.factories.player.UnitData",
+    "class": "com.bryjamin.dancedungeon.factories.unit.UnitData",
     "id": "cf5db9a9-b053-4de8-ad17-4f56a1e008f6",
     "name": "Blobb",
     "icon": "enemy/blob",
@@ -23,7 +23,7 @@
 
 
   {
-    "class": "com.bryjamin.dancedungeon.factories.player.UnitData",
+    "class": "com.bryjamin.dancedungeon.factories.unit.UnitData",
     "id": "925dcc29-c81c-4abc-9bd3-adee4b8e636a",
     "name": "Lobba",
     "icon": "enemy/silverhead_standing",
@@ -39,7 +39,7 @@
   //Bosses
 
   {
-    "class": "com.bryjamin.dancedungeon.factories.player.UnitData",
+    "class": "com.bryjamin.dancedungeon.factories.unit.UnitData",
     "id": "1e08e0ff-77ec-4a26-b75c-0eeca3ea86bd",
     "name": "Big Blaster",
     "icon": "enemy/boss/boss_blaster",

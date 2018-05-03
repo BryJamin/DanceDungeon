@@ -15,6 +15,8 @@ import com.bryjamin.dancedungeon.utils.HitBox;
 
 /**
  * Created by BB on 15/10/2017.
+ *
+ * System for debugging. Draws the hitboxes and centeringboundary components of an Entity.
  */
 
 public class BoundsDrawingSystem extends EntitySystem {
@@ -22,7 +24,7 @@ public class BoundsDrawingSystem extends EntitySystem {
     ComponentMapper<HitBoxComponent> hitboxm;
     ComponentMapper<CenteringBoundComponent> boundm;
 
-    private boolean isDrawing = false;
+    private static final boolean IS_DRAWING = false;
 
     private Array<Rectangle> bounds = new Array<Rectangle>();
     private Array<Rectangle> hitboxes = new Array<Rectangle>();
@@ -50,7 +52,7 @@ public class BoundsDrawingSystem extends EntitySystem {
     protected void processSystem() {
 
 
-        if (!isDrawing) return;
+        if (!IS_DRAWING) return;
 
         for (Entity e : this.getEntities()) {
             if (hitboxm.has(e)) {

@@ -1,4 +1,4 @@
-package com.bryjamin.dancedungeon.factories.player;
+package com.bryjamin.dancedungeon.factories.unit;
 
 import com.artemis.Entity;
 import com.artemis.World;

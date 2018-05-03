@@ -17,6 +17,9 @@ public class Skins {
     }
 
 
+    /**
+     * Returns the default skin used throughout the project
+     */
     public static Skin DEFAULT_SKIN(AssetManager assetManager){
         Skin uiSkin = new Skin();
 

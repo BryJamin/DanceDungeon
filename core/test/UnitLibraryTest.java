@@ -1,8 +1,8 @@
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.assets.FileStrings;
-import com.bryjamin.dancedungeon.factories.enemy.UnitLibrary;
-import com.bryjamin.dancedungeon.factories.player.UnitData;
+import com.bryjamin.dancedungeon.factories.unit.UnitLibrary;
+import com.bryjamin.dancedungeon.factories.unit.UnitData;
 import com.bryjamin.dancedungeon.factories.spells.SkillLibrary;
 
 import org.junit.Assert;

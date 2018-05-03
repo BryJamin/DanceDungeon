@@ -1,11 +1,8 @@
 package com.bryjamin.dancedungeon.screens.battle;
 
 import com.badlogic.gdx.utils.Array;
-import com.bryjamin.dancedungeon.factories.player.UnitData;
+import com.bryjamin.dancedungeon.factories.unit.UnitData;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
-import com.bryjamin.dancedungeon.factories.spells.SkillLibrary;
-
-import java.util.Arrays;
 
 
 /**

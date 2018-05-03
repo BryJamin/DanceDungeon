@@ -2,10 +2,6 @@ package com.bryjamin.dancedungeon.utils.options;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
-import com.badlogic.gdx.utils.Json;
-import com.bryjamin.dancedungeon.assets.Prefs;
-import com.bryjamin.dancedungeon.factories.map.GameMap;
-import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
 
 public class DevOptions {
 

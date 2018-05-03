@@ -17,9 +17,6 @@ import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComp
  *
  * This is based on whether the unit is an enemy or an ally.
  *
- * //TODO maybe move the target Component to instead just hold, enums of what the characters
- * //TODO can attack and move the methods for generation to a different place?
- *
  */
 
 public class GenerateTargetsSystem extends EntitySystem {

@@ -10,6 +10,8 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
 
 /**
  * Created by BB on 28/10/2017.
+ *
+ * System used for creating a fading in an out effect on textures.
  */
 
 public class FadeSystem extends EntityProcessingSystem {
@@ -27,15 +29,19 @@ public class FadeSystem extends EntityProcessingSystem {
 
         FadeComponent fc = fm.get(e);
 
-        if (fc.flicker) {
+        if (fc.flicker) { //Fancy fade. Starts at max alpha and then returns to normal fading.
             applyFade(e, fc.maxAlpha);
             fc.flicker = false;
             return;
         }
 
+        //Get current fade position. Fade oscillates from. Fade in increases duration, fade out reduces duration.
+        //Naming convention is weird.
         fc.currentDuration = fc.fadeIn ? fc.currentDuration + world.delta : fc.currentDuration - world.delta;
 
+        //Interpolation fade for smoother fade
         fc.alpha = Interpolation.fade.apply(((fc.currentDuration / fc.maximumDuration) * (fc.maxAlpha - fc.minAlpha)) + fc.minAlpha);
+
         if (fc.alpha <= fc.minAlpha) {
             if (fc.isEndless || fc.count > 0) {
                 fc.fadeIn = true;

@@ -10,10 +10,10 @@ import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.DeploymentComponent;
 import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
-import com.bryjamin.dancedungeon.factories.enemy.UnitLibrary;
+import com.bryjamin.dancedungeon.factories.unit.UnitLibrary;
 import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
-import com.bryjamin.dancedungeon.factories.player.UnitData;
-import com.bryjamin.dancedungeon.factories.player.UnitFactory;
+import com.bryjamin.dancedungeon.factories.unit.UnitData;
+import com.bryjamin.dancedungeon.factories.unit.UnitFactory;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 import com.bryjamin.dancedungeon.utils.observer.Observable;
@@ -26,8 +26,6 @@ import com.bryjamin.dancedungeon.utils.observer.Observable;
  * <p>
  * It also deploys enemy characters initially so players can see where they may want to best deploy their units
  * <p>
- * //TODO this system will either rely on the TileSystem selected map, Or the map inserted into the constructor
- * //TODO this means this system MUST be placed beneath the TileSystem when used,
  */
 public class BattleDeploymentSystem extends EntitySystem {
 

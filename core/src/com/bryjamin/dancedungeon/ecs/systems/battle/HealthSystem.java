@@ -26,6 +26,10 @@ import com.bryjamin.dancedungeon.utils.texture.TextDescription;
 
 /**
  * Created by BB on 15/10/2017.
+ *
+ * Health System, tracks any damage or healing that has been accumulated during a game frame and applies it to an
+ * entities actual health
+ *
  */
 
 public class HealthSystem extends EntityProcessingSystem {
@@ -38,6 +42,8 @@ public class HealthSystem extends EntityProcessingSystem {
     ComponentMapper<PlayerControlledComponent> pm;
     ComponentMapper<BlinkOnHitComponent> blinkOnHitMapper;
     ComponentMapper<AffectMoraleComponent> affectMapper;
+    ComponentMapper<PositionComponent> posM;
+    ComponentMapper<CenteringBoundComponent> centeringM;
 
     @SuppressWarnings("unchecked")
     public HealthSystem() {
@@ -59,30 +65,20 @@ public class HealthSystem extends EntityProcessingSystem {
                 blinkOnHitMapper.get(e).isHit = true;
             }
 
-            //if(MathUtils.random(1f) > statm.get(e).getDodgeChance()) {
-                //TODO I grab parts of entity that aren't called in the Aspect class, so there is a null pointer chance
-                createFloatingDamageText(world, Integer.toString((int) hc.getAccumulatedDamage()), new Color(Color.RED), e);
-                hc.health = hc.health - hc.getAccumulatedDamage();
+            createFloatingDamageText(world, Integer.toString((int) hc.getAccumulatedDamage()), new Color(Color.RED), e);
+            hc.health = hc.health - hc.getAccumulatedDamage();
 
-                healthChangedflag = true;
+            healthChangedflag = true;
 
-                if(affectMapper.has(e)){//Damage taken by morale affected entities damage the party's morale as well
-                    playerPartyManagementSystem.editMorale((int) -hc.getAccumulatedDamage());
-                }
-
-
-
-            //} else {
-              //  createFloatingDamageText(world, "Dodge", new Color(Color.RED), e);
-            //}
+            if(affectMapper.has(e)){//Damage taken by morale affected entities damage the party's morale as well
+                playerPartyManagementSystem.editMorale((int) -hc.getAccumulatedDamage());
+            }
 
             hc.clearDamage();
 
         }
 
         if(hc.getAccumulatedHealing() > 0 && blinkOnHitMapper.has(e)) {
-           // blinkOnHitMapper.get(e).isHit = true;
-            //TODO I grab parts of entity that aren't called in the Aspect class, so there is a null pointer chance
             createFloatingDamageText(world, Integer.toString((int) hc.getAccumulatedHealing()), new Color(Color.GREEN), e);
             hc.health = hc.health + hc.getAccumulatedHealing() > hc.maxHealth ? hc.maxHealth : hc.health + hc.getAccumulatedHealing();
             hc.clearHealing();
@@ -93,8 +89,6 @@ public class HealthSystem extends EntityProcessingSystem {
 
         if(healthChangedflag) {
             unitM.get(e).getUnitData().setHealth(hc.health);
-
-
             playerPartyManagementSystem.editMorale(0);
 
         }
@@ -104,25 +98,31 @@ public class HealthSystem extends EntityProcessingSystem {
     }
 
 
-
+    /**
+     * Creates the damage text that appears after an entity is damaged or healed
+     */
     public void createFloatingDamageText(World world, String text, Color color, Entity entity){
 
-        Entity floatingTextEntity = world.createEntity();
+        if(posM.has(entity) && centeringM.has(entity)) {
 
-        floatingTextEntity.edit().add(new PositionComponent(entity.getComponent(PositionComponent.class)));
-        floatingTextEntity.edit().add(new CenteringBoundComponent(entity.getComponent(CenteringBoundComponent.class)));
-        floatingTextEntity.edit().add(new FadeComponent.FadeBuilder()
-                .maximumTime(0.75f)
-                .endless(false)
-                .fadeIn(false)
-                .build());
-        floatingTextEntity.edit().add(new VelocityComponent(0, Measure.units(20f)));
-        floatingTextEntity.edit().add(new ExpireComponent(2.0f));
-        floatingTextEntity.edit().add(new DrawableComponent(Layer.BACKGROUND_LAYER_FAR,
-                new TextDescription.Builder(Fonts.SMALL)
-                        .text(text)
-                        .color(color)
-                        .build()));
+            Entity floatingTextEntity = world.createEntity();
+
+            floatingTextEntity.edit().add(new PositionComponent(entity.getComponent(PositionComponent.class)));
+            floatingTextEntity.edit().add(new CenteringBoundComponent(entity.getComponent(CenteringBoundComponent.class)));
+            floatingTextEntity.edit().add(new FadeComponent.FadeBuilder()
+                    .maximumTime(0.75f)
+                    .endless(false)
+                    .fadeIn(false)
+                    .build());
+            floatingTextEntity.edit().add(new VelocityComponent(0, Measure.units(20f)));
+            floatingTextEntity.edit().add(new ExpireComponent(2.0f));
+            floatingTextEntity.edit().add(new DrawableComponent(Layer.BACKGROUND_LAYER_FAR,
+                    new TextDescription.Builder(Fonts.SMALL)
+                            .text(text)
+                            .color(color)
+                            .build()));
+
+        }
 
 
 

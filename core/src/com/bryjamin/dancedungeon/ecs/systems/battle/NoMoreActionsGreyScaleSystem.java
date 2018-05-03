@@ -12,6 +12,8 @@ import com.bryjamin.dancedungeon.ecs.components.identifiers.SelectedEntityCompon
 
 /**
  * Created by BB on 23/12/2017.
+ *
+ * Tracks when a player unit Entity is out of actions and adds a GreyScaleComponent to it.
  */
 
 
