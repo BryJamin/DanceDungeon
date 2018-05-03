@@ -249,7 +249,7 @@ public class TileSystem extends EntitySystem {
         if(sm.has(e)){ //If the entity is 'solid' it can not be placed on top up another entity.
             if (occupiedMap.containsValue(e.getComponent(CoordinateComponent.class).coordinates, false) || !coordinateMap.containsKey(coordinateComponent.coordinates)) {
                 if (!relocateEntity(e))
-                    e.deleteFromWorld(); //TODO decide what to do if a there is no space to place something
+                    e.deleteFromWorld();
             } else {
                 addEntityToMaps(e, coordinateComponent.coordinates);
             }
@@ -399,7 +399,7 @@ public class TileSystem extends EntitySystem {
             aStarPathCalculator = new AStarPathCalculator(coordinateMap.keys().toArray(), occupiedMap.values().toArray(),
                     playerControlledMap.values().toArray());
 
-        } else { //TODO what to with walls and etc? If there even are walls.
+        } else {
 
             aStarPathCalculator = new AStarPathCalculator(
                     coordinateMap.keys().toArray(),
@@ -417,11 +417,11 @@ public class TileSystem extends EntitySystem {
 
         AStarPathCalculator aStarPathCalculator;
 
-        if(pcm.has(e)) {//TODO What happens if you have allied units?
+        if(pcm.has(e)) {
             aStarPathCalculator = new AStarPathCalculator(coordinateMap.keys().toArray(), occupiedMap.values().toArray(),
                     playerControlledMap.values().toArray());
 
-        } else { //TODO what to with walls and etc? If there even are walls.
+        } else {
             aStarPathCalculator = new AStarPathCalculator(coordinateMap.keys().toArray(), occupiedMap.values().toArray(),
                     enemyMap.values().toArray());
         }

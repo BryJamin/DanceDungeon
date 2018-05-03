@@ -222,8 +222,8 @@ public class TutorialSystem extends EntitySystem implements Observer{
                     //PART THREE - PLAYER UNIT WITH RANGED SKILL IS PLACED. USER NEEDS TO USE RANGED ATTACK ///
 
                     //Add Ranged Enemy,
-                    //TODO Tutorial Hack To Skip Over The 'Intent' Turn.
-                    //TODO Better to Create an 'Enemy Turn' Listener within the TurnSystem.
+                    //Tutorial Hack To Skip Over The 'Intent' Turn.
+                    //Better to Create an 'Enemy Turn' Listener within the TurnSystem.
                     turnSystem.setUp(TurnSystem.TURN.ENEMY);
 
                     for(Entity e : this.getEntities()){

@@ -135,7 +135,7 @@ public class AStarPathCalculator {
                 return true;
             }
 
-            //TODO test what happens if null
+
             Node potentialOpenListNode = allNodeMap.get(c);
             if(!closedList.contains(potentialOpenListNode, false) && potentialOpenListNode != null) {
                 potentialOpenListNode.parent = firstNode;
@@ -154,8 +154,6 @@ public class AStarPathCalculator {
             Node nextNode = getNextNode(openList, closedList);
             Array<Coordinates> surroundingCoordinates = returnSurroundingCoordinates(nextNode.coordinates);
 
-            //TODO convert this is use an array? So you can have a range of coordinates you are trying to get it instead of the one?
-            //TODO this would mean you wouldn't need this 'isDestinationNextTo' boolean
             if(surroundingCoordinates.contains(end, false)) {
                 createCoordinateSequence(nextNode, fillQueue);
                 fillQueue.addLast(end);

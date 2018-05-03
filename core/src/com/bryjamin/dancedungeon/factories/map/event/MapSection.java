@@ -96,8 +96,7 @@ public class MapSection {
         }
 
 
-        //TODO this makes it so with larger generation you can create more 'spaced out' looking setsups
-        //TODO however, this should be a varaible or an option
+        //This makes it so with larger generation you can create more 'spaced out' looking setUps
         if (mapNodes.size > 3) {
 
             if (random.nextInt(2) > 0) {

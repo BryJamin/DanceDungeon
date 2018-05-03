@@ -179,7 +179,6 @@ public class RenderingSystem extends EntitySystem {
                 tr = atlas.findRegion(TextureStrings.BLOCK);
             }
 
-            //TODO currently testing, using integers instead of floats for positions
             batch.draw(tr,
                     (int) (positionComponent.getX() + drawableDescription.getOffsetX()),
                     (int) (positionComponent.getY() + drawableDescription.getOffsetY()),

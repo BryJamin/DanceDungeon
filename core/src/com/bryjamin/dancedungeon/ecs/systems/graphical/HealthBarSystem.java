@@ -82,42 +82,6 @@ public class HealthBarSystem extends EntityProcessingSystem {
     }
 
 
-
-
-    //TODO store and then draw elsewhere.
-    public void draw(Entity e){
-
-        if(entityHealthBarObjectMap.containsKey(e)) {
-         HealthBar hb = entityHealthBarObjectMap.get(e);
-
-/*            batch.setColor(bottomBarColor);
-            batch.draw(atlas.findRegion(TextureStrings.BLOCK),
-                    x, y,
-                    initialHealthBarWidth,
-                    initialHealthBarHeight);
-
-
-            batch.setColor(middleBarColor);
-            batch.draw(atlas.findRegion(TextureStrings.BLOCK),
-                    x, y,
-                    healthBar.whiteHealthBarLength,
-                    initialHealthBarHeight);
-
-
-            batch.setColor(topBarColor);
-            batch.draw(atlas.findRegion(TextureStrings.BLOCK),
-                    x, y,
-                    healthBar.redHealthBarLength,
-                    initialHealthBarHeight);*/
-
-
-        }
-
-
-
-    }
-
-
     @Override
     protected void process(Entity e) {
 
@@ -130,9 +94,6 @@ public class HealthBarSystem extends EntityProcessingSystem {
 
         float maxHealth = healthComponent.maxHealth;
         float health = healthComponent.health;
-
-        //TODO The recetangle should instead by the cell size and you need to use the center coordinate of the CentaryBoundary
-        //TODO to draw the health bar
 
         //Black bar
         float width = ((rect.getWidth() / 5) * 3.5f);

@@ -281,7 +281,7 @@ public class MapScreenUISystem extends BaseSystem {
     }
 
 
-    //TODO messy?
+
     public void updateInformation() {
         container.remove();
         container.clear();

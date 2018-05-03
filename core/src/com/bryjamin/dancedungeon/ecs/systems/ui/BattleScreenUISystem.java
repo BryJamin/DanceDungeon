@@ -129,7 +129,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
 
     private enum BottomTableState {
-        PLAYER_SELECT, ENEMY_SELECT, ALLY_SELECT //TODO maybe.
+        PLAYER_SELECT, ENEMY_SELECT, ALLY_SELECT
     }
 
     private BottomTableState botTabState;

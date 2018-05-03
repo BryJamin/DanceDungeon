@@ -7,7 +7,7 @@ buildscript {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         jcenter()
 
-        //TODO Note: Gradle 4.1, is not working currently with LIBGDX please remember and kepe track of when to update
+        //TODO Note: Gradle 4.1, is not working currently with LIBGDX please remember and keep track of when to update
         //google()
     }
     dependencies {

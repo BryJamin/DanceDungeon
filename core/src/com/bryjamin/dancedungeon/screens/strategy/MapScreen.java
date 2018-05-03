@@ -94,7 +94,6 @@ public class MapScreen extends AbstractScreen {
 
         world = new World(config);
 
-        //TODO I want to place this within the world instead of in the screen
 
         if(world.getSystem(MapNodeSystem.class).getCurrentMapNode() != null) {
             gameport.getCamera().position.set(world.getSystem(MapNodeSystem.class).getCurrentMapNode().getPosition().x,

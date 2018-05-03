@@ -163,8 +163,6 @@ public class MapGenerator {
 
             case BATTLE:
 
-                //TODO verify if the ids of the parent and successor, is not the same
-
                 WeightedObject<String> roll = battleEventRoller.rollForWeight();
                 mapNode.setEventId(roll.obj());
 
@@ -237,7 +235,7 @@ public class MapGenerator {
 
         float number;
 
-        if(secondaryNodeSize == 0) return -100; //TODO decide how to handle this, since technically this should never happen
+        if(secondaryNodeSize == 0) return -100;
         else {
             number = 100.0f / secondaryNodeSize;
         }
@@ -356,7 +354,7 @@ public class MapGenerator {
      *
      * In future, may be wise to check for potential intersections, but as the generations stand this is not neccessary
      *
-     * //TODO create a test which checks each section to ensure no connected lines, cause intersections
+     *
      *
      */
     private void firstPassLeftToRight(Array<MapNode> leftMapNodeArray, Array<MapNode> rightMapNodeArray, Array<Line> connectedLines){

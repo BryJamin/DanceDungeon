@@ -194,7 +194,6 @@ public class TurnSystem extends EntitySystem implements Observer{
 
             case NEXT_TURN:
 
-                //TODO what if the set up has an entity that is less than zero?
                 if (currentTurnEntities.size <= 0) { //Sets up New set of turn entities when current entiteis are finished
                     switch (turn) {
                         case ENEMY:
