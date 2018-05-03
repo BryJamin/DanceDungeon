@@ -56,6 +56,10 @@ public class SkillLibrary {
     public static final String SKILL_STRAIGHT_SHOT;
     public static final String SKILL_THROW_BOMB;
     public static final String SKILL_CLOBBER;
+    public static final String SKILL_JAVELIN;
+    public static final String SKILL_HEAVY_JAVELIN;
+    public static final String SKILL_CLAW;
+    public static final String SKILL_HEAVY_CLAW;
 
 
     public static final String ENEMY_SKILL_BLAST;
@@ -67,11 +71,14 @@ public class SkillLibrary {
 
     static {
 
-        //Melee
+        //Default
         SKILL_HEAVY_STRIKE = add("a5f2cd73-7ade-4577-8d7b-862299baf774");
         SKILL_HEAVIER_STRIKE = add("d92aa63f-1f4d-40bf-9dca-344cebd78d31");
         SKILL_CLOBBER = add("3fdb6885-00b3-453a-aefc-532384332329");
         ENEMY_SKILL_SWIPE = add("d3059e1f-41f5-48a1-8ff5-5cc67cea1927");
+
+        SKILL_CLAW = add("29ba0cf5-1d07-4906-8dff-eeac727d6dd8");
+        SKILL_HEAVY_CLAW = add("48fa44b1-db1f-482b-bd60-556853aeeb3b");
 
         //Ranged
         SKILL_HOOK_SHOT = add("cd8ced23-790b-41cd-99dd-f884abccc003");
@@ -82,6 +89,9 @@ public class SkillLibrary {
         //Aerial
         SKILL_THROW_BOMB = add("1e3e7778-14e1-4466-b1fb-b24a01723155");
         ENEMY_SKILL_THROW_ROCK = add("509d0cd7-ad54-4794-b53e-2f97bc87d8b8");
+
+        SKILL_JAVELIN = add("1c7611bb-a5b5-4194-9888-05a68e1dcd83");
+        SKILL_HEAVY_JAVELIN = add("42c6d76b-7cf7-439f-8148-554015ac283d");
 
     }
 

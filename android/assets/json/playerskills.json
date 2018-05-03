@@ -6,20 +6,18 @@
     "icon": "icons/units/warrior",
     "push": 1,
     "baseDamage": 1,
-    "targeting": "Melee",
     "spellAnimation": "Slash",
     "attackType": "Damage"
   },
 
   "d92aa63f-1f4d-40bf-9dca-344cebd78d31": {
     "class": "com.bryjamin.dancedungeon.factories.spells.Skill",
-    "name": "Heavier Strike",
+    "name": "Haevy Strike+",
     "description": "Deals 2 damage. Pushes a target 2 tiles",
     "icon": "icons/units/warrior",
     "push": 2,
     "storePrice": 3,
     "baseDamage": 2,
-    "targeting": "Melee",
     "spellAnimation": "Slash",
     "attackType": "Damage"
   },
@@ -32,6 +30,7 @@
     "baseDamage": 1,
     "targeting": "StraightShot",
     "spellAnimation": "Projectile",
+    "storePrice": 2,
     "attackType": "Damage"
   },
 
@@ -44,6 +43,7 @@
     "baseDamage": 1,
     "targeting": "StraightShot",
     "spellAnimation": "Projectile",
+    "storePrice": 2,
     "attackType": "Damage"
   },
 
@@ -55,7 +55,6 @@
     "icon": "skills/LaserScope",
     "stun": 1,
     "baseDamage": 1,
-    "targeting": "Melee",
     "spellAnimation": "Slash",
     "attackType": "Damage",
 
@@ -63,13 +62,75 @@
 
   },
 
+
+
+  "1c7611bb-a5b5-4194-9888-05a68e1dcd83": {
+    "class": "com.bryjamin.dancedungeon.factories.spells.Skill",
+    "name": "Javelin",
+    "description": "Aerial Attack, Deals 1 Damage, Pushes 1 tile",
+    "icon": "skills/javelin",
+    "baseDamage": 1,
+    "push": 1,
+    "minRange": 2,
+    "maxRange": 11,
+    "spellAnimation": "Thrown",
+    "attackType": "Damage",
+
+    "storePrice": 2
+  },
+
+
+  "42c6d76b-7cf7-439f-8148-554015ac283d": {
+    "class": "com.bryjamin.dancedungeon.factories.spells.Skill",
+    "name": "Javelin+",
+    "description": "Aerial Attack, Deals 2 Damage, Pushes 1 tile",
+    "icon": "skills/heavy_javelin",
+    "baseDamage": 2,
+    "push": 1,
+    "minRange": 2,
+    "maxRange": 11,
+    "spellAnimation": "Thrown",
+    "attackType": "Damage",
+
+    "storePrice": 4
+  },
+
+
+
+  "29ba0cf5-1d07-4906-8dff-eeac727d6dd8": {
+    "class": "com.bryjamin.dancedungeon.factories.spells.Skill",
+    "name": "Claw",
+    "description": "Melee Attack, Deals 2 Damage",
+    "icon": "skills/claw",
+    "baseDamage": 2,
+    "push": 0,
+    "spellAnimation": "Slash",
+    "attackType": "Damage",
+
+    "storePrice": 3
+  },
+
+
+  "48fa44b1-db1f-482b-bd60-556853aeeb3b": {
+    "class": "com.bryjamin.dancedungeon.factories.spells.Skill",
+    "name": "Claw+",
+    "description": "Melee Attack, Deals 3 Damage",
+    "icon": "skills/red_claw",
+    "baseDamage": 3,
+    "push": 0,
+    "spellAnimation": "Slash",
+    "attackType": "Damage",
+    "storePrice": 5
+  },
+
+
+
   "1e3e7778-14e1-4466-b1fb-b24a01723155": {
     "class": "com.bryjamin.dancedungeon.factories.spells.Skill",
     "name": "Throw Bomb",
     "description": "Throws a Bomb That Deals 1 Damage and Pushes all Adjacent Tiles by 1",
     "icon": "skills/Fire",
     "baseDamage": 1,
-    "targeting": "Melee",
     "spellAnimation": "Thrown",
     "minRange": 2,
     "maxRange": 11,

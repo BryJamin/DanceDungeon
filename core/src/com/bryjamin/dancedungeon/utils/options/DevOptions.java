@@ -12,7 +12,6 @@ public class DevOptions {
 
     public final static String DEV_PREFS_KEY = "dev_settings";
     public final static String UTILITY_SCORE_DEBUG = "score_debug";
-    public final static String PARTY_DATA = "partyData";
 
     public static void toggleUtilityInfo(){
         Preferences preferences = Gdx.app.getPreferences(DEV_PREFS_KEY);

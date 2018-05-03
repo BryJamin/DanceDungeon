@@ -46,7 +46,7 @@ public class UnitLibraryTest  extends GameTest {
             UnitData unitData = UnitLibrary.getUnitData(s);
 
             if(textureAtlas.findRegion(unitData.icon) == null){
-                errors.add("Icon: " + unitData.icon + "not found. \nUnit name: " + unitData.getName()  + "\nUnit ID: " + unitData.getId());
+                errors.add("Icon: " + unitData.icon + " not found. \nUnit name: " + unitData.getName()  + "\nUnit ID: " + unitData.getId());
             };
 
         }
