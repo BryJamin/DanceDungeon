@@ -49,7 +49,6 @@ public class MapSection {
         this.height = height;
         this.minimumSpacing = minimumSpacing;
         this.nodeNumber = nodeNumber;
-        this.generateNodePositionsWithinSection();
     }
 
     /**
@@ -57,7 +56,7 @@ public class MapSection {
      *
      * Throws a runtime error if the generation is incorrect
      */
-    public void generateNodePositionsWithinSection() {
+    public void generateNodePositionsWithinSection() throws MapSectionMinimumSpacingException {
 
         Random random = new Random();
 
@@ -84,9 +83,9 @@ public class MapSection {
                     minY = prev.getPosY() + minimumSpacing;
             }
 
-            //TODO handle this a bit better
+
             if (maxY < minY)
-                throw new RuntimeException("Generation failed minimum Y larger than maximum Y. Minimum Spacing may be too large");
+                throw new MapSectionMinimumSpacingException();
 
             float y = random.nextFloat() * (maxY - minY) + minY;
 
@@ -106,6 +105,39 @@ public class MapSection {
             }
         }
 
+    }
+
+    public void evenlySpaceNodePositions() {
+
+        for (int i = 0; i < nodeNumber; i++) {
+
+            MapNode node = new MapNode();
+
+            float x = startX + (width / 2);
+
+            node.setPosX(x);
+
+            float y = (height / nodeNumber) * (i + 1);
+
+            node.setPosY(y);
+
+            mapNodes.add(node);
+
+        }
+
+
+
+
+
+    }
+
+
+    public class MapSectionMinimumSpacingException extends Exception {
+
+        @Override
+        public String getMessage() {
+            return "Generation failed minimum Y larger than maximum Y. Minimum Spacing may be too large";
+        }
     }
 
     public Array<MapNode> getMapNodes() {

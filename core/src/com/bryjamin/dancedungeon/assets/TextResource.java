@@ -142,9 +142,9 @@ public class TextResource {
     public static final String TUTORIAL_RANGED_ATTACK_TEXT_1 = "This Hero Has A Ranged Attack";
     public static final String TUTORIAL_RANGED_ATTACK_TEXT_2 = "Ranged Attacks Travel In A Straight Line Until Blocked";
 
-    public static final String TUTORIAL_THROWN_ATTACK = "Aerial Attacks";
-    public static final String TUTORIAL_THROWN_ATTACK_TEXT_1 = "This Hero Has An Aerial Attack";
-    public static final String TUTORIAL_THROWN_ATTACK_TEXT_2 = "Aerial Attacks Can Travel OVER Objects But Can't Target ADJACENT Tiles";
+    public static final String TUTORIAL_AERIAL_ATTACK = "Aerial Attacks";
+    public static final String TUTORIAL_AERIAL_ATTACK_TEXT_1 = "This Hero Has An Aerial Attack";
+    public static final String TUTORIAL_AERIAL_ATTACK_TEXT_2 = "Aerial Attacks Can Travel OVER Objects But Can't Target ADJACENT Tiles";
 
     public static final String TUTORIAL_OBJECTIVES_TITLE = "Objectives";
     public static final String TUTORIAL_OBJECTIVES_TEXT_1 = "You Must Complete The Primary Objective To Win A Battle";

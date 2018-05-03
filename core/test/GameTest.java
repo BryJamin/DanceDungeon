@@ -10,6 +10,9 @@ import org.mockito.Mockito;
 
 /**
  * Created by BB on 21/12/2017.
+ *
+ * This code is required in order to get Unit
+ *
  */
 
 public class GameTest {

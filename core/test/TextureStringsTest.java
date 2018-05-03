@@ -8,30 +8,11 @@ import com.bryjamin.dancedungeon.factories.spells.SkillLibrary;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class UnitLibraryTest {
-
-    @Test
-    public void testLoadingLibraryData() {
-        SkillLibrary.loadFromJSON();
-        UnitLibrary.loadFromJSON();
-    }
-
+public class TextureStringsTest {
 
 
     @Test
-    public void getEnemiesFromLoadedData() throws Exception {
-
-        SkillLibrary.loadFromJSON();
-        UnitLibrary.loadFromJSON();
-
-        for(String s : UnitLibrary.getUnitIdList()){
-            UnitLibrary.getUnitData(s);
-        }
-    }
-
-
-    @Test
-    public void verifyUnitIconsExist() throws Exception {
+    public void verifyUsedTextureStringsPointToATexture() throws Exception {
 
         SkillLibrary.loadFromJSON();
         UnitLibrary.loadFromJSON();
@@ -58,8 +39,4 @@ public class UnitLibraryTest {
         Assert.assertTrue(errors.size == 0);
 
     }
-
-
-
 }
-

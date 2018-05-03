@@ -1239,9 +1239,9 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
                         height,
                         Measure.units(32.5f),
                         0,
-                        TextResource.TUTORIAL_THROWN_ATTACK,
-                        TextResource.TUTORIAL_THROWN_ATTACK_TEXT_1,
-                        TextResource.TUTORIAL_THROWN_ATTACK_TEXT_2
+                        TextResource.TUTORIAL_AERIAL_ATTACK,
+                        TextResource.TUTORIAL_AERIAL_ATTACK_TEXT_1,
+                        TextResource.TUTORIAL_AERIAL_ATTACK_TEXT_2
                 );
 
                 buildTutorialArrow(tutorialArrowTable, tutorialInformationWindow, rectangleToCenterOn);
