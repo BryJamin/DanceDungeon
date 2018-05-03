@@ -39,7 +39,8 @@ public class MapGenerator {
     private static final int NUMBER_OF_SHOP_EVENTS = 5;
 
 
-    private static final boolean IGNORE_FAILS_FOR_DEBUGGING = false;
+    //Used for when you want to generate special events without adhering to the rules of generator
+    private static final boolean IGNORE_FAILS_FOR_VISUAL_DEBUGGING = false;
 
 
     private EventManager eventManager = new EventManager();
@@ -68,8 +69,8 @@ public class MapGenerator {
 
              } catch (Exception e){
                  e.printStackTrace();
-                 if(IGNORE_FAILS_FOR_DEBUGGING){
-                     System.out.println("YOU ARE CURRENTLY IGNORING FAILURES.");
+                 if(IGNORE_FAILS_FOR_VISUAL_DEBUGGING){
+                     System.out.println("YOU ARE CURRENTLY IGNORING FAILURES. PLEASE TURN BACK ON WHEN NO LONGER REQUIRED");
                      return new GameMap(mapSections);
                  }
              }

@@ -7,12 +7,13 @@
     "push": 1,
     "baseDamage": 1,
     "spellAnimation": "Slash",
-    "attackType": "Damage"
+    "attackType": "Damage",
+    "storePrice": 2
   },
 
   "d92aa63f-1f4d-40bf-9dca-344cebd78d31": {
     "class": "com.bryjamin.dancedungeon.factories.spells.Skill",
-    "name": "Haevy Strike+",
+    "name": "Heavy Strike+",
     "description": "Deals 2 damage. Pushes a target 2 tiles",
     "icon": "icons/units/warrior",
     "push": 2,
