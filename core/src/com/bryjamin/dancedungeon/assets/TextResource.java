@@ -95,6 +95,9 @@ public class TextResource {
     public static final String BATTLE_ACTIONS_REMAINING_TEXT_1 = "Some Heroes Still Have Actions Remaining!";
     public static final String BATTLE_ACTIONS_REMAINING_TEXT_2 = "Are You Sure You Want To End Your Turn?";
 
+    public static final String BATTLE_QUIT_TEXT_1 = "Are You Sure You Want To Quit?";
+    public static final String BATTLE_QUIT_TEXT_2 = "All Unsaved Data Will Be Lost";
+
 
 
 

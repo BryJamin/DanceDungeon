@@ -139,6 +139,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
     private final Table bottomContainer = new Table();
     private AreYouSureFrame areYouSureContainer;
+    private AreYouSureFrame quitFrame;
 
     private Table tutorialInformationWindow;
     private Table tutorialArrowTable;
@@ -234,7 +235,37 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
         areYouSureContainer.align(Align.center);
         areYouSureContainer.setVisible(false);
         areYouSureContainer.setTouchable(Touchable.enabled);
+        areYouSureContainer.addListener(new ClickListener());
         areYouSureContainer.setBackground(new TextureRegionDrawable(atlas.findRegion(TextureStrings.BLOCK)).tint(new Color(0, 0, 0, 0.85f)));
+
+
+
+        quitFrame = new AreYouSureFrame(
+                new ChangeListener() {
+                    @Override
+                    public void changed(ChangeEvent event, Actor actor) {
+                        goToMenuScreen();
+                        quitFrame.setVisible(false);
+                    }
+                }, new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                quitFrame.setVisible(false);
+            }
+        }, uiSkin, TextResource.BATTLE_QUIT_TEXT_1,
+                TextResource.BATTLE_QUIT_TEXT_2
+        );
+
+        quitFrame.setDebug(StageUIRenderingSystem.DEBUG);
+        quitFrame.setWidth(stage.getWidth());
+        quitFrame.setHeight(stage.getHeight());
+        quitFrame.align(Align.center);
+        quitFrame.setVisible(false);
+        quitFrame.setTouchable(Touchable.enabled);
+        quitFrame.addListener(new ClickListener());
+        quitFrame.setBackground(new TextureRegionDrawable(atlas.findRegion(TextureStrings.BLOCK)).tint(new Color(0, 0, 0, 0.85f)));
+
+
 
         nextTurnBanner = new Table(uiSkin);
 
@@ -298,6 +329,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
         stage.addActor(rightSideContainer);
         stage.addActor(bottomContainer);
         stage.addActor(attackIndicatorTable);
+        stage.addActor(quitFrame);
         stage.addActor(areYouSureContainer);
 
         tutorialInformationWindow = new Table(uiSkin);
@@ -327,25 +359,6 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
 
     private void populateAreYouSureContainer(){
-
-        if(areYouSureContainer.hasChildren()){
-            areYouSureContainer.reset();
-        }
-
-        areYouSureContainer.setVisible(true);
-        areYouSureContainer.addAction(new Action() { //Ensures, units can not be interacted with when this Container is visible
-            @Override
-            public boolean act(float delta) {
-                if(areYouSureContainer.isVisible()){
-                    battleScreenInputSystem.restrictInputToStage();
-                } else {
-                    battleScreenInputSystem.unRestrictInput();
-                    return true;
-                }
-                return false;
-            }
-        });
-
         areYouSureContainer.update();
     }
 
@@ -382,7 +395,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
                     turnSystem.endAllyTurn();
                     resetBottomContainer();
                 } else {
-                    populateAreYouSureContainer();
+                    areYouSureContainer.update();
                 }
             }
         });
@@ -978,11 +991,16 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
         textButton.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.getScreen().dispose();
-                game.setScreen(new MenuScreen(game));
+                goToMenuScreen();
             }
         });
 
+    }
+
+
+    private void goToMenuScreen(){
+        game.getScreen().dispose();
+        game.setScreen(new MenuScreen(game));
     }
 
 
@@ -1028,6 +1046,16 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
                         .color(pcm.has(entity) ? new Color(Color.WHITE) : new Color(Color.RED))
                         .build()));
 
+    }
+
+
+    //// PAUSE SCREEN ////
+
+    /**
+     * Opens Pause Menu.
+     */
+    public void openQuitMenu() {
+        quitFrame.update();
     }
 
 

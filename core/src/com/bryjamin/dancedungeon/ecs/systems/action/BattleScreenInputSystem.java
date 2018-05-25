@@ -2,6 +2,8 @@ package com.bryjamin.dancedungeon.ecs.systems.action;
 
 import com.artemis.BaseSystem;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector3;
@@ -12,7 +14,6 @@ import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.SelectedTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
-import com.bryjamin.dancedungeon.utils.observer.Observable;
 import com.bryjamin.dancedungeon.utils.observer.Observer;
 
 /**
@@ -29,6 +30,7 @@ public class BattleScreenInputSystem extends BaseSystem implements Observer {
     private ActionQueueSystem actionQueueSystem;
     private SelectedTargetSystem selectedTargetSystem;
     private StageUIRenderingSystem stageUIRenderingSystem;
+    private BattleScreenUISystem battleScreenUISystem;
     private BattleDeploymentSystem battleDeploymentSystem;
     private InputMultiplexer multiplexer;
 
@@ -69,11 +71,13 @@ public class BattleScreenInputSystem extends BaseSystem implements Observer {
 
     private void refreshInputProcessor(){
         multiplexer.clear();
+        multiplexer.addProcessor(new BattleWorldInput());
         multiplexer.addProcessor(stageUIRenderingSystem.stage);
 
         if(state != State.ONLY_STAGE) {
             multiplexer.addProcessor(gestureDetector);
         }
+
     }
 
 
@@ -117,6 +121,30 @@ public class BattleScreenInputSystem extends BaseSystem implements Observer {
             }
             return false;
         }
+    }
+
+
+
+
+    private class BattleWorldInput extends InputAdapter {
+
+        @Override
+        public boolean keyDown(int keycode) {
+
+            System.out.println(keycode);
+
+            if(keycode == Input.Keys.BACK || keycode == Input.Keys.ESCAPE){
+
+                battleScreenUISystem.openQuitMenu();
+
+
+                return true;
+                // Do your optional back button handling (show pause menu?)
+            }
+
+            return false;
+        }
+
     }
 
 
