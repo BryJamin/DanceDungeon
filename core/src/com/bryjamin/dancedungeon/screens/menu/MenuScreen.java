@@ -19,6 +19,7 @@ import com.bryjamin.dancedungeon.ecs.systems.graphical.FadeSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.UpdateBoundPositionsSystem;
 import com.bryjamin.dancedungeon.ecs.systems.input.BasicInputSystemWithStage;
+import com.bryjamin.dancedungeon.ecs.systems.input.MenuInputSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.MenuScreenUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.StageUIRenderingSystem;
 import com.bryjamin.dancedungeon.screens.AbstractScreen;
@@ -46,7 +47,7 @@ public class MenuScreen extends AbstractScreen {
                 .with(WorldConfigurationBuilder.Priority.HIGHEST,
 
                         new MenuScreenUISystem(game, gameport),
-                        new BasicInputSystemWithStage(gameport),
+                        new MenuInputSystem(gameport),
                         game.musicSystem,
                         new MovementSystem(),
                         new UpdateBoundPositionsSystem(),

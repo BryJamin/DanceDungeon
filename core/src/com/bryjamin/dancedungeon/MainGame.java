@@ -1,6 +1,7 @@
 package com.bryjamin.dancedungeon;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
@@ -47,6 +48,9 @@ public class MainGame extends Game {
     @Override
     public void create () {
         batch = new SpriteBatch(700);
+
+        Gdx.input.setCatchBackKey(true);
+
         //Gdx.input.setCursorCatched(true);
         //Gdx.input.setCursorPosition(0, 0);
 

@@ -134,10 +134,7 @@ public class BattleScreenInputSystem extends BaseSystem implements Observer {
             System.out.println(keycode);
 
             if(keycode == Input.Keys.BACK || keycode == Input.Keys.ESCAPE){
-
-                battleScreenUISystem.openQuitMenu();
-
-
+                battleScreenUISystem.openQuitMenu(keycode);
                 return true;
                 // Do your optional back button handling (show pause menu?)
             }

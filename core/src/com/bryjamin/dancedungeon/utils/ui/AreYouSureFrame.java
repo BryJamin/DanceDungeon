@@ -57,6 +57,11 @@ public class AreYouSureFrame extends Table{
     }
 
 
+    public void close(){
+        this.reset();
+        this.setVisible(false);
+    }
+
 
 
 

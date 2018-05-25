@@ -4,6 +4,7 @@ import com.artemis.Aspect;
 import com.artemis.EntitySystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -18,12 +19,19 @@ public class BasicInputSystem extends EntitySystem{
 
     protected Viewport gameport;
     protected GestureDetector gestureListener;
+    InputMultiplexer multiplexer = new InputMultiplexer();
 
 
     public BasicInputSystem(Viewport gameport){
         super(Aspect.all(ActionOnTapComponent.class));
         this.gameport = gameport;
         gestureListener = new GestureDetector(new Adapter());
+    }
+
+
+
+    protected void addProcessor(InputProcessor processor){
+        multiplexer.addProcessor(processor);
     }
 
     @Override

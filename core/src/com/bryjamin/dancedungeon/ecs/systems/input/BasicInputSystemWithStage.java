@@ -18,6 +18,11 @@ public class BasicInputSystemWithStage extends BasicInputSystem {
     }
 
     @Override
+    protected void initialize() {
+        super.initialize();
+    }
+
+    @Override
     protected void processSystem() {
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(stageUIRenderingSystem.stage);

@@ -6,6 +6,7 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.utils.IntBag;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -1054,8 +1055,22 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
     /**
      * Opens Pause Menu.
      */
-    public void openQuitMenu() {
-        quitFrame.update();
+    public void openQuitMenu(int keycode) {
+
+        if(quitFrame.isVisible()){
+
+            switch (keycode){
+                case Input.Keys.BACK:
+                    goToMenuScreen();
+                    break;
+                case Input.Keys.ESCAPE:
+                    quitFrame.close();
+                    break;
+            }
+
+        } else {
+            quitFrame.update();
+        }
     }
 
 
