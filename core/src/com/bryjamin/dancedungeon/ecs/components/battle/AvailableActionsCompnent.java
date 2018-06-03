@@ -23,6 +23,12 @@ public class AvailableActionsCompnent extends Component {
 
     public AvailableActionsCompnent(){}
 
+    public AvailableActionsCompnent(AvailableActionsCompnent availableActionsCompnent){
+        this.movementActionAvailable = availableActionsCompnent.movementActionAvailable;
+        this.attackActionAvailable = availableActionsCompnent.attackActionAvailable;
+        this.aiState = availableActionsCompnent.aiState;
+    }
+
     public void reset(){
         movementActionAvailable = true;
         attackActionAvailable = true;

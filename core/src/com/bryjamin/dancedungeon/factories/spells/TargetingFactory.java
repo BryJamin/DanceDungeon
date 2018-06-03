@@ -269,8 +269,10 @@ public class TargetingFactory {
                     world.getSystem(BattleScreenUISystem.class).resetBottomContainer();
                     player.edit().add(new ReselectEntityComponent());
                     player.edit().remove(SelectedEntityComponent.class);
+                    world.getSystem(ActionQueueSystem.class).createSnapAction(world.createEntity());
                     world.getSystem(ActionQueueSystem.class).pushLastAction(player, createMovementAction(player, coordinatesWithPathMap.get(c)));
                     world.getSystem(ActionQueueSystem.class).createUpdateIntentAction(world.createEntity());
+
                 }
             }));
 

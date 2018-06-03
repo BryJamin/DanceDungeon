@@ -105,9 +105,14 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
             if (!playableCharacter.getComponent(AvailableActionsCompnent.class).hasActions()) return;
         }
 
-
-
         battleScreenUISystem.setUpSelectedCharacterHUD(playableCharacter);
+    }
+
+
+    public void setUpSelectedCharacter() {
+        if(this.getEntities().size() > 0){
+            setUpCharacter(this.getEntities().get(0));
+        }
     }
 
 

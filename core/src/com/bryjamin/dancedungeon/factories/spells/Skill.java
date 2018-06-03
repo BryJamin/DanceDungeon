@@ -296,7 +296,7 @@ public class Skill {
                         }
 
                         e.getComponent(HealthComponent.class).applyDamage(baseDamage);
-                        
+
                         break;
                     case Heal:
                         e.getComponent(HealthComponent.class).applyHealing(baseDamage);

@@ -25,6 +25,7 @@ public class TextResource {
     public static final String BATTLE_OBJECTIVES = "Objectives";
     public static final String BATTLE_BONUS = "Bonus";
     public static final String BATTLE_END_TURN = "End Turn";
+    public static final String BATTLE_UNDO = "Undo";
 
 
     public static final String BATTLE_ENEMY_TURN = "Enemy Turn";

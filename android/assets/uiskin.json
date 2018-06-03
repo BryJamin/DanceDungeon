@@ -3,6 +3,7 @@
 	"green": { a: 1, b: 0, g: 1, r: 0 },
 	"white": { a: 1, b: 1, g: 1, r: 1 },
 	"red": { a: 1, b: 0, g: 0, r: 1 },
+	"grey": {a:1, b: 0.4, g:0.4, r:0.4}
 	"black": { a: 1, b: 0, g: 0, r: 0 },
 },
 com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
@@ -14,7 +15,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 	inventory: { down: default-round-down, checked: default-round-down, up: border},
 },
 com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
-	default: { down: default-round-down, up: border, font: myFont12, fontColor: white },
+	default: { down: default-round-down, up: border, font: myFont12, fontColor: white, disabledFontColor: grey,},
 	toggle: { down: default-round-down, up: border, font: myFont12, checked: default-round-down, fontColor: white }
 },
 com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {

@@ -427,6 +427,53 @@ public class ActionQueueSystem extends EntitySystem {
     }
 
 
+    public void createSnapAction(Entity entity){
+
+        pushLastAction(entity, new WorldConditionalAction() {
+            @Override
+            public boolean condition(World world, Entity entity) {
+                return true;
+            }
+
+            @Override
+            public void performAction(World world, Entity entity) {
+                world.getSystem(UndoMoveSystem.class).snapShotUnits();
+            }
+        });
+    }
+
+
+    public void createPopSnapAction(Entity entity){
+
+        pushLastAction(entity, new WorldConditionalAction() {
+            @Override
+            public boolean condition(World world, Entity entity) {
+                return true;
+            }
+
+            @Override
+            public void performAction(World world, Entity entity) {
+                world.getSystem(UndoMoveSystem.class).popSnapShot();
+            }
+        });
+    }
+
+
+    public void createClearSnapShotAction(Entity entity){
+
+        pushLastAction(entity, new WorldConditionalAction() {
+            @Override
+            public boolean condition(World world, Entity entity) {
+                return true;
+            }
+
+            @Override
+            public void performAction(World world, Entity entity) {
+                world.getSystem(UndoMoveSystem.class).snapShotUnits();
+            }
+        });
+    }
+
 /*    protected boolean checkProcessing() {
         processingFlag = actionQueue.size != 0;
         return processingFlag;

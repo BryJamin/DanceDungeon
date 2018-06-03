@@ -40,10 +40,15 @@ public class UnitData implements Json.Serializable {
     public UnitData(){}
 
 
-
-
-
     public UnitData(UnitData unitData) {
+        copyUnitDataAttributes(unitData);
+
+        for(Skill s : unitData.getSkills()){
+            this.skills.add(new Skill(s));
+        }
+    }
+
+    public void copyUnitDataAttributes(UnitData unitData){
         this.id = unitData.id;
         this.icon = unitData.icon;
         this.name = unitData.name;
@@ -51,14 +56,8 @@ public class UnitData implements Json.Serializable {
         this.maxHealth = unitData.maxHealth;
         this.movementRange = unitData.movementRange;
         this.attackRange = unitData.attackRange;
-
         this.drawScale = unitData.drawScale;
-
         this.mapMovementSpeed = unitData.mapMovementSpeed;
-
-        for(Skill s : unitData.getSkills()){
-            this.skills.add(new Skill(s));
-        }
     }
 
 
@@ -159,5 +158,7 @@ public class UnitData implements Json.Serializable {
         }
 
     }
+
+
 
 }

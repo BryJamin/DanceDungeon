@@ -61,8 +61,10 @@ import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.BattleScreenInputSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionQueueSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BattleDeploymentSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.SelectedTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.UndoMoveSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.UtilityAiSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
 import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
@@ -109,6 +111,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
     private PlayerPartyManagementSystem playerPartyManagementSystem;
     private RenderingSystem renderingSystem;
     private TileSystem tileSystem;
+    private UndoMoveSystem undoMoveSystem;
 
 
     private ComponentMapper<PlayerControlledComponent> pcm;
@@ -170,6 +173,9 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
     private Label description;
 
     private TextButton endTurn;
+    private TextButton undoButton;
+
+
     private Stage stage;
 
     private MainGame game;
@@ -401,9 +407,37 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
             }
         });
 
+        undoButton = new TextButton(TextResource.BATTLE_UNDO, uiSkin);
+
+        undoButton.addAction(new Action() {
+            @Override
+            public boolean act(float delta) {
+
+                if(undoMoveSystem.hasSnapShot()){
+                    undoButton.setDisabled(true);
+                } else {
+                    undoButton.setDisabled(false);
+                }
+
+                return false;
+            }
+        });
+
+        undoButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                undoMoveSystem.popSnapShot();
+               // actionQueueSystem.createUpdateIntentAction();
+                world.getSystem(SelectedTargetSystem.class).setUpSelectedCharacter();
+            }
+        });
+
+        undoButton.addAction(endTurnButtonAction());
         endTurn.addAction(endTurnButtonAction());
 
         rightSideContainer.add(endTurn).width(Measure.units(20f)).height(Measure.units(7.5f)).expandX();
+        rightSideContainer.row();
+        rightSideContainer.add(undoButton).width(Measure.units(20f)).height(Measure.units(7.5f)).expandX();
     }
 
 
@@ -411,6 +445,20 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
      * Action for The End Turn Button. It hides itself when actions are Queued or when it is not the player's turn.
      */
     private Action endTurnButtonAction(){
+        return new Action() {
+            @Override
+            public boolean act(float delta) {
+                if (actionQueueSystem.isProcessing() || !turnSystem.isTurn(TurnSystem.TURN.PLAYER)) {
+                    actor.setVisible(false);
+                } else {
+                    actor.setVisible(true);
+                }
+                return false;
+            }
+        };
+    }
+
+    private Action undoTurnAction(){
         return new Action() {
             @Override
             public boolean act(float delta) {
