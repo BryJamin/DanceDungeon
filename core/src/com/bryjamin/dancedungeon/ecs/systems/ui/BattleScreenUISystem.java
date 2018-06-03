@@ -46,6 +46,7 @@ import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.FollowPositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
+import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.QueuedAction;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.AvailableActionsCompnent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
@@ -148,10 +149,6 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
     private Table tutorialInformationWindow;
     private Table tutorialArrowTable;
 
-
-
-    private Entity actionQueueEntity;
-
     //Battle State
     private Table tableForSkillButtons;
     private Table skillDescriptionTable;
@@ -211,8 +208,6 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
     @Override
     protected void initialize() {
-
-        actionQueueEntity = world.createEntity();
 
         battleDeploymentSystem.getObservers().addObserver(this);
         playerPartyManagementSystem.addObserver(this);
@@ -427,7 +422,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 undoMoveSystem.popSnapShot();
-               // actionQueueSystem.createUpdateIntentAction();
+                actionQueueSystem.createUpdateIntentAction(null);
                 world.getSystem(SelectedTargetSystem.class).setUpSelectedCharacter();
             }
         });
@@ -635,15 +630,13 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
         nextTurnBanner.addAction(a);
 
-        actionQueueSystem.pushLastAction(actionQueueEntity, new WorldConditionalAction() {
+        actionQueueSystem.pushLastAction(null, new QueuedAction() {
             @Override
-            public boolean condition(World world, Entity entity) {
+            public void act() { }
+
+            @Override
+            public boolean isComplete() {
                 return nextTurnBanner.getColor().a <= 0.1f;
-            }
-
-            @Override
-            public void performAction(World world, Entity entity) {
-
             }
         });
 

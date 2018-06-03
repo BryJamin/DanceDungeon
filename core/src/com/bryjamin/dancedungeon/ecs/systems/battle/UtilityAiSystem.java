@@ -17,6 +17,7 @@ import com.bryjamin.dancedungeon.assets.Fonts;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.UtilityAiComponent;
+import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.QueuedInstantAction;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.AvailableActionsCompnent;
@@ -209,7 +210,7 @@ public class UtilityAiSystem extends EntitySystem {
      * Calculates the decision and Entity will makes and adds those decision to the action queue.
      * @param e
      */
-    public void calculateMove(Entity e){
+    public void calculateMove(final Entity e){
 
         if(!calculateScoreForAllCoordinates(e)) return;
 
@@ -231,21 +232,13 @@ public class UtilityAiSystem extends EntitySystem {
         // (Null Skills exist if skills can't target anything on a particular coordinate)
         if((pathsMap.get(chosen.coordinates).last().equals(chosen.coordinates)) && chosen.attackScore.attack != null) {
 
-            actionQueueSystem.pushLastAction(e, new WorldConditionalAction() {
+            actionQueueSystem.pushLastAction(e, new QueuedInstantAction() {
                 @Override
-                public boolean condition(World world, Entity entity) {
-                    return true;
-                }
-
-                @Override
-                public void performAction(World world, Entity entity) {
-
-                    entity.edit().add(new StoredSkillComponent(entity.getComponent(CoordinateComponent.class).coordinates,
+                public void act() {
+                    e.edit().add(new StoredSkillComponent(e.getComponent(CoordinateComponent.class).coordinates,
                             chosen.attackScore.target, chosen.attackScore.attack));
 
                     world.getSystem(DisplayEnemyIntentUISystem.class).updateIntent();
-
-                    //chosen.s.cast(world, entity, chosen.target);
                 }
             });
 

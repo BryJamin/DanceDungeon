@@ -14,6 +14,8 @@ import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
+import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.QueuedAction;
+import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.QueuedInstantAction;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.AvailableActionsCompnent;
@@ -252,11 +254,6 @@ public class TargetingFactory {
                 coordinateComponent.coordinates, movementRange);
 
 
-
-
-
-
-
         for(final Coordinates c : coordinatesWithPathMap.orderedKeys()){
 
             Rectangle r = tileSystem.createRectangleUsingCoordinates(c);
@@ -270,8 +267,15 @@ public class TargetingFactory {
                     player.edit().add(new ReselectEntityComponent());
                     player.edit().remove(SelectedEntityComponent.class);
                     world.getSystem(ActionQueueSystem.class).createSnapAction(world.createEntity());
-                    world.getSystem(ActionQueueSystem.class).pushLastAction(player, createMovementAction(player, coordinatesWithPathMap.get(c)));
-                    world.getSystem(ActionQueueSystem.class).createUpdateIntentAction(world.createEntity());
+                    world.getSystem(ActionQueueSystem.class).createMovementAction(player, coordinatesWithPathMap.get(c));
+
+                    world.getSystem(ActionQueueSystem.class).pushLastAction(player, new QueuedInstantAction() {
+                        @Override
+                        public void act() {
+                            player.getComponent(AvailableActionsCompnent.class).movementActionAvailable = false;
+                        }
+                    });
+                    world.getSystem(ActionQueueSystem.class).createUpdateIntentAction(null);
 
                 }
             }));
@@ -368,42 +372,6 @@ public class TargetingFactory {
                         .build()));
 
     }
-
-
-    public WorldConditionalAction createMovementAction(final Entity entity, final Queue<Coordinates> coordinatesQueue) {
-        return new WorldConditionalAction() {
-            @Override
-            public boolean condition(World world, Entity entity) {
-                return entity.getComponent(MoveToComponent.class).isEmpty();
-            }
-
-            @Override
-            public void performAction(World world, Entity entity) {
-                for (Coordinates c : coordinatesQueue) {
-                    entity.getComponent(MoveToComponent.class).movementPositions.add(
-                            world.getSystem(TileSystem.class).getPositionUsingCoordinates(
-                                    c, entity.getComponent(CenteringBoundComponent.class).bound));
-                }
-
-
-                //pushLastAction
-                entity.getComponent(AvailableActionsCompnent.class).movementActionAvailable = false;
-
-                //If no enemies are in range at the end of the potential movement, set attack action availiable to false
-                if (new TargetingFactory().getTargetsInRange(world, coordinatesQueue.last(), entity.getComponent(TargetComponent.class).getTargets(world),
-                        entity.getComponent(UnitComponent.class).getUnitData().getAttackRange()).size <= 0) {
-
-
-
-                    //entity.getComponent(AvailableActionsCompnent.class).attackActionAvailable = false;
-                }
-
-
-
-            }
-        };
-    }
-
 
     /**
      * Gets All targets of an entity's target component that are in range of a given co-ordinates

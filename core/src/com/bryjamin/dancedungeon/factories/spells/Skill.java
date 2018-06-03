@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
+import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.QueuedInstantAction;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.AvailableActionsCompnent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
@@ -378,16 +379,11 @@ public class Skill {
 
             if(isUnkillable){
                 e.edit().add(new UnkillableComponent());
-                world.getSystem(ActionQueueSystem.class).pushLastAction(e, new WorldConditionalAction() {
+                world.getSystem(ActionQueueSystem.class).pushLastAction(e, new QueuedInstantAction() {
                     @Override
-                    public boolean condition(World world, Entity entity) {
-                        return true;
-                    }
-
-                    @Override
-                    public void performAction(World world, Entity entity) {
-                        if(entity.getComponent(UnkillableComponent.class) != null) {
-                            entity.edit().remove(UnkillableComponent.class);
+                    public void act() {
+                        if(e.getComponent(UnkillableComponent.class) != null) {
+                            e.edit().remove(UnkillableComponent.class);
                         }
                     }
                 });

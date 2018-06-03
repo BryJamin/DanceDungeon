@@ -9,6 +9,8 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.Queue;
+import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.QueuedAction;
+import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.QueuedInstantAction;
 import com.bryjamin.dancedungeon.utils.observer.Observable;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
@@ -33,7 +35,7 @@ import java.util.UUID;
 
 public class ActionQueueSystem extends EntitySystem {
 
-    private OrderedMap<Entity, Array<WorldConditionalAction>> queuedActionMap = new OrderedMap<>();
+    private OrderedMap<Entity, Array<QueuedAction>> queuedActionMap = new OrderedMap<>();
 
 
     private Queue<String> queuedActionIds = new Queue<>();
@@ -140,12 +142,15 @@ public class ActionQueueSystem extends EntitySystem {
             for(PushedAction p : pushedActions){
 
                 //Remove the action from the map.
-                queuedActionMap.get(p.entity).removeValue(p.worldConditionalAction, true);
+                if(p.hasOwner()) {
+                    queuedActionMap.get(p.entity).removeValue(p.queuedAction, true);
 
-                //Checks if the entity is featured in any other actions before removing the identifying Component
-                if(queuedActionMap.get(p.entity).size == 0){
-                    p.entity.edit().remove(QueuedActionComponent.class);
-                    queuedActionMap.remove(p.entity);
+                    //Checks if the entity is featured in any other actions before removing the identifying Component
+                    if (queuedActionMap.get(p.entity).size == 0) {
+                        p.entity.edit().remove(QueuedActionComponent.class);
+                        queuedActionMap.remove(p.entity);
+                    }
+
                 }
             }
 
@@ -158,31 +163,34 @@ public class ActionQueueSystem extends EntitySystem {
     /**
      * Pushes a new action into the system checks if the action is apart of an 'action id' group that may exist.
      * @param e - Entity assosiated with the action
-     * @param wca - The action
+     * @param qa - The action
      * @param id - The action id group.
      */
-    public void pushLastAction(Entity e, WorldConditionalAction wca, String id) {
+    public void pushLastAction(Entity e, String id, QueuedAction qa) {
 
         if(queuedActionIds.indexOf(id, false) == -1){ //Checks if the id group exists, if it doesn't it creates it.
             queuedActionIds.addLast(id);
             actionMonitor.put(id, new Array<PushedAction>());
-            actionMonitor.get(id).add(new PushedAction(e, wca, id));
+            actionMonitor.get(id).add(new PushedAction(e, qa, id));
         } else {
-            actionMonitor.get(id).add(new PushedAction(e, wca, id));
+            actionMonitor.get(id).add(new PushedAction(e, qa, id));
         }
 
-        if(queuedActionMap.containsKey(e)){ //Checks if the entity already has queued actions.
-            queuedActionMap.get(e).add(wca); //Adds the given action to the entity's action list.
-        } else {//Adds an identifier component to new entity's to the system
-            e.edit().add(new QueuedActionComponent());
-            queuedActionMap.put(e, new Array<WorldConditionalAction>());
+        if(e != null) {
+            if (queuedActionMap.containsKey(e)) { //Checks if the entity already has queued actions.
+                queuedActionMap.get(e).add(qa); //Adds the given action to the entity's action list.
+            } else {//Adds an identifier component to new entity's to the system
+                e.edit().add(new QueuedActionComponent());
+                queuedActionMap.put(e, new Array<QueuedAction>());
+            }
         }
+
         processingFlag = true; //Turns on the system
     }
 
 
-    public void pushLastAction(Entity e, WorldConditionalAction wca) {
-        pushLastAction(e, wca, UUID.randomUUID().toString());
+    public void pushLastAction(Entity e, QueuedAction qa) {
+        pushLastAction(e, UUID.randomUUID().toString(), qa);
         processingFlag = true; //Turns on the system
     }
 
@@ -196,26 +204,25 @@ public class ActionQueueSystem extends EntitySystem {
     }
 
 
-    public void createMovementAction(Entity entity, final Iterable<Coordinates> coordinatesSequence) {
+    public void createMovementAction(final Entity entity, final Iterable<Coordinates> coordinatesSequence) {
 
         if(!mtcMapper.has(entity)) return;
 
-        pushLastAction(entity, new WorldConditionalAction() {
+        pushLastAction(entity, new QueuedAction() {
             @Override
-            public boolean condition(World world, Entity entity) {
-
-                return entity.getComponent(MoveToComponent.class).isEmpty();
-            }
-
-            @Override
-            public void performAction(World world, Entity entity) {
-
+            public void act() {
                 for (Coordinates c : coordinatesSequence) {
                     entity.getComponent(MoveToComponent.class).movementPositions.add(
                             world.getSystem(TileSystem.class).getPositionUsingCoordinates(
                                     c, entity.getComponent(CenteringBoundComponent.class).bound));
                 }
             }
+
+            @Override
+            public boolean isComplete() {
+                return entity.getComponent(MoveToComponent.class).isEmpty();
+            }
+
         });
 
     }
@@ -223,47 +230,40 @@ public class ActionQueueSystem extends EntitySystem {
 
     public void createDeathWaitAction(Entity entity) {
 
-        pushLastAction(entity, new WorldConditionalAction() {
+        pushLastAction(entity, new QueuedAction() {
             @Override
-            public boolean condition(World world, Entity entity) {
+            public void act() { }
+
+            @Override
+            public boolean isComplete() {
                 return false;
             }
 
-            @Override
-            public void performAction(World world, Entity entity) {
-            }
         });
 
     }
 
     public void createDeathWaitAction(Entity entity, String id) {
 
-        pushLastAction(entity, new WorldConditionalAction() {
+        pushLastAction(entity, id, new QueuedAction() {
             @Override
-            public boolean condition(World world, Entity entity) {
-                return false;
-            }
+            public void act() { }
 
             @Override
-            public void performAction(World world, Entity entity) {
+            public boolean isComplete() {
+                return false;
             }
-        }, id);
+        });
 
     }
 
-    public void createMovementAction(Entity entity, final Vector3... positions){
+    public void createMovementAction(final Entity entity, final Vector3... positions){
 
         if(!mtcMapper.has(entity)) return;
 
-        pushLastAction( entity, new WorldConditionalAction() {
+        pushLastAction(entity, new QueuedAction() {
             @Override
-            public boolean condition(World world, Entity entity) {
-                return entity.getComponent(MoveToComponent.class).isEmpty();
-            }
-
-            @Override
-            public void performAction(World world, Entity entity) {
-
+            public void act() {
                 if(entity.getComponent(MoveToComponent.class) == null) {
                     return;
                 }
@@ -271,23 +271,22 @@ public class ActionQueueSystem extends EntitySystem {
                 for (Vector3 p : positions) {
                     entity.getComponent(MoveToComponent.class).movementPositions.add(p);
                 }
+            }
+
+            @Override
+            public boolean isComplete() {
+                return entity.getComponent(MoveToComponent.class).isEmpty();
             }
         });
     }
 
-    public void createMovementAction(Entity entity, String id, final Vector3... positions){
+    public void createMovementAction(final Entity entity, String id, final Vector3... positions){
 
         if(!mtcMapper.has(entity)) return;
 
-        pushLastAction( entity, new WorldConditionalAction() {
+        pushLastAction(entity, id, new QueuedAction() {
             @Override
-            public boolean condition(World world, Entity entity) {
-                return entity.getComponent(MoveToComponent.class).isEmpty();
-            }
-
-            @Override
-            public void performAction(World world, Entity entity) {
-
+            public void act() {
                 if(entity.getComponent(MoveToComponent.class) == null) {
                     return;
                 }
@@ -296,7 +295,14 @@ public class ActionQueueSystem extends EntitySystem {
                     entity.getComponent(MoveToComponent.class).movementPositions.add(p);
                 }
             }
-        }, id);
+
+            @Override
+            public boolean isComplete() {
+                return entity.getComponent(MoveToComponent.class).isEmpty();
+            }
+
+
+        });
     }
 
 
@@ -305,23 +311,32 @@ public class ActionQueueSystem extends EntitySystem {
         private String actionGroupId = UUID.randomUUID().toString();
         private boolean isActionPerformed = false;
         private Entity entity;
-        private WorldConditionalAction worldConditionalAction;
+        private QueuedAction queuedAction;
 
-        public PushedAction(Entity entity, WorldConditionalAction worldConditionalAction, String id){
+        public PushedAction(Entity entity, QueuedAction queuedAction, String id){
             this.entity = entity;
-            this.worldConditionalAction = worldConditionalAction;
+            this.queuedAction = queuedAction;
             this.actionGroupId = id;
         }
 
-        public PushedAction(Entity entity, WorldConditionalAction worldConditionalAction){
+        public PushedAction(Entity entity, QueuedAction queuedAction){
             this.entity = entity;
-            this.worldConditionalAction = worldConditionalAction;
+            this.queuedAction = queuedAction;
         }
 
 
+        public PushedAction(QueuedAction queuedAction){
+            this.entity = null;
+            this.queuedAction = queuedAction;
+        }
+
         public void performAction(){
             isActionPerformed = true;
-            worldConditionalAction.performAction(world, entity);
+            queuedAction.act();
+        }
+
+        public boolean hasOwner(){
+            return entity != null;
         }
 
         public void setActionGroupId(String actionGroupId) {
@@ -333,26 +348,18 @@ public class ActionQueueSystem extends EntitySystem {
         }
 
         public boolean isCompleted() {
-            return worldConditionalAction.condition(world, entity);
+            return queuedAction.isComplete();
         }
 
     }
 
-
-
-    public void createDamageApplicationAction(Entity entity, final int damage){
+    public void createDamageApplicationAction(final Entity entity, final int damage){
 
         if(!mtcMapper.has(entity)) return;
 
-        pushLastAction(entity, new WorldConditionalAction() {
+        pushLastAction(entity, new QueuedInstantAction() {
             @Override
-            public boolean condition(World world, Entity entity) {
-                return true;
-            }
-
-            @Override
-            public void performAction(World world, Entity entity) {
-
+            public void act() {
                 if(entity.getComponent(HealthComponent.class) == null) {
                     return;
                 }
@@ -361,66 +368,27 @@ public class ActionQueueSystem extends EntitySystem {
         });
     }
 
-
-    public void createDamageApplicationAction(String skillId, Entity entity, final int damage){
+    public void createDamageApplicationAction(String skillId, final Entity entity, final int damage){
 
         if(!mtcMapper.has(entity)) return;
 
-        pushLastAction(entity, new WorldConditionalAction() {
+        pushLastAction(entity, skillId, new QueuedInstantAction() {
             @Override
-            public boolean condition(World world, Entity entity) {
-                return true;
-            }
-
-            @Override
-            public void performAction(World world, Entity entity) {
-
+            public void act() {
                 if(entity.getComponent(HealthComponent.class) == null) {
                     return;
                 }
                 entity.getComponent(HealthComponent.class).applyDamage(damage);
             }
-        }, skillId);
-    }
-
-
-    public void createASyncMovementAction(Entity entity, final Vector3... positions){
-
-        if(!mtcMapper.has(entity)) return;
-
-        pushLastAction(entity, new WorldConditionalAction() {
-            @Override
-            public boolean condition(World world, Entity entity) {
-                return entity.getComponent(MoveToComponent.class).isEmpty();
-            }
-
-            @Override
-            public void performAction(World world, Entity entity) {
-
-                if(entity.getComponent(MoveToComponent.class) == null) {
-                    return;
-                }
-
-
-                for (Vector3 p : positions) {
-                    entity.getComponent(MoveToComponent.class).movementPositions.add(p);
-                }
-            }
         });
     }
-
 
 
     public void createUpdateIntentAction(Entity entity){
 
-        pushLastAction(entity, new WorldConditionalAction() {
+        pushLastAction(entity, new QueuedInstantAction() {
             @Override
-            public boolean condition(World world, Entity entity) {
-                return true;
-            }
-
-            @Override
-            public void performAction(World world, Entity entity) {
+            public void act() {
                 world.getSystem(DisplayEnemyIntentUISystem.class).updateIntent();
             }
         });
@@ -429,53 +397,22 @@ public class ActionQueueSystem extends EntitySystem {
 
     public void createSnapAction(Entity entity){
 
-        pushLastAction(entity, new WorldConditionalAction() {
+        pushLastAction(entity, new QueuedInstantAction() {
             @Override
-            public boolean condition(World world, Entity entity) {
-                return true;
-            }
-
-            @Override
-            public void performAction(World world, Entity entity) {
+            public void act() {
                 world.getSystem(UndoMoveSystem.class).snapShotUnits();
             }
         });
     }
-
-
-    public void createPopSnapAction(Entity entity){
-
-        pushLastAction(entity, new WorldConditionalAction() {
-            @Override
-            public boolean condition(World world, Entity entity) {
-                return true;
-            }
-
-            @Override
-            public void performAction(World world, Entity entity) {
-                world.getSystem(UndoMoveSystem.class).popSnapShot();
-            }
-        });
-    }
-
 
     public void createClearSnapShotAction(Entity entity){
 
-        pushLastAction(entity, new WorldConditionalAction() {
+        pushLastAction(entity, new QueuedInstantAction() {
             @Override
-            public boolean condition(World world, Entity entity) {
-                return true;
-            }
-
-            @Override
-            public void performAction(World world, Entity entity) {
+            public void act() {
                 world.getSystem(UndoMoveSystem.class).snapShotUnits();
             }
         });
     }
 
-/*    protected boolean checkProcessing() {
-        processingFlag = actionQueue.size != 0;
-        return processingFlag;
-    }*/
 }

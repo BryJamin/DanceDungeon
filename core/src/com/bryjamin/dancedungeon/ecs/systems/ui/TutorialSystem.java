@@ -12,6 +12,8 @@ import com.badlogic.gdx.utils.Queue;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.UtilityAiComponent;
+import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.QueuedAction;
+import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.QueuedInstantAction;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
@@ -344,43 +346,37 @@ public class TutorialSystem extends EntitySystem implements Observer{
 
     private void createMovementActionForEnemyEntity(final Entity e, final Coordinates destination){
 
-        actionQueueSystem.pushLastAction(e, new WorldConditionalAction() {
+        actionQueueSystem.pushLastAction(e, new QueuedAction() {
             @Override
-            public boolean condition(World world, Entity entity) {
-                return entity.getComponent(MoveToComponent.class).isEmpty();
-            }
-
-            @Override
-            public void performAction(World world, Entity entity) {
-
+            public void act() {
                 Queue<Coordinates> coordinatesQueue = new Queue<>();
                 tileSystem.findShortestPath(e, coordinatesQueue, destination, 1000);
 
 
                 for (Coordinates c : coordinatesQueue) {
-                    entity.getComponent(MoveToComponent.class).movementPositions.add(
+                    e.getComponent(MoveToComponent.class).movementPositions.add(
                             world.getSystem(TileSystem.class).getPositionUsingCoordinates(
-                                    c, entity.getComponent(CenteringBoundComponent.class).bound));
+                                    c, e.getComponent(CenteringBoundComponent.class).bound));
                 }
-
             }
+
+            @Override
+            public boolean isComplete() {
+                return e.getComponent(MoveToComponent.class).isEmpty();
+            }
+
         });
 
     }
 
 
-    private void createAttackActionForEnemyEntity(Entity e, final Skill s, final Coordinates target){
+    private void createAttackActionForEnemyEntity(final Entity e, final Skill s, final Coordinates target){
 
         //MOVE ENEMY INTO PLACE
-        actionQueueSystem.pushLastAction(e, new WorldConditionalAction() {
+        actionQueueSystem.pushLastAction(e, new QueuedInstantAction() {
             @Override
-            public boolean condition(World world, Entity entity) {
-                return true;
-            }
-
-            @Override
-            public void performAction(World world, Entity entity) {
-                entity.edit().add(new StoredSkillComponent(entity.getComponent(CoordinateComponent.class).coordinates,
+            public void act() {
+                e.edit().add(new StoredSkillComponent(e.getComponent(CoordinateComponent.class).coordinates,
                         target, s));
 
                 world.getSystem(DisplayEnemyIntentUISystem.class).updateIntent();
@@ -394,18 +390,18 @@ public class TutorialSystem extends EntitySystem implements Observer{
     private void createTipWorldAction(final Rectangle r, final TutorialState tutorialState){
 
 
-        actionQueueSystem.pushLastAction(world.createEntity(), new WorldConditionalAction() {
+        actionQueueSystem.pushLastAction(world.createEntity(), new QueuedAction() {
 
             Table t;
 
             @Override
-            public boolean condition(World world, Entity entity) {
-                return !t.isVisible();
+            public void act() {
+                t = battleScreenUISystem.createTutorialWindow(r, tutorialState);
             }
 
             @Override
-            public void performAction(World world, Entity entity) {
-                t = battleScreenUISystem.createTutorialWindow(r, tutorialState);
+            public boolean isComplete() {
+                return !t.isVisible();
             }
 
         });
@@ -416,15 +412,10 @@ public class TutorialSystem extends EntitySystem implements Observer{
     private void createTutorialStateTransferAction(final TutorialState tutorialStateChange){
 
 
-        actionQueueSystem.pushLastAction(rangedEnemy, new WorldConditionalAction() {
+        actionQueueSystem.pushLastAction(rangedEnemy, new QueuedInstantAction() {
 
             @Override
-            public boolean condition(World world, Entity entity) {
-                return true;
-            }
-
-            @Override
-            public void performAction(World world, Entity entity) {
+            public void act() {
                 tutorialState = tutorialStateChange;
             }
 
