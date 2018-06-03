@@ -93,7 +93,7 @@ public class HealthBarSystem extends EntityProcessingSystem {
         HealthBar healthBar = entityHealthBarObjectMap.get(e);
 
         float maxHealth = healthComponent.maxHealth;
-        float health = healthComponent.health;
+        float health = healthComponent.health < 0 ? 0 : healthComponent.health;
 
         //Black bar
         float width = ((rect.getWidth() / 5) * 3.5f);

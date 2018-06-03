@@ -41,8 +41,7 @@ public class MenuScreen extends AbstractScreen {
 
 
     private void createWorld() {
-
-
+        
         WorldConfiguration config = new WorldConfigurationBuilder()
                 .with(WorldConfigurationBuilder.Priority.HIGHEST,
 

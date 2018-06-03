@@ -57,4 +57,8 @@ public class HealthComponent extends Component {
         accumulatedHealing = 0;
     }
 
+    public boolean isDying(){
+        return health - accumulatedDamage <= 0;
+    }
+
 }

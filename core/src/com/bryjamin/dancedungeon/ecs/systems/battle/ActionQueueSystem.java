@@ -362,6 +362,28 @@ public class ActionQueueSystem extends EntitySystem {
     }
 
 
+    public void createDamageApplicationAction(String skillId, Entity entity, final int damage){
+
+        if(!mtcMapper.has(entity)) return;
+
+        pushLastAction(entity, new WorldConditionalAction() {
+            @Override
+            public boolean condition(World world, Entity entity) {
+                return true;
+            }
+
+            @Override
+            public void performAction(World world, Entity entity) {
+
+                if(entity.getComponent(HealthComponent.class) == null) {
+                    return;
+                }
+                entity.getComponent(HealthComponent.class).applyDamage(damage);
+            }
+        }, skillId);
+    }
+
+
     public void createASyncMovementAction(Entity entity, final Vector3... positions){
 
         if(!mtcMapper.has(entity)) return;

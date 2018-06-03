@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
+import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.AvailableActionsCompnent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
@@ -20,6 +21,7 @@ import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.KillOnAnimationEndComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.SolidComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.UnkillableComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionQueueSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.factories.spells.animations.BasicProjectile;
@@ -43,7 +45,7 @@ public class Skill {
     public enum Targeting {Ally, Normal, Self, StraightShot}
     public enum ActionType {UsesMoveAndAttackAction, UsesAttackAction, UsesMoveAction, Free}
     public enum SpellAnimation {Projectile, Slash, Glitter, Thrown}
-    public enum AttackType {Heal, HealOverTime, Damage, Burn}
+    public enum AttackType {Heal, HealOverTime, Damage, Burn, None}
     public enum SpellCoolDown {NoCoolDown, OverTime, Limited}
     private transient String skillId = UUID.randomUUID().toString();
     private String name = "N/A";
@@ -273,7 +275,10 @@ public class Skill {
         //If a coordinate is selected outside of map coordinates
         if(entityArray == null) return;
 
-        for (Entity e : world.getSystem(TileSystem.class).getCoordinateMap().get(target)) {
+
+        boolean isUnkillable = false;
+
+        for (final Entity e : world.getSystem(TileSystem.class).getCoordinateMap().get(target)) {
 
             if(stun > 0){
                 e.getComponent(UnitComponent.class).getUnitData().stun = stun;
@@ -285,7 +290,13 @@ public class Skill {
                 switch (attackType) {
 
                     case Damage:
+
+                        if(e.getComponent(HealthComponent.class).health - baseDamage < 0){
+                            isUnkillable = true;
+                        }
+
                         e.getComponent(HealthComponent.class).applyDamage(baseDamage);
+                        
                         break;
                     case Heal:
                         e.getComponent(HealthComponent.class).applyHealing(baseDamage);
@@ -364,6 +375,24 @@ public class Skill {
 
                 }
             }
+
+            if(isUnkillable){
+                e.edit().add(new UnkillableComponent());
+                world.getSystem(ActionQueueSystem.class).pushLastAction(e, new WorldConditionalAction() {
+                    @Override
+                    public boolean condition(World world, Entity entity) {
+                        return true;
+                    }
+
+                    @Override
+                    public void performAction(World world, Entity entity) {
+                        if(entity.getComponent(UnkillableComponent.class) != null) {
+                            entity.edit().remove(UnkillableComponent.class);
+                        }
+                    }
+                });
+            }
+
 
         }
 

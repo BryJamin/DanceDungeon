@@ -8,6 +8,8 @@ import com.bryjamin.dancedungeon.ecs.components.actions.OnDeathActionsComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.QueuedActionComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.UnkillableComponent;
+
 /**
  * Created by BB on 15/10/2017.
  *
@@ -23,7 +25,7 @@ public class DeathSystem extends EntityProcessingSystem {
 
     @SuppressWarnings("unchecked")
     public DeathSystem() {
-        super(Aspect.all(DeadComponent.class));
+        super(Aspect.all(DeadComponent.class).exclude(UnkillableComponent.class));
     }
 
     @Override
