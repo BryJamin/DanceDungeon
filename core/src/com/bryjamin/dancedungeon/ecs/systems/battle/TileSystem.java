@@ -21,6 +21,7 @@ import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.OutOfBoundsComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.SolidComponent;
 import com.bryjamin.dancedungeon.factories.decor.FloorFactory;
@@ -47,6 +48,7 @@ public class TileSystem extends EntitySystem {
     private ComponentMapper<PlayerControlledComponent> pcm;
     private ComponentMapper<CoordinateComponent> cm;
     private ComponentMapper<SolidComponent> sm;
+    private ComponentMapper<OutOfBoundsComponent> outOfBoundsm;
     private ComponentMapper<EnemyComponent> enemym;
 
     private TiledMap map;
@@ -81,6 +83,7 @@ public class TileSystem extends EntitySystem {
 
     //Map used to show if a space is occupied
     private ArrayMap<Entity, Coordinates> occupiedMap = new ArrayMap<>();
+    private ArrayMap<Entity, Coordinates> outOfBoundsMap = new ArrayMap<>();
 
     private OrderedMap<Coordinates, Rectangle> rectangleMap = new OrderedMap<Coordinates, Rectangle>();
 
@@ -106,9 +109,16 @@ public class TileSystem extends EntitySystem {
 
         UnitFactory unitFactory = new UnitFactory();
 
-        for(int i = 0; i < objects.getWidth(); i++){
-            for(int j = 0; j < objects.getHeight(); j++){
-                if(objects.getCell(i, j) != null) {
+        for(int i = -1; i <= objects.getWidth(); i++){
+            for(int j = -1; j <= objects.getHeight(); j++){
+
+
+                System.out.println(new Coordinates(i, j));
+
+                if(i < 0 || i >= objects.getWidth() || j < 0 || j >= objects.getHeight()){
+
+                    unitFactory.outOfBoundsTile(world, new Coordinates(i, j));
+                }else if(objects.getCell(i, j) != null) {
                     TiledMapTile tile = objects.getCell(i, j).getTile();
                     if (tile.getProperties().containsKey(MapData.OBJECT_LAYER_TILE_INFO_PROPERTY)) {
                         String property = (String) tile.getProperties().get(MapData.OBJECT_LAYER_TILE_INFO_PROPERTY);
@@ -123,7 +133,7 @@ public class TileSystem extends EntitySystem {
                     }
                 } else { //Create a deployment zone depending on
 
-                    if(i < 3) {
+                    if(i < 3 && j > 0 && j < objects.getHeight()) {
                         allySpawningLocations.add(new Coordinates(i, j));
                         //unitFactory.baseDeploymentZone(world, createRectangleUsingCoordinates(new Coordinates(i, j)), new Coordinates(i, j));
                     } else if(i > 4){
@@ -136,12 +146,15 @@ public class TileSystem extends EntitySystem {
         }
 
 
-        for (int i = 0; i < columns; i++) {
-            for (int j = 0; j < rows; j++) {
+        for (int i = -1; i < columns + 1; i++) {
+            for (int j = -1; j < rows + 1; j++) {
                 coordinateMap.put(new Coordinates(i, j), new Array<Entity>());
                 rectangleMap.put(new Coordinates(i, j), createRectangleUsingCoordinates(new Coordinates(i, j)));
             }
         }
+
+        //Out of bounds co-ordinates
+
 
         new FloorFactory().createFloor(world, originX, originY, width, height, rows, columns);
 
@@ -228,6 +241,10 @@ public class TileSystem extends EntitySystem {
 
         if(sm.has(e)) { //'Solid' entities are tracked in the occupied map
             occupiedMap.put(e, coordinates);
+        }
+
+        if(outOfBoundsm.has(e)){
+            outOfBoundsMap.put(e, coordinates);
         }
 
         if(coordinateMap.get(coordinates) != null) {//Coordinate map tracks all entities in the coordinate
@@ -393,20 +410,7 @@ public class TileSystem extends EntitySystem {
 
     public boolean findShortestPath(Entity e, Queue<Coordinates> fillQueue, Array<Coordinates> targets, int maxDistance) {
 
-        AStarPathCalculator aStarPathCalculator;
-
-        if(pcm.has(e)) {
-            aStarPathCalculator = new AStarPathCalculator(coordinateMap.keys().toArray(), occupiedMap.values().toArray(),
-                    playerControlledMap.values().toArray());
-
-        } else {
-
-            aStarPathCalculator = new AStarPathCalculator(
-                    coordinateMap.keys().toArray(),
-                    occupiedMap.values().toArray(),
-                    enemyMap.values().toArray());
-        }
-        return aStarPathCalculator.findShortestPathMultipleChoice(fillQueue,
+        return createAStarPathCalculator(e).findShortestPathMultipleChoice(fillQueue,
                 e.getComponent(CoordinateComponent.class).coordinates,
                 targets,
                 maxDistance);
@@ -417,12 +421,17 @@ public class TileSystem extends EntitySystem {
 
         AStarPathCalculator aStarPathCalculator;
 
+        Array<Coordinates> coordinates = new Array<>();
+
+        coordinates.addAll(occupiedMap.values().toArray());
+        coordinates.addAll(outOfBoundsMap.values().toArray());
+
         if(pcm.has(e)) {
-            aStarPathCalculator = new AStarPathCalculator(coordinateMap.keys().toArray(), occupiedMap.values().toArray(),
+            aStarPathCalculator = new AStarPathCalculator(coordinateMap.keys().toArray(), coordinates,
                     playerControlledMap.values().toArray());
 
         } else {
-            aStarPathCalculator = new AStarPathCalculator(coordinateMap.keys().toArray(), occupiedMap.values().toArray(),
+            aStarPathCalculator = new AStarPathCalculator(coordinateMap.keys().toArray(), coordinates,
                     enemyMap.values().toArray());
         }
 

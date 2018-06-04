@@ -11,9 +11,11 @@ import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.AvailableActionsCompnent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.TileEffectComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.DeploymentComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.OutOfBoundsComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UnPushableComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
@@ -58,6 +60,24 @@ public class UnitFactory {
 
         return e;
 
+    }
+
+
+    public Entity outOfBoundsTile(World world, Coordinates c){
+        Entity e = baseTileBag(world, c);
+        e.edit().remove(SolidComponent.class);
+        // e.edit().remove(UnPushableComponent.class);
+        e.edit().add(new OutOfBoundsComponent());
+        e.edit().add(new TileEffectComponent(TileEffectComponent.Effect.DEATH));
+
+
+        UnitData unitData = new UnitData();
+        unitData.setHealth(2);
+        unitData.setHealth(2);
+
+        e.edit().add(new UnitComponent(unitData));
+        e.getComponent(DrawableComponent.class).drawables.getColor().set(new Color(Color.CYAN));
+        return e;
     }
 
 

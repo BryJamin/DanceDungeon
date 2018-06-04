@@ -12,7 +12,7 @@ public class MapData {
 
     public static final String OBJECT_LAYER_KEY = "Object";
     public static final String OBJECT_LAYER_TILE_INFO_PROPERTY = "Type";
-    public static final String BACKGROUND_LAYER_KEY = "backgrounds";
+    public static final String BACKGROUND_LAYER_KEY = " backgrounds";
 
 
     public static final String OBJECTS_TILE_WALL = "Wall";

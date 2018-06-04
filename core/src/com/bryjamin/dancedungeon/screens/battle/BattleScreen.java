@@ -14,6 +14,7 @@ import com.bryjamin.dancedungeon.ecs.systems.audio.SoundSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BattleDeploymentSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.DisplayEnemyIntentUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.StunnedSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.TileEffectSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.UndoMoveSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.UtilityAiSystem;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.ArchingTextureSystem;
@@ -103,10 +104,12 @@ public class BattleScreen extends AbstractScreen {
                         new MovementSystem(),
                         new FollowPositionSystem(),
                         new UpdateBoundPositionsSystem(),
-
                         new MoveToTargetSystem()
                 )
                 .with(WorldConfigurationBuilder.Priority.HIGH,
+
+                        new TileEffectSystem(),
+
                         new ConditionalActionSystem(),
                         new TurnSystem(),
                         new HealthSystem(),

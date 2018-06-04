@@ -292,11 +292,15 @@ public class Skill {
 
                     case Damage:
 
-                        if(e.getComponent(HealthComponent.class).health - baseDamage < 0){
+                        if(e.getComponent(HealthComponent.class).health - baseDamage <= 0){
                             isUnkillable = true;
+                            e.edit().add(new UnkillableComponent());
                         }
 
+
+
                         e.getComponent(HealthComponent.class).applyDamage(baseDamage);
+
 
                         break;
                     case Heal:
