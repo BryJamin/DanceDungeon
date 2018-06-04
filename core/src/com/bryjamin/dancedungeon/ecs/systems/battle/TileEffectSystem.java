@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TileEffectComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
 import com.bryjamin.dancedungeon.utils.observer.Observable;
 import com.bryjamin.dancedungeon.utils.observer.Observer;
 
@@ -48,7 +49,7 @@ public class TileEffectSystem extends EntityProcessingSystem implements Observer
                 switch (effect){
                     case DEATH:
                         if(hm.has(occupier)){
-                            hm.get(occupier).applyDamage(hm.get(occupier).maxHealth * 2);
+                            occupier.edit().add(new DeadComponent());
                         };
                 }
             }
