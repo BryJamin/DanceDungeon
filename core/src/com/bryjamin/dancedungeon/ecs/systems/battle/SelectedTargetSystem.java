@@ -42,12 +42,16 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
     @Override
     public void inserted(Entity e) {
 
+        System.out.println("Before" + this.getEntities().size());
+
         if (this.getEntities().size() >= 1) {
             for (Entity entity : this.getEntities()) {
                 entity.edit().remove(SelectedEntityComponent.class);
             }
             world.getSystem(BattleScreenUISystem.class).resetBottomContainer();
         }
+
+        System.out.println("After" + this.getEntities().size());
 
         setUpCharacter(e);
     }
@@ -110,7 +114,12 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
 
 
     public void setUpSelectedCharacter() {
+
+        System.out.println(this.getEntities().size());
+
         if(this.getEntities().size() > 0){
+
+
             setUpCharacter(this.getEntities().get(0));
         }
     }

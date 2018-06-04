@@ -29,6 +29,7 @@ import com.bryjamin.dancedungeon.ecs.components.identifiers.ReselectEntityCompon
 import com.bryjamin.dancedungeon.ecs.components.identifiers.SelectedEntityComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionQueueSystem;
+import com.bryjamin.dancedungeon.ecs.systems.battle.UndoMoveSystem;
 import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.utils.HitBox;
@@ -131,6 +132,7 @@ public class TargetingFactory {
             @Override
             public void performAction(World world, final Entity e) {
                 skill.cast(world, player, coordinates);
+                world.getSystem(UndoMoveSystem.class).clearSnapShots();
                 world.getSystem(BattleScreenUISystem.class).resetBottomContainer();
             }
         }));

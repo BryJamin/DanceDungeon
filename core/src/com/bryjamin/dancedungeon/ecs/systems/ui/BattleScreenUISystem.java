@@ -47,6 +47,7 @@ import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.FollowPositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.QueuedAction;
+import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.QueuedInstantAction;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.AvailableActionsCompnent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
@@ -423,7 +424,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
             public void changed(ChangeEvent event, Actor actor) {
                 undoMoveSystem.popSnapShot();
                 actionQueueSystem.createUpdateIntentAction(null);
-                world.getSystem(SelectedTargetSystem.class).setUpSelectedCharacter();
+                resetBottomContainer();
             }
         });
 

@@ -78,6 +78,8 @@ public class ActionQueueSystem extends EntitySystem {
 
         for(PushedAction p : copy){
 
+            if(p.entity == null) continue;
+
             boolean remove = true;
             for(Entity e : this.getEntities()){
                 if(p.entity.equals(e)){
