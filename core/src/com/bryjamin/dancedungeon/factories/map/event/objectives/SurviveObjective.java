@@ -27,4 +27,9 @@ public class SurviveObjective extends AbstractObjective {
         super.update(o);
     }
 
+    @Override
+    public SurviveObjective clone() {
+        return new SurviveObjective(rounds);
+    }
+
 }

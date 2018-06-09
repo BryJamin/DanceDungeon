@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.bryjamin.dancedungeon.factories.map.event.EventManager;
+import com.bryjamin.dancedungeon.factories.map.event.EventLibrary;
 import com.bryjamin.dancedungeon.factories.map.event.MapEvent;
 import com.bryjamin.dancedungeon.factories.map.event.MapSection;
 import com.bryjamin.dancedungeon.utils.Measure;
@@ -43,7 +43,7 @@ public class MapGenerator {
     private static final boolean IGNORE_FAILS_FOR_VISUAL_DEBUGGING = false;
 
 
-    private EventManager eventManager = new EventManager();
+    private EventLibrary eventLibrary = new EventLibrary();
 
     private WeightedRoll<String> battleEventRoller = new WeightedRoll<String>(MathUtils.random);
 
@@ -98,7 +98,7 @@ public class MapGenerator {
      */
     private void setupMapEventTypes(Array<MapSection> mapSections) throws NodeWithSameNeighbourSpecialEventException, IncorrectNumberOfSpecialEventException {
 
-        for(String s : eventManager.getKeys()){
+        for(String s : EventLibrary.getKeys()){
             battleEventRoller.addWeightedObjects(new WeightedObject<String>(s, 20));
         }
 

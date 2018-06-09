@@ -1,4 +1,6 @@
+import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Queue;
+import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
 import com.bryjamin.dancedungeon.factories.spells.Skill;
 import com.bryjamin.dancedungeon.utils.math.CoordinateMath;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
@@ -11,6 +13,20 @@ import org.junit.Test;
  */
 
 public class CoordinateMathTest {
+
+
+    @Test
+    public void jsonStuff(){
+
+        Json json = new Json();
+
+        System.out.println(json.prettyPrint(new BattleEvent()));
+
+
+
+
+    }
+
 
 
     @Test

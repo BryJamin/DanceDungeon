@@ -21,7 +21,7 @@ import com.bryjamin.dancedungeon.ecs.components.map.MapNodeComponent;
 import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.factories.map.MapNode;
 import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
-import com.bryjamin.dancedungeon.factories.map.event.EventManager;
+import com.bryjamin.dancedungeon.factories.map.event.EventLibrary;
 import com.bryjamin.dancedungeon.factories.map.event.MapEvent;
 import com.bryjamin.dancedungeon.screens.battle.BattleScreen;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
@@ -42,7 +42,7 @@ public class MapNodeSystem extends EntitySystem {
 
     private ComponentMapper<ActionOnTapComponent> actionOnTapMapper;
 
-    private EventManager eventManager = new EventManager();
+    private EventLibrary eventLibrary = new EventLibrary();
 
     private float width = Measure.units(6.5f);
     private float height = Measure.units(6.5f);
@@ -145,9 +145,9 @@ public class MapNodeSystem extends EntitySystem {
 
                         BattleEvent battleEvent;
                         if(eventType == MapEvent.EventType.BOSS) {
-                            battleEvent = eventManager.bossBattle().getEvent();
+                            battleEvent = eventLibrary.bossBattle().getEvent();
                         } else {
-                            battleEvent = eventManager.getLevel1Event(mapNode.getEventId()).getEvent();
+                            battleEvent = EventLibrary.getEvent(mapNode.getEventId());
                         }
 
 

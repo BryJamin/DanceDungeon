@@ -1,0 +1,20 @@
+{
+
+  "64f80f4a-e313-401c-91bb-981c9f623eb8": {
+    "class": "com.bryjamin.dancedungeon.factories.map.event.BattleEvent",
+    "mapLocation": "maps/map_1.tmx",
+    "primaryObjective": {
+      "class": "com.bryjamin.dancedungeon.factories.map.event.objectives.DefeatAllEnemiesObjective"
+    },
+
+    "enemies": ["7720994b-263a-439d-b83c-70586bb63777"],
+
+    "bonusObjectives": [
+      {
+        "class": "com.bryjamin.dancedungeon.factories.map.event.objectives.CompleteWithinObjective",
+        "reward": "MORALE"
+      }
+    ]
+  }
+
+}

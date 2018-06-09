@@ -17,6 +17,7 @@ import com.bryjamin.dancedungeon.assets.FileStrings;
 import com.bryjamin.dancedungeon.assets.Fonts;
 import com.bryjamin.dancedungeon.assets.music.SoundFiles;
 import com.bryjamin.dancedungeon.ecs.systems.audio.MusicSystem;
+import com.bryjamin.dancedungeon.factories.map.event.EventLibrary;
 import com.bryjamin.dancedungeon.factories.unit.UnitLibrary;
 import com.bryjamin.dancedungeon.factories.spells.SkillLibrary;
 import com.bryjamin.dancedungeon.screens.LoadingScreen;
@@ -98,6 +99,7 @@ public class MainGame extends Game {
         //LOAD IN DATA FROM JSON
         SkillLibrary.loadFromJSON();
         UnitLibrary.loadFromJSON();
+        EventLibrary.loadFromJSON();
 
         setScreen(new LoadingScreen(this));
     }

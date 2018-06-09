@@ -7,6 +7,7 @@ import com.bryjamin.dancedungeon.assets.MapData;
 import com.bryjamin.dancedungeon.factories.map.event.objectives.AbstractObjective;
 import com.bryjamin.dancedungeon.factories.map.event.objectives.CompleteWithinObjective;
 import com.bryjamin.dancedungeon.factories.map.event.objectives.DefeatAllEnemiesObjective;
+import com.bryjamin.dancedungeon.factories.unit.UnitLibrary;
 
 /**
  * Created by BB on 07/01/2018.
@@ -19,7 +20,7 @@ public class BattleEvent extends MapEvent {
     private String id = "unidentified";
     private String mapLocation = MapData.MAP_1;
 
-    private int numberOfWaves = 0;
+    private int numberOfWaves = 3;
 
     private AbstractObjective primaryObjective = new DefeatAllEnemiesObjective();
     private AbstractObjective[] bonusObjectives = new AbstractObjective[]{new CompleteWithinObjective(7)};
@@ -27,11 +28,41 @@ public class BattleEvent extends MapEvent {
     private Array<String> enemies = new Array<String>();
     private Queue<Array<String>> waves = new Queue<>();
 
+    public BattleEvent(){ }
 
     public BattleEvent(String... enemies){
         this.enemies.addAll(enemies);
     }
 
+
+    private enum Objective {
+        SURVIVE(5), BATTLE, BOMBS;
+        private int value;
+
+        Objective(){}
+
+        Objective(int value){
+            this.value = value;
+        }
+
+    }
+
+
+    public BattleEvent(BattleEvent be){
+
+        this.mapLocation = mapLocation;
+        this.primaryObjective = be.primaryObjective.clone();
+
+        this.bonusObjectives = be.bonusObjectives;
+
+        //TODO create a 'reset' inside of the Objectives? Not sure. 
+
+        this.enemies.addAll(be.enemies);
+    }
+
+
+
+    private Objective objective = Objective.SURVIVE;
 
     public BattleEvent(Builder b){
         this.mapLocation = b.mapLocation;
@@ -81,7 +112,7 @@ public class BattleEvent extends MapEvent {
 
         private final String mapLocation;
 
-        private int numberOfWaves = 1;
+        private int numberOfWaves = 3;
 
         private Queue<Array<String>> presetWaves = new Queue<>();
         private Array<String> enemyPool = new Array<String>();

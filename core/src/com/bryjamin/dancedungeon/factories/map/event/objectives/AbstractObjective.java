@@ -4,7 +4,7 @@ import com.artemis.World;
 import com.bryjamin.dancedungeon.utils.observer.Observer;
 import com.bryjamin.dancedungeon.utils.observer.Observable;
 
-public abstract class AbstractObjective implements Observer {
+public abstract class AbstractObjective implements Observer, Cloneable {
 
     public enum UpdateOn { //Used to show which events objectives should be listening for.
         ENEMY_DEATH,
@@ -30,9 +30,9 @@ public abstract class AbstractObjective implements Observer {
 
     protected Reward reward = Reward.MONEY;
 
-    private Observable observable = new Observable(); //Array of observers that listen to the Objective.
+    private transient Observable observable = new Observable(); //Array of observers that listen to the Objective.
 
-    private UpdateOn[] updateOnArray;
+    private transient UpdateOn[] updateOnArray;
 
     public AbstractObjective(UpdateOn... updateOns){
         this.updateOnArray = updateOns;
@@ -68,4 +68,7 @@ public abstract class AbstractObjective implements Observer {
     public Reward getReward() {
         return reward;
     }
+
+    @Override
+    public abstract AbstractObjective clone();
 }

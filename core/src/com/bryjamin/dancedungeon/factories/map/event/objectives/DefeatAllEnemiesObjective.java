@@ -30,4 +30,9 @@ public class DefeatAllEnemiesObjective extends AbstractObjective {
         super.update(o);
     }
 
+    @Override
+    public DefeatAllEnemiesObjective clone() {
+        return new DefeatAllEnemiesObjective();
+    }
+
 }

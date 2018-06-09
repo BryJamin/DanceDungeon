@@ -17,6 +17,7 @@ import com.bryjamin.dancedungeon.factories.unit.UnitFactory;
 import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
 import com.bryjamin.dancedungeon.utils.observer.Observable;
+import com.bryjamin.dancedungeon.utils.observer.Observer;
 
 
 /**
@@ -27,10 +28,12 @@ import com.bryjamin.dancedungeon.utils.observer.Observable;
  * It also deploys enemy characters initially so players can see where they may want to best deploy their units
  * <p>
  */
-public class BattleDeploymentSystem extends EntitySystem {
+public class BattleDeploymentSystem extends EntitySystem implements Observer{
 
     private TileSystem tileSystem;
     private PlayerPartyManagementSystem playerPartyManagementSystem;
+
+    private TurnSystem turnSystem;
 
     private int count;
     private boolean[] deployedArray = new boolean[PartyDetails.PARTY_SIZE];
@@ -61,6 +64,7 @@ public class BattleDeploymentSystem extends EntitySystem {
 
         Array<Coordinates> spawningLocations = new Array<Coordinates>(tileSystem.getEnemySpawningLocations());
 
+        turnSystem.addPlayerTurnObserver(this);
 
         if(battleEvent.getNumberOfWaves() > 0){
             if(battleEvent.getWaves().size > 0){
@@ -75,8 +79,12 @@ public class BattleDeploymentSystem extends EntitySystem {
             } else {
 
                 for (int i = 0; i < 3; i++) {
+
+                    System.out.println("Here");
                     if (battleEvent.getEnemies().size == 0)
                         continue;
+
+                    System.out.println("And here");
                     addEnemyUnit(spawningLocations, battleEvent.getEnemies().random());
                 }
 
@@ -216,4 +224,8 @@ public class BattleDeploymentSystem extends EntitySystem {
         return playerPartyManagementSystem.getPartyDetails().getParty()[count];
     }
 
+    @Override
+    public void update(Object o) {
+
+    }
 }

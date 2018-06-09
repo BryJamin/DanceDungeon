@@ -6,8 +6,11 @@ import java.util.Locale;
 
 public class CompleteWithinObjective extends AbstractObjective {
 
-    private int rounds;
+    private int rounds = 3;
 
+    public CompleteWithinObjective() {
+        super(UpdateOn.END_TURN);
+    }
 
 
     public CompleteWithinObjective(int rounds) {
@@ -47,5 +50,10 @@ public class CompleteWithinObjective extends AbstractObjective {
     @Override
     public boolean isFailed(World world) {
         return rounds <= 0;
+    }
+
+    @Override
+    public CompleteWithinObjective clone() {
+        return new CompleteWithinObjective(reward, rounds);
     }
 }
