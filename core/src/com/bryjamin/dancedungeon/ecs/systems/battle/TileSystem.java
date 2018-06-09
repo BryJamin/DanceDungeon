@@ -133,7 +133,7 @@ public class TileSystem extends EntitySystem {
                     }
                 } else { //Create a deployment zone depending on
 
-                    if(i < 3 && j > 0 && j < objects.getHeight()) {
+                    if(i < 3 && j >= 0 && j < objects.getHeight()) {
                         allySpawningLocations.add(new Coordinates(i, j));
                         //unitFactory.baseDeploymentZone(world, createRectangleUsingCoordinates(new Coordinates(i, j)), new Coordinates(i, j));
                     } else if(i > 4){
