@@ -146,11 +146,13 @@ public class EndBattleSystem extends EntitySystem implements Observer {
                 unitData.setMaxHealth(hc.maxHealth);
             }
 
-            if(currentEvent instanceof TutorialEvent){
+            if(TutorialSystem.isTutorial){
                 battleScreenUISystem.createTutorialWindow(new Rectangle(), TutorialSystem.TutorialState.END);
             } else {
                 actionQueueSystem.observable.removeObserver(this);
                 battleScreenUISystem.createVictoryRewards(currentEvent, partyDetails);
+
+                turnSystem.stop();
                 battleScreenInputSystem.restrictInputToStage();
             }
 

@@ -23,7 +23,7 @@
     "class": "com.bryjamin.dancedungeon.factories.map.event.BattleEvent",
     "mapLocation": "maps/map_2.tmx",
     "primaryObjective": {
-      "class": "com.bryjamin.dancedungeon.factories.map.event.objectives.SurviveObjective"
+      "class": "com.bryjamin.dancedungeon.factories.map.event.objectives.SurviveObjective",
       "rounds": 2,
       "reward": "MONEY"
     },

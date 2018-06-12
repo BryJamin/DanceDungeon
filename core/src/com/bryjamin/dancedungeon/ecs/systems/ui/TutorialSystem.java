@@ -62,9 +62,13 @@ public class TutorialSystem extends EntitySystem implements Observer{
     private Entity playerUnitWithTHROWNSkill;
 
 
+    public static boolean isTutorial = false;
+
+
     public TutorialSystem(boolean processing){
         super(Aspect.all(UsedByTutorialComponent.class));
         this.processing = processing;
+        TutorialSystem.isTutorial = processing;
     }
 
 

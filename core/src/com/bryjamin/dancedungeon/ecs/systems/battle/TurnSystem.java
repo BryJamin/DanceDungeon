@@ -55,6 +55,15 @@ public class TurnSystem extends EntitySystem implements Observer{
     private boolean processingFlag = false;
 
 
+    public void start() {
+        processingFlag = true;
+    }
+
+    public void stop() {
+        processingFlag = false;
+    }
+
+
     private enum STATE {
         WAITING, NEXT_TURN
     }
@@ -86,7 +95,7 @@ public class TurnSystem extends EntitySystem implements Observer{
     public void update(Object o) {
         if(o.getClass() == BattleDeploymentSystem.class){
             if(!((BattleDeploymentSystem) o).isProcessing()){
-                processingFlag = true;
+                start();
             }
         }
     }
