@@ -4,17 +4,66 @@
     "class": "com.bryjamin.dancedungeon.factories.map.event.BattleEvent",
     "mapLocation": "maps/map_1.tmx",
     "primaryObjective": {
-      "class": "com.bryjamin.dancedungeon.factories.map.event.objectives.DefeatAllEnemiesObjective"
+      "class": "com.bryjamin.dancedungeon.factories.map.event.objectives.SurviveObjective",
+      "rounds": 1,
+      "reward": "MORALE"
     },
-
-    "enemies": ["7720994b-263a-439d-b83c-70586bb63777"],
 
     "bonusObjectives": [
       {
-        "class": "com.bryjamin.dancedungeon.factories.map.event.objectives.CompleteWithinObjective",
+        "class": "com.bryjamin.dancedungeon.factories.map.event.objectives.SurviveObjective",
+        "rounds": 1,
         "reward": "MORALE"
       }
     ]
+  },
+
+
+  "5cebfb5b-5945-4165-b599-b74b4249d9a1": {
+    "class": "com.bryjamin.dancedungeon.factories.map.event.BattleEvent",
+    "mapLocation": "maps/map_2.tmx",
+    "primaryObjective": {
+      "class": "com.bryjamin.dancedungeon.factories.map.event.objectives.SurviveObjective"
+      "rounds": 2,
+      "reward": "MONEY"
+    },
+
+    "bonusObjectives": [
+      {
+        "class": "com.bryjamin.dancedungeon.factories.map.event.objectives.SurviveObjective",
+        "rounds": 2,
+        "reward": "MONEY"
+      }
+    ]
+  },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  //Tutorial
+
+  "TUTORIAL": {
+    "class": "com.bryjamin.dancedungeon.factories.map.event.BattleEvent",
+    "mapLocation": "maps/tutorial.tmx",
+    "numberOfWaves": 0,
+    "primaryObjective": {
+      "class": "com.bryjamin.dancedungeon.factories.map.event.objectives.DefeatAllEnemiesObjectiveTutorial"
+    },
+
+    "fixedEnemyPool": ["7720994b-263a-439d-b83c-70586bb63777"]
   }
+
 
 }

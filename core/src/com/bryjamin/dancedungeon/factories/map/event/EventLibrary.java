@@ -95,6 +95,9 @@ public class EventLibrary {
     }
 
 
+
+    public static String TUTORIAL_EVENT = "TUTORIAL";
+/*
     public EventCommand bossBattle(){
         return new EventCommand() {
             @Override
@@ -107,7 +110,7 @@ public class EventLibrary {
                         .build();
             }
         };
-    }
+    }*/
 
 
 

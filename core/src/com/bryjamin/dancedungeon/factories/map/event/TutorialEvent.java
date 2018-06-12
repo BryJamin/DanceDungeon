@@ -10,7 +10,10 @@ import com.bryjamin.dancedungeon.factories.map.event.objectives.SurviveObjective
 public class TutorialEvent extends BattleEvent{
 
     public TutorialEvent(){
-        super(new Builder(MapData.MAP_TUTORIAL).primaryObjective(new DefeatAllEnemiesObjectiveTutorial(AbstractObjective.Reward.MONEY)));
+
+        BattleEvent battleEvent = new BattleEvent();
+
+        //TODO Tutorial is dead
     }
 
 

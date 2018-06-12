@@ -24,9 +24,10 @@ public class UnitLibrary {
     private static final String CHARACTER_UNITS_FILE = "json/units/characters.json";
 
 
-    private static final OrderedMap<String, UnitData> enemies = new OrderedMap<>();
+    private static final OrderedMap<String, UnitData> unitList = new OrderedMap<>();
 
     private static final Array<String> unitIdList = new Array<>();
+    private static final Array<String> enemyIdList = new Array<>();
 
 
 
@@ -36,9 +37,14 @@ public class UnitLibrary {
     }
 
 
+    private static String addEnemy(String id){
+        enemyIdList.add(id);
+        return add(id);
+    }
+
     public static void loadFromJSON(){
 
-        enemies.clear();
+        unitList.clear();
 
         Json json = new Json();
         json.setIgnoreUnknownFields(true);
@@ -53,12 +59,12 @@ public class UnitLibrary {
             Array<UnitData> array = json.fromJson(Array.class, Gdx.files.internal(file));
 
             for(UnitData unitData : array){
-                if(enemies.containsKey(unitData.getId())) {
+                if(unitList.containsKey(unitData.getId())) {
                     throw new RuntimeException("Duplicate key found in Unit Library: " + unitData.getId() + "\n" +
                             "Unit Name: " + unitData.getName()  + "\n" +
                             "File Name: " + file);
                 }
-                enemies.put(unitData.getId(), unitData);
+                unitList.put(unitData.getId(), unitData);
             }
 
 
@@ -71,10 +77,10 @@ public class UnitLibrary {
 
     public static UnitData getUnitData(String id){
 
-        if(enemies.containsKey(id)){
-            return new UnitData(enemies.get(id));
+        if(unitList.containsKey(id)){
+            return new UnitData(unitList.get(id));
         } else {
-            throw new IllegalArgumentException("Enemy ID:" + id + " does not exist");
+            throw new IllegalArgumentException("Unit ID:" + id + " does not exist");
         }
     }
 
@@ -85,6 +91,11 @@ public class UnitLibrary {
         e.edit().add(new EnemyComponent());
         e.edit().add(new UtilityAiComponent());
         return e;
+
+    }
+
+    public static String getRandomEnemyUnitID(){
+        return enemyIdList.random();
 
     }
 
@@ -137,9 +148,13 @@ public class UnitLibrary {
     static {
 
         //Enemies
-        MELEE_BLOB = add("cf5db9a9-b053-4de8-ad17-4f56a1e008f6");
-        RANGED_BLASTER = add("7720994b-263a-439d-b83c-70586bb63777");
-        RANGED_LOBBA = add("925dcc29-c81c-4abc-9bd3-adee4b8e636a");
+        MELEE_BLOB = addEnemy("cf5db9a9-b053-4de8-ad17-4f56a1e008f6");
+        RANGED_BLASTER = addEnemy("7720994b-263a-439d-b83c-70586bb63777");
+        RANGED_LOBBA = addEnemy("925dcc29-c81c-4abc-9bd3-adee4b8e636a");
+        //TODO Infuture I think I need to add a 'Difficulty Rating' of sorts for enemies that
+        //TODO can just be randomly selected.
+
+
         BIG_BLASTER_BOSS = add("1e08e0ff-77ec-4a26-b75c-0eeca3ea86bd");
 
         CHARACTERS_SGT_SWORD = add("2ade2064-eaf1-4a63-8ba4-1fd98b72c0dc");

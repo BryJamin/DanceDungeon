@@ -58,20 +58,17 @@ public class BattleDeploymentSystem extends EntitySystem implements Observer{
 
 
 
+    public void spawnNextEnemyWave(){
 
-    @Override
-    protected void initialize() {
 
         Array<Coordinates> spawningLocations = new Array<Coordinates>(tileSystem.getEnemySpawningLocations());
-
-        turnSystem.addPlayerTurnObserver(this);
 
         if(battleEvent.getNumberOfWaves() > 0){
             if(battleEvent.getWaves().size > 0){
                 Array<String> stringArray = battleEvent.getWaves().removeFirst();
                 for(String s : stringArray){
                     if(s.equals(BattleEvent.RANDOM_POOLED_UNIT)){
-                        addEnemyUnit(spawningLocations, battleEvent.getEnemies().random());
+                        addEnemyUnit(spawningLocations, battleEvent.getFixedEnemyPool().random());
                     } else {
                         addEnemyUnit(spawningLocations, s);
                     }
@@ -81,24 +78,40 @@ public class BattleDeploymentSystem extends EntitySystem implements Observer{
                 for (int i = 0; i < 3; i++) {
 
                     System.out.println("Here");
-                    if (battleEvent.getEnemies().size == 0)
+                    if (battleEvent.getFixedEnemyPool().size == 0) {
+
+                        //TODO You need to add units based on a 'Difficulty Level' of the Event.
+
+                        addEnemyUnit(spawningLocations, UnitLibrary.getRandomEnemyUnitID());
+
                         continue;
+                    }
 
                     System.out.println("And here");
-                    addEnemyUnit(spawningLocations, battleEvent.getEnemies().random());
+                    addEnemyUnit(spawningLocations, battleEvent.getFixedEnemyPool().random());
                 }
 
 
             }
         }
 
+    }
 
+
+    @Override
+    protected void initialize() {
+
+        turnSystem.addPlayerTurnObserver(this);
+        spawnNextEnemyWave();
         deploymentLocations = new Array<>(tileSystem.getAllySpawningLocations());
         calculateUnitToBeDeployed();
         createDeploymentLocations();
 
 
     }
+
+
+
 
     private void addEnemyUnit(Array<Coordinates> spawningLocations, String unitId){
         Entity e = UnitLibrary.getEnemyUnit(world, unitId);
@@ -226,6 +239,8 @@ public class BattleDeploymentSystem extends EntitySystem implements Observer{
 
     @Override
     public void update(Object o) {
-
+        if(!isTutorial) {
+            spawnNextEnemyWave();
+        }
     }
 }

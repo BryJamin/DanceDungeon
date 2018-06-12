@@ -26,6 +26,7 @@ import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.systems.graphical.RenderingSystem;
+import com.bryjamin.dancedungeon.factories.map.event.EventLibrary;
 import com.bryjamin.dancedungeon.factories.unit.UnitLibrary;
 import com.bryjamin.dancedungeon.factories.map.MapGenerator;
 import com.bryjamin.dancedungeon.factories.map.event.TutorialEvent;
@@ -452,7 +453,7 @@ public class CharacterSelectionScreenInitilization extends BaseSystem {
         yes.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new BattleScreen(game, game.getScreen(), new TutorialEvent(), createPartyDetails(), true));
+                game.setScreen(new BattleScreen(game, game.getScreen(), EventLibrary.getEvent(EventLibrary.TUTORIAL_EVENT), createPartyDetails(), true));
             }
         });
 

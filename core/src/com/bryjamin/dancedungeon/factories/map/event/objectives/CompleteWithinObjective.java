@@ -7,6 +7,7 @@ import java.util.Locale;
 public class CompleteWithinObjective extends AbstractObjective {
 
     private int rounds = 3;
+    private int trackedRounds = 3;
 
     public CompleteWithinObjective() {
         super(UpdateOn.END_TURN);
@@ -16,21 +17,16 @@ public class CompleteWithinObjective extends AbstractObjective {
     public CompleteWithinObjective(int rounds) {
         super(AbstractObjective.UpdateOn.END_TURN);
         this.rounds = rounds;
-    }
-
-    public CompleteWithinObjective(Reward reward, int rounds) {
-        super(AbstractObjective.UpdateOn.END_TURN);
-        this.rounds = rounds;
-        this.reward = reward;
+        this.trackedRounds = rounds;
     }
 
     @Override
     public String getDescription() {
 
         if(rounds == 1){
-            return  String.format(Locale.ENGLISH, "Complete within %d turn", rounds);
+            return  String.format(Locale.ENGLISH, "Complete within %d turn", trackedRounds);
         } else {
-            return String.format(Locale.ENGLISH, "Complete within %d turns", rounds);
+            return String.format(Locale.ENGLISH, "Complete within %d turns", trackedRounds);
         }
     }
 
@@ -42,18 +38,18 @@ public class CompleteWithinObjective extends AbstractObjective {
 
     @Override
     public void update(Object o) {
-        rounds--;
-        if(rounds < 0) rounds = 0;
+        trackedRounds--;
+        if(trackedRounds < 0) trackedRounds = 0;
         super.update(o);
     }
 
     @Override
     public boolean isFailed(World world) {
-        return rounds <= 0;
+        return trackedRounds <= 0;
     }
 
     @Override
     public CompleteWithinObjective clone() {
-        return new CompleteWithinObjective(reward, rounds);
+        return new CompleteWithinObjective(rounds);
     }
 }

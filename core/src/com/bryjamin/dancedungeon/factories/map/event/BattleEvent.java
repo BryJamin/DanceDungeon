@@ -7,7 +7,6 @@ import com.bryjamin.dancedungeon.assets.MapData;
 import com.bryjamin.dancedungeon.factories.map.event.objectives.AbstractObjective;
 import com.bryjamin.dancedungeon.factories.map.event.objectives.CompleteWithinObjective;
 import com.bryjamin.dancedungeon.factories.map.event.objectives.DefeatAllEnemiesObjective;
-import com.bryjamin.dancedungeon.factories.unit.UnitLibrary;
 
 /**
  * Created by BB on 07/01/2018.
@@ -15,23 +14,34 @@ import com.bryjamin.dancedungeon.factories.unit.UnitLibrary;
 
 public class BattleEvent extends MapEvent {
 
+
     public static final String RANDOM_POOLED_UNIT = "random_pooled_unit";
 
+    //Id of the Event
     private String id = "unidentified";
+
+    //Map used for the event (Maybe array for multiple map selections?)
     private String mapLocation = MapData.MAP_1;
 
-    private int numberOfWaves = 3;
 
     private AbstractObjective primaryObjective = new DefeatAllEnemiesObjective();
     private AbstractObjective[] bonusObjectives = new AbstractObjective[]{new CompleteWithinObjective(7)};
 
-    private Array<String> enemies = new Array<String>();
+    //Enemies that can be spawned inside of the event
+    private Array<String> fixedEnemyPool = new Array<String>();
+
+    //TODO Variable for determining which random enemies can be drawn from? A difficulty variable?
+
+    //The Fixed number of the waves that can be inside of the event
     private Queue<Array<String>> waves = new Queue<>();
+
+    //Assuming the rest of the waves are random and only one wave is fixed. This is the maximum number of waves that will be spawned
+    private int numberOfWaves = 3;
 
     public BattleEvent(){ }
 
-    public BattleEvent(String... enemies){
-        this.enemies.addAll(enemies);
+    public BattleEvent(String... fixedEnemyPool){
+        this.fixedEnemyPool.addAll(fixedEnemyPool);
     }
 
 
@@ -50,32 +60,21 @@ public class BattleEvent extends MapEvent {
 
     public BattleEvent(BattleEvent be){
 
-        this.mapLocation = mapLocation;
+        this.mapLocation = be.mapLocation;
         this.primaryObjective = be.primaryObjective.clone();
 
         this.bonusObjectives = be.bonusObjectives;
 
-        //TODO create a 'reset' inside of the Objectives? Not sure. 
+        //TODO create a 'reset' inside of the Objectives? Not sure.
 
-        this.enemies.addAll(be.enemies);
+        this.fixedEnemyPool.addAll(be.fixedEnemyPool);
     }
-
-
 
     private Objective objective = Objective.SURVIVE;
 
-    public BattleEvent(Builder b){
-        this.mapLocation = b.mapLocation;
-        this.primaryObjective = b.primaryObjective;
-        this.bonusObjectives = b.bonusObjectives;
-        this.enemies = b.enemyPool;
-        this.waves = b.presetWaves;
-        this.numberOfWaves = b.numberOfWaves;
-    }
 
-
-    public Array<String> getEnemies() {
-        return enemies;
+    public Array<String> getFixedEnemyPool() {
+        return fixedEnemyPool;
     }
 
     public Queue<Array<String>> getWaves() {
@@ -108,56 +107,6 @@ public class BattleEvent extends MapEvent {
         return mapLocation;
     }
 
-    public static class Builder {
-
-        private final String mapLocation;
-
-        private int numberOfWaves = 3;
-
-        private Queue<Array<String>> presetWaves = new Queue<>();
-        private Array<String> enemyPool = new Array<String>();
-        private AbstractObjective primaryObjective = new DefeatAllEnemiesObjective();
-        private AbstractObjective[] bonusObjectives = new AbstractObjective[]{};
-
-        public Builder(String mapLocation){
-            this.mapLocation = mapLocation;
-        }
-
-        public Builder enemyPool(String... val) {
-            this.enemyPool.clear();
-            this.enemyPool.addAll(val); return this;
-        }
-
-
-        public Builder addEnemyWave(String... val) {
-            Array<String> strings = new Array<>();
-            strings.addAll(val);
-            presetWaves.addLast(strings);
-            return this;
-        }
-
-
-        public Builder numberOfWaves(int val) {
-            this.numberOfWaves = val;
-            return this;
-        }
-
-
-
-        public Builder primaryObjective(AbstractObjective val)
-        { this.primaryObjective = val; return this; }
-
-        public Builder bonusObjective(AbstractObjective... val)
-        { this.bonusObjectives = val;
-
-
-        return this; }
-
-        public BattleEvent build(){
-            return new BattleEvent(this);
-        }
-
-    }
 
 
     public int getNumberOfWaves() {

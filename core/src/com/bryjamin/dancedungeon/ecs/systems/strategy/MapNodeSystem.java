@@ -145,7 +145,7 @@ public class MapNodeSystem extends EntitySystem {
 
                         BattleEvent battleEvent;
                         if(eventType == MapEvent.EventType.BOSS) {
-                            battleEvent = eventLibrary.bossBattle().getEvent();
+                            battleEvent = new BattleEvent(); //eventLibrary.bossBattle().getEvent();
                         } else {
                             battleEvent = EventLibrary.getEvent(mapNode.getEventId());
                         }

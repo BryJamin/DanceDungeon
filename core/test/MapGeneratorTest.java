@@ -1,6 +1,7 @@
 import com.bryjamin.dancedungeon.factories.map.GameMap;
 import com.bryjamin.dancedungeon.factories.map.MapGenerator;
 import com.bryjamin.dancedungeon.factories.map.MapNode;
+import com.bryjamin.dancedungeon.factories.map.event.EventLibrary;
 import com.bryjamin.dancedungeon.factories.map.event.MapEvent;
 import com.bryjamin.dancedungeon.factories.map.event.MapSection;
 
@@ -17,6 +18,8 @@ public class MapGeneratorTest {
 
     @Test
     public void simpleMapGenerationTest() throws Exception {
+
+        EventLibrary.loadFromJSON();
 
         int generations = 100000;
         float failCount = 0;
