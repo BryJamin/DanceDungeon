@@ -179,6 +179,8 @@ public class UtilityAiSystem extends EntitySystem {
                 scoreMap.get(c).movementScore -= 50;
             }
 
+            //Reduce if the path ends on a spawned unit
+
         }
 
     }

@@ -173,7 +173,7 @@ public class UnitFactory {
 
     public static Entity baseSpawnBag(World world, String unitID){
 
-        float size = TileSystem.CELL_SIZE * 0.6f;
+        float size = TileSystem.CELL_SIZE * 0.5f;
 
         Entity e = world.createEntity();
 
@@ -187,7 +187,7 @@ public class UnitFactory {
 
         e.edit().add(new CenteringBoundComponent(size, size));
 
-        e.edit().add(new DrawableComponent(Layer.BACKGROUND_LAYER_NEAR,
+        e.edit().add(new DrawableComponent(Layer.PLAYER_LAYER_NEAR,
                 new TextureDescription.Builder(TextureStrings.SPAWNER)
                         .size(size)
                         .build()));

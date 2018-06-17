@@ -8,15 +8,14 @@ import com.artemis.utils.IntBag;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.QueuedAction;
-import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.QueuedInstantAction;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.SpawnerComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.DeploymentComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
 import com.bryjamin.dancedungeon.factories.unit.UnitLibrary;
 import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
@@ -78,7 +77,7 @@ public class BattleDeploymentSystem extends EntitySystem implements Observer{
                     unitIdsToSpawn.add(s.equals(BattleEvent.RANDOM_POOLED_UNIT) ? battleEvent.getFixedEnemyPool().random() : s);
                 }
             } else {
-                for (int i = 0; i < 3; i++) {
+                for (int i = 0; i < 2; i++) {
                     unitIdsToSpawn.add(battleEvent.getFixedEnemyPool().size == 0 ? UnitLibrary.getRandomEnemyUnitID() : battleEvent.getFixedEnemyPool().random());
                 }
 
@@ -98,7 +97,7 @@ public class BattleDeploymentSystem extends EntitySystem implements Observer{
         turnSystem.addEnemyTurnObserver(this);
 
         for(String s : getNextEnemyWave()){
-            addEnemyUnit(new Array<>(tileSystem.getEnemySpawningLocations()), s);
+            addEnemyUnit(new Array<>(tileSystem.getAvailableEnemySpawningLocations()), s);
         }
 
         deploymentLocations = new Array<>(tileSystem.getAllySpawningLocations());
@@ -261,28 +260,54 @@ public class BattleDeploymentSystem extends EntitySystem implements Observer{
                         final Entity e = world.getEntity(toBeSpawned.get(i));
 
 
-                        actionQueueSystem.pushLastAction(new QueuedAction() {
+                        actionQueueSystem.pushLastAction(e, new QueuedAction() {
 
                             Entity spawned;
 
                             @Override
                             public void act() {
 
-                                //TODO is it possible for a null pointer?
+                                Coordinates current = e.getComponent(CoordinateComponent.class).coordinates;
 
-                                spawned = UnitLibrary.getEnemyUnit(world, e.getComponent(SpawnerComponent.class).getUnitID());
-                                spawned.getComponent(CoordinateComponent.class).coordinates.set(e.getComponent(CoordinateComponent.class).coordinates);
-                                spawned.edit().add(new FadeComponent(new FadeComponent.FadeBuilder()
-                                        .alpha(0)
-                                        .fadeIn(true)
-                                        .endless(false)
-                                        .maximumDuration(0.2f)));
+                                if(tileSystem.getCoordinateMap().get(current).size <= 1){
 
-                                e.edit().add(new DeadComponent());
+                                    //TODO is it possible for a null pointer?
+
+                                    spawned = UnitLibrary.getEnemyUnit(world, e.getComponent(SpawnerComponent.class).getUnitID());
+                                    spawned.getComponent(CoordinateComponent.class).coordinates.set(e.getComponent(CoordinateComponent.class).coordinates);
+
+
+                                    spawned.edit().add(new FadeComponent(new FadeComponent.FadeBuilder()
+                                            .alpha(0)
+                                            .fadeIn(true)
+                                            .endless(false)
+                                            .maximumDuration(0.2f)));
+
+                                    e.edit().add(new DeadComponent());
+
+                                } else {
+
+                                    for(Entity unit : tileSystem.getCoordinateMap().get(current)){
+
+                                        if(unit.getComponent(HealthComponent.class) != null){
+                                            unit.getComponent(HealthComponent.class).applyDamage(1);
+                                        }
+
+                                    };
+
+                                    e.edit().add(new DeadComponent());
+                                }
+
+
                             }
 
                             @Override
                             public boolean isComplete() {
+
+                                if(spawned == null) {
+                                    return true;
+                                }
+
                                 return spawned.getComponent(DrawableComponent.class).drawables.getColor().a >= 1;
                             }
                         });
@@ -299,7 +324,7 @@ public class BattleDeploymentSystem extends EntitySystem implements Observer{
 
                             @Override
                             public void act() {
-                                e = addSpawnUnit(new Array<>(tileSystem.getEnemySpawningLocations()), s);
+                                e = addSpawnUnit(new Array<>(tileSystem.getAvailableEnemySpawningLocations()), s);
                                 e.edit().add(new FadeComponent(new FadeComponent.FadeBuilder()
                                         .alpha(0)
                                         .fadeIn(true)

@@ -20,6 +20,7 @@ import com.bryjamin.dancedungeon.assets.MapData;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.SpawnerComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.OutOfBoundsComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
@@ -48,6 +49,7 @@ public class TileSystem extends EntitySystem {
     private ComponentMapper<PlayerControlledComponent> pcm;
     private ComponentMapper<CoordinateComponent> cm;
     private ComponentMapper<SolidComponent> sm;
+    private ComponentMapper<SpawnerComponent> spawnerM;
     private ComponentMapper<OutOfBoundsComponent> outOfBoundsm;
     private ComponentMapper<EnemyComponent> enemym;
 
@@ -80,6 +82,7 @@ public class TileSystem extends EntitySystem {
 
     private OrderedMap<Entity, Coordinates> playerControlledMap = new OrderedMap<Entity, Coordinates>();
     private OrderedMap<Entity, Coordinates> enemyMap = new OrderedMap<Entity, Coordinates>();
+    private OrderedMap<Entity, Coordinates> spawnerMap = new OrderedMap<Entity, Coordinates>();
 
     //Map used to show if a space is occupied
     private ArrayMap<Entity, Coordinates> occupiedMap = new ArrayMap<>();
@@ -136,7 +139,7 @@ public class TileSystem extends EntitySystem {
                     if(i < 3 && j >= 0 && j < objects.getHeight()) {
                         allySpawningLocations.add(new Coordinates(i, j));
                         //unitFactory.baseDeploymentZone(world, createRectangleUsingCoordinates(new Coordinates(i, j)), new Coordinates(i, j));
-                    } else if(i > 4){
+                    } else if(i > 3){
                         //unitFactory.baseDeploymentZone(world, createRectangleUsingCoordinates(new Coordinates(i, j)), new Coordinates(i, j));
                         enemySpawningLocations.add(new Coordinates(i, j));
                     }
@@ -199,6 +202,7 @@ public class TileSystem extends EntitySystem {
         occupiedMap.clear();
         playerControlledMap.clear();
         enemyMap.clear();
+        spawnerMap.clear();
 
         for(Coordinates c : coordinateMap.keys()){
             coordinateMap.get(c).clear();
@@ -253,6 +257,7 @@ public class TileSystem extends EntitySystem {
 
         if (pcm.has(e)) playerControlledMap.put(e, coordinates); //Player and Enemy maps
         if (enemym.has(e)) enemyMap.put(e, coordinates);
+        if(spawnerM.has(e)) spawnerMap.put(e, coordinates);
 
     }
 
@@ -390,24 +395,6 @@ public class TileSystem extends EntitySystem {
     }
 
 
-
-/*
-    public OrderedMap<Coordinates, Queue<Coordinates>> findPathsToAllCoordinates(Entity e, Coordinates start) {
-
-        OrderedMap<Coordinates, Queue<Coordinates>> queueOrderedMap = new OrderedMap<>();
-
-
-
-
-
-        Array<Coordinates> coordinatesArray = new Array<Coordinates>();
-        coordinatesArray.add(c);
-        return findShortestPath(e, fillQueue, coordinatesArray, maxDistance);
-    }
-*/
-
-
-
     public boolean findShortestPath(Entity e, Queue<Coordinates> fillQueue, Array<Coordinates> targets, int maxDistance) {
 
         return createAStarPathCalculator(e).findShortestPathMultipleChoice(fillQueue,
@@ -534,8 +521,19 @@ public class TileSystem extends EntitySystem {
     }
 
 
-    public Array<Coordinates> getEnemySpawningLocations() {
-        return enemySpawningLocations;
+    public Array<Coordinates> getAvailableEnemySpawningLocations() {
+
+        Array<Coordinates> coordinates = new Array<>(enemySpawningLocations);
+
+        Array<Coordinates> unavailable = spawnerMap.values().toArray();
+
+        for(Coordinates c : enemySpawningLocations){
+            if(unavailable.contains(c, false)){
+                coordinates.removeValue(c, false);
+            }
+        }
+
+        return coordinates;
     }
 
     public Array<Coordinates> getAllySpawningLocations() {
