@@ -121,11 +121,14 @@ public class TurnSystem extends EntitySystem implements Observer{
 
     public void endAllyTurn(){
         setUp(INTENT);
-        battleState = STATE.NEXT_TURN;
         playerTurnObservable.notifyObservers(this);
     }
 
 
+    /**
+     * Resets the Available actions of the entities inside the builder
+     * @param builder
+     */
     private void populateTurnEntities(Aspect.Builder builder){
 
         IntBag bag = world.getAspectSubscriptionManager().get(builder).getEntities();
@@ -135,11 +138,9 @@ public class TurnSystem extends EntitySystem implements Observer{
             Entity e = world.getEntity(bag.get(i));
 
             if(this.getEntities().contains(e)) {
-
                 skillMapper.get(e).endTurn();
                 turnMapper.get(e).reset();
                 currentTurnEntities.add(e);
-
             }
         }
 
@@ -176,25 +177,9 @@ public class TurnSystem extends EntitySystem implements Observer{
         if(world.getSystem(ActionQueueSystem.class).isProcessing()) return;
 
         if(turn == INTENT){
-
-            switch (battleState){
-
-                case NEXT_TURN:
-
-                    if(world.getSystem(DisplayEnemyIntentUISystem.class).releaseAttack()){
-                        battleState = STATE.WAITING;
-                    } else {
-                        setUp(ENEMY);
-                    }
-                    break;
-                case WAITING:
-
-                    if (!world.getSystem(ActionQueueSystem.class).isProcessing()) {
-                        battleState = STATE.NEXT_TURN;
-                    }
-                    break;
+            if(!world.getSystem(DisplayEnemyIntentUISystem.class).checkForAndReleaseStoreAttack()){
+                setUp(ENEMY);
             }
-
             return;
         }
 

@@ -158,7 +158,7 @@ public class DisplayEnemyIntentUISystem extends EntitySystem implements Observer
         updateIntent();
     }
 
-    public boolean releaseAttack(){
+    public boolean checkForAndReleaseStoreAttack(){
 
         if(actionQueueSystem.isProcessing()) return true;
 
@@ -173,7 +173,7 @@ public class DisplayEnemyIntentUISystem extends EntitySystem implements Observer
 
     }
 
-    public boolean releaseAttack(Entity e){
+    public boolean checkForAndReleaseStoreAttack(Entity e){
         if(this.getEntities().contains(e)){
             StoredSkillComponent storedSkillComponent = storedMapper.get(e);
             storedSkillComponent.skill.cast(world, e, storedSkillComponent.storedTargetCoordinates);

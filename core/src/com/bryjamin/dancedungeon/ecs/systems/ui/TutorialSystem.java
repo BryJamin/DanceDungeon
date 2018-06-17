@@ -233,7 +233,7 @@ public class TutorialSystem extends EntitySystem implements Observer{
                     turnSystem.setUp(TurnSystem.TURN.ENEMY);
 
                     for(Entity e : this.getEntities()){
-                        displayEnemyIntentUISystem.releaseAttack(e);
+                        displayEnemyIntentUISystem.checkForAndReleaseStoreAttack(e);
                     }
 
                         //MOVE RANGED UNIT TO RE-ATTACK SAME STRUCTURE
@@ -264,7 +264,7 @@ public class TutorialSystem extends EntitySystem implements Observer{
                     turnSystem.setUp(TurnSystem.TURN.ENEMY);
 
                     for(Entity e : this.getEntities()){
-                        displayEnemyIntentUISystem.releaseAttack(e);
+                        displayEnemyIntentUISystem.checkForAndReleaseStoreAttack(e);
                     }
 
                     Entity tutorialEnemyNumber3 = createTutorialEntity(new Coordinates(MELEE_ENEMY_COORDINATES), UnitLibrary.MELEE_BLOB);

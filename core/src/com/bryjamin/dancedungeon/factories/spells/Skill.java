@@ -279,7 +279,7 @@ public class Skill {
 
         boolean isUnkillable = false;
 
-        for (final Entity e : world.getSystem(TileSystem.class).getCoordinateMap().get(target)) {
+        for (final Entity e : entityArray) {
 
             if(stun > 0){
                 e.getComponent(UnitComponent.class).getUnitData().stun = stun;
