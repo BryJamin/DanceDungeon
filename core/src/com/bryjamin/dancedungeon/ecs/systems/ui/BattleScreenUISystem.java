@@ -47,8 +47,6 @@ import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.FollowPositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.QueuedAction;
-import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.QueuedInstantAction;
-import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.AvailableActionsCompnent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.StoredSkillComponent;
@@ -63,7 +61,6 @@ import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
 import com.bryjamin.dancedungeon.ecs.systems.action.BattleScreenInputSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.ActionQueueSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.BattleDeploymentSystem;
-import com.bryjamin.dancedungeon.ecs.systems.battle.SelectedTargetSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.UndoMoveSystem;
@@ -473,7 +470,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
     private void populateMoraleTable(){
 
         moraleTable.clear();
-        Label morale = new Label(String.format(Locale.ENGLISH,TextResource.PARTY_MORALE + ": %d/%d", playerPartyManagementSystem.getPartyDetails().getMorale(), PartyDetails.MAX_MORALE), uiSkin);
+        Label morale = new Label(String.format(Locale.ENGLISH,TextResource.PARTY_STABILITY + ": %d/%d", playerPartyManagementSystem.getPartyDetails().getMorale(), PartyDetails.MAX_MORALE), uiSkin);
         morale.setAlignment(Align.center);
         moraleTable.add(morale).fill().align(Align.center);
 
@@ -985,7 +982,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
         }
 
         if(morale > 0)
-            t.add(new Label(TextResource.PARTY_MORALE + " +" + morale, uiSkin)).padRight(Padding.MEDIUM);
+            t.add(new Label(TextResource.PARTY_STABILITY + " +" + morale, uiSkin)).padRight(Padding.MEDIUM);
 
         t.add(new Label(TextResource.PARTY_REPUTATION + " +" + reputation, uiSkin)).padRight(Padding.MEDIUM);
 

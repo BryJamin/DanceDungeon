@@ -17,7 +17,7 @@ public class PartyDetails {
 
     private int money = 3;
     private int reputation;
-    private int morale = 7;
+    private int morale = 70;
 
     private UnitData[] party = new UnitData[PARTY_SIZE];
 

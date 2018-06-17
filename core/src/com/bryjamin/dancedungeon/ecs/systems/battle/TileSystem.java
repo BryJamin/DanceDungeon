@@ -426,6 +426,10 @@ public class TileSystem extends EntitySystem {
     }
 
 
+    public boolean isOccupied(Coordinates c){
+        return occupiedMap.containsValue(c, false);
+    }
+
 
 
     public Array<Coordinates> getFreeCoordinateInAGivenDirection(Coordinates c, Direction[] d){

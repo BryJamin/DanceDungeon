@@ -255,12 +255,13 @@ public class BattleDeploymentSystem extends EntitySystem implements Observer{
                     IntBag toBeSpawned = world.getAspectSubscriptionManager().get(Aspect.all(CoordinateComponent.class, SpawnerComponent.class)).getEntities();
 
 
+                    System.out.println("size " + toBeSpawned.size());
 
                     for(int i = 0; i < toBeSpawned.size(); i++){
                         final Entity e = world.getEntity(toBeSpawned.get(i));
 
 
-                        actionQueueSystem.pushLastAction(e, new QueuedAction() {
+                        actionQueueSystem.pushLastAction(new QueuedAction() {
 
                             Entity spawned;
 
@@ -269,7 +270,7 @@ public class BattleDeploymentSystem extends EntitySystem implements Observer{
 
                                 Coordinates current = e.getComponent(CoordinateComponent.class).coordinates;
 
-                                if(tileSystem.getCoordinateMap().get(current).size <= 1){
+                                if(!tileSystem.isOccupied(current)){
 
                                     //TODO is it possible for a null pointer?
 
@@ -282,8 +283,6 @@ public class BattleDeploymentSystem extends EntitySystem implements Observer{
                                             .fadeIn(true)
                                             .endless(false)
                                             .maximumDuration(0.2f)));
-
-                                    e.edit().add(new DeadComponent());
 
                                 } else {
 
@@ -308,7 +307,15 @@ public class BattleDeploymentSystem extends EntitySystem implements Observer{
                                     return true;
                                 }
 
-                                return spawned.getComponent(DrawableComponent.class).drawables.getColor().a >= 1;
+                                if(spawned.getComponent(DrawableComponent.class).drawables.getColor().a >= 1){
+
+                                    e.edit().add(new DeadComponent());
+
+                                    return true;
+                                }
+
+
+                                return false;
                             }
                         });
                     }

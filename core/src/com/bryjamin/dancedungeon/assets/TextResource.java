@@ -17,7 +17,7 @@ public class TextResource {
     public static final String CONFIRM_YES = "Yes";
     public static final String CONFIRM_NO = "No";
 
-    public static final String PARTY_MORALE = "Morale";
+    public static final String PARTY_STABILITY = "Stability";
     public static final String PARTY_GOLD = "Money";
     public static final String PARTY_REPUTATION = "Rep";
     public static final String PARTY_REPUTATION_FULL = "Reputation";

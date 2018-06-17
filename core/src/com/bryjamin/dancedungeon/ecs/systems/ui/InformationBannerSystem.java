@@ -90,7 +90,7 @@ public class InformationBannerSystem extends BaseSystem implements Observer {
 
         infoTable.add(tableForMoneyIconAndText).width(width);
 
-        label = new Label(String.format(Locale.ENGLISH,TextResource.PARTY_MORALE + ": %d/%d", partyDetails.getMorale(), PartyDetails.MAX_MORALE), uiSkin);
+        label = new Label(String.format(Locale.ENGLISH,TextResource.PARTY_STABILITY + ": %d/%d", partyDetails.getMorale(), PartyDetails.MAX_MORALE), uiSkin);
         label.setAlignment(Align.center);
         infoTable.add(label).width(width).align(Align.center);
 
