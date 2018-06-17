@@ -4,11 +4,19 @@ import com.artemis.Aspect;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.artemis.World;
+import com.artemis.utils.IntBag;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
+import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.QueuedAction;
+import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.QueuedInstantAction;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.SpawnerComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.DeploymentComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
 import com.bryjamin.dancedungeon.factories.unit.UnitLibrary;
 import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
@@ -31,6 +39,7 @@ import com.bryjamin.dancedungeon.utils.observer.Observer;
 public class BattleDeploymentSystem extends EntitySystem implements Observer{
 
     private TileSystem tileSystem;
+    private ActionQueueSystem actionQueueSystem;
     private PlayerPartyManagementSystem playerPartyManagementSystem;
 
     private TurnSystem turnSystem;
@@ -58,42 +67,26 @@ public class BattleDeploymentSystem extends EntitySystem implements Observer{
 
 
 
-    public void spawnNextEnemyWave(){
+    public Array<String> getNextEnemyWave(){
 
-
-        Array<Coordinates> spawningLocations = new Array<Coordinates>(tileSystem.getEnemySpawningLocations());
+        Array<String> unitIdsToSpawn = new Array<>();
 
         if(battleEvent.getNumberOfWaves() > 0){
+
             if(battleEvent.getWaves().size > 0){
-                Array<String> stringArray = battleEvent.getWaves().removeFirst();
-                for(String s : stringArray){
-                    if(s.equals(BattleEvent.RANDOM_POOLED_UNIT)){
-                        addEnemyUnit(spawningLocations, battleEvent.getFixedEnemyPool().random());
-                    } else {
-                        addEnemyUnit(spawningLocations, s);
-                    }
+                for(String s : battleEvent.getWaves().removeFirst()){
+                    unitIdsToSpawn.add(s.equals(BattleEvent.RANDOM_POOLED_UNIT) ? battleEvent.getFixedEnemyPool().random() : s);
                 }
             } else {
-
                 for (int i = 0; i < 3; i++) {
-
-                    System.out.println("Here");
-                    if (battleEvent.getFixedEnemyPool().size == 0) {
-
-                        //TODO You need to add units based on a 'Difficulty Level' of the Event.
-
-                        addEnemyUnit(spawningLocations, UnitLibrary.getRandomEnemyUnitID());
-
-                        continue;
-                    }
-
-                    System.out.println("And here");
-                    addEnemyUnit(spawningLocations, battleEvent.getFixedEnemyPool().random());
+                    unitIdsToSpawn.add(battleEvent.getFixedEnemyPool().size == 0 ? UnitLibrary.getRandomEnemyUnitID() : battleEvent.getFixedEnemyPool().random());
                 }
 
 
             }
         }
+
+        return unitIdsToSpawn;
 
     }
 
@@ -102,7 +95,12 @@ public class BattleDeploymentSystem extends EntitySystem implements Observer{
     protected void initialize() {
 
         turnSystem.addPlayerTurnObserver(this);
-        spawnNextEnemyWave();
+        turnSystem.addEnemyTurnObserver(this);
+
+        for(String s : getNextEnemyWave()){
+            addEnemyUnit(new Array<>(tileSystem.getEnemySpawningLocations()), s);
+        }
+
         deploymentLocations = new Array<>(tileSystem.getAllySpawningLocations());
         calculateUnitToBeDeployed();
         createDeploymentLocations();
@@ -110,14 +108,24 @@ public class BattleDeploymentSystem extends EntitySystem implements Observer{
 
     }
 
+    private Entity addSpawnUnit(Array<Coordinates> spawningLocations, String unitId){
+
+        Entity e = UnitFactory.baseSpawnBag(world, unitId);
+        Coordinates selected = spawningLocations.random();
+        spawningLocations.removeValue(selected, true);
+        e.getComponent(CoordinateComponent.class).coordinates.set(selected);
+
+        return e;
+
+    }
 
 
-
-    private void addEnemyUnit(Array<Coordinates> spawningLocations, String unitId){
+    private Entity addEnemyUnit(Array<Coordinates> spawningLocations, String unitId){
         Entity e = UnitLibrary.getEnemyUnit(world, unitId);
         Coordinates selected = spawningLocations.random();
         spawningLocations.removeValue(selected, true);
         e.getComponent(CoordinateComponent.class).coordinates.set(selected);
+        return e;
     }
 
 
@@ -240,7 +248,80 @@ public class BattleDeploymentSystem extends EntitySystem implements Observer{
     @Override
     public void update(Object o) {
         if(!isTutorial) {
-            spawnNextEnemyWave();
+
+            switch (turnSystem.getTurn()){
+
+                case INTENT:
+
+                    IntBag toBeSpawned = world.getAspectSubscriptionManager().get(Aspect.all(CoordinateComponent.class, SpawnerComponent.class)).getEntities();
+
+
+
+                    for(int i = 0; i < toBeSpawned.size(); i++){
+                        final Entity e = world.getEntity(toBeSpawned.get(i));
+
+
+                        actionQueueSystem.pushLastAction(new QueuedAction() {
+
+                            Entity spawned;
+
+                            @Override
+                            public void act() {
+
+                                //TODO is it possible for a null pointer?
+
+                                spawned = UnitLibrary.getEnemyUnit(world, e.getComponent(SpawnerComponent.class).getUnitID());
+                                spawned.getComponent(CoordinateComponent.class).coordinates.set(e.getComponent(CoordinateComponent.class).coordinates);
+                                spawned.edit().add(new FadeComponent(new FadeComponent.FadeBuilder()
+                                        .alpha(0)
+                                        .fadeIn(true)
+                                        .endless(false)
+                                        .maximumDuration(0.2f)));
+
+                                e.edit().add(new DeadComponent());
+                            }
+
+                            @Override
+                            public boolean isComplete() {
+                                return spawned.getComponent(DrawableComponent.class).drawables.getColor().a >= 1;
+                            }
+                        });
+                    }
+
+                    break;
+
+                case PLAYER: //When switching to the player turn queue up the gltiches showing up.
+
+                    for(final String s : getNextEnemyWave()) {
+                        actionQueueSystem.pushLastAction(new QueuedAction() {
+
+                            Entity e;
+
+                            @Override
+                            public void act() {
+                                e = addSpawnUnit(new Array<>(tileSystem.getEnemySpawningLocations()), s);
+                                e.edit().add(new FadeComponent(new FadeComponent.FadeBuilder()
+                                        .alpha(0)
+                                        .fadeIn(true)
+                                        .endless(false)
+                                        .maximumDuration(0.4f)));
+
+                            }
+
+                            @Override
+                            public boolean isComplete() {
+                                return e.getComponent(DrawableComponent.class).drawables.getColor().a >= 1;
+                            }
+                        });
+
+                    }
+
+                    break;
+
+
+
+            }
+
         }
     }
 }

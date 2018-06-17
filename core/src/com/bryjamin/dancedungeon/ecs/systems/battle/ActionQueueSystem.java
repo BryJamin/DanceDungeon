@@ -190,6 +190,10 @@ public class ActionQueueSystem extends EntitySystem {
         processingFlag = true; //Turns on the system
     }
 
+    public void pushLastAction(QueuedAction qa) {
+        pushLastAction(null, UUID.randomUUID().toString(), qa);
+        processingFlag = true; //Turns on the system
+    }
 
     public void pushLastAction(Entity e, QueuedAction qa) {
         pushLastAction(e, UUID.randomUUID().toString(), qa);

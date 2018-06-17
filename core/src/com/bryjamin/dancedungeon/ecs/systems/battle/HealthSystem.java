@@ -110,7 +110,7 @@ public class HealthSystem extends EntityProcessingSystem {
             floatingTextEntity.edit().add(new PositionComponent(entity.getComponent(PositionComponent.class)));
             floatingTextEntity.edit().add(new CenteringBoundComponent(entity.getComponent(CenteringBoundComponent.class)));
             floatingTextEntity.edit().add(new FadeComponent.FadeBuilder()
-                    .maximumTime(0.75f)
+                    .maximumDuration(0.75f)
                     .endless(false)
                     .fadeIn(false)
                     .build());

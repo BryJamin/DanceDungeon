@@ -62,11 +62,9 @@ public class BattleEvent extends MapEvent {
 
         this.mapLocation = be.mapLocation;
         this.primaryObjective = be.primaryObjective.clone();
-
-        this.bonusObjectives = be.bonusObjectives;
+        this.bonusObjectives = be.bonusObjectives.clone();
 
         //TODO create a 'reset' inside of the Objectives? Not sure.
-
         this.fixedEnemyPool.addAll(be.fixedEnemyPool);
     }
 

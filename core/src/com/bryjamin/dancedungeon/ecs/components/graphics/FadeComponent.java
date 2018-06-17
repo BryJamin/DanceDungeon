@@ -45,8 +45,8 @@ public class FadeComponent extends Component {
     public FadeComponent(FadeBuilder fb){
         this.minAlpha = fb.minAlpha;
         this.maxAlpha = fb.maxAlpha;
-        this.currentDuration = fb.time;
-        this.maximumDuration = fb.maximumTime;
+        this.currentDuration = fb.currentDuration;
+        this.maximumDuration = fb.maximumDuration;
         this.alpha = fb.alpha;
         this.fadeIn = fb.fadeIn;
         this.flicker = fb.flicker;
@@ -64,8 +64,8 @@ public class FadeComponent extends Component {
         private float minAlpha = 0;
         private float maxAlpha = 1;
 
-        private float time = 0;
-        private float maximumTime;
+        private float currentDuration = 0;
+        private float maximumDuration = 1;
 
         private float alpha = 1;
 
@@ -82,11 +82,11 @@ public class FadeComponent extends Component {
         public FadeBuilder maxAlpha(float val)
         { this.maxAlpha = val; return this; }
 
-        public FadeBuilder time(float val)
-        { this.time = val; return this; }
+        public FadeBuilder currentDuration(float val)
+        { this.currentDuration = val; return this; }
 
-        public FadeBuilder maximumTime(float val)
-        { this.maximumTime = val; return this; }
+        public FadeBuilder maximumDuration(float val)
+        { this.maximumDuration = val; return this; }
 
         public FadeBuilder alpha(float val)
         { this.alpha = val; return this; }

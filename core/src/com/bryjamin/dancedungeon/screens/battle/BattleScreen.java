@@ -88,7 +88,6 @@ public class BattleScreen extends AbstractScreen {
                         //Initialize Tiles
                         new TileSystem(battleEvent),
                         new TutorialSystem(isTutorial),
-                        new BattleDeploymentSystem(battleEvent, isTutorial),
                         new UndoMoveSystem(),
 
                         game.musicSystem,
@@ -97,6 +96,9 @@ public class BattleScreen extends AbstractScreen {
                         new BattleScreenInputSystem(gameport),
 
                         //new InformationBannerSystem(game, gameport, InformationBannerSystem.State.BATTLE_SCREEN),
+
+                        new BattleDeploymentSystem(battleEvent, isTutorial),
+
                         new BattleScreenUISystem(UIStage, game),
 
                         new PlayerPartyManagementSystem(partyDetails),

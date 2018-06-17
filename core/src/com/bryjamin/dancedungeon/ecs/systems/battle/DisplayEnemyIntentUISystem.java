@@ -200,7 +200,7 @@ public class DisplayEnemyIntentUISystem extends EntitySystem implements Observer
                 .add(new CenteringBoundComponent())
                 .add(new FadeComponent(new FadeComponent.FadeBuilder()
                         .minAlpha(0.5f)
-                        .maximumTime(2f)))
+                        .maximumDuration(2f)))
                 .add(new EnemyIntentUIComponent());
 
         return e;

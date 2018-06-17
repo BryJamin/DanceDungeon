@@ -5,7 +5,7 @@
     "mapLocation": "maps/map_1.tmx",
     "primaryObjective": {
       "class": "com.bryjamin.dancedungeon.factories.map.event.objectives.SurviveObjective",
-      "rounds": 1,
+      "rounds": 4,
       "reward": "MORALE"
     },
 
@@ -24,7 +24,7 @@
     "mapLocation": "maps/map_2.tmx",
     "primaryObjective": {
       "class": "com.bryjamin.dancedungeon.factories.map.event.objectives.SurviveObjective",
-      "rounds": 2,
+      "rounds": 4,
       "reward": "MONEY"
     },
 
@@ -62,7 +62,7 @@
       "class": "com.bryjamin.dancedungeon.factories.map.event.objectives.DefeatAllEnemiesObjectiveTutorial"
     },
 
-    "fixedEnemyPool": ["7720994b-263a-439d-b83c-70586bb63777"]
+    "fixedEnemyPool": ["Blobb"]
   }
 
 

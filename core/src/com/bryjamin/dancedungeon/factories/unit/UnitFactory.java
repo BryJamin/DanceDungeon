@@ -3,6 +3,7 @@ package com.bryjamin.dancedungeon.factories.unit;
 import com.artemis.Entity;
 import com.artemis.World;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Rectangle;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
@@ -11,7 +12,10 @@ import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.AvailableActionsCompnent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
+import com.bryjamin.dancedungeon.ecs.components.battle.SpawnerComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TileEffectComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationMapComponent;
+import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationStateComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.DeploymentComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
@@ -127,7 +131,7 @@ public class UnitFactory {
                                 .minAlpha(0.15f)
                                 .maxAlpha(0.85f)
                                // .endless(true)
-                                .maximumTime(1.5f)));
+                                .maximumDuration(1.5f)));
         return e;
     }
 
@@ -160,6 +164,39 @@ public class UnitFactory {
                 new TextureDescription.Builder(unitData.icon)
                         .size(size)
                         .build()));
+
+
+        return e;
+
+    }
+
+
+    public static Entity baseSpawnBag(World world, String unitID){
+
+        float size = TileSystem.CELL_SIZE * 0.6f;
+
+        Entity e = world.createEntity();
+
+        e.edit().add(new PositionComponent());
+        e.edit().add(new SpawnerComponent(unitID));
+        e.edit().add(new CoordinateComponent());
+
+        //Graphical
+        e.edit().add(new AvailableActionsCompnent());
+
+
+        e.edit().add(new CenteringBoundComponent(size, size));
+
+        e.edit().add(new DrawableComponent(Layer.BACKGROUND_LAYER_NEAR,
+                new TextureDescription.Builder(TextureStrings.SPAWNER)
+                        .size(size)
+                        .build()));
+
+
+        int STANDING_ANIMATION = 23;
+        e.edit().add(new AnimationStateComponent(STANDING_ANIMATION));
+        e.edit().add(new AnimationMapComponent()
+                .put(STANDING_ANIMATION, TextureStrings.SPAWNER, 0.4f, Animation.PlayMode.LOOP));
 
 
         return e;

@@ -160,14 +160,14 @@ decor/grass_tile
   index: 1
 decor/grass_tile
   rotate: false
-  xy: 793, 129
+  xy: 925, 129
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 2
 decor/grass_tile
   rotate: false
-  xy: 857, 193
+  xy: 989, 193
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
@@ -188,14 +188,14 @@ decor/rock
   index: 0
 decor/rock
   rotate: false
-  xy: 793, 95
+  xy: 925, 95
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 1
 decor/rock
   rotate: false
-  xy: 891, 193
+  xy: 1023, 193
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
@@ -216,47 +216,47 @@ decor/rock
   index: 4
 decor/rock
   rotate: false
-  xy: 925, 193
+  xy: 1057, 193
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 5
-decor/turret
+decor/teleporter
   rotate: false
   xy: 979, 227
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
-decor/turret
+decor/teleporter
   rotate: false
   xy: 1045, 227
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 1
-decor/turret
+decor/teleporter
   rotate: false
   xy: 1111, 227
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 2
-decor/turret
+decor/teleporter
   rotate: false
   xy: 1177, 227
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 3
-decor/turret
+decor/teleporter
   rotate: false
   xy: 1243, 227
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 4
-decor/turret
+decor/teleporter
   rotate: false
   xy: 1309, 227
   size: 64, 64
@@ -269,66 +269,108 @@ decor/turret
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
-  index: 6
+  index: 0
 decor/turret
   rotate: false
   xy: 1441, 227
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
-  index: 7
+  index: 1
 decor/turret
   rotate: false
   xy: 1507, 227
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
-  index: 8
+  index: 2
 decor/turret
   rotate: false
   xy: 1573, 227
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
-  index: 9
+  index: 3
 decor/turret
   rotate: false
   xy: 1639, 227
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
-  index: 10
+  index: 4
 decor/turret
   rotate: false
   xy: 1705, 227
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
-  index: 11
+  index: 5
 decor/turret
   rotate: false
   xy: 1771, 227
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
-  index: 12
+  index: 6
 decor/turret
   rotate: false
   xy: 1837, 227
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
-  index: 13
+  index: 7
 decor/turret
   rotate: false
   xy: 1903, 227
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
-  index: 14
+  index: 8
 decor/turret
   rotate: false
   xy: 1969, 227
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 9
+decor/turret
+  rotate: false
+  xy: 463, 161
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 10
+decor/turret
+  rotate: false
+  xy: 463, 95
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 11
+decor/turret
+  rotate: false
+  xy: 529, 161
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 12
+decor/turret
+  rotate: false
+  xy: 529, 95
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 13
+decor/turret
+  rotate: false
+  xy: 595, 161
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 14
+decor/turret
+  rotate: false
+  xy: 595, 95
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -489,7 +531,7 @@ enemy/silverhead_standing
   index: 2
 enemy/xi_portrait
   rotate: false
-  xy: 727, 95
+  xy: 859, 95
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -538,7 +580,7 @@ icons/line_arrow
   index: 0
 icons/line_arrow
   rotate: false
-  xy: 793, 163
+  xy: 925, 163
   size: 62, 62
   split: 23, 23, 0, 62
   pad: 23, 23, 0, 52
@@ -631,14 +673,14 @@ icons/units/mage
   index: 0
 icons/units/warrior
   rotate: false
-  xy: 595, 95
+  xy: 727, 95
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
 icons/warning
   rotate: false
-  xy: 595, 161
+  xy: 727, 161
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -867,72 +909,51 @@ player/targeting
   orig: 64, 64
   offset: 0, 0
   index: 0
-player/wanda_firing
-  rotate: false
-  xy: 463, 161
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 0
 player/wanda_standing
-  rotate: false
-  xy: 463, 161
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 3
-player/wanda_standing
-  rotate: false
-  xy: 463, 161
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 0
-player/wanda_firing
-  rotate: false
-  xy: 463, 95
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 1
-player/wanda_firing
-  rotate: false
-  xy: 529, 161
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 2
-player/wanda_standing
-  rotate: false
-  xy: 529, 95
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 1
-player/wanda_standing
-  rotate: false
-  xy: 529, 95
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 2
-player/xi_firing
   rotate: false
   xy: 661, 161
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 0
-player/xi_firing
+player/wanda_standing
+  rotate: false
+  xy: 661, 161
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 3
+player/wanda_standing
   rotate: false
   xy: 661, 95
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 1
+player/wanda_standing
+  rotate: false
+  xy: 661, 95
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 2
 player/xi_firing
   rotate: false
-  xy: 727, 161
+  xy: 793, 161
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 0
+player/xi_firing
+  rotate: false
+  xy: 793, 95
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 1
+player/xi_firing
+  rotate: false
+  xy: 859, 161
   size: 64, 64
   orig: 64, 64
   offset: 0, 0

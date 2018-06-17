@@ -14,6 +14,7 @@ public class TextureStrings {
     static {
 
         BLOCK = add("blocktiny");
+        SPAWNER = add("decor/teleporter");
         TARGETING = add("player/targeting");
 
         WALL = add("decor/wall");
@@ -48,6 +49,7 @@ public class TextureStrings {
     }
 
     public static final String BLOCK;
+    public static final String SPAWNER;
     public static final String TARGETING;
     public static final String WALL;
     public static final String ROCK_TILE;

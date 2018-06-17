@@ -594,46 +594,48 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
 
 
-    private void createNextTurnBanner(TurnSystem.TURN turn){
-
-        nextTurnBanner.reset();
-        //nextTurnBanner.getActions().clear();
-        nextTurnBanner.getColor().set(new Color(Color.WHITE));
-        String text;
-
-        switch (turn){
-
-            default:
-            case ENEMY:
-            case INTENT:
-
-                text = TextResource.BATTLE_ENEMY_TURN;
-                nextTurnBanner.setBackground(NinePatches.getBorderNinePatchDrawable(renderingSystem.getAtlas(), new Color(Color.RED)));
-                break;
-
-            case PLAYER:
-                text = TextResource.BATTLE_ALLY_TURN;
-                nextTurnBanner.setBackground(NinePatches.getBorderNinePatchDrawable(renderingSystem.getAtlas(), new Color(Colors.TABLE_BORDER_COLOR)));
-                break;
-        }
-
-        float height = Measure.units(7.5f);
-        float width = stage.getWidth() + Measure.units(20f);
-
-        nextTurnBanner.setVisible(true);
-        nextTurnBanner.setWidth(width);
-        nextTurnBanner.setHeight(height);
-        nextTurnBanner.setPosition(CenterMath.centerOnPositionX(width, stage.getWidth() / 2), CenterMath.centerOnPositionY(height, stage.getHeight() / 2 + Measure.units(5f)));
-        nextTurnBanner.align(Align.center);
-        nextTurnBanner.add(new Label(text, uiSkin));
-
-        final Action a = Actions.fadeOut(1.25f, Interpolation.smoother);
-
-        nextTurnBanner.addAction(a);
+    private void createNextTurnBanner(final TurnSystem.TURN turn){
 
         actionQueueSystem.pushLastAction(null, new QueuedAction() {
             @Override
-            public void act() { }
+            public void act() {
+
+                nextTurnBanner.reset();
+                //nextTurnBanner.getActions().clear();
+                nextTurnBanner.getColor().set(new Color(Color.WHITE));
+                String text;
+
+                switch (turn){
+
+                    default:
+                    case ENEMY:
+                    case INTENT:
+
+                        text = TextResource.BATTLE_ENEMY_TURN;
+                        nextTurnBanner.setBackground(NinePatches.getBorderNinePatchDrawable(renderingSystem.getAtlas(), new Color(Color.RED)));
+                        break;
+
+                    case PLAYER:
+                        text = TextResource.BATTLE_ALLY_TURN;
+                        nextTurnBanner.setBackground(NinePatches.getBorderNinePatchDrawable(renderingSystem.getAtlas(), new Color(Colors.TABLE_BORDER_COLOR)));
+                        break;
+                }
+
+                float height = Measure.units(7.5f);
+                float width = stage.getWidth() + Measure.units(20f);
+
+                nextTurnBanner.setVisible(true);
+                nextTurnBanner.setWidth(width);
+                nextTurnBanner.setHeight(height);
+                nextTurnBanner.setPosition(CenterMath.centerOnPositionX(width, stage.getWidth() / 2), CenterMath.centerOnPositionY(height, stage.getHeight() / 2 + Measure.units(5f)));
+                nextTurnBanner.align(Align.center);
+                nextTurnBanner.add(new Label(text, uiSkin));
+
+                final Action a = Actions.fadeOut(1.25f, Interpolation.smoother);
+
+                nextTurnBanner.addAction(a);
+
+            }
 
             @Override
             public boolean isComplete() {

@@ -25,6 +25,11 @@ public class FadeSystem extends EntityProcessingSystem {
     }
 
     @Override
+    public void inserted(Entity e) {
+        applyFade(e, fm.get(e).alpha);
+    }
+
+    @Override
     protected void process(Entity e) {
 
         FadeComponent fc = fm.get(e);

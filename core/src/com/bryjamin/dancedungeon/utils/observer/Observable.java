@@ -1,6 +1,7 @@
 package com.bryjamin.dancedungeon.utils.observer;
 
 import com.badlogic.gdx.utils.Array;
+import com.bryjamin.dancedungeon.ecs.systems.battle.TurnSystem;
 
 /**
  * Custom implementation of observer pattern.

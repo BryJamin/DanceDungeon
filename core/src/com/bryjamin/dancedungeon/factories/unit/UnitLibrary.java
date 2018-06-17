@@ -64,6 +64,7 @@ public class UnitLibrary {
                             "Unit Name: " + unitData.getName()  + "\n" +
                             "File Name: " + file);
                 }
+                unitList.put(unitData.getName(), unitData);
                 unitList.put(unitData.getId(), unitData);
             }
 
