@@ -153,7 +153,7 @@ public class TurnSystem extends EntitySystem implements Observer{
         currentTurnEntities.clear();
 
         if (turn == ENEMY) {
-            populateTurnEntities(Aspect.all(AvailableActionsCompnent.class, SkillsComponent.class, UnitComponent.class, EnemyComponent.class));
+            populateTurnEntities(Aspect.all(UtilityAiComponent.class, AvailableActionsCompnent.class, SkillsComponent.class, UnitComponent.class, EnemyComponent.class));
         } else if (turn == PLAYER) {
             populateTurnEntities(Aspect.all(AvailableActionsCompnent.class, SkillsComponent.class, UnitComponent.class, PlayerControlledComponent.class));
 
