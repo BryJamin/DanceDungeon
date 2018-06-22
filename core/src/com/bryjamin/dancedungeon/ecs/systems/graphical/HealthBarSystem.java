@@ -1,6 +1,7 @@
 package com.bryjamin.dancedungeon.ecs.systems.graphical;
 
 import com.artemis.Aspect;
+import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.graphics.Color;
@@ -22,7 +23,7 @@ import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
@@ -41,6 +42,8 @@ import java.util.Locale;
  */
 
 public class HealthBarSystem extends EntityProcessingSystem {
+
+    private ComponentMapper<UnitComponent> unitM;
 
     private TileSystem tileSystem;
 
@@ -69,8 +72,8 @@ public class HealthBarSystem extends EntityProcessingSystem {
 
     private ObjectMap<Entity, HealthBar> entityHealthBarObjectMap = new ObjectMap<Entity, HealthBar>();
 
-    public HealthBarSystem(MainGame game, Viewport gameport) {
-        super(Aspect.all(HealthComponent.class, PositionComponent.class, CenteringBoundComponent.class, CoordinateComponent.class));
+    public HealthBarSystem(MainGame game) {
+        super(Aspect.all(UnitComponent.class, PositionComponent.class, CenteringBoundComponent.class, CoordinateComponent.class));
         this.batch = game.batch;
         this.atlas = game.assetManager.get(FileStrings.SPRITE_ATLAS_FILE, TextureAtlas.class);
         healthFont = game.assetManager.get(Fonts.SMALL, BitmapFont.class);
@@ -89,11 +92,11 @@ public class HealthBarSystem extends EntityProcessingSystem {
         Rectangle rect = tileSystem.getCellDimensions();
 
         PositionComponent positionComponent = e.getComponent(PositionComponent.class);
-        HealthComponent healthComponent = e.getComponent(HealthComponent.class);
+        UnitComponent unitComponent = e.getComponent(UnitComponent.class);
         HealthBar healthBar = entityHealthBarObjectMap.get(e);
 
-        float maxHealth = healthComponent.maxHealth;
-        float health = healthComponent.health < 0 ? 0 : healthComponent.health;
+        float maxHealth = unitComponent.getUnitData().getMaxHealth();
+        float health = unitComponent.getUnitData().getHealth() < 0 ? 0 : unitComponent.getUnitData().getHealth();
 
         //Black bar
         float width = ((rect.getWidth() / 5) * 3.5f);

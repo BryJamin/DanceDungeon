@@ -23,4 +23,6 @@ public class UnitComponent extends Component {
     public UnitData getUnitData() {
         return unitData;
     }
+
+
 }

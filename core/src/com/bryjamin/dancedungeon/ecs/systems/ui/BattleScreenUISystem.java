@@ -48,7 +48,6 @@ import com.bryjamin.dancedungeon.ecs.components.FollowPositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.QueuedAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.AvailableActionsCompnent;
-import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.ai.StoredSkillComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
@@ -115,7 +114,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
 
     private ComponentMapper<PlayerControlledComponent> pcm;
     private ComponentMapper<EnemyComponent> em;
-    private ComponentMapper<HealthComponent> hm;
+    private ComponentMapper<UnitComponent> um;
     private ComponentMapper<StoredSkillComponent> storedm;
 
     private static final float SKILL_BUTTON_SIZE = Measure.units(7.5f);
@@ -748,7 +747,7 @@ public class BattleScreenUISystem extends BaseSystem implements Observer {
                 for(Entity e : tileSystem.getCoordinateMap().get(storedSkillComponent.storedTargetCoordinates)){
 
 
-                    if(hm.has(e)){
+                    if(um.has(e)){ //TODO Have a component that shows that something can not be damage. Or can everything be damaged?
 
                         attackIndicatorTable.setVisible(true);
 

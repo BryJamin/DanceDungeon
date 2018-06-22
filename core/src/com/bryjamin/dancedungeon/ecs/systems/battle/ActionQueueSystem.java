@@ -11,10 +11,10 @@ import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.Queue;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.QueuedAction;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.QueuedInstantAction;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
 import com.bryjamin.dancedungeon.utils.observer.Observable;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
-import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.QueuedActionComponent;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
@@ -370,10 +370,10 @@ public class ActionQueueSystem extends EntitySystem {
         pushLastAction(entity, new QueuedInstantAction() {
             @Override
             public void act() {
-                if(entity.getComponent(HealthComponent.class) == null) {
+                if(entity.getComponent(UnitComponent.class) == null) {
                     return;
                 }
-                entity.getComponent(HealthComponent.class).applyDamage(damage);
+                entity.getComponent(UnitComponent.class).getUnitData().applyDamage(damage);
             }
         });
     }
@@ -385,10 +385,10 @@ public class ActionQueueSystem extends EntitySystem {
         pushLastAction(entity, skillId, new QueuedInstantAction() {
             @Override
             public void act() {
-                if(entity.getComponent(HealthComponent.class) == null) {
+                if(entity.getComponent(UnitComponent.class) == null) {
                     return;
                 }
-                entity.getComponent(HealthComponent.class).applyDamage(damage);
+                entity.getComponent(UnitComponent.class).getUnitData().applyDamage(damage);
             }
         });
     }

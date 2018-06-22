@@ -17,7 +17,6 @@ import com.bryjamin.dancedungeon.ecs.components.battle.TileEffectComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationMapComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationStateComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.DeploymentComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.OutOfBoundsComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UnPushableComponent;
@@ -73,13 +72,7 @@ public class UnitFactory {
         // e.edit().remove(UnPushableComponent.class);
         e.edit().add(new OutOfBoundsComponent());
         e.edit().add(new TileEffectComponent(TileEffectComponent.Effect.DEATH));
-
-
-        UnitData unitData = new UnitData();
-        unitData.setHealth(2);
-        unitData.setHealth(2);
-
-        e.edit().add(new UnitComponent(unitData));
+        
         e.getComponent(DrawableComponent.class).drawables.getColor().set(new Color(Color.CYAN));
         return e;
     }
@@ -88,7 +81,6 @@ public class UnitFactory {
     public Entity baseAlliedTileBag(World world, Coordinates c){
         Entity e = baseTileBag(world, c);
        // e.edit().remove(UnPushableComponent.class);
-        e.edit().add(new HealthComponent(2));
         e.edit().add(new AffectMoraleComponent());
         e.edit().add(new FriendlyComponent());
         e.edit().add(new BlinkOnHitComponent());
@@ -96,7 +88,7 @@ public class UnitFactory {
 
         UnitData unitData = new UnitData();
         unitData.setHealth(2);
-        unitData.setHealth(2);
+        unitData.setMaxHealth(2);
 
         e.edit().add(new UnitComponent(unitData));
         e.getComponent(DrawableComponent.class).drawables.getColor().set(new Color(Color.ORANGE));
@@ -144,8 +136,6 @@ public class UnitFactory {
         e.edit().add(new PositionComponent());
         e.edit().add(new UnitComponent(unitData));
         e.edit().add(new SolidComponent());
-
-        e.edit().add(new HealthComponent(unitData.getHealth(), unitData.getMaxHealth()));
         e.edit().add(new CoordinateComponent());
         e.edit().add(new MoveToComponent(Measure.units(unitData.getMapMovementSpeed())));
         e.edit().add(new VelocityComponent());

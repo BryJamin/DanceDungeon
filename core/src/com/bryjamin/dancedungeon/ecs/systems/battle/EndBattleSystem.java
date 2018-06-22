@@ -1,6 +1,7 @@
 package com.bryjamin.dancedungeon.ecs.systems.battle;
 
 import com.artemis.Aspect;
+import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
@@ -14,7 +15,6 @@ import com.bryjamin.dancedungeon.ecs.systems.ui.TutorialSystem;
 import com.bryjamin.dancedungeon.factories.map.event.TutorialEvent;
 import com.bryjamin.dancedungeon.factories.unit.UnitData;
 import com.bryjamin.dancedungeon.utils.observer.Observer;
-import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.EnemyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
@@ -32,7 +32,7 @@ import com.bryjamin.dancedungeon.screens.battle.PartyDetails;
  * System used to track when a battle has ended.
  */
 
-public class EndBattleSystem extends EntitySystem implements Observer {
+public class EndBattleSystem extends BaseSystem implements Observer {
 
     private PlayerPartyManagementSystem playerPartyManagementSystem;
     private BattleScreenUISystem battleScreenUISystem;
@@ -45,11 +45,6 @@ public class EndBattleSystem extends EntitySystem implements Observer {
     private ComponentMapper<UnitComponent> uMapper;
     private ComponentMapper<PlayerControlledComponent> pcMapper;
 
-
-    private Bag<Entity> playerBag = new Bag<Entity>();
-
-    private MainGame game;
-
     private PartyDetails partyDetails;
     private GameMap gameMap;
 
@@ -59,9 +54,7 @@ public class EndBattleSystem extends EntitySystem implements Observer {
 
 
     public EndBattleSystem(MainGame game, BattleEvent battleEvent, PartyDetails partyDetails) {
-        super(Aspect.one(EnemyComponent.class, PlayerControlledComponent.class));
         this.partyDetails = partyDetails;
-        this.game = game;
         this.gameMap = gameMap;
         //partyDetails.getPlayerParty().
         this.currentEvent = battleEvent;
@@ -103,17 +96,6 @@ public class EndBattleSystem extends EntitySystem implements Observer {
         return false;
     }
 
-
-    @Override
-    public void inserted(Entity e) {
-        if (pcMapper.has(e)) playerBag.add(e);
-    }
-
-    @Override
-    public void removed(Entity e) {
-        if (pcMapper.has(e)) playerBag.remove(e);
-    }
-
     @Override
     public void update(Object o) {
 
@@ -130,22 +112,11 @@ public class EndBattleSystem extends EntitySystem implements Observer {
 
         if (currentEvent.isComplete(world) && turnSystem.getTurn() == TurnSystem.TURN.PLAYER) {
 
-            IntBag intBag = world.getAspectSubscriptionManager().get(Aspect.all(PlayerControlledComponent.class, HealthComponent.class, UnitComponent.class)).getEntities();
-
-            for(int i = 0; i < intBag.size(); i++){
-                Entity e = world.getEntity(intBag.get(i));
-                HealthComponent hc = e.getComponent(HealthComponent.class);
-                UnitData unitData = uMapper.get(e).getUnitData();
-                unitData.setHealth(hc.health);
-                unitData.setMaxHealth(hc.maxHealth);
-            }
-
             if(TutorialSystem.isTutorial){
                 battleScreenUISystem.createTutorialWindow(new Rectangle(), TutorialSystem.TutorialState.END);
             } else {
                 actionQueueSystem.observable.removeObserver(this);
                 battleScreenUISystem.createVictoryRewards(currentEvent, partyDetails);
-
                 turnSystem.stop();
                 battleScreenInputSystem.restrictInputToStage();
             }

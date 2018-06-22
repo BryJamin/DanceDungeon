@@ -10,12 +10,12 @@ import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.QueuedAction;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.SpawnerComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.DeploymentComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
 import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
 import com.bryjamin.dancedungeon.factories.unit.UnitLibrary;
 import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
@@ -288,8 +288,8 @@ public class BattleDeploymentSystem extends EntitySystem implements Observer{
 
                                     for(Entity unit : tileSystem.getCoordinateMap().get(current)){
 
-                                        if(unit.getComponent(HealthComponent.class) != null){
-                                            unit.getComponent(HealthComponent.class).applyDamage(1);
+                                        if(unit.getComponent(UnitComponent.class) != null){
+                                            unit.getComponent(UnitComponent.class).getUnitData().applyDamage(1);
                                         }
 
                                     };

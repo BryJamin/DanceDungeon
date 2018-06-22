@@ -1,5 +1,6 @@
 package com.bryjamin.dancedungeon.factories.spells;
 
+import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.World;
 import com.badlogic.gdx.graphics.Color;
@@ -10,10 +11,8 @@ import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.QueuedInstantAction;
-import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldConditionalAction;
 import com.bryjamin.dancedungeon.ecs.components.battle.AvailableActionsCompnent;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.StunnedComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UnPushableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationMapComponent;
@@ -286,25 +285,26 @@ public class Skill {
                 e.edit().add(new StunnedComponent());
             }
 
-            if (world.getMapper(HealthComponent.class).has(e)) {
+
+            ComponentMapper<UnitComponent> um = world.getMapper(UnitComponent.class);
+
+            if (um.has(e)) {
 
                 switch (attackType) {
 
                     case Damage:
 
-                        if(e.getComponent(HealthComponent.class).health - baseDamage <= 0){
+                        if(um.get(e).getUnitData().getHealth() - baseDamage <= 0){
                             isUnkillable = true;
                             e.edit().add(new UnkillableComponent());
                         }
 
-
-
-                        e.getComponent(HealthComponent.class).applyDamage(baseDamage);
+                        um.get(e).getUnitData().applyDamage(baseDamage);
 
 
                         break;
                     case Heal:
-                        e.getComponent(HealthComponent.class).applyHealing(baseDamage);
+                        um.get(e).getUnitData().applyHealing(baseDamage);
                         break;
                 }
             }
@@ -322,24 +322,7 @@ public class Skill {
 
                     //PUSH MECHANIC.
 
-                    Coordinates[] pushCoordinateArray = new Coordinates[Math.abs(push) + 1];
-
-
-                    for (int i = 0; i <= Math.abs(push); i++) { //Decides the direction used to shove a target
-
-                        int x = casterCoords.getY() == target.getY() ? casterCoords.getX() < target.getX() ? i : -i : 0;
-                        int y = casterCoords.getX() == target.getX() ? casterCoords.getY() < target.getY() ? i : -i : 0;
-
-                        if(push < 0){
-                            x *= -1;
-                            y *= -1;
-                        }
-
-                        if((x == 0 && y != 0) || (x != 0 && y == 0) || (x == 0 && y == 0)) {
-                            pushCoordinateArray[i] = new Coordinates(target.getX() + x, target.getY() + y);
-                        }
-                    }
-
+                    Coordinates[] pushCoordinateArray = getCoordinatesFromPush(casterCoords, target, push);
 
                     for (int i = 1; i < pushCoordinateArray.length; i++) { //Starts at one incase you are knocked back to the previous coordinate
 
@@ -416,6 +399,31 @@ public class Skill {
 
     }
 
+
+    private Coordinates[] getCoordinatesFromPush(Coordinates start, Coordinates end, int distance){
+
+
+        Coordinates[] pushCoordinateArray = new Coordinates[Math.abs(distance) + 1];
+
+
+        for (int i = 0; i <= Math.abs(distance); i++) { //Decides the direction used to shove a target
+
+            int x = start.getY() == end.getY() ? start.getX() < end.getX() ? i : -i : 0;
+            int y = start.getX() == end.getX() ? start.getY() < end.getY() ? i : -i : 0;
+
+            if(distance < 0){
+                x *= -1;
+                y *= -1;
+            }
+
+            if((x == 0 && y != 0) || (x != 0 && y == 0) || (x == 0 && y == 0)) {
+                pushCoordinateArray[i] = new Coordinates(end.getX() + x, end.getY() + y);
+            }
+        }
+
+        return pushCoordinateArray;
+
+    }
 
     ;
 

@@ -27,6 +27,9 @@ public class UnitData implements Json.Serializable {
     private int health;
     private int maxHealth;
 
+    private int accumulatedDamage;
+    private int accumulatedHealing;
+
     private int movementRange;
     private int attackRange;
 
@@ -54,6 +57,8 @@ public class UnitData implements Json.Serializable {
         this.name = unitData.name;
         this.health = unitData.health;
         this.maxHealth = unitData.maxHealth;
+        this.accumulatedDamage = unitData.accumulatedDamage;
+        this.accumulatedHealing = unitData.accumulatedHealing;
         this.movementRange = unitData.movementRange;
         this.attackRange = unitData.attackRange;
         this.drawScale = unitData.drawScale;
@@ -157,6 +162,42 @@ public class UnitData implements Json.Serializable {
             health = maxHealth;
         }
 
+    }
+
+
+    public void applyDamage(int accumulatedDamage){
+        this.accumulatedDamage += accumulatedDamage;
+    }
+
+    public void applyAccumulatedDamage(){
+        health = health - accumulatedDamage;
+        accumulatedDamage = 0;
+    }
+
+
+    public void applyAccumulatedHealing(){
+        health = health + getAccumulatedHealing() > maxHealth ? maxHealth : health + getAccumulatedHealing();
+        accumulatedHealing = 0;
+    }
+
+    public void applyHealing(int accumulatedHealing){
+        this.accumulatedHealing += accumulatedHealing;
+    }
+
+    public int getAccumulatedDamage() {
+        return accumulatedDamage;
+    }
+
+    public int getAccumulatedHealing() {
+        return accumulatedHealing;
+    }
+
+    public void clearDamage(){
+        accumulatedDamage = 0;
+    }
+
+    public void clearHealing(){
+        accumulatedHealing = 0;
     }
 
 

@@ -7,9 +7,9 @@ import com.artemis.EntitySystem;
 import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.ecs.components.battle.CoordinateComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TileEffectComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
 import com.bryjamin.dancedungeon.utils.observer.Observable;
 import com.bryjamin.dancedungeon.utils.observer.Observer;
 
@@ -19,10 +19,8 @@ public class TileEffectSystem extends EntityProcessingSystem implements Observer
     private ActionQueueSystem actionQueueSystem;
 
     private ComponentMapper<CoordinateComponent> cm;
+    private ComponentMapper<UnitComponent> um;
     private ComponentMapper<TileEffectComponent> tem;
-
-
-    private ComponentMapper<HealthComponent> hm;
 
     private boolean processingFlag = false;
 
@@ -48,7 +46,7 @@ public class TileEffectSystem extends EntityProcessingSystem implements Observer
 
                 switch (effect){
                     case DEATH:
-                        if(hm.has(occupier)){
+                        if(um.has(occupier)){
                             occupier.edit().add(new DeadComponent());
                         };
                 }

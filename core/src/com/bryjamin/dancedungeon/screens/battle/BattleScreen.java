@@ -134,7 +134,7 @@ public class BattleScreen extends AbstractScreen {
                         new StunnedSystem(),
                         new AnimationSystem(game),
                         new RenderingSystem(game, gameport),
-                        new HealthBarSystem(game, gameport),
+                        new HealthBarSystem(game),
                         new StageUIRenderingSystem(UIStage),
                         new BoundsDrawingSystem(batch),
                         new GenerateTargetsSystem(),

@@ -11,7 +11,6 @@ import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.ExpireComponent;
 import com.bryjamin.dancedungeon.ecs.components.PositionComponent;
 import com.bryjamin.dancedungeon.ecs.components.VelocityComponent;
-import com.bryjamin.dancedungeon.ecs.components.battle.HealthComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
@@ -20,6 +19,7 @@ import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.PlayerControlledComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
 import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
+import com.bryjamin.dancedungeon.factories.unit.UnitData;
 import com.bryjamin.dancedungeon.utils.Measure;
 import com.bryjamin.dancedungeon.utils.texture.Layer;
 import com.bryjamin.dancedungeon.utils.texture.TextDescription;
@@ -37,7 +37,6 @@ public class HealthSystem extends EntityProcessingSystem {
     PlayerPartyManagementSystem playerPartyManagementSystem;
 
     ComponentMapper<UnitComponent> unitM;
-    ComponentMapper<HealthComponent> healthm;
     ComponentMapper<VelocityComponent> vm;
     ComponentMapper<PlayerControlledComponent> pm;
     ComponentMapper<BlinkOnHitComponent> blinkOnHitMapper;
@@ -47,53 +46,48 @@ public class HealthSystem extends EntityProcessingSystem {
 
     @SuppressWarnings("unchecked")
     public HealthSystem() {
-        super(Aspect.all(HealthComponent.class, UnitComponent.class));
+        super(Aspect.all(UnitComponent.class));
     }
 
 
     @Override
     protected void process(Entity e) {
 
-        HealthComponent hc = healthm.get(e);
+        UnitData ud = unitM.get(e).getUnitData();
 
         boolean healthChangedflag = false;
 
 
-        if(hc.getAccumulatedDamage() > 0) {
+        if(ud.getAccumulatedDamage() > 0) {
 
             if(blinkOnHitMapper.has(e)) {
                 blinkOnHitMapper.get(e).isHit = true;
             }
 
-            createFloatingDamageText(world, Integer.toString((int) hc.getAccumulatedDamage()), new Color(Color.RED), e);
-            hc.health = hc.health - hc.getAccumulatedDamage();
-
-            healthChangedflag = true;
-
             if(affectMapper.has(e)){//Damage taken by morale affected entities damage the party's morale as well
-                playerPartyManagementSystem.editMorale((int) -hc.getAccumulatedDamage());
+                playerPartyManagementSystem.editMorale(ud.getAccumulatedDamage());
             }
 
-            hc.clearDamage();
+            createFloatingDamageText(world, Integer.toString(ud.getAccumulatedDamage()), new Color(Color.RED), e);
+            healthChangedflag = true;
+            ud.applyAccumulatedDamage();
 
         }
 
-        if(hc.getAccumulatedHealing() > 0 && blinkOnHitMapper.has(e)) {
-            createFloatingDamageText(world, Integer.toString((int) hc.getAccumulatedHealing()), new Color(Color.GREEN), e);
-            hc.health = hc.health + hc.getAccumulatedHealing() > hc.maxHealth ? hc.maxHealth : hc.health + hc.getAccumulatedHealing();
-            hc.clearHealing();
-
+        if(ud.getAccumulatedHealing() > 0 && blinkOnHitMapper.has(e)) {
+            createFloatingDamageText(world, Integer.toString(ud.getAccumulatedHealing()), new Color(Color.GREEN), e);
+            ud.applyAccumulatedHealing();
             healthChangedflag = true;
 
         }
 
         if(healthChangedflag) {
-            unitM.get(e).getUnitData().setHealth(hc.health);
-            playerPartyManagementSystem.editMorale(0);
+            playerPartyManagementSystem.notifyObservers();
 
         }
-        if(hc.health <= 0) e.edit().add(new DeadComponent());
 
+
+        if(ud.getHealth() <= 0) e.edit().add(new DeadComponent());
 
     }
 
