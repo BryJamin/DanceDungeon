@@ -190,13 +190,12 @@ public class TurnSystem extends EntitySystem implements Observer{
                 if(!world.getSystem(DisplayEnemyIntentUISystem.class).checkForAndReleaseStoreAttack()){
                     setUp(ENEMY);
                 }
-                break;
+                return;
 
-            case ENEMY:
+            case PLAYER:
+                return;
 
         }
-
-        if(turn == PLAYER) return;
 
 
         switch (battleState) {
