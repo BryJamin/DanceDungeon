@@ -202,10 +202,12 @@ public class TurnSystem extends EntitySystem implements Observer{
 
             case NEXT_TURN:
 
-
                 IntBag bag = world.getAspectSubscriptionManager()
                         .get(Aspect.all(UtilityAiComponent.class, CurrentTurnComponent.class, AvailableActionsCompnent.class))
                         .getEntities();
+
+
+                System.out.println("bag size: " + bag.size());
 
 
                 if (bag.size() <= 0) { //Sets up New set of turn entities when current entiteis are finished
@@ -225,8 +227,9 @@ public class TurnSystem extends EntitySystem implements Observer{
 
 
             case WAITING:
-                AvailableActionsCompnent availableActionsCompnent = currentEntity.getComponent(AvailableActionsCompnent.class);
-                calculateAiTurn(availableActionsCompnent);
+                if(calculateAiTurn(availMapper.get(currentEntity))){
+                    battleState = STATE.NEXT_TURN;
+                };
                 break;
         }
 
@@ -241,7 +244,7 @@ public class TurnSystem extends EntitySystem implements Observer{
      * If an entity has no actions left, it's turn is automatically ended.
      * @param availableActionsCompnent
      */
-    private void calculateAiTurn(AvailableActionsCompnent availableActionsCompnent){
+    private boolean calculateAiTurn(AvailableActionsCompnent availableActionsCompnent){
 
 
 
@@ -272,12 +275,12 @@ public class TurnSystem extends EntitySystem implements Observer{
                 break;
 
             case TURN_END:
-
                 currentEntity.edit().remove(CurrentTurnComponent.class);
                 //Once the turn is over set the turn State to the Next Turn
-                battleState = STATE.NEXT_TURN;
-                break;
+                return true;
         }
+
+        return false;
 
     }
 

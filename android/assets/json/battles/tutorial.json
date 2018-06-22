@@ -1,0 +1,13 @@
+{
+  "TUTORIAL": {
+    "class": "com.bryjamin.dancedungeon.factories.map.event.BattleEvent",
+    "mapLocation": "maps/tutorial.tmx",
+    "numberOfWaves": 0,
+    "primaryObjective": {
+      "class": "com.bryjamin.dancedungeon.factories.map.event.objectives.DefeatAllEnemiesObjectiveTutorial"
+    },
+    "fixedEnemyPool": [
+      "Blobb"
+    ]
+  }
+}

@@ -5,6 +5,7 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.artemis.utils.Bag;
+import com.artemis.utils.IntBag;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.MainGame;
@@ -46,7 +47,6 @@ public class EndBattleSystem extends EntitySystem implements Observer {
 
 
     private Bag<Entity> playerBag = new Bag<Entity>();
-    private Bag<Entity> enemyBag = new Bag<Entity>();
 
     private MainGame game;
 
@@ -106,21 +106,13 @@ public class EndBattleSystem extends EntitySystem implements Observer {
 
     @Override
     public void inserted(Entity e) {
-        if (enemyMapper.has(e)) enemyBag.add(e);
         if (pcMapper.has(e)) playerBag.add(e);
     }
 
     @Override
     public void removed(Entity e) {
-        if (enemyMapper.has(e)) enemyBag.remove(e);
         if (pcMapper.has(e)) playerBag.remove(e);
     }
-
-
-    public BattleEvent getCurrentEvent() {
-        return currentEvent;
-    }
-
 
     @Override
     public void update(Object o) {
@@ -136,12 +128,14 @@ public class EndBattleSystem extends EntitySystem implements Observer {
             actionQueueSystem.observable.removeObserver(this);
         }
 
-        if (currentEvent.isComplete(world)) {
+        if (currentEvent.isComplete(world) && turnSystem.getTurn() == TurnSystem.TURN.PLAYER) {
 
-            for(Entity e : playerBag){
+            IntBag intBag = world.getAspectSubscriptionManager().get(Aspect.all(PlayerControlledComponent.class, HealthComponent.class, UnitComponent.class)).getEntities();
+
+            for(int i = 0; i < intBag.size(); i++){
+                Entity e = world.getEntity(intBag.get(i));
                 HealthComponent hc = e.getComponent(HealthComponent.class);
                 UnitData unitData = uMapper.get(e).getUnitData();
-
                 unitData.setHealth(hc.health);
                 unitData.setMaxHealth(hc.maxHealth);
             }

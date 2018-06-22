@@ -1,13 +1,11 @@
 {
 
+
+  //LEVEL ONE BATTLES
+
   "64f80f4a-e313-401c-91bb-981c9f623eb8": {
     "class": "com.bryjamin.dancedungeon.factories.map.event.BattleEvent",
     "mapLocation": "maps/map_1.tmx",
-    "primaryObjective": {
-      "class": "com.bryjamin.dancedungeon.factories.map.event.objectives.SurviveObjective",
-      "rounds": 4,
-      "reward": "MORALE"
-    },
 
     "bonusObjectives": [
       {
@@ -22,11 +20,6 @@
   "5cebfb5b-5945-4165-b599-b74b4249d9a1": {
     "class": "com.bryjamin.dancedungeon.factories.map.event.BattleEvent",
     "mapLocation": "maps/map_2.tmx",
-    "primaryObjective": {
-      "class": "com.bryjamin.dancedungeon.factories.map.event.objectives.SurviveObjective",
-      "rounds": 4,
-      "reward": "MONEY"
-    },
 
     "bonusObjectives": [
       {
@@ -35,35 +28,8 @@
         "reward": "MONEY"
       }
     ]
-  },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  //Tutorial
-
-  "TUTORIAL": {
-    "class": "com.bryjamin.dancedungeon.factories.map.event.BattleEvent",
-    "mapLocation": "maps/tutorial.tmx",
-    "numberOfWaves": 0,
-    "primaryObjective": {
-      "class": "com.bryjamin.dancedungeon.factories.map.event.objectives.DefeatAllEnemiesObjectiveTutorial"
-    },
-
-    "fixedEnemyPool": ["Blobb"]
   }
+
 
 
 }

@@ -98,7 +98,7 @@ public class MapGenerator {
      */
     private void setupMapEventTypes(Array<MapSection> mapSections) throws NodeWithSameNeighbourSpecialEventException, IncorrectNumberOfSpecialEventException {
 
-        for(String s : EventLibrary.getKeys()){
+        for(String s : EventLibrary.getLevelOneKeys()){
             battleEventRoller.addWeightedObjects(new WeightedObject<String>(s, 20));
         }
 

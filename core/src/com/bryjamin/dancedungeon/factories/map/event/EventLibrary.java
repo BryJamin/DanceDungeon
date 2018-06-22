@@ -13,13 +13,27 @@ import com.bryjamin.dancedungeon.factories.map.event.objectives.DefeatAllEnemies
 
 public class EventLibrary {
 
+    private static ObjectMap<String, BattleEvent> level_one_events;
     private static ObjectMap<String, BattleEvent> events;
 
     private static final Array<String> skillIDList = new Array<>();
 
+
+    private static final String LEVEL_ONE = "json/battles/battles.json";
+    private static final String TUTORIAL = "json/battles/tutorial.json";
+
     public static void loadFromJSON(){
         Json json = new Json();
-        events = json.fromJson(ObjectMap.class, Gdx.files.internal("json/battles/battles.json"));
+
+        level_one_events = json.fromJson(ObjectMap.class, Gdx.files.internal(LEVEL_ONE));
+
+        events = json.fromJson(ObjectMap.class, Gdx.files.internal(LEVEL_ONE));
+
+        events.putAll(json.fromJson(ObjectMap.class, Gdx.files.internal(TUTORIAL)));
+
+
+
+
     }
 
     public ObjectMap<String, BattleEvent> getEvents() {
@@ -80,6 +94,9 @@ public class EventLibrary {
 
     public static Array<String> getKeys(){
         return events.keys().toArray();
+    }
+    public static Array<String> getLevelOneKeys(){
+        return level_one_events.keys().toArray();
     }
 
     public OrderedMap<String, EventCommand> getLevel1BattleEvents() {

@@ -7,6 +7,7 @@ import com.bryjamin.dancedungeon.assets.MapData;
 import com.bryjamin.dancedungeon.factories.map.event.objectives.AbstractObjective;
 import com.bryjamin.dancedungeon.factories.map.event.objectives.CompleteWithinObjective;
 import com.bryjamin.dancedungeon.factories.map.event.objectives.DefeatAllEnemiesObjective;
+import com.bryjamin.dancedungeon.factories.map.event.objectives.SurviveObjective;
 
 /**
  * Created by BB on 07/01/2018.
@@ -24,7 +25,7 @@ public class BattleEvent extends MapEvent {
     private String mapLocation = MapData.MAP_1;
 
 
-    private AbstractObjective primaryObjective = new DefeatAllEnemiesObjective();
+    private AbstractObjective primaryObjective = new SurviveObjective(4);
     private AbstractObjective[] bonusObjectives = new AbstractObjective[]{new CompleteWithinObjective(7)};
 
     //Enemies that can be spawned inside of the event
