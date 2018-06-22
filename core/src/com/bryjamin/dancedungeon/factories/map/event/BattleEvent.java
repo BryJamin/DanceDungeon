@@ -8,6 +8,7 @@ import com.bryjamin.dancedungeon.factories.map.event.objectives.AbstractObjectiv
 import com.bryjamin.dancedungeon.factories.map.event.objectives.CompleteWithinObjective;
 import com.bryjamin.dancedungeon.factories.map.event.objectives.DefeatAllEnemiesObjective;
 import com.bryjamin.dancedungeon.factories.map.event.objectives.SurviveObjective;
+import com.bryjamin.dancedungeon.factories.unit.UnitLibrary;
 
 /**
  * Created by BB on 07/01/2018.
@@ -39,7 +40,15 @@ public class BattleEvent extends MapEvent {
     //Assuming the rest of the waves are random and only one wave is fixed. This is the maximum number of waves that will be spawned
     private int numberOfWaves = 3;
 
-    public BattleEvent(){ }
+    public BattleEvent(){
+        fixedEnemyPool.addAll(UnitLibrary.MELEE_BLOB, UnitLibrary.RANGED_BLASTER_X, UnitLibrary.RANGED_LOBBA);
+
+
+        Array<String> array = new Array<>();
+        array.addAll(UnitLibrary.MELEE_BLOB, UnitLibrary.RANGED_BLASTER, UnitLibrary.RANGED_LOBBA);
+
+        waves.addFirst(array);
+    }
 
     public BattleEvent(String... fixedEnemyPool){
         this.fixedEnemyPool.addAll(fixedEnemyPool);

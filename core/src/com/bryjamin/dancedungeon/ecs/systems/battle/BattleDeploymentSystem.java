@@ -5,7 +5,9 @@ import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.artemis.World;
 import com.artemis.utils.IntBag;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Array;
+import com.bryjamin.dancedungeon.assets.Colors;
 import com.bryjamin.dancedungeon.ecs.components.actions.ActionOnTapComponent;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.QueuedAction;
 import com.bryjamin.dancedungeon.ecs.components.actions.interfaces.WorldAction;
@@ -14,9 +16,10 @@ import com.bryjamin.dancedungeon.ecs.components.battle.SpawnerComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.DeadComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.DeploymentComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.DeploymentUIComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
 import com.bryjamin.dancedungeon.ecs.systems.PlayerPartyManagementSystem;
+import com.bryjamin.dancedungeon.factories.spells.TargetingFactory;
 import com.bryjamin.dancedungeon.factories.unit.UnitLibrary;
 import com.bryjamin.dancedungeon.factories.map.event.BattleEvent;
 import com.bryjamin.dancedungeon.factories.unit.UnitData;
@@ -56,10 +59,11 @@ public class BattleDeploymentSystem extends EntitySystem implements Observer{
 
     private boolean processingFlag = true;
 
+
     private boolean isTutorial = false;
 
     public BattleDeploymentSystem(BattleEvent battleEvent, boolean isTutorial) {
-        super(Aspect.all(DeploymentComponent.class));
+        super(Aspect.all(DeploymentUIComponent.class));
         this.battleEvent = battleEvent;
         this.isTutorial = isTutorial;
     }
@@ -77,7 +81,7 @@ public class BattleDeploymentSystem extends EntitySystem implements Observer{
                     unitIdsToSpawn.add(s.equals(BattleEvent.RANDOM_POOLED_UNIT) ? battleEvent.getFixedEnemyPool().random() : s);
                 }
             } else {
-                for (int i = 0; i < 2; i++) {
+                for (int i = 0; i < 3; i++) {
                     unitIdsToSpawn.add(battleEvent.getFixedEnemyPool().size == 0 ? UnitLibrary.getRandomEnemyUnitID() : battleEvent.getFixedEnemyPool().random());
                 }
 
@@ -97,7 +101,11 @@ public class BattleDeploymentSystem extends EntitySystem implements Observer{
         turnSystem.addEnemyTurnObserver(this);
 
         for(String s : getNextEnemyWave()){
-            addEnemyUnit(new Array<>(tileSystem.getAvailableEnemySpawningLocations()), s);
+
+            System.out.println(s);
+
+            addEnemyUnit(new Array<>(tileSystem.getAvailableEnemySpawningLocations()),
+                    s.equals(BattleEvent.RANDOM_POOLED_UNIT) ? battleEvent.getFixedEnemyPool().random() : s);
         }
 
         deploymentLocations = new Array<>(tileSystem.getAllySpawningLocations());
@@ -168,6 +176,10 @@ public class BattleDeploymentSystem extends EntitySystem implements Observer{
                 }
             }));
         }
+
+        for(Entity e : new TargetingFactory().createOutlineOfCoordinates(world, new Color(Colors.UI_DEPLOYMENT_TILE_BORDER_COLOR), deploymentLocations)){
+            e.edit().add(new DeploymentUIComponent());
+        };
 
 
     }

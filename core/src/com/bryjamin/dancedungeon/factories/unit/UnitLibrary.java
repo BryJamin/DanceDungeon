@@ -152,6 +152,7 @@ public class UnitLibrary {
         MELEE_BLOB = addEnemy("cf5db9a9-b053-4de8-ad17-4f56a1e008f6");
         RANGED_BLASTER = addEnemy("7720994b-263a-439d-b83c-70586bb63777");
         RANGED_LOBBA = addEnemy("925dcc29-c81c-4abc-9bd3-adee4b8e636a");
+        RANGED_BLASTER_X = add("e49e6ccd-d18b-4515-a830-9ea15c024bab");
         //TODO Infuture I think I need to add a 'Difficulty Rating' of sorts for enemies that
         //TODO can just be randomly selected.
 
@@ -170,6 +171,7 @@ public class UnitLibrary {
 
     public static final String MELEE_BLOB;
     public static final String RANGED_BLASTER;
+    public static final String RANGED_BLASTER_X;
     public static final String RANGED_LOBBA;
     public static final String BIG_BLASTER_BOSS;
 

@@ -6,6 +6,7 @@ import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.graphics.Color;
+import com.bryjamin.dancedungeon.assets.Colors;
 import com.bryjamin.dancedungeon.assets.Fonts;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.ExpireComponent;
@@ -64,11 +65,15 @@ public class HealthSystem extends EntityProcessingSystem {
                 blinkOnHitMapper.get(e).isHit = true;
             }
 
+            System.out.println("Accul dmg " + ud.getAccumulatedDamage());
+
             if(affectMapper.has(e)){//Damage taken by morale affected entities damage the party's morale as well
-                playerPartyManagementSystem.editMorale(ud.getAccumulatedDamage());
+
+                System.out.println("IN HERE>>>??");
+                playerPartyManagementSystem.editMorale(-ud.getAccumulatedDamage());
             }
 
-            createFloatingDamageText(world, Integer.toString(ud.getAccumulatedDamage()), new Color(Color.RED), e);
+            createFloatingDamageText(world, Integer.toString(ud.getAccumulatedDamage()), new Color(Colors.DAMAGE_TEXT_COLOR), e);
             healthChangedflag = true;
             ud.applyAccumulatedDamage();
 
@@ -111,7 +116,7 @@ public class HealthSystem extends EntityProcessingSystem {
             floatingTextEntity.edit().add(new VelocityComponent(0, Measure.units(20f)));
             floatingTextEntity.edit().add(new ExpireComponent(2.0f));
             floatingTextEntity.edit().add(new DrawableComponent(Layer.BACKGROUND_LAYER_FAR,
-                    new TextDescription.Builder(Fonts.SMALL)
+                    new TextDescription.Builder(Fonts.MEDIUM)
                             .text(text)
                             .color(color)
                             .build()));

@@ -11,31 +11,40 @@ import com.badlogic.gdx.utils.ObjectMap;
 
 public class SkillLibrary {
 
-    // Map where we store our items as "item id"-"item" pairs
-    private static ObjectMap<String, Skill> items;
+    // Map where we store our playerSkills as "item id"-"item" pairs
+    private static ObjectMap<String, Skill> playerSkills;
     private static ObjectMap<String, Skill> enemySkills;
+    private static ObjectMap<String, Skill> skills;
 
     private static final Array<String> skillIDList = new Array<>();
 
     public static void loadFromJSON(){
 
         Json json = new Json();
-        items = json.fromJson(ObjectMap.class, Gdx.files.internal("json/playerskills.json"));
+        playerSkills = json.fromJson(ObjectMap.class, Gdx.files.internal("json/playerskills.json"));
         enemySkills = json.fromJson(ObjectMap.class, Gdx.files.internal("json/enemyskills.json"));
+
+
+        skills = new ObjectMap<>();
+
+        skills.putAll(playerSkills);
+        skills.putAll(enemySkills);
+
+        for(String s : skills.keys().toArray()){
+            skills.put(skills.get(s).getName(), skills.get(s));
+        }
 
 
     }
     public ObjectMap<String, Skill> getItems() {
-        return items;
+        return playerSkills;
     }
 
-    //Return a new Skill object to avoid any potential over-writes of the skills within the static array
+    //Return a new Skill object to avoid any potential over-writes of the playerSkills within the static array
     public static Skill getSkill(String key) {
 
-        if(items.containsKey(key)){
-            return new Skill(items.get(key));
-        } else if(enemySkills.containsKey(key)){
-            return new Skill(enemySkills.get(key));
+        if(skills.containsKey(key)){
+            return new Skill(skills.get(key));
         } else {
             throw new SkillNotFoundException(key);
         }

@@ -34,6 +34,7 @@ import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
 import com.bryjamin.dancedungeon.ecs.systems.battle.TileSystem;
 import com.bryjamin.dancedungeon.utils.HitBox;
 import com.bryjamin.dancedungeon.utils.Measure;
+import com.bryjamin.dancedungeon.utils.enums.Direction;
 import com.bryjamin.dancedungeon.utils.math.CenterMath;
 import com.bryjamin.dancedungeon.utils.math.CoordinateMath;
 import com.bryjamin.dancedungeon.utils.math.Coordinates;
@@ -54,6 +55,8 @@ public class TargetingFactory {
 
     private static final int TILE_LAYER = Layer.ENEMY_LAYER_MIDDLE;
     private static final int TILE_LINE_LAYER = Layer.ENEMY_LAYER_MIDDLE + 1;
+
+    private static final float LINE_THICKNESS = Measure.units(0.5f);
 
 
     /**
@@ -282,78 +285,10 @@ public class TargetingFactory {
                 }
             }));
 
-            //Create the line Borders for the Movement Tiles
-
-            Coordinates c2 = new Coordinates();
-            c2.set(c.getX() + 1, c.getY()); //Right Line
-
-            float LINE_THICKNESS = Measure.units(0.5f);
-
-            Color lineColor = new Color(Colors.UI_MOVEMENT_TILE_BORDER_COLOR);
-
-            //Right Line
-            if(!coordinatesWithPathMap.containsKey(c2)){
-
-                float y = r.y;
-                float height = r.getHeight();
-
-                if(coordinatesWithPathMap.containsKey(new Coordinates(c.getX(), c.getY() + 1)))
-                    height += LINE_THICKNESS;
-
-                if(coordinatesWithPathMap.containsKey(new Coordinates(c.getX(), c.getY() - 1))) {
-                    y -= LINE_THICKNESS;
-                    height += LINE_THICKNESS;
-                }
-
-                createLineEntity(world, r.x + r.getWidth() - LINE_THICKNESS, y, LINE_THICKNESS, height, lineColor);
-
-            }
-
-            c2.set(c.getX() - 1, c.getY());
-
-            //Left Line
-            if(!coordinatesWithPathMap.containsKey(c2)){
-
-                float y = r.y;
-                float height = r.getHeight();
-
-                if(coordinatesWithPathMap.containsKey(new Coordinates(c.getX(), c.getY() + 1)))
-                    height += LINE_THICKNESS;
-
-                if(coordinatesWithPathMap.containsKey(new Coordinates(c.getX(), c.getY() - 1))) {
-                    y -= LINE_THICKNESS;
-                    height += LINE_THICKNESS;
-                }
-
-
-                createLineEntity(world, r.x, y, LINE_THICKNESS, height, lineColor);
-            }
-
-
-            c2.set(c.getX(), c.getY() + 1);
-            //Top Line
-            if(!coordinatesWithPathMap.containsKey(c2)){
-                createLineEntity(world, r.x, r.y + r.getHeight() - LINE_THICKNESS, r.getWidth(), LINE_THICKNESS, lineColor);
-            }
-
-
-            c2.set(c.getX(), c.getY() - 1);
-            //Bottom Line
-            if(!coordinatesWithPathMap.containsKey(c2)){
-                createLineEntity(world, r.x, r.y, r.getWidth(), LINE_THICKNESS, lineColor);
-            }
-
-
-
-
-
-
-
-
-
-
 
         }
+
+        createOutlineOfCoordinates(world, new Color(Colors.UI_MOVEMENT_TILE_BORDER_COLOR), coordinatesWithPathMap.orderedKeys());
 
         coordinatesWithPathMap.put(coordinateComponent.coordinates, new Queue<Coordinates>());
         return entityArray;
@@ -361,7 +296,91 @@ public class TargetingFactory {
     }
 
 
-    private void createLineEntity(World world, float x, float y, float width, float height, Color color){
+    public Array<Entity> createOutlineOfCoordinates(World world, Color color, Coordinates... coordinates){
+        return createOutlineOfCoordinates(world, color, new Array<>(coordinates));
+    }
+
+
+    public Array<Entity> createOutlineOfCoordinates(World world, Color color, Array<Coordinates> array){
+
+
+        TileSystem tileSystem = world.getSystem(TileSystem.class);
+
+        Array<Entity> entityArray = new Array<>();
+
+        for(Coordinates c : array){
+
+            Rectangle r = tileSystem.createRectangleUsingCoordinates(c);
+
+            Coordinates surroundingCoordinates = new Coordinates();
+            surroundingCoordinates.set(c.getX() + 1, c.getY());
+
+            //RIGHT LINE
+
+            if(!array.contains(surroundingCoordinates, false)){
+
+                float y = r.y;
+                float height = r.getHeight();
+
+                if(array.contains(new Coordinates(c.getX(), c.getY() + 1), false))
+                    height += LINE_THICKNESS;
+
+                if(array.contains(new Coordinates(c.getX(), c.getY() - 1), false)) {
+                    y -= LINE_THICKNESS;
+                    height += LINE_THICKNESS;
+                }
+
+                entityArray.add(createLineEntity(world, r.x + r.getWidth() - LINE_THICKNESS, y, LINE_THICKNESS, height, color));
+
+            }
+
+
+            surroundingCoordinates.set(c.getX() - 1, c.getY());
+
+            //LEFT LINE
+
+            if(!array.contains(surroundingCoordinates, false)){
+
+                float y = r.y;
+                float height = r.getHeight();
+
+                if(array.contains(new Coordinates(c.getX(), c.getY() + 1), false))
+                    height += LINE_THICKNESS;
+
+                if(array.contains(new Coordinates(c.getX(), c.getY() - 1), false)) {
+                    y -= LINE_THICKNESS;
+                    height += LINE_THICKNESS;
+                }
+
+
+                entityArray.add(createLineEntity(world, r.x, y, LINE_THICKNESS, height, color));
+            }
+
+
+            surroundingCoordinates.set(c.getX(), c.getY() + 1);
+
+            //TOP LINE
+            if(!array.contains(surroundingCoordinates, false)){
+                entityArray.add(createLineEntity(world, r.x, r.y + r.getHeight() - LINE_THICKNESS, r.getWidth(), LINE_THICKNESS, color));
+            }
+
+
+            surroundingCoordinates.set(c.getX(), c.getY() - 1);
+
+            //BOTTOM LINE
+            if(!array.contains(surroundingCoordinates, false)){
+                entityArray.add(createLineEntity(world, r.x, r.y, r.getWidth(), LINE_THICKNESS, color));
+            }
+
+
+        }
+
+        return entityArray;
+
+    }
+
+
+    private Entity createLineEntity(World world, float x, float y, float width, float height, Color color){
 
         Entity e = world.createEntity();
         e.edit().add(new UITargetingComponent());
@@ -372,6 +391,8 @@ public class TargetingFactory {
                         .width(width)
                         .height(height)
                         .build()));
+
+        return e;
 
     }
 

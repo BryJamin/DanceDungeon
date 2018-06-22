@@ -35,6 +35,9 @@ public class UnitData implements Json.Serializable {
 
     public int stun;
 
+    //Used to assign a value to spawning units
+    private int value = -1;
+
     private float mapMovementSpeed = 60f;
     private float drawScale = 0.65f;
 

@@ -6,5 +6,5 @@ import com.artemis.Component;
  * Used by the {@link com.bryjamin.dancedungeon.ecs.systems.battle.BattleDeploymentSystem} to identify
  * which entities it uses
  */
-public class DeploymentComponent extends Component{
+public class DeploymentUIComponent extends Component{
 }

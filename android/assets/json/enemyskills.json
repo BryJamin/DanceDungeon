@@ -24,6 +24,19 @@
   },
 
 
+  "1c0134f8-143f-4fd9-9725-c06bd7eca57e": {
+    "class": "com.bryjamin.dancedungeon.factories.spells.Skill",
+    "name": "Blast 2",
+    "description": "Ranged Attack, Deals 2 damage",
+    "icon": "skills/LaserScope",
+    "baseDamage": 2,
+    "targeting": "StraightShot",
+    "spellAnimation": "Projectile",
+    "attackType": "Damage",
+    "purchasable": false
+  },
+
+
   "598cbfff-19b7-412c-9618-cde1db76617b": {
     "class": "com.bryjamin.dancedungeon.factories.spells.Skill",
     "name": "Big Blast",

@@ -5,6 +5,7 @@ import com.artemis.World;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Rectangle;
+import com.bryjamin.dancedungeon.assets.Colors;
 import com.bryjamin.dancedungeon.assets.TextureStrings;
 import com.bryjamin.dancedungeon.ecs.components.CenteringBoundComponent;
 import com.bryjamin.dancedungeon.ecs.components.HitBoxComponent;
@@ -16,7 +17,7 @@ import com.bryjamin.dancedungeon.ecs.components.battle.SpawnerComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.TileEffectComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationMapComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.AnimationStateComponent;
-import com.bryjamin.dancedungeon.ecs.components.identifiers.DeploymentComponent;
+import com.bryjamin.dancedungeon.ecs.components.identifiers.DeploymentUIComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.MoveToComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.OutOfBoundsComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UnPushableComponent;
@@ -24,7 +25,6 @@ import com.bryjamin.dancedungeon.ecs.components.battle.ai.TargetComponent;
 import com.bryjamin.dancedungeon.ecs.components.battle.player.SkillsComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.BlinkOnHitComponent;
 import com.bryjamin.dancedungeon.ecs.components.graphics.DrawableComponent;
-import com.bryjamin.dancedungeon.ecs.components.graphics.FadeComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.AffectMoraleComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.FriendlyComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.SolidComponent;
@@ -104,26 +104,13 @@ public class UnitFactory {
         e.edit().add(new PositionComponent(r.x, r.y))
                 .add(new CoordinateComponent(c))
                 .add(new HitBoxComponent(r))
-                .add(new DeploymentComponent())
+                .add(new DeploymentUIComponent())
                 .add(new DrawableComponent(Layer.ENEMY_LAYER_MIDDLE, new TextureDescription.Builder(TextureStrings.BLOCK)
-                        .color(new Color(Color.BLUE))
-                        .alpha(0.2f)
+                        .color(new Color(Colors.UI_DEPLOYMENT_TILE_COLOR))
                         .width(r.width)
                         .height(r.height)
-                        .build()))
-/*                .add(new FadeComponent(new FadeComponent.FadeBuilder()
-                        .fadeIn(true)
-                        .alpha(0.17f)
-                        .minAlpha(0.15f)
-                        .maxAlpha(0.55f)
-                        .maximumDuration(1.5f)));*/
-                .add(new FadeComponent(
-                        new FadeComponent.FadeBuilder()
-                                .fadeIn(true)
-                                .minAlpha(0.15f)
-                                .maxAlpha(0.85f)
-                               // .endless(true)
-                                .maximumDuration(1.5f)));
+                        .build()));
+
         return e;
     }
 
