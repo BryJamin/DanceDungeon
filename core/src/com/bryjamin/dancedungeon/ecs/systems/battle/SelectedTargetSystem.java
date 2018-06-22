@@ -109,16 +109,4 @@ public class SelectedTargetSystem extends EntityProcessingSystem {
     }
 
 
-    public void setUpSelectedCharacter() {
-
-        System.out.println(this.getEntities().size());
-
-        if(this.getEntities().size() > 0){
-
-
-            setUpCharacter(this.getEntities().get(0));
-        }
-    }
-
-
 }

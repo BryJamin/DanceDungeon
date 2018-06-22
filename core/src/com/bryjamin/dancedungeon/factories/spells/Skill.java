@@ -47,7 +47,7 @@ public class Skill {
     public enum SpellAnimation {Projectile, Slash, Glitter, Thrown}
     public enum AttackType {Heal, HealOverTime, Damage, Burn, None}
     public enum SpellCoolDown {NoCoolDown, OverTime, Limited}
-    private transient String skillId = UUID.randomUUID().toString();
+    private transient String skillAnimationQueueId = UUID.randomUUID().toString();
     private String name = "N/A";
     private String description = "N/A";
     private String icon = TextureStrings.BLOCK;
@@ -214,11 +214,6 @@ public class Skill {
 
 
         createSpellEffects(world, caster, caster.getComponent(CoordinateComponent.class).coordinates, target);
-
-/*        if(spellAnimation != SpellAnimation.Projectile) {
-            castSpellOnTargetLocation(world, caster, caster.getComponent(CoordinateComponent.class).coordinates, target);
-        }*/
-
     }
 
 
@@ -265,8 +260,8 @@ public class Skill {
     }
 
 
-    public String getSkillId() {
-        return skillId;
+    public String getSkillAnimationQueueId() {
+        return skillAnimationQueueId;
     }
 
     public void castSpellOnTargetLocation(String id, World world, Entity caster, Coordinates casterCoords, Coordinates target) {
@@ -300,8 +295,6 @@ public class Skill {
                         }
 
                         um.get(e).getUnitData().applyDamage(baseDamage);
-
-
                         break;
                     case Heal:
                         um.get(e).getUnitData().applyHealing(baseDamage);
@@ -320,6 +313,8 @@ public class Skill {
 
                 if (push != 0) {
 
+                    System.out.println("Should PUSH");
+
                     //PUSH MECHANIC.
 
                     Coordinates[] pushCoordinateArray = getCoordinatesFromPush(casterCoords, target, push);
@@ -331,7 +326,7 @@ public class Skill {
 
                         //Check if coordinate is off the side of the map. If it is, look back to the previous coordinate.
                         if (!tileSystem.getCoordinateMap().containsKey(pushCoords)) {
-                            world.getSystem(ActionQueueSystem.class).createMovementAction(e, skillId,
+                            world.getSystem(ActionQueueSystem.class).createMovementAction(e, skillAnimationQueueId,
                                     tileSystem.getPositionUsingCoordinates(prev, e.getComponent(CenteringBoundComponent.class).bound));
 
                             break;
@@ -339,7 +334,7 @@ public class Skill {
 
                         if (tileSystem.getOccupiedMap().containsValue(pushCoords, false)) { //Pretend move but bounce back
 
-                            world.getSystem(ActionQueueSystem.class).createMovementAction(e, skillId,
+                            world.getSystem(ActionQueueSystem.class).createMovementAction(e, skillAnimationQueueId,
                                     tileSystem.getPositionUsingCoordinates(pushCoords, e.getComponent(CenteringBoundComponent.class).bound),
                                     tileSystem.getPositionUsingCoordinates(prev, e.getComponent(CenteringBoundComponent.class).bound)
                             );
@@ -352,7 +347,7 @@ public class Skill {
                         ;
 
                         if (i == pushCoordinateArray.length - 1) { //Final loop
-                            world.getSystem(ActionQueueSystem.class).createMovementAction(e, skillId,
+                            world.getSystem(ActionQueueSystem.class).createMovementAction(e, skillAnimationQueueId,
                                     tileSystem.getPositionUsingCoordinates(pushCoords, e.getComponent(CenteringBoundComponent.class).bound));
 
                         }
@@ -382,7 +377,7 @@ public class Skill {
 
         if(affectedAreas.length > 0){
 
-            affectedAreaSkill.setSkillId(getSkillId());
+            affectedAreaSkill.setSkillAnimationQueueId(getSkillAnimationQueueId());
 
             for(Coordinates c : affectedAreas){
                 Coordinates affected = new Coordinates(target.getX() + c.getX(), target.getY() + c.getY());
@@ -427,8 +422,8 @@ public class Skill {
 
     ;
 
-    public void setSkillId(String skillId) {
-        this.skillId = skillId;
+    public void setSkillAnimationQueueId(String skillAnimationQueueId) {
+        this.skillAnimationQueueId = skillAnimationQueueId;
     }
 
     public void endTurnUpdate() {

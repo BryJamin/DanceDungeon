@@ -67,6 +67,9 @@ public class ActionQueueSystem extends EntitySystem {
     }
 
 
+
+
+
     /**
      * Removes entities that are no longer apart of the system from the queue.
      *
@@ -89,7 +92,7 @@ public class ActionQueueSystem extends EntitySystem {
             }
 
             if(remove) {
-                pushedActions.removeValue(p, true);
+                pushedActions.removeValue(p, false);
             }
 
         }
@@ -145,7 +148,7 @@ public class ActionQueueSystem extends EntitySystem {
 
                 //Remove the action from the map.
                 if(p.hasOwner()) {
-                    queuedActionMap.get(p.entity).removeValue(p.queuedAction, true);
+                    queuedActionMap.get(p.entity).removeValue(p.queuedAction, false);
 
                     //Checks if the entity is featured in any other actions before removing the identifying Component
                     if (queuedActionMap.get(p.entity).size == 0) {
@@ -161,6 +164,11 @@ public class ActionQueueSystem extends EntitySystem {
 
     }
 
+
+    @Override
+    public void removed(Entity e) {
+        this.queuedActionMap.remove(e);
+    }
 
     /**
      * Pushes a new action into the system checks if the action is apart of an 'action id' group that may exist.
@@ -214,9 +222,16 @@ public class ActionQueueSystem extends EntitySystem {
 
         if(!mtcMapper.has(entity)) return;
 
+        System.out.println("Created UI Action");
+
+        System.out.println("Entity Id is " + entity.getId());
+
         pushLastAction(entity, new QueuedAction() {
             @Override
             public void act() {
+
+                System.out.println("Acting Created UI Action");
+
                 for (Coordinates c : coordinatesSequence) {
                     entity.getComponent(MoveToComponent.class).movementPositions.add(
                             world.getSystem(TileSystem.class).getPositionUsingCoordinates(
@@ -288,16 +303,13 @@ public class ActionQueueSystem extends EntitySystem {
 
     public void createMovementAction(final Entity entity, String id, final Vector3... positions){
 
+
         if(!mtcMapper.has(entity)) return;
 
         pushLastAction(entity, id, new QueuedAction() {
             @Override
             public void act() {
                 if(entity.getComponent(MoveToComponent.class) == null) {
-
-
-                    System.out.println("THIS IS A PROBLEM I AM HERE SADFACE");
-
                     return;
                 }
 

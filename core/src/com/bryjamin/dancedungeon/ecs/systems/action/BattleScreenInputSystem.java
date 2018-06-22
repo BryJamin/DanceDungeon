@@ -131,8 +131,6 @@ public class BattleScreenInputSystem extends BaseSystem implements Observer {
         @Override
         public boolean keyDown(int keycode) {
 
-            System.out.println(keycode);
-
             if(keycode == Input.Keys.BACK || keycode == Input.Keys.ESCAPE){
                 battleScreenUISystem.openQuitMenu(keycode);
                 return true;

@@ -207,9 +207,6 @@ public class TurnSystem extends EntitySystem implements Observer{
                         .getEntities();
 
 
-                System.out.println("bag size: " + bag.size());
-
-
                 if (bag.size() <= 0) { //Sets up New set of turn entities when current entiteis are finished
                     switch (turn) {
                         case ENEMY:
@@ -246,8 +243,6 @@ public class TurnSystem extends EntitySystem implements Observer{
      */
     private boolean calculateAiTurn(AvailableActionsCompnent availableActionsCompnent){
 
-
-
         switch (availableActionsCompnent.aiState) {
 
             case DECIDING:
@@ -275,6 +270,7 @@ public class TurnSystem extends EntitySystem implements Observer{
                 break;
 
             case TURN_END:
+                availableActionsCompnent.aiState = AvailableActionsCompnent.AIState.DECIDING;
                 currentEntity.edit().remove(CurrentTurnComponent.class);
                 //Once the turn is over set the turn State to the Next Turn
                 return true;

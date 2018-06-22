@@ -255,8 +255,6 @@ public class BattleDeploymentSystem extends EntitySystem implements Observer{
                     IntBag toBeSpawned = world.getAspectSubscriptionManager().get(Aspect.all(CoordinateComponent.class, SpawnerComponent.class)).getEntities();
 
 
-                    System.out.println("size " + toBeSpawned.size());
-
                     for(int i = 0; i < toBeSpawned.size(); i++){
                         final Entity e = world.getEntity(toBeSpawned.get(i));
 

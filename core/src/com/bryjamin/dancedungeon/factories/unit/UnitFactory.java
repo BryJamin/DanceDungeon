@@ -72,7 +72,7 @@ public class UnitFactory {
         // e.edit().remove(UnPushableComponent.class);
         e.edit().add(new OutOfBoundsComponent());
         e.edit().add(new TileEffectComponent(TileEffectComponent.Effect.DEATH));
-        
+
         e.getComponent(DrawableComponent.class).drawables.getColor().set(new Color(Color.CYAN));
         return e;
     }

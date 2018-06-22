@@ -46,8 +46,8 @@ public class BasicSlashAnimation implements SpellAnimation {
 
         String id = UUID.randomUUID().toString();
 
-        world.getSystem(ActionQueueSystem.class).createDeathWaitAction(slash, skill.getSkillId());
-        skill.castSpellOnTargetLocation(skill.getSkillId(), world, caster, casterCoordinates, target);
+        world.getSystem(ActionQueueSystem.class).createDeathWaitAction(slash, skill.getSkillAnimationQueueId());
+        skill.castSpellOnTargetLocation(skill.getSkillAnimationQueueId(), world, caster, casterCoordinates, target);
 
         world.getSystem(SoundSystem.class).playRandomSound(SoundFiles.playerFireMegaMix);
 

@@ -115,9 +115,6 @@ public class TileSystem extends EntitySystem {
         for(int i = -1; i <= objects.getWidth(); i++){
             for(int j = -1; j <= objects.getHeight(); j++){
 
-
-                System.out.println(new Coordinates(i, j));
-
                 if(i < 0 || i >= objects.getWidth() || j < 0 || j >= objects.getHeight()){
 
                     unitFactory.outOfBoundsTile(world, new Coordinates(i, j));
