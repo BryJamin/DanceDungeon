@@ -294,6 +294,10 @@ public class ActionQueueSystem extends EntitySystem {
             @Override
             public void act() {
                 if(entity.getComponent(MoveToComponent.class) == null) {
+
+
+                    System.out.println("THIS IS A PROBLEM I AM HERE SADFACE");
+
                     return;
                 }
 

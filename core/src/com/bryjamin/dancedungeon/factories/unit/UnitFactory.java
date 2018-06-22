@@ -182,7 +182,6 @@ public class UnitFactory {
         e.edit().add(new CoordinateComponent());
 
         //Graphical
-        e.edit().add(new AvailableActionsCompnent());
 
 
         e.edit().add(new CenteringBoundComponent(size, size));

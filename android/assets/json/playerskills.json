@@ -5,7 +5,7 @@
     "description": "Deals 1 damage. Pushes a target 1 tile",
     "icon": "icons/units/warrior",
     "push": 1,
-    "baseDamage": 1,
+    "baseDamage": 3,
     "spellAnimation": "Slash",
     "attackType": "Damage",
     "storePrice": 2

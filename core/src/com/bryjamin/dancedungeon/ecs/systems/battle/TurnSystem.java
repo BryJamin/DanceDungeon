@@ -7,6 +7,7 @@ import com.artemis.EntitySystem;
 import com.artemis.utils.IntBag;
 import com.badlogic.gdx.utils.Array;
 import com.bryjamin.dancedungeon.ecs.components.battle.AvailableActionsCompnent;
+import com.bryjamin.dancedungeon.ecs.components.battle.CurrentTurnComponent;
 import com.bryjamin.dancedungeon.ecs.components.identifiers.UnitComponent;
 import com.bryjamin.dancedungeon.ecs.systems.ui.BattleScreenUISystem;
 import com.bryjamin.dancedungeon.factories.unit.UnitData;
@@ -33,8 +34,9 @@ public class TurnSystem extends EntitySystem implements Observer{
     private UtilityAiSystem utilityAiSystem;
     private BattleDeploymentSystem battleDeploymentSystem;
     private BattleScreenUISystem battleScreenUISystem;
+    private ActionQueueSystem actionQueueSystem;
 
-    private ComponentMapper<AvailableActionsCompnent> turnMapper;
+    private ComponentMapper<AvailableActionsCompnent> availMapper;
     private ComponentMapper<EnemyComponent> enemyMapper;
     private ComponentMapper<PlayerControlledComponent> playerMapper;
 
@@ -102,7 +104,7 @@ public class TurnSystem extends EntitySystem implements Observer{
 
     @Override
     public void inserted(Entity e) {
-        turnMapper.get(e).reset();
+        availMapper.get(e).reset();
     }
 
     @Override
@@ -137,11 +139,15 @@ public class TurnSystem extends EntitySystem implements Observer{
 
             Entity e = world.getEntity(bag.get(i));
 
-            if(this.getEntities().contains(e)) {
-                skillMapper.get(e).endTurn();
-                turnMapper.get(e).reset();
-                currentTurnEntities.add(e);
-            }
+            //TODO Create a CURRENT TURN COMPONENT, THAT MARKS THAT THE ENTITY IS PART OF THE CURRENT TURN
+            //TODO THEN PERFORM A TURN WHERE AFTER IT IS OVER YOU REMOVE THE COMPOENT
+            //TODO REPEAT UNTIL THE ENTITY NO LONGER EXISTS
+
+
+            skillMapper.get(e).endTurn();
+            availMapper.get(e).reset();
+            e.edit().add(new CurrentTurnComponent());
+            currentTurnEntities.add(e);
         }
 
 
@@ -151,6 +157,8 @@ public class TurnSystem extends EntitySystem implements Observer{
 
         this.turn = turn;
         currentTurnEntities.clear();
+
+
 
         if (turn == ENEMY) {
             populateTurnEntities(Aspect.all(UtilityAiComponent.class, AvailableActionsCompnent.class, SkillsComponent.class, UnitComponent.class, EnemyComponent.class));
@@ -172,53 +180,55 @@ public class TurnSystem extends EntitySystem implements Observer{
     @Override
     protected void processSystem() {
 
-        if(turn == PLAYER) return;
 
-        if(world.getSystem(ActionQueueSystem.class).isProcessing()) return;
+        if(actionQueueSystem.isProcessing()) return;
 
-        if(turn == INTENT){
-            if(!world.getSystem(DisplayEnemyIntentUISystem.class).checkForAndReleaseStoreAttack()){
-                setUp(ENEMY);
-            }
-            return;
+
+        switch (turn) {
+
+            case INTENT:
+                if(!world.getSystem(DisplayEnemyIntentUISystem.class).checkForAndReleaseStoreAttack()){
+                    setUp(ENEMY);
+                }
+                break;
+
+            case ENEMY:
+
         }
+
+        if(turn == PLAYER) return;
 
 
         switch (battleState) {
 
             case NEXT_TURN:
 
-                if (currentTurnEntities.size <= 0) { //Sets up New set of turn entities when current entiteis are finished
+
+                IntBag bag = world.getAspectSubscriptionManager()
+                        .get(Aspect.all(UtilityAiComponent.class, CurrentTurnComponent.class, AvailableActionsCompnent.class))
+                        .getEntities();
+
+
+                if (bag.size() <= 0) { //Sets up New set of turn entities when current entiteis are finished
                     switch (turn) {
                         case ENEMY:
                             setUp(PLAYER);
                             enemyTurnObservable.notifyObservers(this);
                             break;
-                        case PLAYER:
-                            setUp(ENEMY);
-                            break;
                     }
-                }
 
-                //If the next turn has an array size of zero, switch to the previous turn
-                if(currentTurnEntities.size <= 0){
-                    turn = turn == ENEMY ? PLAYER : ENEMY;
                     return;
                 }
 
-                currentEntity = currentTurnEntities.pop();
+                currentEntity = world.getEntity(bag.get(0));
                 battleState = STATE.WAITING;
                 break;
 
 
             case WAITING:
                 AvailableActionsCompnent availableActionsCompnent = currentEntity.getComponent(AvailableActionsCompnent.class);
-                if (!playerMapper.has(currentEntity)) {
-                    calculateAiTurn(availableActionsCompnent);
-                }
+                calculateAiTurn(availableActionsCompnent);
                 break;
-
-
         }
 
     }
@@ -244,11 +254,11 @@ public class TurnSystem extends EntitySystem implements Observer{
 
                 if(unitData.stun > 0){
                     availableActionsCompnent.aiState = AvailableActionsCompnent.AIState.TURN_END;
-                } else if (!availableActionsCompnent.hasActions()) {
-                    availableActionsCompnent.aiState = AvailableActionsCompnent.AIState.TURN_END;
-                } else {
+                } else if (availableActionsCompnent.hasActions()) {
                     availableActionsCompnent.aiState = AvailableActionsCompnent.AIState.WAITING;
                     utilityAiSystem.calculateMove(currentEntity);
+                } else {
+                    availableActionsCompnent.aiState = AvailableActionsCompnent.AIState.TURN_END;
                 }
 
                 break;
@@ -256,13 +266,16 @@ public class TurnSystem extends EntitySystem implements Observer{
             case WAITING:
 
                 //Before making a decision check it see if an action is currently playing
-                if (!world.getSystem(ActionQueueSystem.class).isProcessing()) {
+                if (!actionQueueSystem.isProcessing()) {
                     availableActionsCompnent.aiState = AvailableActionsCompnent.AIState.DECIDING;
                 }
 
                 break;
 
-            case TURN_END: //Once the turn is over set the turn State to the Next Turn
+            case TURN_END:
+
+                currentEntity.edit().remove(CurrentTurnComponent.class);
+                //Once the turn is over set the turn State to the Next Turn
                 battleState = STATE.NEXT_TURN;
                 break;
         }
@@ -277,7 +290,7 @@ public class TurnSystem extends EntitySystem implements Observer{
     public boolean isAllActionsComplete(){
 
         for(Entity e : currentTurnEntities){
-            AvailableActionsCompnent tc = turnMapper.get(e);
+            AvailableActionsCompnent tc = availMapper.get(e);
             if(tc.attackActionAvailable || tc.movementActionAvailable)
                 return false;
         }
